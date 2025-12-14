@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GURMAO – Sbírky</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config={
+      theme:{
+        extend:{
+          colors:{
+            gurmaoblack:'#0b0b0d',
+            gurmaogold:'#d4af37',
+            gurmaored:'#8b1d18'
+          },
+          boxShadow:{ glow:'0 0 40px rgba(212,175,55,0.35)' }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body{font-family:Inter,sans-serif}
+    h1,h2,h3{font-family:'Playfair Display',serif}
+  </style>
+</head>
+<body class="bg-gurmaoblack text-white overflow-x-hidden">
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="text-2xl font-bold tracking-tight">GUR<span class="text-gurmaogold">M</span>AO</a>
+    <nav class="hidden md:flex gap-6 text-sm">
+      <a href="feed.html" class="hover:text-gurmaogold">Feed</a>
+      <a href="restaurace.html" class="hover:text-gurmaogold">Restaurace</a>
+      <a href="kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
+      <a href="gear.html" class="hover:text-gurmaogold">Gear</a>
+      <a href="ai.html" class="hover:text-gurmaogold">AI</a>
+      <a href="collections.html" class="text-gurmaogold">Sbírky</a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-6 py-10">
+  <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+    <div>
+      <h1 class="text-4xl">Sbírky</h1>
+      <p class="text-white/60 mt-2">Uložené restaurace. Tvoje chuťová paměť.</p>
+    </div>
+    <div class="flex gap-3">
+      <a href="feed.html" class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">Pokračovat ve feedu</a>
+      <a href="ai.html" class="px-6 py-3 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition">AI doporučení</a>
+    </div>
+  </div>
+
+  <div class="mt-10 rounded-3xl p-6 bg-white/5 border border-white/10">
+    <div class="text-sm text-gurmaogold">Tip</div>
+    <div class="text-white/70 mt-1">Klikni na 🤍 v Feed / Detailu a restaurace se ti uloží sem.</div>
+  </div>
+
+  <div id="savedGrid" class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+  <div id="empty" class="hidden mt-10 text-white/60">Zatím tu nic nemáš. Otevři <a class="text-gurmaogold hover:underline" href="feed.html">feed</a> a něco si ulož.</div>
+</main>
+
+<script>
+  const savedKey='gurmao_saved';
+  const saved=new Set(JSON.parse(localStorage.getItem(savedKey)||'[]'));
+
+  // MVP katalog – v ostrém provozu z DB
+  const catalog=[
+    {id:'noir-table',vibe:'🍷 LUXE',name:'Noir Table',city:'Praha',tag:'fine dining',href:'restaurace-noir-table.html',img:'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=80'},
+    {id:'ember-steak',vibe:'🔥 DRAMA',name:'Ember Steak',city:'Brno',tag:'steakhouse',href:'restaurace-noir-table.html',img:'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1200&q=80'},
+    {id:'la-calle',vibe:'🌮 CHAOS',name:'La Calle',city:'Ostrava',tag:'street food',href:'restaurace-noir-table.html',img:'https://images.unsplash.com/photo-1529692236671-f1dc2c0f2c0e?auto=format&fit=crop&w=1200&q=80'},
+  ];
+
+  const items=catalog.filter(x=>saved.has(x.id));
+  const grid=document.getElementById('savedGrid');
+  const empty=document.getElementById('empty');
+
+  if(!items.length){
+    empty.classList.remove('hidden');
+  } else {
+    grid.innerHTML = items.map(x=>`
+      <div class="rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
+        <a href="${x.href}" class="block">
+          <div class="aspect-[3/4] bg-cover bg-center" style="background-image:url('${x.img}')"></div>
+        </a>
+        <div class="p-5 flex items-start justify-between gap-4">
+          <div>
+            <div class="text-sm text-gurmaogold mb-1">${x.vibe}</div>
+            <div class="text-xl font-semibold">${x.name}</div>
+            <div class="text-white/60 text-sm mt-1">${x.city} · ${x.tag}</div>
+          </div>
+          <button data-remove="${x.id}" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition">❤️</button>
+        </div>
+      </div>
+    `).join('');
+
+    grid.querySelectorAll('[data-remove]').forEach(btn=>{
+      btn.addEventListener('click',(e)=>{
+        e.preventDefault();
+        const id=btn.getAttribute('data-remove');
+        const s=new Set(JSON.parse(localStorage.getItem(savedKey)||'[]'));
+        s.delete(id);
+        localStorage.setItem(savedKey, JSON.stringify([...s]));
+        location.reload();
+      });
+    });
+  }
+</script>
+
+<footer class="py-10 border-t border-white/10 text-center text-sm text-white/40">© 2025 GURMAO.cz · Nejez. Prožij.</footer>
+</body>
+</html>
