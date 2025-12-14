@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Adam Noir – GURMAO</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gurmaoblack: '#0b0b0d',
+            gurmaogold: '#d4af37',
+            gurmaored: '#8b1d18'
+          },
+          boxShadow: {
+            glow: '0 0 40px rgba(212,175,55,0.35)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    h1,h2,h3 { font-family: 'Playfair Display', serif; }
+  </style>
+</head>
+<body class="bg-gurmaoblack text-white overflow-x-hidden">
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="text-2xl font-bold tracking-tight">GUR<span class="text-gurmaogold">M</span>AO</a>
+    <nav class="hidden md:flex gap-6 text-sm">
+      <a href="feed.html" class="hover:text-gurmaogold">Feed</a>
+      <a href="restaurace.html" class="hover:text-gurmaogold">Restaurace</a>
+      <a href="kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
+      <a href="gear.html" class="hover:text-gurmaogold">Gear</a>
+      <a href="ai.html" class="hover:text-gurmaogold">AI</a>
+      <a href="collections.html" class="hover:text-gurmaogold">Sbírky</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="min-h-screen relative flex items-end">
+  <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1600891965050-dc6c28c5a12b')] bg-cover bg-center"></div>
+  <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
+
+  <div class="relative max-w-6xl mx-auto px-6 pb-20">
+    <div class="text-gurmaogold text-sm mb-3">🧑‍🍳 Head Chef · 🍷 LUXE</div>
+    <h1 class="text-5xl md:text-7xl font-bold">Adam Noir</h1>
+    <p class="text-white/70 mt-4 max-w-xl">
+      Kuchař posedlý detailem, ohněm a tichem v kuchyni.
+    </p>
+
+    <div class="mt-8 flex gap-3">
+      <button class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🤍 Sledovat</button>
+      <a href="restaurace-noir-table.html" class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🍷 Restaurace</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<section class="py-24">
+  <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16">
+
+    <!-- LEFT -->
+    <div>
+      <h2 class="text-3xl mb-6">Manifest</h2>
+      <p class="text-white/70 leading-relaxed mb-10">
+        „Chuť je ticho.“ Adam pracuje s minimem surovin a maximem soustředění.
+        Nepotřebuje show. Potřebuje oheň, čas a čistý talíř.
+      </p>
+
+      <div class="grid grid-cols-3 gap-4 mb-12">
+        <div class="rounded-2xl p-4 bg-white/5 text-center">
+          <div class="text-xl">🔥</div>
+          <div class="text-sm text-white/60">Intenzita</div>
+        </div>
+        <div class="rounded-2xl p-4 bg-white/5 text-center">
+          <div class="text-xl">🎯</div>
+          <div class="text-sm text-white/60">Preciznost</div>
+        </div>
+        <div class="rounded-2xl p-4 bg-white/5 text-center">
+          <div class="text-xl">🖤</div>
+          <div class="text-sm text-white/60">Styl</div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl p-6 bg-white/5 mb-8">
+        <div class="text-sm text-gurmaogold mb-1">Signature styl</div>
+        <div class="text-lg">Oheň · fermentace · ticho u stolu</div>
+      </div>
+
+      <div class="rounded-2xl p-6 bg-white/5">
+        <div class="text-sm text-gurmaogold mb-2">Aktuální působiště</div>
+        <div class="text-white/80">Noir Table · Praha</div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+      <h2 class="text-3xl mb-6">GURMAO Gear</h2>
+
+      <div class="space-y-6">
+        <a href="gear.html" class="block rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
+          <div class="aspect-square bg-[url('https://images.unsplash.com/photo-1600180758895-7f9a5c0a0f94')] bg-cover bg-center"></div>
+          <div class="p-6">
+            <div class="text-gurmaogold text-sm mb-1">TOP nástroj</div>
+            <div class="text-2xl font-semibold">Gyuto 240 mm</div>
+            <div class="text-white/60 mt-1">Preciznost bez kompromisů</div>
+          </div>
+        </a>
+
+        <a href="gear.html" class="block rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
+          <div class="aspect-square bg-[url('https://images.unsplash.com/photo-1600489000022-c2086d79f9d4')] bg-cover bg-center"></div>
+          <div class="p-6">
+            <div class="text-gurmaogold text-sm mb-1">Používá denně</div>
+            <div class="text-2xl font-semibold">Litinová pánev</div>
+            <div class="text-white/60 mt-1">Chuť, která drží</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="py-10 border-t border-white/10 text-center text-sm text-white/40">
+  © 2025 GURMAO.cz · Nejez. Prožij.
+</footer>
+
+</body>
+</html>
