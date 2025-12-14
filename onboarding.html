@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GURMAO – Chci být na Gurmao</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gurmaoblack: '#0b0b0d',
+            gurmaogold: '#d4af37',
+            gurmaored: '#8b1d18',
+          },
+          boxShadow: { glow: '0 0 40px rgba(212,175,55,0.35)' }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    h1,h2,h3 { font-family: 'Playfair Display', serif; }
+  </style>
+</head>
+<body class="bg-gurmaoblack text-white overflow-x-hidden">
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="text-2xl font-bold tracking-tight">GUR<span class="text-gurmaogold">M</span>AO</a>
+    <nav class="hidden md:flex gap-6 text-sm">
+      <a href="feed.html" class="hover:text-gurmaogold">Feed</a>
+      <a href="restaurace.html" class="hover:text-gurmaogold">Restaurace</a>
+      <a href="kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
+      <a href="gear.html" class="hover:text-gurmaogold">Gear</a>
+      <a href="ai.html" class="hover:text-gurmaogold">AI</a>
+      <a href="collections.html" class="hover:text-gurmaogold">Sbírky</a>
+      <a href="onboarding.html" class="text-gurmaogold">Chci být na Gurmao</a>
+    </nav>
+  </div>
+</header>
+
+<!-- FORM -->
+<section class="py-24">
+  <div class="max-w-3xl mx-auto px-6">
+    <h1 class="text-4xl md:text-5xl mb-6">Chci být na <span class="text-gurmaogold">GURMAO</span></h1>
+    <p class="text-white/70 mb-10">
+      Nejsme katalog. Jsme kurátorovaný svět. Přihláška je jednoduchá – a rychlá.
+    </p>
+
+    <div class="rounded-3xl bg-white/5 border border-white/10 p-8">
+      <form id="form" class="space-y-6">
+
+        <div>
+          <label class="block text-sm text-white/70 mb-2">Co chceš registrovat?</label>
+          <select id="type" class="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 focus:border-gurmaogold outline-none">
+            <option value="restaurace">Restauraci</option>
+            <option value="kuchar">Kuchaře</option>
+            <option value="gear">Gear / Produkt</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm text-white/70 mb-2">Název</label>
+          <input id="name" required class="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 focus:border-gurmaogold outline-none" placeholder="Noir Table / Adam Noir / Gyuto 240" />
+        </div>
+
+        <div>
+          <label class="block text-sm text-white/70 mb-2">Město / Lokace</label>
+          <input id="city" class="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 focus:border-gurmaogold outline-none" placeholder="Praha" />
+        </div>
+
+        <div>
+          <label class="block text-sm text-white/70 mb-2">Web / Instagram</label>
+          <input id="link" class="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 focus:border-gurmaogold outline-none" placeholder="https://…" />
+        </div>
+
+        <div>
+          <label class="block text-sm text-white/70 mb-2">Proč právě vy?</label>
+          <textarea id="why" rows="4" class="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 focus:border-gurmaogold outline-none" placeholder="2 věty. Ne román."></textarea>
+        </div>
+
+        <button class="w-full px-8 py-4 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-[1.02] transition">
+          Odeslat přihlášku
+        </button>
+
+        <p class="text-sm text-white/40 text-center">
+          Odesláním souhlasíš s tím, že tě můžeme kontaktovat kvůli doplnění informací.
+        </p>
+      </form>
+
+      <div id="done" class="hidden text-center py-10">
+        <div class="text-5xl mb-4">✅</div>
+        <div class="text-2xl font-semibold">Přihláška odeslána</div>
+        <p class="text-white/60 mt-2">MVP režim: uloženo lokálně. V ostrém provozu to půjde do systému.</p>
+        <div class="mt-8 flex justify-center gap-3">
+          <a href="feed.html" class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">Feed</a>
+          <a href="index.html" class="px-6 py-3 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition">Domů</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-10 rounded-3xl bg-white/5 border border-white/10 p-6">
+      <div class="text-sm text-gurmaogold">Jak vybíráme</div>
+      <ul class="mt-3 space-y-2 text-white/70">
+        <li>• Zážitek (ne jen jídlo)</li>
+        <li>• Konzistence a styl</li>
+        <li>• Vibe – atmosféra, servis, detail</li>
+        <li>• Ochota být součástí GURMAO světa</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+  const key='gurmao_applications';
+  const form=document.getElementById('form');
+  const done=document.getElementById('done');
+
+  form.addEventListener('submit',(e)=>{
+    e.preventDefault();
+    const payload={
+      type: document.getElementById('type').value,
+      name: document.getElementById('name').value.trim(),
+      city: document.getElementById('city').value.trim(),
+      link: document.getElementById('link').value.trim(),
+      why: document.getElementById('why').value.trim(),
+      createdAt: new Date().toISOString()
+    };
+
+    const arr = JSON.parse(localStorage.getItem(key) || '[]');
+    arr.push(payload);
+    localStorage.setItem(key, JSON.stringify(arr));
+
+    form.classList.add('hidden');
+    done.classList.remove('hidden');
+  });
+</script>
+
+<footer class="py-10 border-t border-white/10 text-center text-sm text-white/40">
+  © 2025 GURMAO.cz · Nejez. Prožij.
+</footer>
+
+</body>
+</html>
