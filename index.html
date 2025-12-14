@@ -1,442 +1,309 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gurmao.cz – Chuť, která spojuje | AO gastro</title>
+  <title>GURMAO – Nejez. Prožij.</title>
 
-  <!-- Google Fonts (CZ diakritika) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: { serif: ['Playfair Display', 'ui-serif', 'Georgia'], sans: ['Roboto', 'ui-sans-serif', 'system-ui'] },
           colors: {
-            burgundy: '#6b0f1a',
-            burgundyDark: '#4d0b13',
-            gold: '#c9a227',
-            goldSoft: '#e3c86a',
+            gurmaoblack: '#0b0b0d',
+            gurmaogold: '#d4af37',
+            gurmaored: '#8b1d18',
           },
           boxShadow: {
-            soft: '0 10px 30px -12px rgba(0,0,0,0.25)'
+            glow: '0 0 40px rgba(212,175,55,0.35)'
           }
         }
       }
     }
   </script>
 
-  <!-- Lucide icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; }
+    h1,h2,h3 { font-family: 'Playfair Display', serif; }
   </style>
 </head>
-<body class="bg-[rgb(248,246,242)] text-slate-900 font-sans">
-  <!-- Top notice / bar -->
-  <div class="bg-burgundy text-white text-center text-sm py-2">
-    <span class="opacity-90">Novinka:</span> Připravujeme e‑shop s delikatesami <span class="font-semibold">Gurmao Select</span> – brzy spuštění!
+<body class="bg-gurmaoblack text-white overflow-x-hidden">
+
+<!-- HEADER / NAV -->
+<header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="/index.html" class="text-2xl font-bold tracking-tight">GUR<span class="text-gurmaogold">M</span>AO</a>
+    <nav class="hidden md:flex gap-6 text-sm">
+      <a href="/feed.html" class="hover:text-gurmaogold">Feed</a>
+      <a href="/restaurace.html" class="hover:text-gurmaogold">Restaurace</a>
+      <a href="/kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
+      <a href="/gear.html" class="hover:text-gurmaogold">Gear</a>
+      <a href="/ai.html" class="hover:text-gurmaogold">AI</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO / FEED -->
+<section class="min-h-screen flex flex-col items-center justify-center px-6 text-center relative">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(212,175,55,0.15),transparent_70%)]"></div>
+
+  <h1 class="relative text-5xl md:text-7xl font-bold tracking-tight">
+    GUR<span class="text-gurmaogold">M</span>AO
+  </h1>
+
+  <p class="relative mt-6 text-xl md:text-2xl text-white/80 max-w-xl">
+    Nejez.<br />
+    <span class="text-gurmaogold font-semibold">Prožij.</span>
+  </p>
+
+  <div class="relative mt-10 flex gap-4">
+    <a href="/feed.html" class="px-8 py-4 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-105 transition inline-block">Prozkoumat feed</a>
+    <a href="/onboarding.html" class="px-8 py-4 rounded-full border border-white/30 hover:border-gurmaogold hover:text-gurmaogold transition inline-block">Chci být na Gurmao</a>
   </div>
 
-  <!-- Header / Navbar -->
-  <header id="topbar" class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-black/5">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="h-16 flex items-center justify-between">
-        <!-- Brand -->
-        <a href="#" class="flex items-center gap-3 group">
-          <div class="w-10 h-10 rounded-2xl grid place-items-center bg-burgundy text-white shadow-soft">
-            <!-- Simple plate/letter logo as inline SVG -->
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.6"/>
-              <path d="M8.5 8.5h5.2c1.9 0 3.3 1.3 3.3 3.1 0 1.5-1 2.7-2.4 3l2.5 3.3h-2.4l-2.3-3.1h-2v3.1H8.5V8.5zm2.4 1.8v3.1h2.6c0.9 0 1.6-0.7 1.6-1.5s-0.7-1.5-1.6-1.5h-2.6z" fill="currentColor"/>
-            </svg>
-          </div>
-          <div class="leading-tight">
-            <div class="font-extrabold tracking-tight text-lg sm:text-xl">Gurmao.cz</div>
-            <div class="text-xs sm:text-sm text-slate-500 -mt-0.5">Chuť, která spojuje</div>
-          </div>
-        </a>
+  <p class="relative mt-12 text-sm text-white/40">
+    Kurátorovaný svět gastronomie. Pouze vybrané restaurace.
+  </p>
+</section>
 
-        <!-- Desktop nav -->
-        <nav class="hidden md:flex items-center gap-7 font-medium">
-          <a href="#kategorie" class="hover:text-burgundy">Kategorie</a>
-          <a href="#delikatesy" class="hover:text-burgundy">Delikatesy</a>
-          <a href="#napoje" class="hover:text-burgundy">Nápoje</a>
-          <a href="#magazin" class="hover:text-burgundy">Magazín</a>
-          <a href="#kontakt" class="hover:text-burgundy">Kontakt</a>
-          <a href="#eshop" class="inline-flex items-center gap-2 rounded-xl border border-gold/40 px-4 py-2 text-burgundy hover:bg-gold/10 transition">
-            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
-            E‑shop (brzy)
-          </a>
-        </nav>
+<!-- VIBE STRIP -->
+<section class="py-16 border-t border-white/10">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl md:text-4xl mb-8">Vyber si <span class="text-gurmaogold">vibe</span></h2>
 
-        <!-- Mobile hamburger -->
-        <button id="hamburger" class="md:hidden p-2 rounded-lg border border-black/10" aria-label="Otevřít menu">
-          <i data-lucide="menu" class="w-5 h-5"></i>
-        </button>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+      <div class="rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer">🔥 DRAMA</div>
+      <div class="rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer">🖤 DARK</div>
+      <div class="rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer">🌿 PURE</div>
+      <div class="rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer">🍷 LUXE</div>
+      <div class="rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer">🌮 CHAOS</div>
+      <div class="rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer">🌊 CALM</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEED PREVIEW -->
+<section class="py-20 border-t border-white/10">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl md:text-4xl mb-10">GURMAO <span class="text-gurmaogold">feed</span></h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- CARD 1 -->
+      <div class="group rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
+        <div class="aspect-[3/4] bg-[url('https://images.unsplash.com/photo-1541544741938-0af808871cc0')] bg-cover bg-center"></div>
+        <div class="p-5">
+          <div class="text-sm text-gurmaogold mb-1">🍷 LUXE</div>
+          <div class="text-xl font-semibold">Noir Table</div>
+          <div class="text-white/60 text-sm mt-1">Praha · fine dining</div>
+        </div>
+      </div>
+
+      <!-- CARD 2 -->
+      <div class="group rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
+        <div class="aspect-[3/4] bg-[url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092')] bg-cover bg-center"></div>
+        <div class="p-5">
+          <div class="text-sm text-gurmaogold mb-1">🔥 DRAMA</div>
+          <div class="text-xl font-semibold">Ember Steak</div>
+          <div class="text-white/60 text-sm mt-1">Brno · steakhouse</div>
+        </div>
+      </div>
+
+      <!-- CARD 3 -->
+      <div class="group rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
+        <div class="aspect-[3/4] bg-[url('https://images.unsplash.com/photo-1529692236671-f1dc2c0f2c0e')] bg-cover bg-center"></div>
+        <div class="p-5">
+          <div class="text-sm text-gurmaogold mb-1">🌮 CHAOS</div>
+          <div class="text-xl font-semibold">La Calle</div>
+          <div class="text-white/60 text-sm mt-1">Ostrava · street food</div>
+        </div>
       </div>
     </div>
 
-    <!-- Mobile menu -->
-    <div id="mobileMenu" class="md:hidden hidden border-t border-black/5 bg-white">
-      <div class="mx-auto max-w-7xl px-4 py-4 flex flex-col gap-2 text-base">
-        <a href="#kategorie" class="py-2" data-close-mobile>Kategorie</a>
-        <a href="#delikatesy" class="py-2" data-close-mobile>Delikatesy</a>
-        <a href="#napoje" class="py-2" data-close-mobile>Nápoje</a>
-        <a href="#magazin" class="py-2" data-close-mobile>Magazín</a>
-        <a href="#kontakt" class="py-2" data-close-mobile>Kontakt</a>
-        <a href="#eshop" class="py-2 inline-flex items-center gap-2" data-close-mobile>
-          <i data-lucide="shopping-bag" class="w-4 h-4"></i> E‑shop (brzy)
-        </a>
-      </div>
+    <div class="mt-14 text-center">
+      <button class="px-10 py-4 rounded-full border border-white/30 hover:border-gurmaogold hover:text-gurmaogold transition">
+        Načíst celý feed
+      </button>
     </div>
-  </header>
+  </div>
+</section>
 
-  <!-- Hero -->
-  <section class="relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-br from-burgundy via-burgundyDark to-black"></div>
-    <!-- gold waves -->
-    <svg class="absolute -bottom-16 left-1/2 -translate-x-1/2 opacity-30" width="1200" height="300" viewBox="0 0 1200 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M0 200 C 200 260, 400 140, 600 200 C 800 260, 1000 140, 1200 200 L1200 300 L0 300 Z" fill="#c9a227"/>
-    </svg>
-    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-      <div class="grid lg:grid-cols-2 gap-10 items-center">
-        <div class="text-white">
-          <h1 class="font-serif font-bold text-4xl sm:text-5xl leading-tight">Gurmao – svět delikates a inspirace pro gurmány</h1>
-          <p class="mt-5 text-white/90 text-lg">Magazín, recepty, degustace, šéfkuchaři i prémiové suroviny. Propojíme tě s chutí – od farmy až po fine dining.</p>
-          <div class="mt-8 flex flex-wrap gap-3">
-            <a href="#kategorie" class="inline-flex items-center gap-2 bg-gold text-black font-semibold px-5 py-3 rounded-xl hover:bg-goldSoft transition shadow-soft">
-              <i data-lucide="grid" class="w-4 h-4"></i> Prohlédnout kategorie
-            </a>
-            <a href="#magazin" class="inline-flex items-center gap-2 bg-white/10 text-white border border-white/20 px-5 py-3 rounded-xl hover:bg-white/15 transition">
-              <i data-lucide="newspaper" class="w-4 h-4"></i> Číst magazín
-            </a>
+<!-- RESTAURACE DETAIL PREVIEW -->
+<section class="py-24 border-t border-white/10">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl md:text-4xl mb-12">Ukázka <span class="text-gurmaogold">detailu restaurace</span></h2>
+
+    <div class="grid md:grid-cols-2 gap-12 items-start">
+      <!-- IMAGE -->
+      <div class="rounded-3xl overflow-hidden shadow-glow">
+        <div class="aspect-[4/5] bg-[url('https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c')] bg-cover bg-center"></div>
+      </div>
+
+      <!-- INFO -->
+      <div>
+        <div class="text-gurmaogold text-sm mb-2">🍷 LUXE · večerní fine dining</div>
+        <h3 class="text-4xl font-semibold mb-4">Noir Table</h3>
+        <p class="text-white/70 mb-6">
+          Místo, kde se zpomalí čas. Minimalistická kuchyně, otevřený oheň,
+          ticho u stolu a precizní servis. Nechodíš se najíst. Přicházíš pro zážitek.
+        </p>
+
+        <div class="grid grid-cols-3 gap-4 mb-8">
+          <div class="rounded-2xl p-4 bg-white/5 text-center">
+            <div class="text-xl">🔥</div>
+            <div class="text-sm text-white/60">WOW efekt</div>
           </div>
-          <div class="mt-6 flex items-center gap-4 text-white/80 text-sm">
-            <div class="flex items-center gap-2"><i data-lucide="thumbs-up" class="w-4 h-4"></i>Recenze restaurací</div>
-            <div class="flex items-center gap-2"><i data-lucide="wine" class="w-4 h-4"></i>Degustace & párování</div>
-            <div class="flex items-center gap-2"><i data-lucide="chef-hat" class="w-4 h-4"></i>Tipy šéfkuchařů</div>
+          <div class="rounded-2xl p-4 bg-white/5 text-center">
+            <div class="text-xl">🤤</div>
+            <div class="text-sm text-white/60">Chuť</div>
+          </div>
+          <div class="rounded-2xl p-4 bg-white/5 text-center">
+            <div class="text-xl">🖤</div>
+            <div class="text-sm text-white/60">Atmosféra</div>
           </div>
         </div>
-        <div>
-          <!-- Decorative card grid -->
-          <div class="grid grid-cols-2 gap-4">
-            <div class="rounded-2xl bg-white shadow-soft p-4">
-              <div class="aspect-[4/3] rounded-xl bg-[radial-gradient(circle_at_30%_30%,#fff_0%,#f6efe0_50%,#eadfbf_100%)] grid place-items-center">
-                <i data-lucide="sprout" class="w-10 h-10 text-burgundy"></i>
-              </div>
-              <div class="mt-3 font-medium">Farmářské suroviny</div>
-              <div class="text-sm text-slate-500">Původ, kvalita, sezónnost.</div>
-            </div>
-            <div class="rounded-2xl bg-white shadow-soft p-4">
-              <div class="aspect-[4/3] rounded-xl bg-[radial-gradient(circle_at_30%_30%,#fff_0%,#efe8ff_50%,#e0d5ff_100%)] grid place-items-center">
-                <i data-lucide="wine" class="w-10 h-10 text-burgundy"></i>
-              </div>
-              <div class="mt-3 font-medium">Víno & párování</div>
-              <div class="text-sm text-slate-500">Vinao.cz propojeno.</div>
-            </div>
-            <div class="rounded-2xl bg-white shadow-soft p-4">
-              <div class="aspect-[4/3] rounded-xl bg-[radial-gradient(circle_at_30%_30%,#fff_0%,#eaf6ff_50%,#cfe9ff_100%)] grid place-items-center">
-                <i data-lucide="cup-soda" class="w-10 h-10 text-burgundy"></i>
-              </div>
-              <div class="mt-3 font-medium">Rum & destiláty</div>
-              <div class="text-sm text-slate-500">Rumao.cz obsah.</div>
-            </div>
-            <div class="rounded-2xl bg-white shadow-soft p-4">
-              <div class="aspect-[4/3] rounded-xl bg-[radial-gradient(circle_at_30%_30%,#fff_0%,#ffe7e7_50%,#ffd0d0_100%)] grid place-items-center">
-                <i data-lucide="utensils" class="w-10 h-10 text-burgundy"></i>
-              </div>
-              <div class="mt-3 font-medium">Recepty a cheaty</div>
-              <div class="text-sm text-slate-500">Rychlé i fine dining.</div>
-            </div>
-          </div>
+
+        <div class="rounded-2xl p-6 bg-white/5 mb-6">
+          <div class="text-sm text-gurmaogold mb-1">Signature dish</div>
+          <div class="text-lg">Hovězí steak na uhlí · fermentovaný pepř · máslo</div>
+        </div>
+
+        <div class="rounded-2xl p-6 bg-white/5">
+          <div class="text-sm text-gurmaogold mb-2">Používané vybavení</div>
+          <div class="text-white/80">Japonský nůž Gyuto · litinová pánev · otevřený gril</div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Kategorie -->
-  <section id="kategorie" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-    <div class="flex items-end justify-between gap-6">
-      <h2 class="font-serif text-3xl font-bold text-burgundy">Kategorie</h2>
-      <a href="#magazin" class="text-burgundy hover:underline">Všechny články</a>
-    </div>
-    <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-      <!-- Card template -->
-      <a href="#delikatesy" class="group rounded-2xl overflow-hidden bg-white shadow-soft border border-black/5">
-        <div class="aspect-[4/3] bg-[linear-gradient(135deg,#fff,#f9f3e4)] grid place-items-center">
-          <i data-lucide="cookie" class="w-10 h-10 text-burgundy"></i>
-        </div>
-        <div class="p-4">
-          <div class="font-semibold">Delikatesy</div>
-          <div class="text-sm text-slate-500">Sýry, paštiky, olivy, čokoláda…</div>
-        </div>
-      </a>
-      <a href="#napoje" class="group rounded-2xl overflow-hidden bg-white shadow-soft border border-black/5">
-        <div class="aspect-[4/3] bg-[linear-gradient(135deg,#fff,#efe8ff)] grid place-items-center">
-          <i data-lucide="wine" class="w-10 h-10 text-burgundy"></i>
-        </div>
-        <div class="p-4">
-          <div class="font-semibold">Nápoje</div>
-          <div class="text-sm text-slate-500">Víno, rum, pivo, káva, čaj</div>
-        </div>
-      </a>
-      <a href="#recepty" class="group rounded-2xl overflow-hidden bg-white shadow-soft border border-black/5">
-        <div class="aspect-[4/3] bg-[linear-gradient(135deg,#fff,#eaf6ff)] grid place-items-center">
-          <i data-lucide="chef-hat" class="w-10 h-10 text-burgundy"></i>
-        </div>
-        <div class="p-4">
-          <div class="font-semibold">Recepty</div>
-          <div class="text-sm text-slate-500">Jednoduché i noblesní</div>
-        </div>
-      </a>
-      <a href="#magazin" class="group rounded-2xl overflow-hidden bg-white shadow-soft border border-black/5">
-        <div class="aspect-[4/3] bg-[linear-gradient(135deg,#fff,#ffe7e7)] grid place-items-center">
-          <i data-lucide="sparkles" class="w-10 h-10 text-burgundy"></i>
-        </div>
-        <div class="p-4">
-          <div class="font-semibold">Magazín</div>
-          <div class="text-sm text-slate-500">Testy, recenze, tipy</div>
-        </div>
-      </a>
-    </div>
-  </section>
+<!-- CHEF PROFILE PREVIEW -->
+<section class="py-24 border-t border-white/10">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl md:text-4xl mb-12">Profil <span class="text-gurmaogold">kuchaře</span></h2>
 
-  <!-- Delikatesy (placeholder kolekce) -->
-  <section id="delikatesy" class="bg-white border-y border-black/5">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-      <div class="flex items-end justify-between gap-6">
-        <h2 class="font-serif text-3xl font-bold text-burgundy">Výběr delikates</h2>
-        <a href="#eshop" class="text-burgundy hover:underline">Vše (brzy v e‑shopu)</a>
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+      <div class="rounded-3xl overflow-hidden shadow-glow">
+        <div class="aspect-[4/5] bg-[url('https://images.unsplash.com/photo-1600891965050-dc6c28c5a12b')] bg-cover bg-center"></div>
       </div>
-      <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- 6 produktových karet s placeholdery -->
-        <div class="rounded-2xl overflow-hidden border border-black/5 shadow-soft">
-          <div class="aspect-square bg-[conic-gradient(at_30%_30%,#fff,#f7f2e7,#eadfbf,#fff)]"></div>
-          <div class="p-4">
-            <div class="font-semibold">Olivový olej EVOO</div>
-            <div class="text-sm text-slate-500">Studená extrakce, Itálie</div>
-          </div>
+
+      <div>
+        <div class="text-gurmaogold text-sm mb-2">🧑‍🍳 Head Chef · 🍷 LUXE</div>
+        <h3 class="text-4xl font-semibold mb-4">Adam Noir</h3>
+        <p class="text-white/70 mb-6">
+          Kuchař posedlý detailem, ohněm a tichem v kuchyni. Věří, že jídlo má mluvit samo.
+          Každý talíř je podpis, každý večer rituál.
+        </p>
+
+        <div class="grid grid-cols-3 gap-4 mb-8">
+          <div class="rounded-2xl p-4 bg-white/5 text-center"><div class="text-xl">🔥</div><div class="text-sm text-white/60">Intenzita</div></div>
+          <div class="rounded-2xl p-4 bg-white/5 text-center"><div class="text-xl">🎯</div><div class="text-sm text-white/60">Preciznost</div></div>
+          <div class="rounded-2xl p-4 bg-white/5 text-center"><div class="text-xl">🖤</div><div class="text-sm text-white/60">Styl</div></div>
         </div>
-        <div class="rounded-2xl overflow-hidden border border-black/5 shadow-soft">
-          <div class="aspect-square bg-[conic-gradient(at_30%_30%,#fff,#efe8ff,#d9cbff,#fff)]"></div>
-          <div class="p-4">
-            <div class="font-semibold">Hořká čokoláda 80%</div>
-            <div class="text-sm text-slate-500">Dominikánská republika</div>
-          </div>
+
+        <div class="rounded-2xl p-6 bg-white/5 mb-6">
+          <div class="text-sm text-gurmaogold mb-1">Aktuální restaurace</div>
+          <div class="text-lg">Noir Table · Praha</div>
         </div>
-        <div class="rounded-2xl overflow-hidden border border-black/5 shadow-soft">
-          <div class="aspect-square bg-[conic-gradient(at_30%_30%,#fff,#eaf6ff,#cfe9ff,#fff)]"></div>
-          <div class="p-4">
-            <div class="font-semibold">Francouzská paštika</div>
-            <div class="text-sm text-slate-500">S calvadosovým želé</div>
-          </div>
-        </div>
-        <div class="rounded-2xl overflow-hidden border border-black/5 shadow-soft">
-          <div class="aspect-square bg-[conic-gradient(at_30%_30%,#fff,#ffe7e7,#ffd0d0,#fff)]"></div>
-          <div class="p-4">
-            <div class="font-semibold">Sýr Comté 18M</div>
-            <div class="text-sm text-slate-500">AOC, Jura</div>
-          </div>
-        </div>
-        <div class="rounded-2xl overflow-hidden border border-black/5 shadow-soft">
-          <div class="aspect-square bg-[conic-gradient(at_30%_30%,#fff,#f0fff4,#ccf4d1,#fff)]"></div>
-          <div class="p-4">
-            <div class="font-semibold">Pesto Genovese</div>
-            <div class="text-sm text-slate-500">Bazalka DOP</div>
-          </div>
-        </div>
-        <div class="rounded-2xl overflow-hidden border border-black/5 shadow-soft">
-          <div class="aspect-square bg-[conic-gradient(at_30%_30%,#fff,#fef9c3,#fde68a,#fff)]"></div>
-          <div class="p-4">
-            <div class="font-semibold">Med akátový</div>
-            <div class="text-sm text-slate-500">Z Moravy</div>
-          </div>
+
+        <div class="rounded-2xl p-6 bg-white/5">
+          <div class="text-sm text-gurmaogold mb-2">Oblíbené vybavení</div>
+          <div class="text-white/80">Gyuto 240 mm · uhlí Binchotan · litina</div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Nápoje / rozcestník -->
-  <section id="napoje" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-    <h2 class="font-serif text-3xl font-bold text-burgundy">Nápoje</h2>
-    <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-5 gap-5">
-      <a href="https://www.vinao.cz" target="_blank" class="rounded-2xl p-5 bg-white border border-black/5 shadow-soft hover:shadow-md transition">
-        <div class="flex items-center gap-3">
-          <i data-lucide="wine" class="w-6 h-6 text-burgundy"></i>
-          <div class="font-semibold">Víno (Vinao.cz)</div>
-        </div>
-        <p class="text-sm text-slate-500 mt-2">Degustace, párování, regiony</p>
-      </a>
-      <a href="https://www.rumao.cz" target="_blank" class="rounded-2xl p-5 bg-white border border-black/5 shadow-soft hover:shadow-md transition">
-        <div class="flex items-center gap-3">
-          <i data-lucide="glass-water" class="w-6 h-6 text-burgundy"></i>
-          <div class="font-semibold">Rum (Rumao.cz)</div>
-        </div>
-        <p class="text-sm text-slate-500 mt-2">Rum kluby, styly, recenze</p>
-      </a>
-      <a href="https://www.pivao.cz" target="_blank" class="rounded-2xl p-5 bg-white border border-black/5 shadow-soft hover:shadow-md transition">
-        <div class="flex items-center gap-3">
-          <i data-lucide="beer" class="w-6 h-6 text-burgundy"></i>
-          <div class="font-semibold">Pivo (Pivao.cz)</div>
-        </div>
-        <p class="text-sm text-slate-500 mt-2">Pivovary, styly, páření</p>
-      </a>
-      <a href="#" class="rounded-2xl p-5 bg-white border border-black/5 shadow-soft hover:shadow-md transition">
-        <div class="flex items-center gap-3">
-          <i data-lucide="coffee" class="w-6 h-6 text-burgundy"></i>
-          <div class="font-semibold">Káva</div>
-        </div>
-        <p class="text-sm text-slate-500 mt-2">Pražení, metody, baristé</p>
-      </a>
-      <a href="#" class="rounded-2xl p-5 bg-white border border-black/5 shadow-soft hover:shadow-md transition">
-        <div class="flex items-center gap-3">
-          <i data-lucide="cup-soda" class="w-6 h-6 text-burgundy"></i>
-          <div class="font-semibold">Čaj</div>
-        </div>
-        <p class="text-sm text-slate-500 mt-2">Odrůdy, příprava, párování</p>
-      </a>
-    </div>
-  </section>
+<!-- GURMAO GEAR -->
+<section class="py-24 border-t border-white/10">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-3xl md:text-4xl mb-12">GURMAO <span class="text-gurmaogold">GEAR</span></h2>
 
-  <!-- Magazín -->
-  <section id="magazin" class="bg-white border-y border-black/5">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-      <div class="flex items-end justify-between gap-6">
-        <h2 class="font-serif text-3xl font-bold text-burgundy">Z magazínu</h2>
-        <a href="#" class="text-burgundy hover:underline">Všechny články</a>
-      </div>
-      <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <article class="rounded-2xl overflow-hidden border border-black/5 bg-white hover:shadow-md transition">
-          <div class="aspect-[16/9] bg-[linear-gradient(135deg,#fff,#f9f3e4)]"></div>
-          <div class="p-5">
-            <h3 class="font-semibold leading-snug">Jak správně párovat víno s jídlem: 5 jednoduchých pravidel</h3>
-            <p class="text-sm text-slate-500 mt-2">Základní principy od acidity po tělo vína a intenzitu chuti.</p>
-          </div>
-        </article>
-        <article class="rounded-2xl overflow-hidden border border-black/5 bg-white hover:shadow-md transition">
-          <div class="aspect-[16/9] bg-[linear-gradient(135deg,#fff,#efe8ff)]"></div>
-          <div class="p-5">
-            <h3 class="font-semibold leading-snug">Průvodce rumem: od světa agricole po melasové poklady</h3>
-            <p class="text-sm text-slate-500 mt-2">Co odlišuje styly, jak degustovat a na co si dát pozor.</p>
-          </div>
-        </article>
-        <article class="rounded-2xl overflow-hidden border border-black/5 bg-white hover:shadow-md transition">
-          <div class="aspect-[16/9] bg-[linear-gradient(135deg,#fff,#eaf6ff)]"></div>
-          <div class="p-5">
-            <h3 class="font-semibold leading-snug">Sezónní recept: hovězí na víně s kořenovou zeleninou</h3>
-            <p class="text-sm text-slate-500 mt-2">Klasika, která zahřeje. Včetně časování a tipů na servis.</p>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- Newsletter -->
-  <section id="eshop" class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16 text-center">
-    <h2 class="font-serif text-3xl font-bold text-burgundy">Chceš vědět, až spustíme e‑shop?</h2>
-    <p class="mt-3 text-slate-600">Nech nám svůj e‑mail a pošleme ti první výběr <span class="font-semibold">Gurmao Select</span> – olivy, oleje, čokolády a další.</p>
-    <form class="mt-6 flex gap-3 max-w-xl mx-auto">
-      <input type="email" required placeholder="tvůj@email.cz" class="flex-1 px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-gold/60">
-      <button class="px-5 py-3 rounded-xl bg-burgundy text-white font-semibold hover:bg-burgundyDark transition">Upozornit</button>
-    </form>
-    <p class="mt-2 text-xs text-slate-500">Soukromí respektujeme. Žádný spam – jen chutné novinky.</p>
-  </section>
-
-  <!-- AO synergie -->
-  <section class="bg-white border-y border-black/5">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-      <h2 class="font-serif text-3xl font-bold text-burgundy">Součást AO světa</h2>
-      <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-6 gap-4">
-        <a href="https://www.vinao.cz" target="_blank" class="rounded-xl border border-black/10 px-4 py-3 bg-gradient-to-br from-white to-red-50 hover:shadow-md transition">Vinao.cz</a>
-        <a href="https://www.rumao.cz" target="_blank" class="rounded-xl border border-black/10 px-4 py-3 bg-gradient-to-br from-white to-amber-50 hover:shadow-md transition">Rumao.cz</a>
-        <a href="https://www.pivao.cz" target="_blank" class="rounded-xl border border-black/10 px-4 py-3 bg-gradient-to-br from-white to-yellow-50 hover:shadow-md transition">Pivao.cz</a>
-        <a href="https://www.delikao.cz" target="_blank" class="rounded-xl border border-black/10 px-4 py-3 bg-gradient-to-br from-white to-emerald-50 hover:shadow-md transition">Delikao.cz</a>
-        <a href="https://www.farmao.cz" target="_blank" class="rounded-xl border border-black/10 px-4 py-3 bg-gradient-to-br from-white to-green-50 hover:shadow-md transition">Farmao.cz</a>
-        <a href="https://www.reklamas.cz" target="_blank" class="rounded-xl border border-black/10 px-4 py-3 bg-gradient-to-br from-white to-slate-50 hover:shadow-md transition">Reklamas.cz</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Kontakt / patička -->
-  <footer id="kontakt" class="bg-burgundy text-white">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-      <div class="grid md:grid-cols-4 gap-8">
-        <div>
-          <div class="font-serif text-xl font-bold">Gurmao.cz</div>
-          <p class="text-white/80 mt-2">AO značka pro gurmány – magazín, recepty a delikatesy.</p>
-        </div>
-        <div>
-          <div class="font-semibold mb-3">Navigace</div>
-          <ul class="space-y-2 text-white/90">
-            <li><a href="#kategorie" class="hover:underline">Kategorie</a></li>
-            <li><a href="#delikatesy" class="hover:underline">Delikatesy</a></li>
-            <li><a href="#napoje" class="hover:underline">Nápoje</a></li>
-            <li><a href="#magazin" class="hover:underline">Magazín</a></li>
-          </ul>
-        </div>
-        <div>
-          <div class="font-semibold mb-3">Kontakt</div>
-          <ul class="space-y-2 text-white/90">
-            <li class="flex items-center gap-2"><i data-lucide="mail" class="w-4 h-4"></i> hello@gurmao.cz</li>
-            <li class="flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4"></i> Zlínský kraj, Česko</li>
-          </ul>
-        </div>
-        <div>
-          <div class="font-semibold mb-3">Sociální sítě</div>
-          <div class="flex gap-3">
-            <a href="#" class="p-2 rounded-lg bg-white/10 hover:bg-white/15"><i data-lucide="instagram" class="w-5 h-5"></i></a>
-            <a href="#" class="p-2 rounded-lg bg-white/10 hover:bg-white/15"><i data-lucide="facebook" class="w-5 h-5"></i></a>
-            <a href="#" class="p-2 rounded-lg bg-white/10 hover:bg-white/15"><i data-lucide="youtube" class="w-5 h-5"></i></a>
-          </div>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="rounded-3xl bg-white/5 overflow-hidden">
+        <div class="aspect-square bg-[url('https://images.unsplash.com/photo-1600180758895-7f9a5c0a0f94')] bg-cover bg-center"></div>
+        <div class="p-6">
+          <div class="text-gurmaogold text-sm mb-1">Používá 18 kuchařů</div>
+          <div class="text-lg font-semibold">Japonský nůž Gyuto 240 mm</div>
+          <div class="text-white/60 text-sm mt-1">Preciznost bez kompromisů</div>
         </div>
       </div>
-      <div class="mt-10 pt-6 border-t border-white/10 text-sm text-white/70 flex flex-wrap items-center justify-between gap-4">
-        <div>© <span id="year"></span> Gurmao.cz • AO Group</div>
-        <div class="flex items-center gap-4">
-          <a href="#" class="hover:underline">Podmínky</a>
-          <a href="#" class="hover:underline">Cookies</a>
+
+      <div class="rounded-3xl bg-white/5 overflow-hidden">
+        <div class="aspect-square bg-[url('https://images.unsplash.com/photo-1600489000022-c2086d79f9d4')] bg-cover bg-center"></div>
+        <div class="p-6">
+          <div class="text-gurmaogold text-sm mb-1">Používá 11 restaurací</div>
+          <div class="text-lg font-semibold">Litinová pánev</div>
+          <div class="text-white/60 text-sm mt-1">Chuť, která drží</div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl bg-white/5 overflow-hidden">
+        <div class="aspect-square bg-[url('https://images.unsplash.com/photo-1598514983318-2f64f8f4796c')] bg-cover bg-center"></div>
+        <div class="p-6">
+          <div class="text-gurmaogold text-sm mb-1">Používá Noir Table</div>
+          <div class="text-lg font-semibold">Uhlí Binchotan</div>
+          <div class="text-white/60 text-sm mt-1">Oheň bez kouře</div>
         </div>
       </div>
     </div>
-  </footer>
+  </div>
+</section>
 
-  <script>
-    // Init icons
-    lucide.createIcons();
+<!-- AI GURMAO -->
+<section class="py-28 border-t border-white/10 relative overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.12),transparent_70%)]"></div>
+  <div class="relative max-w-4xl mx-auto px-6 text-center">
+    <h2 class="text-4xl md:text-5xl mb-6">Kam dnes <span class="text-gurmaogold">podle nálady</span>?</h2>
+    <p class="text-xl text-white/70 mb-10">
+      Nehledej. Nepřemýšlej. Jen si vyber pocit.
+    </p>
 
-    // Mobile menu toggle
-    const hamburger = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobileMenu');
-    hamburger?.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-    });
+    <div class="flex flex-wrap justify-center gap-4 mb-10">
+      <button class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🔥 Drama</button>
+      <button class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🖤 Dark</button>
+      <button class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🌿 Pure</button>
+      <button class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🍷 Luxe</button>
+      <button class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🌮 Chaos</button>
+      <button class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🌊 Calm</button>
+    </div>
 
-    // Close mobile menu on link click
-    document.querySelectorAll('[data-close-mobile]').forEach(a => {
-      a.addEventListener('click', () => mobileMenu.classList.add('hidden'));
-    });
+    <button class="px-10 py-4 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-105 transition">
+      Doporuč mi místo
+    </button>
 
-    // Add shadow when scrolling
-    const topbar = document.getElementById('topbar');
-    const onScroll = () => {
-      if (window.scrollY > 6) {
-        topbar.classList.add('shadow-soft');
-      } else {
-        topbar.classList.remove('shadow-soft');
-      }
-    };
-    window.addEventListener('scroll', onScroll);
-    onScroll();
+    <p class="mt-8 text-sm text-white/40">
+      Jedno doporučení. Žádné scrollování.
+    </p>
+  </div>
+</section>
 
-    // Year
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+<!-- MANIFEST -->
+<section class="py-20 bg-gradient-to-b from-transparent to-black">
+  <div class="max-w-4xl mx-auto px-6 text-center">
+    <h2 class="text-4xl md:text-5xl mb-8">GURMAO není katalog</h2>
+    <p class="text-xl text-white/80 leading-relaxed">
+      Nehodnotíme hvězdičkami.<br />
+      Nepíšeme recenze.<br /><br />
+      Sledujeme emoce, návraty, ticho u stolu a moment,<br />
+      kdy se svět na vteřinu zastaví.
+    </p>
+
+    <p class="mt-10 text-gurmaogold font-semibold">
+      Restaurace, které tu jsou, tu chtějí být.
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="py-10 border-t border-white/10 text-center text-sm text-white/40">
+  © 2025 GURMAO.cz · Nejez. Prožij.
+</footer>
+
 </body>
 </html>
