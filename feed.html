@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GURMAO – Feed</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gurmaoblack: '#0b0b0d',
+            gurmaogold: '#d4af37',
+            gurmaored: '#8b1d18',
+          },
+          boxShadow: {
+            glow: '0 0 40px rgba(212,175,55,0.35)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    h1,h2,h3 { font-family: 'Playfair Display', serif; }
+    /* Mobile snap feed */
+    .snap-y { scroll-snap-type: y mandatory; }
+    .snap-start { scroll-snap-align: start; }
+  </style>
+</head>
+<body class="bg-gurmaoblack text-white overflow-x-hidden">
+
+<!-- HEADER / NAV + HAMBURGER -->
+<header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="text-2xl font-bold tracking-tight">GUR<span class="text-gurmaogold">M</span>AO</a>
+
+    <nav class="hidden md:flex gap-6 text-sm">
+      <a href="feed.html" class="text-gurmaogold">Feed</a>
+      <a href="restaurace.html" class="hover:text-gurmaogold">Restaurace</a>
+      <a href="kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
+      <a href="gear.html" class="hover:text-gurmaogold">Gear</a>
+      <a href="ai.html" class="hover:text-gurmaogold">AI</a>
+      <a href="collections.html" class="hover:text-gurmaogold">Sbírky</a>
+    </nav>
+
+    <!-- Mobile hamburger -->
+    <button id="menuBtn" class="md:hidden w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="menuBackdrop" class="hidden md:hidden fixed inset-0 bg-black/70"></div>
+  <div id="mobileMenu" class="hidden md:hidden fixed inset-x-0 top-[65px]">
+    <div class="mx-4 rounded-3xl border border-white/10 bg-gurmaoblack/95 backdrop-blur p-4">
+      <div class="flex items-center justify-between px-2 pb-3">
+        <div class="text-sm text-white/60">Navigace</div>
+        <button id="menuClose" class="w-10 h-10 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Zavřít menu">✕</button>
+      </div>
+      <nav class="grid gap-2">
+        <a href="index.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Domů</a>
+        <a href="feed.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Feed</a>
+        <a href="restaurace.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Restaurace</a>
+        <a href="kuchar.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Kuchaři</a>
+        <a href="gear.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Gear</a>
+        <a href="ai.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">AI</a>
+        <a href="collections.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Sbírky</a>
+        <a href="onboarding.html" class="px-4 py-3 rounded-2xl border border-white/20 hover:border-gurmaogold hover:text-gurmaogold">Chci být na Gurmao</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script>
+  (function(){
+    const btn = document.getElementById('menuBtn');
+    const close = document.getElementById('menuClose');
+    const back = document.getElementById('menuBackdrop');
+    const menu = document.getElementById('mobileMenu');
+    if(!btn || !close || !back || !menu) return;
+
+    const open = () => { back.classList.remove('hidden'); menu.classList.remove('hidden'); document.body.style.overflow='hidden'; };
+    const shut = () => { back.classList.add('hidden'); menu.classList.add('hidden'); document.body.style.overflow=''; };
+
+    btn.addEventListener('click', open);
+    close.addEventListener('click', shut);
+    back.addEventListener('click', shut);
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') shut(); });
+    menu.querySelectorAll('a').forEach(a=>a.addEventListener('click', shut));
+  })();
+</script>
+
+<!-- MOBILE SNAP FEED -->
+<main class="md:hidden">
+  <div id="feed" class="snap-y h-[calc(100vh-65px)] overflow-y-auto"></div>
+
+  <!-- Floating actions -->
+  <div class="fixed right-4 bottom-6 flex flex-col gap-3">
+    <button id="btnSave" class="w-12 h-12 rounded-full bg-white/10 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" title="Uložit">🤍</button>
+    <button id="btnFire" class="w-12 h-12 rounded-full bg-white/10 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" title="WOW">🔥</button>
+    <button id="btnDrool" class="w-12 h-12 rounded-full bg-white/10 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" title="Chuť">🤤</button>
+  </div>
+</main>
+
+<!-- DESKTOP GRID -->
+<main class="hidden md:block">
+  <div class="max-w-6xl mx-auto px-6 py-10">
+    <div class="flex items-end justify-between gap-6">
+      <div>
+        <h1 class="text-4xl">Feed</h1>
+        <p class="text-white/60 mt-2">Kurátorovaný svět. Minimum slov. Maximum chuti.</p>
+      </div>
+      <div class="flex gap-3">
+        <a href="ai.html" class="px-5 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">Kam dnes podle nálady</a>
+        <a href="collections.html" class="px-5 py-3 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition">Sbírky</a>
+      </div>
+    </div>
+
+    <div id="grid" class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+  </div>
+</main>
+
+<!-- Toast (shared) -->
+<div id="toast" class="hidden fixed left-1/2 -translate-x-1/2 bottom-6 px-5 py-3 rounded-full bg-black/70 border border-white/10 text-sm"></div>
+
+<script>
+  // MVP data
+  const items = [
+    {
+      id:'noir-table',
+      vibe:'🍷 LUXE',
+      name:'Noir Table',
+      city:'Praha',
+      tag:'fine dining',
+      href:'restaurace-noir-table.html',
+      img:'https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=1200&q=80'
+    },
+    {
+      id:'ember-steak',
+      vibe:'🔥 DRAMA',
+      name:'Ember Steak',
+      city:'Brno',
+      tag:'steakhouse',
+      href:'restaurace-noir-table.html',
+      img:'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1200&q=80'
+    },
+    {
+      id:'la-calle',
+      vibe:'🌮 CHAOS',
+      name:'La Calle',
+      city:'Ostrava',
+      tag:'street food',
+      href:'restaurace-noir-table.html',
+      img:'https://images.unsplash.com/photo-1529692236671-f1dc2c0f2c0e?auto=format&fit=crop&w=1200&q=80'
+    },
+  ];
+
+  // Saved system
+  const lsKey = 'gurmao_saved';
+  const getSaved = () => new Set(JSON.parse(localStorage.getItem(lsKey) || '[]'));
+  const setSaved = (set) => localStorage.setItem(lsKey, JSON.stringify([...set]));
+
+  // Toast
+  const t = document.getElementById('toast');
+  let tt;
+  const toast = (msg) => {
+    if(!t) return;
+    t.textContent = msg;
+    t.classList.remove('hidden');
+    clearTimeout(tt);
+    tt = setTimeout(()=>t.classList.add('hidden'), 1400);
+  };
+
+  // Mobile feed render
+  const feed = document.getElementById('feed');
+  if (feed) {
+    feed.innerHTML = items.map(x=>`
+      <article class="snap-start h-[calc(100vh-65px)] relative">
+        <a href="${x.href}" class="absolute inset-0">
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(212,175,55,0.12),transparent_70%)]"></div>
+          <div class="absolute inset-0 bg-cover bg-center" style="background-image:url('${x.img}')"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/20"></div>
+          <div class="absolute left-6 right-20 bottom-10">
+            <div class="text-gurmaogold text-sm">${x.vibe}</div>
+            <div class="text-3xl font-semibold mt-1">${x.name}</div>
+            <div class="text-white/70 mt-1">${x.city} · ${x.tag}</div>
+          </div>
+        </a>
+      </article>
+    `).join('');
+
+    const currentIndex = () => Math.round(feed.scrollTop / feed.clientHeight);
+    const act = (type) => {
+      const idx = Math.max(0, Math.min(items.length-1, currentIndex()));
+      const cur = items[idx];
+      if (!cur) return;
+
+      if (type === 'save') {
+        const s = getSaved();
+        s.has(cur.id) ? s.delete(cur.id) : s.add(cur.id);
+        setSaved(s);
+        toast(s.has(cur.id) ? 'Uloženo do sbírek' : 'Odebráno ze sbírek');
+        // update icon
+        document.getElementById('btnSave').textContent = s.has(cur.id) ? '❤️' : '🤍';
+      } else {
+        toast(type === 'fire' ? '🔥 Zapsáno: WOW' : '🤤 Zapsáno: chuť');
+      }
+    };
+
+    // init save icon based on first card
+    const init = () => {
+      const s = getSaved();
+      const cur = items[0];
+      if(cur) document.getElementById('btnSave').textContent = s.has(cur.id) ? '❤️' : '🤍';
+    };
+    init();
+
+    document.getElementById('btnSave')?.addEventListener('click',()=>act('save'));
+    document.getElementById('btnFire')?.addEventListener('click',()=>act('fire'));
+    document.getElementById('btnDrool')?.addEventListener('click',()=>act('drool'));
+
+    // update save icon on scroll
+    feed.addEventListener('scroll', () => {
+      const idx = Math.max(0, Math.min(items.length-1, currentIndex()));
+      const s = getSaved();
+      document.getElementById('btnSave').textContent = s.has(items[idx].id) ? '❤️' : '🤍';
+    }, { passive: true });
+  }
+
+  // Desktop grid render
+  const grid = document.getElementById('grid');
+  if (grid) {
+    const saved = getSaved();
+    grid.innerHTML = items.map(x=>`
+      <div class="rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
+        <a href="${x.href}" class="block">
+          <div class="aspect-[3/4] bg-cover bg-center" style="background-image:url('${x.img}')"></div>
+        </a>
+        <div class="p-5 flex items-start justify-between gap-4">
+          <div>
+            <div class="text-sm text-gurmaogold mb-1">${x.vibe}</div>
+            <div class="text-xl font-semibold">${x.name}</div>
+            <div class="text-white/60 text-sm mt-1">${x.city} · ${x.tag}</div>
+          </div>
+          <button data-save="${x.id}" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" title="Uložit">
+            ${saved.has(x.id) ? '❤️' : '🤍'}
+          </button>
+        </div>
+      </div>
+    `).join('');
+
+    grid.querySelectorAll('[data-save]').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const id = btn.getAttribute('data-save');
+        const s = getSaved();
+        s.has(id) ? s.delete(id) : s.add(id);
+        setSaved(s);
+        btn.textContent = s.has(id) ? '❤️' : '🤍';
+        toast(s.has(id) ? 'Uloženo do sbírek' : 'Odebráno ze sbírek');
+      });
+    });
+  }
+</script>
+
+<footer class="py-10 border-t border-white/10 text-center text-sm text-white/40">
+  © 2025 GURMAO.cz · Nejez. Prožij.
+</footer>
+
+</body>
+</html>
