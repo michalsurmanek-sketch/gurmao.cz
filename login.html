@@ -177,33 +177,38 @@
 </footer>
 
 <script src="app.js"></script>
+
+<!-- Tab switching (must run immediately, not in module) -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabLogin = document.getElementById('tabLogin');
+    const tabSignup = document.getElementById('tabSignup');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+
+    tabLogin.addEventListener('click', () => {
+      tabLogin.classList.add('bg-gurmaogold', 'text-black');
+      tabLogin.classList.remove('bg-white/5');
+      tabSignup.classList.remove('bg-gurmaogold', 'text-black');
+      tabSignup.classList.add('bg-white/5');
+      loginForm.classList.remove('hidden');
+      signupForm.classList.add('hidden');
+    });
+
+    tabSignup.addEventListener('click', () => {
+      tabSignup.classList.add('bg-gurmaogold', 'text-black');
+      tabSignup.classList.remove('bg-white/5');
+      tabLogin.classList.remove('bg-gurmaogold', 'text-black');
+      tabLogin.classList.add('bg-white/5');
+      signupForm.classList.remove('hidden');
+      loginForm.classList.add('hidden');
+    });
+  });
+</script>
+
 <script type="module">
   // Import Supabase helpers
   import { signIn, signUp, signInWithGoogle } from './supabase-client.js';
-
-  // Tab switching
-  const tabLogin = document.getElementById('tabLogin');
-  const tabSignup = document.getElementById('tabSignup');
-  const loginForm = document.getElementById('loginForm');
-  const signupForm = document.getElementById('signupForm');
-
-  tabLogin.addEventListener('click', () => {
-    tabLogin.classList.add('bg-gurmaogold', 'text-black');
-    tabLogin.classList.remove('bg-white/5');
-    tabSignup.classList.remove('bg-gurmaogold', 'text-black');
-    tabSignup.classList.add('bg-white/5');
-    loginForm.classList.remove('hidden');
-    signupForm.classList.add('hidden');
-  });
-
-  tabSignup.addEventListener('click', () => {
-    tabSignup.classList.add('bg-gurmaogold', 'text-black');
-    tabSignup.classList.remove('bg-white/5');
-    tabLogin.classList.remove('bg-gurmaogold', 'text-black');
-    tabLogin.classList.add('bg-white/5');
-    signupForm.classList.remove('hidden');
-    loginForm.classList.add('hidden');
-  });
 
   // SUPABASE: Real login
   document.getElementById('formLogin').addEventListener('submit', async (e) => {
