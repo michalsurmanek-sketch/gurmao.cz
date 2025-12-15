@@ -52,64 +52,132 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 // ======================
-// SAVE TO COLLECTIONS
+// SAVE TO COLLECTIONS (Supabase)
 // ======================
 const GurmaoCollections = {
   storageKey: 'gurmao_saved',
+  savedCache: null,
   
-  getSaved() {
-    return new Set(JSON.parse(localStorage.getItem(this.storageKey) || '[]'));
+  // Check if user is logged in
+  getUser() {
+    return JSON.parse(localStorage.getItem('gurmao_user') || 'null');
   },
   
-  save(id) {
-    const saved = this.getSaved();
-    saved.add(id);
-    localStorage.setItem(this.storageKey, JSON.stringify([...saved]));
-    return true;
+  // Get saved restaurants (localStorage fallback for non-logged users)
+  async getSaved() {
+    const user = this.getUser();
+    
+    if (!user || !user.loggedIn) {
+      // Fallback to localStorage for non-logged users
+      return new Set(JSON.parse(localStorage.getItem(this.storageKey) || '[]'));
+    }
+    
+    // Use cache if available
+    if (this.savedCache) return this.savedCache;
+    
+    try {
+      // Dynamically import Supabase client
+      const { getSavedRestaurants } = await import('./supabase-client.js');
+      const savedRestaurants = await getSavedRestaurants();
+      this.savedCache = new Set(savedRestaurants.map(r => r.restaurant_id));
+      return this.savedCache;
+    } catch (error) {
+      console.error('Error fetching saved restaurants:', error);
+      return new Set();
+    }
   },
   
-  remove(id) {
-    const saved = this.getSaved();
-    saved.delete(id);
-    localStorage.setItem(this.storageKey, JSON.stringify([...saved]));
-    return true;
+  async save(restaurantId) {
+    const user = this.getUser();
+    
+    if (!user || !user.loggedIn) {
+      // Fallback to localStorage
+      const saved = new Set(JSON.parse(localStorage.getItem(this.storageKey) || '[]'));
+      saved.add(restaurantId);
+      localStorage.setItem(this.storageKey, JSON.stringify([...saved]));
+      return true;
+    }
+    
+    try {
+      const { saveRestaurant } = await import('./supabase-client.js');
+      await saveRestaurant(restaurantId);
+      if (this.savedCache) this.savedCache.add(restaurantId);
+      return true;
+    } catch (error) {
+      console.error('Error saving restaurant:', error);
+      showToast('❌ Chyba při ukládání');
+      return false;
+    }
   },
   
-  toggle(id) {
-    const saved = this.getSaved();
-    if (saved.has(id)) {
-      this.remove(id);
+  async remove(restaurantId) {
+    const user = this.getUser();
+    
+    if (!user || !user.loggedIn) {
+      // Fallback to localStorage
+      const saved = new Set(JSON.parse(localStorage.getItem(this.storageKey) || '[]'));
+      saved.delete(restaurantId);
+      localStorage.setItem(this.storageKey, JSON.stringify([...saved]));
+      return true;
+    }
+    
+    try {
+      const { unsaveRestaurant } = await import('./supabase-client.js');
+      await unsaveRestaurant(restaurantId);
+      if (this.savedCache) this.savedCache.delete(restaurantId);
+      return true;
+    } catch (error) {
+      console.error('Error removing restaurant:', error);
+      showToast('❌ Chyba při odebírání');
+      return false;
+    }
+  },
+  
+  async toggle(restaurantId) {
+    const saved = await this.getSaved();
+    if (saved.has(restaurantId)) {
+      await this.remove(restaurantId);
       return false;
     } else {
-      this.save(id);
+      await this.save(restaurantId);
       return true;
     }
   },
   
-  isSaved(id) {
-    return this.getSaved().has(id);
+  async isSaved(restaurantId) {
+    const saved = await this.getSaved();
+    return saved.has(restaurantId);
   }
 };
 
 // Initialize save buttons
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('[data-save]').forEach(btn => {
+document.addEventListener('DOMContentLoaded', async () => {
+  const saveButtons = document.querySelectorAll('[data-save]');
+  
+  for (const btn of saveButtons) {
     const id = btn.getAttribute('data-save');
     
     // Update button state
-    if (GurmaoCollections.isSaved(id)) {
+    const isSaved = await GurmaoCollections.isSaved(id);
+    if (isSaved) {
       btn.textContent = '❤️';
       btn.classList.add('saved');
     }
     
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', async (e) => {
       e.preventDefault();
       e.stopPropagation();
       
-      const isSaved = GurmaoCollections.toggle(id);
-      btn.textContent = isSaved ? '❤️' : '🤍';
+      const user = GurmaoCollections.getUser();
+      if (!user || !user.loggedIn) {
+        showToast('⚠️ Přihlaš se pro synchronizaci');
+        // Still works with localStorage
+      }
       
-      if (isSaved) {
+      const nowSaved = await GurmaoCollections.toggle(id);
+      btn.textContent = nowSaved ? '❤️' : '🤍';
+      
+      if (nowSaved) {
         btn.classList.add('saved');
         showToast('Uloženo do sbírek ✓');
       } else {
@@ -117,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('Odebráno ze sbírek');
       }
     });
-  });
+  }
 });
 
 // ======================

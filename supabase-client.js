@@ -204,58 +204,77 @@ export async function getRestaurant(slug) {
 // ======================
 
 /**
- * Save restaurant
+ * Save restaurant (by slug)
  */
-export async function saveRestaurant(userId, restaurantId, notes = null) {
+export async function saveRestaurant(restaurantSlug) {
+  const user = await getCurrentUser();
+  if (!user) throw new Error('User not authenticated');
+  
+  // Get restaurant UUID by slug
+  const restaurant = await getRestaurant(restaurantSlug);
+  if (!restaurant) throw new Error('Restaurant not found');
+  
   const { data, error } = await supabase
     .from('saved_restaurants')
     .insert({
-      user_id: userId,
-      restaurant_id: restaurantId,
-      notes: notes
+      user_id: user.id,
+      restaurant_id: restaurant.id
     })
     .select()
     .single();
   
-  if (error) throw error;
-  
-  // Increment save_count
-  await supabase.rpc('increment_save_count', { restaurant_id: restaurantId });
+  if (error) {
+    // If already saved, ignore duplicate error
+    if (error.code === '23505') return null;
+    throw error;
+  }
   
   return data;
 }
 
 /**
- * Unsave restaurant
+ * Unsave restaurant (by slug)
  */
-export async function unsaveRestaurant(userId, restaurantId) {
+export async function unsaveRestaurant(restaurantSlug) {
+  const user = await getCurrentUser();
+  if (!user) throw new Error('User not authenticated');
+  
+  // Get restaurant UUID by slug
+  const restaurant = await getRestaurant(restaurantSlug);
+  if (!restaurant) throw new Error('Restaurant not found');
+  
   const { error } = await supabase
     .from('saved_restaurants')
     .delete()
-    .eq('user_id', userId)
-    .eq('restaurant_id', restaurantId);
+    .eq('user_id', user.id)
+    .eq('restaurant_id', restaurant.id);
   
   if (error) throw error;
-  
-  // Decrement save_count
-  await supabase.rpc('decrement_save_count', { restaurant_id: restaurantId });
 }
 
 /**
  * Get user's saved restaurants
  */
-export async function getSavedRestaurants(userId) {
+export async function getSavedRestaurants() {
+  const user = await getCurrentUser();
+  if (!user) return [];
+  
   const { data, error } = await supabase
     .from('saved_restaurants')
     .select(`
       *,
       restaurants (*)
     `)
-    .eq('user_id', userId)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false });
   
   if (error) throw error;
-  return data;
+  
+  // Return with slug as restaurant_id for compatibility
+  return data.map(item => ({
+    ...item,
+    restaurant_id: item.restaurants.slug
+  }));
 }
 
 /**
