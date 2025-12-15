@@ -47,13 +47,22 @@
   <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
     <a href="index.html" class="text-2xl font-bold tracking-tight">GUR<span class="text-gurmaogold">M</span>AO</a>
 
-    <nav class="hidden md:flex gap-6 text-sm">
+    <nav class="hidden md:flex gap-6 text-sm items-center">
       <a href="feed.html" class="text-gurmaogold">Feed</a>
       <a href="restaurace.html" class="hover:text-gurmaogold">Restaurace</a>
       <a href="kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
       <a href="gear.html" class="hover:text-gurmaogold">Gear</a>
       <a href="ai.html" class="hover:text-gurmaogold">AI</a>
       <a href="collections.html" class="hover:text-gurmaogold">Sbírky</a>
+      
+      <!-- User menu (desktop) -->
+      <div id="userMenuDesktop" class="hidden">
+        <div class="flex items-center gap-3">
+          <span id="userNameDesktop" class="text-white/80"></span>
+          <button id="logoutBtnDesktop" class="px-4 py-2 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored text-sm transition">Odhlásit</button>
+        </div>
+      </div>
+      <a id="loginLinkDesktop" href="login.html" class="px-4 py-2 rounded-full border border-gurmaogold text-gurmaogold hover:bg-gurmaogold hover:text-black transition">Přihlásit se</a>
     </nav>
 
     <!-- Mobile hamburger -->
@@ -76,7 +85,15 @@
         <a href="gear.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Gear</a>
         <a href="ai.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">AI</a>
         <a href="collections.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Sbírky</a>
-        <a href="login.html" class="px-4 py-3 rounded-2xl border border-white/20 hover:border-gurmaogold hover:text-gurmaogold">Přihlásit se</a>
+        
+        <!-- User menu (mobile) -->
+        <div id="userMenuMobile" class="hidden">
+          <div class="px-4 py-3 rounded-2xl bg-white/5 text-center">
+            <div id="userNameMobile" class="text-white/80 mb-2"></div>
+            <button id="logoutBtnMobile" class="w-full px-4 py-2 rounded-full border border-gurmaored text-gurmaored hover:bg-gurmaored hover:text-white transition">Odhlásit se</button>
+          </div>
+        </div>
+        <a id="loginLinkMobile" href="login.html" class="px-4 py-3 rounded-2xl border border-white/20 hover:border-gurmaogold hover:text-gurmaogold">Přihlásit se</a>
       </nav>
     </div>
   </div>
@@ -260,5 +277,33 @@
 </footer>
 
 <script src="app.js"></script>
+
+<!-- User authentication UI -->
+<script>
+  // Check if user is logged in
+  const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
+  
+  if (user && user.loggedIn) {
+    // Show user menu
+    document.getElementById('userMenuDesktop').classList.remove('hidden');
+    document.getElementById('userMenuMobile').classList.remove('hidden');
+    document.getElementById('loginLinkDesktop').classList.add('hidden');
+    document.getElementById('loginLinkMobile').classList.add('hidden');
+    
+    // Display user name
+    const userName = user.name || user.email.split('@')[0];
+    document.getElementById('userNameDesktop').textContent = userName;
+    document.getElementById('userNameMobile').textContent = `Přihlášen: ${userName}`;
+    
+    // Logout handlers
+    [document.getElementById('logoutBtnDesktop'), document.getElementById('logoutBtnMobile')].forEach(btn => {
+      btn.addEventListener('click', () => {
+        localStorage.removeItem('gurmao_user');
+        window.location.href = 'index.html';
+      });
+    });
+  }
+</script>
+
 </body>
 </html>
