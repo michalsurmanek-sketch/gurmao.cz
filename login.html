@@ -177,7 +177,10 @@
 </footer>
 
 <script src="app.js"></script>
-<script>
+<script type="module">
+  // Import Supabase helpers
+  import { signIn, signUp, signInWithGoogle } from './supabase-client.js';
+
   // Tab switching
   const tabLogin = document.getElementById('tabLogin');
   const tabSignup = document.getElementById('tabSignup');
@@ -202,39 +205,64 @@
     loginForm.classList.add('hidden');
   });
 
-  // MVP: Mock login (ukládá do localStorage)
-  document.getElementById('formLogin').addEventListener('submit', (e) => {
+  // SUPABASE: Real login
+  document.getElementById('formLogin').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
     
-    // MVP: Simulace přihlášení
-    localStorage.setItem('gurmao_user', JSON.stringify({
-      email: email,
-      name: email.split('@')[0],
-      loggedIn: true,
-      timestamp: Date.now()
-    }));
-    
-    alert('✅ Přihlášení úspěšné! (MVP režim - localStorage)');
-    window.location.href = 'feed.html';
+    try {
+      const { user, session } = await signIn(email, password);
+      
+      // Store user info
+      localStorage.setItem('gurmao_user', JSON.stringify({
+        id: user.id,
+        email: user.email,
+        name: user.user_metadata?.display_name || user.email.split('@')[0],
+        loggedIn: true
+      }));
+      
+      alert('✅ Přihlášení úspěšné!');
+      window.location.href = 'feed.html';
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('❌ Chyba při přihlášení: ' + error.message);
+    }
   });
 
-  // MVP: Mock signup
-  document.getElementById('formSignup').addEventListener('submit', (e) => {
+  // SUPABASE: Real signup
+  document.getElementById('formSignup').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('signupName').value;
     const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
     
-    // MVP: Simulace registrace
-    localStorage.setItem('gurmao_user', JSON.stringify({
-      email: email,
-      name: name,
-      loggedIn: true,
-      timestamp: Date.now()
-    }));
-    
-    alert('✅ Registrace úspěšná! (MVP režim - localStorage)');
-    window.location.href = 'feed.html';
+    try {
+      const { user } = await signUp(email, password, name);
+      
+      alert('✅ Registrace úspěšná! Zkontroluj email pro potvrzení.');
+      
+      // Switch to login tab
+      tabLogin.click();
+    } catch (error) {
+      console.error('Signup error:', error);
+      alert('❌ Chyba při registraci: ' + error.message);
+    }
+  });
+
+  // SUPABASE: Google OAuth
+  const googleButtons = document.querySelectorAll('button[type="button"]');
+  googleButtons.forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        await signInWithGoogle();
+        // Supabase automaticky přesměruje
+      } catch (error) {
+        console.error('Google login error:', error);
+        alert('❌ Chyba při přihlášení přes Google: ' + error.message);
+      }
+    });
   });
 </script>
 

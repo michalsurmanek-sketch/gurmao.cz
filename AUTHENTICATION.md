@@ -18,11 +18,25 @@
 
 ---
 
+## ✅ AKTUÁLNÍ STAV: Supabase vybrán!
+
+**Rozhodnutí:** GURMAO.cz bude používat **Supabase** 🎉
+
+**Důvody:**
+- ✅ Open source
+- ✅ PostgreSQL databáze (SQL > NoSQL pro relační data)
+- ✅ Row Level Security
+- ✅ Real-time subscriptions
+- ✅ REST API automaticky
+- ✅ Zdarma tier je štědrý
+
+---
+
 ## 🎯 Plán implementace autentizace
 
-### Fáze 1: Backend výběr
+### Fáze 1: Backend výběr ✅ HOTOVO
 
-#### Možnost A: Firebase Authentication (Doporučeno pro rychlý start)
+#### ✅ Vybraná možnost: Supabase (IMPLEMENTOVÁNO)
 
 **Výhody:**
 - ✅ Rychlá integrace (2-3 hodiny)
