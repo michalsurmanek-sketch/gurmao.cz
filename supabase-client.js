@@ -415,5 +415,93 @@ export async function migrateLocalStorageToSupabase(userId) {
   }
 }
 
+// ======================
+// STORAGE HELPERS
+// ======================
+
+/**
+ * Upload file to storage
+ */
+export async function uploadFile(bucket, path, file) {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .upload(path, file, {
+      cacheControl: '3600',
+      upsert: false
+    });
+  
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Get public URL for file
+ */
+export function getPublicUrl(bucket, path) {
+  const { data } = supabase.storage
+    .from(bucket)
+    .getPublicUrl(path);
+  
+  return data.publicUrl;
+}
+
+/**
+ * Delete file from storage
+ */
+export async function deleteFile(bucket, path) {
+  const { error } = await supabase.storage
+    .from(bucket)
+    .remove([path]);
+  
+  if (error) throw error;
+}
+
+/**
+ * Upload restaurant image
+ */
+export async function uploadRestaurantImage(file, restaurantSlug) {
+  const ext = file.name.split('.').pop();
+  const path = `${restaurantSlug}.${ext}`;
+  
+  await uploadFile('restaurant-images', path, file);
+  return path;
+}
+
+/**
+ * Upload user avatar
+ */
+export async function uploadAvatar(file) {
+  const user = await getCurrentUser();
+  if (!user) throw new Error('User not authenticated');
+  
+  const ext = file.name.split('.').pop();
+  const path = `${user.id}/avatar.${ext}`;
+  
+  await uploadFile('avatars', path, file);
+  
+  // Update profile with avatar path
+  await updateUserProfile(user.id, { avatar_path: path });
+  
+  return path;
+}
+
+/**
+ * Get restaurant image URL
+ */
+export function getRestaurantImageUrl(imagePath) {
+  if (!imagePath) return null;
+  if (imagePath.startsWith('http')) return imagePath; // Fallback for old URLs
+  return getPublicUrl('restaurant-images', imagePath);
+}
+
+/**
+ * Get avatar URL
+ */
+export function getAvatarUrl(avatarPath) {
+  if (!avatarPath) return null;
+  if (avatarPath.startsWith('http')) return avatarPath; // Fallback for old URLs
+  return getPublicUrl('avatars', avatarPath);
+}
+
 // Export client as default
 export default supabase;

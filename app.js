@@ -210,7 +210,19 @@ function showToast(message, duration = 2000) {
 }
 
 // ======================
-// CATALOG DATA (MVP)
+// IMAGE URL HELPER
+// ======================
+function getImageUrl(imagePath) {
+  if (!imagePath) return 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=80'; // Fallback
+  if (imagePath.startsWith('http')) return imagePath; // Old Unsplash URLs
+  
+  // Supabase Storage URL
+  const supabaseUrl = 'https://urwsfadrwjgvlinhbcgu.supabase.co';
+  return `${supabaseUrl}/storage/v1/object/public/restaurant-images/${imagePath}`;
+}
+
+// ======================
+// CATALOG DATA (MVP + Supabase fallback)
 // ======================
 const GurmaoCatalog = {
   restaurants: [
@@ -221,7 +233,7 @@ const GurmaoCatalog = {
       city: 'Praha',
       tag: 'fine dining',
       href: 'restaurace-noir-table.html',
-      img: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=80',
+      img: getImageUrl('noir-table.jpg'),
       description: 'Místo, kde se čas zpomalí. Oheň, ticho, precizní servis.'
     },
     {
@@ -231,7 +243,7 @@ const GurmaoCatalog = {
       city: 'Brno',
       tag: 'steakhouse',
       href: 'restaurace-noir-table.html',
-      img: 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1200&q=80',
+      img: getImageUrl('ember-steak.jpg'),
       description: 'Oheň, kouř, maso. Žádné výmluvy.'
     },
     {
@@ -241,7 +253,7 @@ const GurmaoCatalog = {
       city: 'Ostrava',
       tag: 'street food',
       href: 'restaurace-noir-table.html',
-      img: 'https://images.unsplash.com/photo-1529692236671-f1dc2c0f2c0e?auto=format&fit=crop&w=1200&q=80',
+      img: getImageUrl('la-calle.jpg'),
       description: 'Chaos, kyselost, šťáva. Ulice na talíři.'
     }
   ],
