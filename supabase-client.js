@@ -10,9 +10,9 @@
  * 4. Pro produkci: přesuň tyto hodnoty do environment variables
  */
 
-// TODO: Nahraď těmito hodnotami z Supabase dashboardu
-const SUPABASE_URL = 'https://your-project.supabase.co';
-const SUPABASE_ANON_KEY = 'your-anon-key-here';
+// Supabase credentials
+const SUPABASE_URL = 'https://urwsfadrwjgvlinhbcgu.supabase.co';
+const SUPABASE_ANON_KEY = 'SUPABASE_CLIENT_API_KEY';
 
 // Import Supabase client (CDN version)
 // V produkci můžeš použít npm: npm install @supabase/supabase-js
