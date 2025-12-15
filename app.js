@@ -2,6 +2,20 @@
 // © 2025 GURMAO.cz
 
 // ======================
+// GLOBAL SETUP
+// ======================
+document.documentElement.style.scrollBehavior = 'smooth';
+
+// Add fade-in animation on page load
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.style.opacity = '0';
+  requestAnimationFrame(() => {
+    document.body.style.transition = 'opacity 0.3s ease-in';
+    document.body.style.opacity = '1';
+  });
+});
+
+// ======================
 // MOBILE MENU
 // ======================
 (function initMobileMenu() {

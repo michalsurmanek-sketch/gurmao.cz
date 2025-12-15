@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <title>GURMAO – Feed</title>
   <meta name="description" content="Kurátorovaný feed gastro zažitků. Prozkumávej vybrané restaurace podle své nálady." />
   <meta property="og:title" content="GURMAO Feed" />
@@ -80,25 +81,6 @@
     </div>
   </div>
 </header>
-
-<script>
-  (function(){
-    const btn = document.getElementById('menuBtn');
-    const close = document.getElementById('menuClose');
-    const back = document.getElementById('menuBackdrop');
-    const menu = document.getElementById('mobileMenu');
-    if(!btn || !close || !back || !menu) return;
-
-    const open = () => { back.classList.remove('hidden'); menu.classList.remove('hidden'); document.body.style.overflow='hidden'; };
-    const shut = () => { back.classList.add('hidden'); menu.classList.add('hidden'); document.body.style.overflow=''; };
-
-    btn.addEventListener('click', open);
-    close.addEventListener('click', shut);
-    back.addEventListener('click', shut);
-    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') shut(); });
-    menu.querySelectorAll('a').forEach(a=>a.addEventListener('click', shut));
-  })();
-</script>
 
 <!-- MOBILE SNAP FEED -->
 <main class="md:hidden">
@@ -277,5 +259,6 @@
   © 2025 GURMAO.cz · Nejez. Prožij.
 </footer>
 
+<script src="app.js"></script>
 </body>
 </html>
