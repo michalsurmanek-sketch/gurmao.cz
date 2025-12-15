@@ -4,6 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GURMAO – Nejez. Prožij.</title>
+  <meta name="description" content="Kurátorovaný svět gastronomie. Pouze vybrané restaurace, kuchaři a zažitky. Nejez. Prožij." />
+  <meta property="og:title" content="GURMAO – Nejez. Prožij." />
+  <meta property="og:description" content="Kurátorovaný svět gastronomie. Pouze vybrané restaurace, kuchaři a zažitky." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
 
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -37,14 +42,40 @@
 <!-- HEADER / NAV -->
 <header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
   <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-    <a href="/index.html" class="text-2xl font-bold tracking-tight">GUR<span class="text-gurmaogold">M</span>AO</a>
+    <a href="index.html" class="text-2xl font-bold tracking-tight">GUR<span class="text-gurmaogold">M</span>AO</a>
+    
     <nav class="hidden md:flex gap-6 text-sm">
-      <a href="/feed.html" class="hover:text-gurmaogold">Feed</a>
-      <a href="/restaurace.html" class="hover:text-gurmaogold">Restaurace</a>
-      <a href="/kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
-      <a href="/gear.html" class="hover:text-gurmaogold">Gear</a>
-      <a href="/ai.html" class="hover:text-gurmaogold">AI</a>
+      <a href="feed.html" class="hover:text-gurmaogold">Feed</a>
+      <a href="restaurace.html" class="hover:text-gurmaogold">Restaurace</a>
+      <a href="kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
+      <a href="gear.html" class="hover:text-gurmaogold">Gear</a>
+      <a href="ai.html" class="hover:text-gurmaogold">AI</a>
+      <a href="collections.html" class="hover:text-gurmaogold">Sbírky</a>
     </nav>
+    
+    <!-- Mobile hamburger -->
+    <button id="menuBtn" class="md:hidden w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
+  </div>
+  
+  <!-- Mobile menu -->
+  <div id="menuBackdrop" class="hidden md:hidden fixed inset-0 bg-black/70 z-40"></div>
+  <div id="mobileMenu" class="hidden md:hidden fixed inset-x-0 top-[65px] z-50">
+    <div class="mx-4 rounded-3xl border border-white/10 bg-gurmaoblack/95 backdrop-blur p-4">
+      <div class="flex items-center justify-between px-2 pb-3">
+        <div class="text-sm text-white/60">Navigace</div>
+        <button id="menuClose" class="w-10 h-10 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Zavřít menu">✕</button>
+      </div>
+      <nav class="grid gap-2">
+        <a href="index.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Domů</a>
+        <a href="feed.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Feed</a>
+        <a href="restaurace.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Restaurace</a>
+        <a href="kuchar.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Kuchaři</a>
+        <a href="gear.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Gear</a>
+        <a href="ai.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">AI</a>
+        <a href="collections.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Sbírky</a>
+        <a href="onboarding.html" class="px-4 py-3 rounded-2xl border border-white/20 hover:border-gurmaogold hover:text-gurmaogold">Chci být na Gurmao</a>
+      </nav>
+    </div>
   </div>
 </header>
 
@@ -62,8 +93,8 @@
   </p>
 
   <div class="relative mt-10 flex gap-4">
-    <a href="/feed.html" class="px-8 py-4 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-105 transition inline-block">Prozkoumat feed</a>
-    <a href="/onboarding.html" class="px-8 py-4 rounded-full border border-white/30 hover:border-gurmaogold hover:text-gurmaogold transition inline-block">Chci být na Gurmao</a>
+    <a href="feed.html" class="px-8 py-4 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-105 transition inline-block">Prozkoumat feed</a>
+    <a href="onboarding.html" class="px-8 py-4 rounded-full border border-white/30 hover:border-gurmaogold hover:text-gurmaogold transition inline-block">Chci být na Gurmao</a>
   </div>
 
   <p class="relative mt-12 text-sm text-white/40">
@@ -95,31 +126,46 @@
     <div class="grid md:grid-cols-3 gap-8">
       <!-- CARD 1 -->
       <div class="group rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
-        <div class="aspect-[3/4] bg-[url('https://images.unsplash.com/photo-1541544741938-0af808871cc0')] bg-cover bg-center"></div>
-        <div class="p-5">
-          <div class="text-sm text-gurmaogold mb-1">🍷 LUXE</div>
-          <div class="text-xl font-semibold">Noir Table</div>
-          <div class="text-white/60 text-sm mt-1">Praha · fine dining</div>
+        <a href="restaurace-noir-table.html" class="block">
+          <div class="aspect-[3/4] bg-[url('https://images.unsplash.com/photo-1541544741938-0af808871cc0')] bg-cover bg-center"></div>
+        </a>
+        <div class="p-5 flex items-start justify-between gap-4">
+          <div>
+            <div class="text-sm text-gurmaogold mb-1">🍷 LUXE</div>
+            <a href="restaurace-noir-table.html" class="text-xl font-semibold hover:text-gurmaogold">Noir Table</a>
+            <div class="text-white/60 text-sm mt-1">Praha · fine dining</div>
+          </div>
+          <button data-save="noir-table" class="save-btn w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition flex-shrink-0" aria-label="Uložit">🤍</button>
         </div>
       </div>
 
       <!-- CARD 2 -->
       <div class="group rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
-        <div class="aspect-[3/4] bg-[url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092')] bg-cover bg-center"></div>
-        <div class="p-5">
-          <div class="text-sm text-gurmaogold mb-1">🔥 DRAMA</div>
-          <div class="text-xl font-semibold">Ember Steak</div>
-          <div class="text-white/60 text-sm mt-1">Brno · steakhouse</div>
+        <a href="restaurace-noir-table.html" class="block">
+          <div class="aspect-[3/4] bg-[url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092')] bg-cover bg-center"></div>
+        </a>
+        <div class="p-5 flex items-start justify-between gap-4">
+          <div>
+            <div class="text-sm text-gurmaogold mb-1">🔥 DRAMA</div>
+            <a href="restaurace-noir-table.html" class="text-xl font-semibold hover:text-gurmaogold">Ember Steak</a>
+            <div class="text-white/60 text-sm mt-1">Brno · steakhouse</div>
+          </div>
+          <button data-save="ember-steak" class="save-btn w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition flex-shrink-0" aria-label="Uložit">🤍</button>
         </div>
       </div>
 
       <!-- CARD 3 -->
       <div class="group rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
-        <div class="aspect-[3/4] bg-[url('https://images.unsplash.com/photo-1529692236671-f1dc2c0f2c0e')] bg-cover bg-center"></div>
-        <div class="p-5">
-          <div class="text-sm text-gurmaogold mb-1">🌮 CHAOS</div>
-          <div class="text-xl font-semibold">La Calle</div>
-          <div class="text-white/60 text-sm mt-1">Ostrava · street food</div>
+        <a href="restaurace-noir-table.html" class="block">
+          <div class="aspect-[3/4] bg-[url('https://images.unsplash.com/photo-1529692236671-f1dc2c0f2c0e')] bg-cover bg-center"></div>
+        </a>
+        <div class="p-5 flex items-start justify-between gap-4">
+          <div>
+            <div class="text-sm text-gurmaogold mb-1">🌮 CHAOS</div>
+            <a href="restaurace-noir-table.html" class="text-xl font-semibold hover:text-gurmaogold">La Calle</a>
+            <div class="text-white/60 text-sm mt-1">Ostrava · street food</div>
+          </div>
+          <button data-save="la-calle" class="save-btn w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition flex-shrink-0" aria-label="Uložit">🤍</button>
         </div>
       </div>
     </div>
@@ -305,5 +351,6 @@
   © 2025 GURMAO.cz · Nejez. Prožij.
 </footer>
 
+<script src="app.js"></script>
 </body>
 </html>

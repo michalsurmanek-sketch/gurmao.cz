@@ -43,6 +43,28 @@
       <a href="ai.html" class="hover:text-gurmaogold">AI</a>
       <a href="collections.html" class="hover:text-gurmaogold">Sbírky</a>
     </nav>
+    <button id="menuBtn" class="md:hidden w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="menuBackdrop" class="hidden md:hidden fixed inset-0 bg-black/70 z-40"></div>
+  <div id="mobileMenu" class="hidden md:hidden fixed inset-x-0 top-[65px] z-50">
+    <div class="mx-4 rounded-3xl border border-white/10 bg-gurmaoblack/95 backdrop-blur p-4">
+      <div class="flex items-center justify-between px-2 pb-3">
+        <div class="text-sm text-white/60">Navigace</div>
+        <button id="menuClose" class="w-10 h-10 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Zavřít menu">✕</button>
+      </div>
+      <nav class="grid gap-2">
+        <a href="index.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Domů</a>
+        <a href="feed.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Feed</a>
+        <a href="restaurace.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Restaurace</a>
+        <a href="kuchar.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Kuchaři</a>
+        <a href="gear.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Gear</a>
+        <a href="ai.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">AI</a>
+        <a href="collections.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Sbírky</a>
+        <a href="onboarding.html" class="px-4 py-3 rounded-2xl border border-white/20 hover:border-gurmaogold hover:text-gurmaogold">Chci být na Gurmao</a>
+      </nav>
+    </div>
   </div>
 </header>
 
@@ -59,7 +81,7 @@
     </p>
 
     <div class="mt-8 flex gap-3">
-      <button class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🤍 Uložit</button>
+      <button data-save="noir-table" class="save-btn px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🤍 Uložit</button>
       <button class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🔥 WOW</button>
       <button class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🤤 Chuť</button>
     </div>
@@ -126,5 +148,6 @@
   © 2025 GURMAO.cz · Nejez. Prožij.
 </footer>
 
+<script src="app.js"></script>
 </body>
 </html>
