@@ -4,11 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <title>GURMAO – AI</title>
-  <meta name="description" content="Kam dnes podle nálady? Jedno doporučení. Žádné scrollování. AI gastro asistent." />
-  <meta property="og:title" content="GURMAO AI Doporučení" />
-  <meta property="og:description" content="Kam dnes podle nálady? Jedno doporučení. Žádné scrollování." />
+  <!-- Primary Meta Tags -->
+  <title>AI Doporučení – GURMAO | Inteligentní výběr restaurace</title>
+  <meta name="title" content="AI Doporučení – GURMAO | Inteligentní výběr restaurace">
+  <meta name="description" content="Kam dnes podle nálady? AI ti doporučí restauraci na míru. Žádné scrollování. Jedno doporučení. Gastro asistent." />
+  <meta name="keywords" content="AI doporučení restaurace, kde jít najíst, doporučení podle nálady, gastro AI">
+  <link rel="canonical" href="https://gurmao.cz/ai.html" />
+  
+  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://gurmao.cz/ai.html" />
+  <meta property="og:title" content="AI Doporučení – GURMAO" />
+  <meta property="og:description" content="Kam dnes podle nálady? AI ti doporučí restauraci na míru." />
+  <meta property="og:image" content="https://gurmao.cz/og-image.jpg" />
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://gurmao.cz/ai.html" />
+  <meta property="twitter:title" content="AI Doporučení – GURMAO" />
+  <meta property="twitter:description" content="Kam dnes podle nálady? AI ti doporučí restauraci na míru." />
+  <meta property="twitter:image" content="https://gurmao.cz/og-image.jpg" />
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -44,6 +59,7 @@
       <a href="kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
       <a href="gear.html" class="hover:text-gurmaogold">Gear</a>
       <a href="ai.html" class="text-gurmaogold">AI</a>
+      <a href="mapa.html" class="hover:text-gurmaogold">Mapa</a>
       <a href="collections.html" class="hover:text-gurmaogold">Sbírky</a>
     </nav>
     <button id="menuBtn" class="md:hidden w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
@@ -75,121 +91,142 @@
 <section class="py-24 border-b border-white/10 relative overflow-hidden">
   <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.12),transparent_70%)]"></div>
   <div class="relative max-w-4xl mx-auto px-6 text-center">
-    <h1 class="text-4xl md:text-6xl mb-6">Kam dnes <span class="text-gurmaogold">podle nálady</span>?</h1>
-    <p class="text-xl text-white/70 mb-10">
-      Jedno doporučení. Žádné scrollování.
+    <h1 class="text-4xl md:text-6xl mb-6">
+      <span class="text-gurmaogold">AI</span> Doporučení
+    </h1>
+    <p class="text-xl text-white/70 mb-2">
+      Kam dnes podle nálady?
     </p>
-
-    <div class="flex flex-wrap justify-center gap-4 mb-10">
-      <button data-vibe="drama" class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🔥 Drama</button>
-      <button data-vibe="dark" class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🖤 Dark</button>
-      <button data-vibe="pure" class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🌿 Pure</button>
-      <button data-vibe="luxe" class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🍷 Luxe</button>
-      <button data-vibe="chaos" class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🌮 Chaos</button>
-      <button data-vibe="calm" class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🌊 Calm</button>
-    </div>
-
-    <div id="result" class="hidden rounded-3xl bg-white/5 border border-white/10 overflow-hidden text-left max-w-2xl mx-auto">
-      <div id="resultImg" class="aspect-[3/2] bg-cover bg-center"></div>
-      <div class="p-6">
-        <div id="resultVibe" class="text-gurmaogold text-sm mb-1"></div>
-        <div id="resultName" class="text-2xl font-semibold"></div>
-        <div id="resultMeta" class="text-white/60 mt-1"></div>
-        <p id="resultLine" class="text-white/70 mt-4"></p>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <a id="resultLink" href="#" class="px-6 py-3 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-105 transition">Otevřít detail</a>
-          <a href="feed.html" class="px-6 py-3 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition">Radši feed</a>
-          <a href="collections.html" class="px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 transition">Moje sbírky</a>
-        </div>
-      </div>
-    </div>
-
-    <p class="mt-10 text-sm text-white/40">Tip: vyber vibe a dostaneš jedno místo. Konec.</p>
+    <p class="text-white/50 mb-10">
+      Zadej své preference a AI ti doporučí restauraci na míru.
+    </p>
   </div>
 </section>
 
-<script>
-  const pool = {
-    drama: {
-      vibe: '🔥 DRAMA',
-      name: 'Ember Steak',
-      meta: 'Brno · steakhouse',
-      line: 'Oheň, kouř, maso. Žádné výmluvy.',
-      href: 'restaurace-noir-table.html',
-      img: 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1200&q=80'
-    },
-    dark: {
-      vibe: '🖤 DARK',
-      name: 'Noir Table',
-      meta: 'Praha · fine dining',
-      line: 'Ticho u stolu. Precizní servis. Rituál.',
-      href: 'restaurace-noir-table.html',
-      img: 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=80'
-    },
-    pure: {
-      vibe: '🌿 PURE',
-      name: 'Garden Ritual',
-      meta: 'Olomouc · seasonal',
-      line: 'Čistota. Lokálnost. Sezóna. Žádný hluk.',
-      href: 'restaurace-noir-table.html',
-      img: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=1200&q=80'
-    },
-    luxe: {
-      vibe: '🍷 LUXE',
-      name: 'Noir Table',
-      meta: 'Praha · fine dining',
-      line: 'Večer, kdy se čas zpomalí.',
-      href: 'restaurace-noir-table.html',
-      img: 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=1200&q=80'
-    },
-    chaos: {
-      vibe: '🌮 CHAOS',
-      name: 'La Calle',
-      meta: 'Ostrava · street food',
-      line: 'Šťáva, kyselost, křupnutí. Ulice.',
-      href: 'restaurace-noir-table.html',
-      img: 'https://images.unsplash.com/photo-1529692236671-f1dc2c0f2c0e?auto=format&fit=crop&w=1200&q=80'
-    },
-    calm: {
-      vibe: '🌊 CALM',
-      name: 'Blue Silence',
-      meta: 'Český Krumlov · seafood',
-      line: 'Klid. Jemnost. Víno. Výhled.',
-      href: 'restaurace-noir-table.html',
-      img: 'https://images.unsplash.com/photo-1529692236671-f1dc2c0f2c0e?auto=format&fit=crop&w=1200&q=80'
-    }
-  };
+<!-- AI FORM -->
+<section class="py-16">
+  <div class="max-w-5xl mx-auto px-6">
+    <form id="aiRecommendationForm" class="bg-white/5 rounded-3xl border border-white/10 p-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- Mood -->
+        <div>
+          <label class="block text-sm font-semibold mb-2">
+            <span class="text-gurmaogold">🎭</span> Nálada
+          </label>
+          <select name="mood" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition">
+            <option value="">-- Vyber náladu --</option>
+            <option value="romantika">💕 Romantika</option>
+            <option value="oslava">🎉 Oslava</option>
+            <option value="business">💼 Business</option>
+            <option value="kamarádi">👥 S kamarády</option>
+            <option value="rychle">⚡ Rychle</option>
+            <option value="klid">🧘 Klid a pohoda</option>
+          </select>
+        </div>
 
-  const result = document.getElementById('result');
-  const resultImg = document.getElementById('resultImg');
-  const resultVibe = document.getElementById('resultVibe');
-  const resultName = document.getElementById('resultName');
-  const resultMeta = document.getElementById('resultMeta');
-  const resultLine = document.getElementById('resultLine');
-  const resultLink = document.getElementById('resultLink');
+        <!-- Occasion -->
+        <div>
+          <label class="block text-sm font-semibold mb-2">
+            <span class="text-gurmaogold">🎯</span> Příležitost
+          </label>
+          <select name="occasion" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition">
+            <option value="">-- Vyber příležitost --</option>
+            <option value="rande">💑 Rande</option>
+            <option value="výročí">💍 Výročí</option>
+            <option value="narozeniny">🎂 Narozeniny</option>
+            <option value="business dinner">🍽️ Business dinner</option>
+            <option value="oběd">🥗 Oběd</option>
+            <option value="páteční večer">🍻 Páteční večer</option>
+            <option value="party">🎊 Party</option>
+          </select>
+        </div>
 
-  const show = (key) => {
-    const x = pool[key];
-    if(!x) return;
-    result.classList.remove('hidden');
-    resultImg.style.backgroundImage = `url('${x.img}')`;
-    resultVibe.textContent = x.vibe;
-    resultName.textContent = x.name;
-    resultMeta.textContent = x.meta;
-    resultLine.textContent = x.line;
-    resultLink.href = x.href;
-    result.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
+        <!-- Group Size -->
+        <div>
+          <label class="block text-sm font-semibold mb-2">
+            <span class="text-gurmaogold">👥</span> Počet lidí
+          </label>
+          <select name="groupSize" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition">
+            <option value="">-- Kolik vás bude? --</option>
+            <option value="1">1 (sólo)</option>
+            <option value="2">2 lidi</option>
+            <option value="4">4 lidi</option>
+            <option value="6">6 lidí</option>
+            <option value="8">8+ lidí</option>
+          </select>
+        </div>
 
-  document.querySelectorAll('[data-vibe]').forEach(btn => {
-    btn.addEventListener('click', () => show(btn.getAttribute('data-vibe')));
-  });
-</script>
+        <!-- City -->
+        <div>
+          <label class="block text-sm font-semibold mb-2">
+            <span class="text-gurmaogold">📍</span> Město
+          </label>
+          <select name="city" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition">
+            <option value="">-- Kde hledáš? --</option>
+            <option value="Praha">Praha</option>
+            <option value="Brno">Brno</option>
+            <option value="Ostrava">Ostrava</option>
+          </select>
+        </div>
+
+        <!-- Price Level -->
+        <div>
+          <label class="block text-sm font-semibold mb-2">
+            <span class="text-gurmaogold">💰</span> Cenová relace
+          </label>
+          <select name="priceLevel" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition">
+            <option value="">-- Rozpočet --</option>
+            <option value="1">💵 Nízká (do 300 Kč)</option>
+            <option value="2">💵💵 Střední (300-600 Kč)</option>
+            <option value="3">💵💵💵 Vyšší (600-1000 Kč)</option>
+            <option value="4">💵💵💵💵 Premium (1000+ Kč)</option>
+          </select>
+        </div>
+
+        <!-- Free Text -->
+        <div>
+          <label class="block text-sm font-semibold mb-2">
+            <span class="text-gurmaogold">✍️</span> Co máš chuť?
+          </label>
+          <input 
+            type="text" 
+            name="freeText" 
+            placeholder="např. steaky, sushi, víno..."
+            class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition"
+          />
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex flex-wrap gap-4">
+        <button 
+          type="submit" 
+          class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
+          🤖 Získat AI doporučení
+        </button>
+        <button 
+          type="button" 
+          id="resetForm"
+          class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
+          ↺ Reset
+        </button>
+      </div>
+
+      <p class="mt-4 text-xs text-white/40 text-center">
+        AI engine analyzuje tvé preference a doporučí nejlepší restaurace podle match score.
+      </p>
+    </form>
+
+    <!-- Results Container -->
+    <div id="aiResults" class="mt-12"></div>
+  </div>
+</section>
 
 <footer class="py-10 border-t border-white/10 text-center text-sm text-white/40">
   © 2025 GURMAO.cz · Nejez. Prožij.
 </footer>
 
+<script src="ai-recommendations.js"></script>
 <script src="app.js"></script>
 <script src="auth-ui.js"></script>
 </body>
