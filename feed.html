@@ -213,22 +213,40 @@
         />
       </div>
       
-      <select id="cityFilter" class="px-5 py-3 rounded-full bg-white/5 border border-white/10 focus:border-gurmaogold focus:outline-none text-white">
-        <option value="">Všechna města</option>
-        <option value="Praha">Praha</option>
-        <option value="Brno">Brno</option>
-        <option value="Ostrava">Ostrava</option>
-      </select>
-      
-      <select id="vibeFilter" class="px-5 py-3 rounded-full bg-white/5 border border-white/10 focus:border-gurmaogold focus:outline-none text-white">
-        <option value="">Všechny vibes</option>
-        <option value="LUXE">🍷 LUXE</option>
-        <option value="DRAMA">🔥 DRAMA</option>
-        <option value="CHAOS">🌮 CHAOS</option>
-        <option value="DARK">🖤 DARK</option>
-        <option value="PURE">🌿 PURE</option>
-        <option value="CALM">🌊 CALM</option>
-      </select>
+      <!-- Custom City Dropdown -->
+      <div class="custom-select min-w-[160px]">
+        <button 
+          id="cityFilterBtn" 
+          class="custom-select-trigger w-full px-5 py-3 rounded-full bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white"
+        >
+          Všechna města
+        </button>
+        <div id="cityOptions" class="custom-options hidden">
+          <div class="custom-option" data-value="">Všechna města</div>
+          <div class="custom-option" data-value="Praha">📍 Praha</div>
+          <div class="custom-option" data-value="Brno">📍 Brno</div>
+          <div class="custom-option" data-value="Ostrava">📍 Ostrava</div>
+        </div>
+      </div>
+
+      <!-- Custom Vibe Dropdown -->
+      <div class="custom-select min-w-[160px]">
+        <button 
+          id="vibeFilterBtn" 
+          class="custom-select-trigger w-full px-5 py-3 rounded-full bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white"
+        >
+          Všechny vibes
+        </button>
+        <div id="vibeOptions" class="custom-options hidden">
+          <div class="custom-option" data-value="">Všechny vibes</div>
+          <div class="custom-option" data-value="LUXE">🍷 LUXE</div>
+          <div class="custom-option" data-value="DRAMA">🔥 DRAMA</div>
+          <div class="custom-option" data-value="CHAOS">🌮 CHAOS</div>
+          <div class="custom-option" data-value="DARK">🖤 DARK</div>
+          <div class="custom-option" data-value="PURE">🌿 PURE</div>
+          <div class="custom-option" data-value="CALM">🌊 CALM</div>
+        </div>
+      </div>
       
       <button id="clearFilters" class="px-5 py-3 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition whitespace-nowrap">
         ✕ Reset
