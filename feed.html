@@ -125,7 +125,45 @@
       </div>
     </div>
 
-    <div id="grid" class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    <!-- Search & Filters -->
+    <div class="mt-8 flex flex-col sm:flex-row gap-3">
+      <div class="flex-1 relative">
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="🔍 Hledej restauraci..."
+          class="w-full px-5 py-3 rounded-full bg-white/5 border border-white/10 focus:border-gurmaogold focus:outline-none text-white placeholder:text-white/40"
+        />
+      </div>
+      
+      <select id="cityFilter" class="px-5 py-3 rounded-full bg-white/5 border border-white/10 focus:border-gurmaogold focus:outline-none text-white">
+        <option value="">Všechna města</option>
+        <option value="Praha">Praha</option>
+        <option value="Brno">Brno</option>
+        <option value="Ostrava">Ostrava</option>
+      </select>
+      
+      <select id="vibeFilter" class="px-5 py-3 rounded-full bg-white/5 border border-white/10 focus:border-gurmaogold focus:outline-none text-white">
+        <option value="">Všechny vibes</option>
+        <option value="LUXE">🍷 LUXE</option>
+        <option value="DRAMA">🔥 DRAMA</option>
+        <option value="CHAOS">🌮 CHAOS</option>
+        <option value="DARK">🖤 DARK</option>
+        <option value="PURE">🌿 PURE</option>
+        <option value="CALM">🌊 CALM</option>
+      </select>
+      
+      <button id="clearFilters" class="px-5 py-3 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition whitespace-nowrap">
+        ✕ Reset
+      </button>
+    </div>
+
+    <div id="resultsCount" class="mt-4 text-sm text-white/40"></div>
+    <div id="grid" class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    <div id="noResults" class="hidden mt-10 text-center text-white/40">
+      <div class="text-4xl mb-3">🤷</div>
+      <p>Nic jsme nenašli. Zkus jiný filtr.</p>
+    </div>
   </div>
 </main>
 
@@ -238,9 +276,28 @@
 
   // Desktop grid render
   const grid = document.getElementById('grid');
-  if (grid) {
+  const noResults = document.getElementById('noResults');
+  const resultsCount = document.getElementById('resultsCount');
+  
+  let filteredItems = [...items];
+
+  function renderGrid() {
+    if (!grid) return;
+    
     const saved = getSaved();
-    grid.innerHTML = items.map(x=>`
+    
+    if (filteredItems.length === 0) {
+      grid.classList.add('hidden');
+      noResults?.classList.remove('hidden');
+      if (resultsCount) resultsCount.textContent = '';
+      return;
+    }
+    
+    grid.classList.remove('hidden');
+    noResults?.classList.add('hidden');
+    if (resultsCount) resultsCount.textContent = `Zobrazeno ${filteredItems.length} restaurací`;
+    
+    grid.innerHTML = filteredItems.map(x=>`
       <div class="rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
         <a href="${x.href}" class="block">
           <div class="aspect-[3/4] bg-cover bg-center" style="background-image:url('${x.img}')"></div>
@@ -269,6 +326,44 @@
         toast(s.has(id) ? 'Uloženo do sbírek' : 'Odebráno ze sbírek');
       });
     });
+  }
+
+  // Filter function
+  function applyFilters() {
+    const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const cityFilter = document.getElementById('cityFilter')?.value || '';
+    const vibeFilter = document.getElementById('vibeFilter')?.value || '';
+    
+    filteredItems = items.filter(item => {
+      const matchesSearch = !searchTerm || 
+        item.name.toLowerCase().includes(searchTerm) ||
+        item.tag.toLowerCase().includes(searchTerm) ||
+        item.city.toLowerCase().includes(searchTerm);
+      
+      const matchesCity = !cityFilter || item.city === cityFilter;
+      const matchesVibe = !vibeFilter || item.vibe.includes(vibeFilter);
+      
+      return matchesSearch && matchesCity && matchesVibe;
+    });
+    
+    renderGrid();
+  }
+
+  // Event listeners for filters
+  document.getElementById('searchInput')?.addEventListener('input', applyFilters);
+  document.getElementById('cityFilter')?.addEventListener('change', applyFilters);
+  document.getElementById('vibeFilter')?.addEventListener('change', applyFilters);
+  
+  document.getElementById('clearFilters')?.addEventListener('click', () => {
+    if (document.getElementById('searchInput')) document.getElementById('searchInput').value = '';
+    if (document.getElementById('cityFilter')) document.getElementById('cityFilter').value = '';
+    if (document.getElementById('vibeFilter')) document.getElementById('vibeFilter').value = '';
+    applyFilters();
+  });
+
+  // Initial render
+  if (grid) {
+    renderGrid();
   }
 </script>
 
