@@ -25,12 +25,15 @@
   </script>
 
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="toast.css">
   <style>
     body { font-family: 'Inter', sans-serif; }
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
   </style>
 </head>
 <body class="bg-gurmaoblack text-white overflow-x-hidden">
+
+<script src="toast.js"></script>
 
 <script type="module">
   // Redirect if already logged in
@@ -224,6 +227,8 @@
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
     
+    const loadingToast = toastLoading('Přihlašování...');
+    
     try {
       const { user, session } = await signIn(email, password);
       
@@ -235,12 +240,16 @@
         loggedIn: true
       }));
       
+      toast.update(loadingToast, '✅ Přihlášení úspěšné!', 'success');
+      
       // Redirect to collections or return URL
-      const returnUrl = new URLSearchParams(window.location.search).get('return') || 'collections.html';
-      window.location.href = returnUrl;
+      setTimeout(() => {
+        const returnUrl = new URLSearchParams(window.location.search).get('return') || 'collections.html';
+        window.location.href = returnUrl;
+      }, 500);
     } catch (error) {
       console.error('Login error:', error);
-      alert('❌ Chyba při přihlášení: ' + error.message);
+      toast.update(loadingToast, '❌ ' + error.message, 'error');
     }
   });
 
@@ -251,16 +260,18 @@
     const email = document.getElementById('signupEmail').value;
     const password = document.getElementById('signupPassword').value;
     
+    const loadingToast = toastLoading('Registrace...');
+    
     try {
       const { user } = await signUp(email, password, name);
       
-      alert('✅ Registrace úspěšná! Zkontroluj email pro potvrzení.');
+      toast.update(loadingToast, '✅ Zkontroluj email pro potvrzení!', 'success');
       
       // Switch to login tab
-      tabLogin.click();
+      setTimeout(() => tabLogin.click(), 1000);
     } catch (error) {
       console.error('Signup error:', error);
-      alert('❌ Chyba při registraci: ' + error.message);
+      toast.update(loadingToast, '❌ ' + error.message, 'error');
     }
   });
 
@@ -269,12 +280,14 @@
   googleButtons.forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
+      const loadingToast = toastLoading('Přihlašování přes Google...');
+      
       try {
         await signInWithGoogle();
         // Supabase automaticky přesměruje
       } catch (error) {
         console.error('Google login error:', error);
-        alert('❌ Chyba při přihlášení přes Google: ' + error.message);
+        toast.update(loadingToast, '❌ ' + error.message, 'error');
       }
     });
   });

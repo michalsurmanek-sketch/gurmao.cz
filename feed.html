@@ -31,6 +31,9 @@
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Toast CSS -->
+  <link rel="stylesheet" href="toast.css">
 
   <style>
     body { font-family: 'Inter', sans-serif; }
@@ -41,6 +44,8 @@
   </style>
 </head>
 <body class="bg-gurmaoblack text-white overflow-x-hidden">
+
+<script src="toast.js"></script>
 
 <!-- HEADER / NAV + HAMBURGER -->
 <header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
@@ -167,9 +172,6 @@
   </div>
 </main>
 
-<!-- Toast (shared) -->
-<div id="toast" class="hidden fixed left-1/2 -translate-x-1/2 bottom-6 px-5 py-3 rounded-full bg-black/70 border border-white/10 text-sm"></div>
-
 <script>
   // MVP data
   const items = [
@@ -207,17 +209,6 @@
   const getSaved = () => new Set(JSON.parse(localStorage.getItem(lsKey) || '[]'));
   const setSaved = (set) => localStorage.setItem(lsKey, JSON.stringify([...set]));
 
-  // Toast
-  const t = document.getElementById('toast');
-  let tt;
-  const toast = (msg) => {
-    if(!t) return;
-    t.textContent = msg;
-    t.classList.remove('hidden');
-    clearTimeout(tt);
-    tt = setTimeout(()=>t.classList.add('hidden'), 1400);
-  };
-
   // Mobile feed render
   const feed = document.getElementById('feed');
   if (feed) {
@@ -237,20 +228,45 @@
     `).join('');
 
     const currentIndex = () => Math.round(feed.scrollTop / feed.clientHeight);
-    const act = (type) => {
+    const act = async (type) => {
       const idx = Math.max(0, Math.min(items.length-1, currentIndex()));
       const cur = items[idx];
       if (!cur) return;
 
       if (type === 'save') {
-        const s = getSaved();
-        s.has(cur.id) ? s.delete(cur.id) : s.add(cur.id);
-        setSaved(s);
-        toast(s.has(cur.id) ? 'Uloženo do sbírek' : 'Odebráno ze sbírek');
-        // update icon
-        document.getElementById('btnSave').textContent = s.has(cur.id) ? '❤️' : '🤍';
+        const btn = document.getElementById('btnSave');
+        const originalText = btn.textContent;
+        
+        try {
+          // Show loading
+          btn.classList.add('btn-loading');
+          btn.textContent = '⏳';
+          
+          // Simulate async save (replace with real Supabase call)
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
+          const s = getSaved();
+          const isAdding = !s.has(cur.id);
+          
+          if (isAdding) {
+            s.add(cur.id);
+            btn.textContent = '🖤';
+            toastSuccess(`✅ ${cur.name} uloženo!`);
+          } else {
+            s.delete(cur.id);
+            btn.textContent = '🤍';
+            toastInfo(`${cur.name} odebráno`);
+          }
+          
+          setSaved(s);
+        } catch (error) {
+          btn.textContent = originalText;
+          toastError('❌ Nepodařilo se uložit');
+        } finally {
+          btn.classList.remove('btn-loading');
+        }
       } else {
-        toast(type === 'fire' ? '🔥 Zapsáno: WOW' : '🤤 Zapsáno: chuť');
+        toastInfo(type === 'fire' ? '🔥 Zapsáno: WOW' : '🤤 Zapsáno: chuť');
       }
     };
 
@@ -316,14 +332,40 @@
     `).join('');
 
     grid.querySelectorAll('[data-save]').forEach(btn=>{
-      btn.addEventListener('click', (e)=>{
+      btn.addEventListener('click', async (e)=>{
         e.preventDefault();
         const id = btn.getAttribute('data-save');
-        const s = getSaved();
-        s.has(id) ? s.delete(id) : s.add(id);
-        setSaved(s);
-        btn.textContent = s.has(id) ? '❤️' : '🤍';
-        toast(s.has(id) ? 'Uloženo do sbírek' : 'Odebráno ze sbírek');
+        const originalText = btn.textContent;
+        const restaurant = items.find(x => x.id === id);
+        
+        try {
+          // Show loading
+          btn.classList.add('btn-loading');
+          btn.textContent = '⏳';
+          
+          // Simulate async save (replace with real Supabase call)
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
+          const s = getSaved();
+          const isAdding = !s.has(id);
+          
+          if (isAdding) {
+            s.add(id);
+            btn.textContent = '🖤';
+            toastSuccess(`✅ ${restaurant?.name || 'Restaurace'} uloženo!`);
+          } else {
+            s.delete(id);
+            btn.textContent = '🤍';
+            toastInfo(`${restaurant?.name || 'Restaurace'} odebráno`);
+          }
+          
+          setSaved(s);
+        } catch (error) {
+          btn.textContent = originalText;
+          toastError('❌ Nepodařilo se uložit');
+        } finally {
+          btn.classList.remove('btn-loading');
+        }
       });
     });
   }
