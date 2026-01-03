@@ -466,8 +466,8 @@
   // Filter function
   function applyFilters() {
     const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
-    const cityFilter = document.getElementById('cityFilter')?.value || '';
-    const vibeFilter = document.getElementById('vibeFilter')?.value || '';
+    const cityFilter = currentCityValue || '';
+    const vibeFilter = currentVibeValue || '';
     
     filteredItems = items.filter(item => {
       const matchesSearch = !searchTerm || 
@@ -484,10 +484,65 @@
     renderGrid();
   }
 
+  // Custom dropdown logic
+  let currentCityValue = '';
+  let currentVibeValue = '';
+
+  function initCustomDropdown(btnId, optionsId, onSelect) {
+    const btn = document.getElementById(btnId);
+    const options = document.getElementById(optionsId);
+    
+    if (!btn || !options) return;
+    
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Close other dropdowns
+      document.querySelectorAll('.custom-options').forEach(o => {
+        if (o !== options) o.classList.add('hidden');
+      });
+      options.classList.toggle('hidden');
+    });
+    
+    options.querySelectorAll('.custom-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        const value = opt.dataset.value;
+        btn.textContent = opt.textContent;
+        options.classList.add('hidden');
+        onSelect(value);
+      });
+    });
+  }
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.custom-options').forEach(o => o.classList.add('hidden'));
+  });
+
+  // Initialize dropdowns
+  initCustomDropdown('cityFilterBtn', 'cityOptions', (value) => {
+    currentCityValue = value;
+    applyFilters();
+  });
+
+  initCustomDropdown('vibeFilterBtn', 'vibeOptions', (value) => {
+    currentVibeValue = value;
+    applyFilters();
+  });
+
   // Event listeners for filters
   document.getElementById('searchInput')?.addEventListener('input', applyFilters);
-  document.getElementById('cityFilter')?.addEventListener('change', applyFilters);
-  document.getElementById('vibeFilter')?.addEventListener('change', applyFilters);
+  
+  document.getElementById('resetFilters')?.addEventListener('click', () => {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
+    currentCityValue = '';
+    currentVibeValue = '';
+    const cityBtn = document.getElementById('cityFilterBtn');
+    const vibeBtn = document.getElementById('vibeFilterBtn');
+    if (cityBtn) cityBtn.textContent = 'Všechna města';
+    if (vibeBtn) vibeBtn.textContent = 'Všechny vibes';
+    applyFilters();
+  });
   
   document.getElementById('clearFilters')?.addEventListener('click', () => {
     if (document.getElementById('searchInput')) document.getElementById('searchInput').value = '';
