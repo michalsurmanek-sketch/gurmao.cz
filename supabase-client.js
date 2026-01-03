@@ -11,8 +11,8 @@
  */
 
 // Supabase credentials
-const SUPABASE_URL = 'https://urwsfadrwjgvlinhbcgu.supabase.co';
-const SUPABASE_ANON_KEY = 'SUPABASE_CLIENT_API_KEY';
+const SUPABASE_URL = 'https://txfuxrezyrgybjvjnhom.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_5G2YGZZrEmfJOZ61oE3ioQ_VuRdscIf';
 
 // Import Supabase client (CDN version)
 // V produkci můžeš použít npm: npm install @supabase/supabase-js

@@ -217,7 +217,7 @@ function getImageUrl(imagePath) {
   if (imagePath.startsWith('http')) return imagePath; // Old Unsplash URLs
   
   // Supabase Storage URL
-  const supabaseUrl = 'https://urwsfadrwjgvlinhbcgu.supabase.co';
+  const supabaseUrl = 'https://txfuxrezyrgybjvjnhom.supabase.co';
   return `${supabaseUrl}/storage/v1/object/public/restaurant-images/${imagePath}`;
 }
 
