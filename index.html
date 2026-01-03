@@ -110,9 +110,10 @@
     <span class="text-gurmaogold font-semibold">Prožij.</span>
   </p>
 
-  <div class="relative mt-10 flex gap-4">
+  <!-- CTA Buttons - different for logged in users -->
+  <div id="heroCTA" class="relative mt-10 flex gap-4">
     <a href="feed.html" class="px-8 py-4 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-105 transition inline-block">Prozkoumat feed</a>
-    <a href="login.html" class="px-8 py-4 rounded-full border border-white/30 hover:border-gurmaogold hover:text-gurmaogold transition inline-block">Přihlásit se</a>
+    <a id="heroLoginBtn" href="login.html" class="px-8 py-4 rounded-full border border-white/30 hover:border-gurmaogold hover:text-gurmaogold transition inline-block">Přihlásit se</a>
   </div>
 
   <p class="relative mt-12 text-sm text-white/40">
@@ -371,5 +372,16 @@
 
 <script src="app.js"></script>
 <script src="auth-ui.js"></script>
+<script>
+  // Homepage: Change CTA for logged-in users
+  const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
+  if (user) {
+    const heroLoginBtn = document.getElementById('heroLoginBtn');
+    if (heroLoginBtn) {
+      heroLoginBtn.href = 'collections.html';
+      heroLoginBtn.textContent = 'Moje sbírky';
+    }
+  }
+</script>
 </body>
 </html>
