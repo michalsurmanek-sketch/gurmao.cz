@@ -62,6 +62,7 @@
 <body class="bg-gurmaoblack text-white overflow-x-hidden">
 
 <script src="toast.js"></script>
+<script src="rating.js"></script>
 
 <!-- HEADER / NAV + HAMBURGER -->
 <header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
@@ -329,23 +330,44 @@
     noResults?.classList.add('hidden');
     if (resultsCount) resultsCount.textContent = `Zobrazeno ${filteredItems.length} restaurací`;
     
-    grid.innerHTML = filteredItems.map(x=>`
+    grid.innerHTML = filteredItems.map(x=>{
+      const avgRating = window.ratingManager.getAverage(x.id);
+      const ratingCount = window.ratingManager.getCount(x.id);
+      const userRating = window.ratingManager.getUserRating(x.id);
+      
+      return `
       <div class="rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
         <a href="${x.href}" class="block">
           <div class="aspect-[3/4] bg-cover bg-center" style="background-image:url('${x.img}')"></div>
         </a>
-        <div class="p-5 flex items-start justify-between gap-4">
-          <div>
-            <div class="text-sm text-gurmaogold mb-1">${x.vibe}</div>
-            <div class="text-xl font-semibold">${x.name}</div>
-            <div class="text-white/60 text-sm mt-1">${x.city} · ${x.tag}</div>
+        <div class="p-5">
+          <div class="flex items-start justify-between gap-4 mb-3">
+            <div>
+              <div class="text-sm text-gurmaogold mb-1">${x.vibe}</div>
+              <div class="text-xl font-semibold">${x.name}</div>
+              <div class="text-white/60 text-sm mt-1">${x.city} · ${x.tag}</div>
+            </div>
+            <button data-save="${x.id}" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition flex-shrink-0" title="Uložit">
+              ${saved.has(x.id) ? '🖤' : '🤍'}
+            </button>
           </div>
-          <button data-save="${x.id}" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" title="Uložit">
-            ${saved.has(x.id) ? '❤️' : '🤍'}
-          </button>
+          
+          <!-- Rating Section -->
+          <div class="border-t border-white/10 pt-3">
+            ${avgRating > 0 ? `
+              <div class="flex items-center gap-2 mb-2">
+                ${window.ratingManager.renderStars(avgRating, 'sm')}
+                <span class="text-xs text-white/60">${avgRating.toFixed(1)} (${ratingCount})</span>
+              </div>
+            ` : '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>'}
+            
+            <div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>
+            ${window.ratingManager.renderInteractiveStars(x.id, userRating || 0)}
+          </div>
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
 
     grid.querySelectorAll('[data-save]').forEach(btn=>{
       btn.addEventListener('click', async (e)=>{
@@ -423,6 +445,11 @@
   if (grid) {
     renderGrid();
   }
+
+  // Listen for rating updates and re-render affected card
+  window.addEventListener('ratingUpdated', (e) => {
+    if (grid) renderGrid();
+  });
 </script>
 
 <footer class="py-10 border-t border-white/10 text-center text-sm text-white/40">
