@@ -78,13 +78,14 @@
       left: 0;
       right: 0;
       margin-top: 0.5rem;
-      background: #0b0b0d;
+      background: #0b0b0d !important;
       border: 1px solid rgba(212, 175, 55, 0.3);
       border-radius: 1rem;
       max-height: 300px;
       overflow-y: auto;
       z-index: 100;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(20px);
     }
     
     .custom-option {
@@ -94,11 +95,13 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      color: #ffffff !important;
+      background: transparent !important;
     }
     
     .custom-option:hover {
-      background: rgba(212, 175, 55, 0.1);
-      color: #d4af37;
+      background: rgba(212, 175, 55, 0.15) !important;
+      color: #d4af37 !important;
     }
     
     .custom-option:first-child {
