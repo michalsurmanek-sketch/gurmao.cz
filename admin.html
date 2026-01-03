@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta name="robots" content="noindex, nofollow">
+  
+  <title>Admin Panel – GURMAO</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gurmaoblack: '#0b0b0d',
+            gurmaogold: '#d4af37',
+            gurmaored: '#8b1d18',
+          },
+          boxShadow: { glow: '0 0 40px rgba(212,175,55,0.35)' }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Mapbox for coordinate picker -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+  
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    h1,h2,h3 { font-family: 'Playfair Display', serif; }
+    #coordMap { height: 300px; border-radius: 1rem; overflow: hidden; }
+  </style>
+</head>
+<body class="bg-gurmaoblack text-white">
+
+<script src="toast.js"></script>
+<script src="supabase-client.js"></script>
+<script src="auth-guard.js"></script>
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="text-2xl font-bold tracking-tight">GUR<span class="text-gurmaogold">M</span>AO</a>
+    
+    <div class="flex items-center gap-4">
+      <span class="text-gurmaored text-sm font-semibold">🔒 ADMIN</span>
+      <button id="logoutBtn" class="px-4 py-2 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored text-sm transition">
+        Odhlásit
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-6 py-10">
+  <!-- Header -->
+  <div class="mb-10">
+    <h1 class="text-4xl mb-2">Admin Panel</h1>
+    <p class="text-white/60">Správa restaurací, kuchařů a obsahu</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex gap-4 mb-8 border-b border-white/10">
+    <button onclick="switchTab('restaurants')" id="tab-restaurants" class="tab-btn active px-6 py-3 border-b-2 border-gurmaogold font-semibold">
+      🍽️ Restaurace
+    </button>
+    <button onclick="switchTab('add')" id="tab-add" class="tab-btn px-6 py-3 border-b-2 border-transparent hover:border-white/20 transition">
+      ➕ Přidat novou
+    </button>
+  </div>
+
+  <!-- Tab Content: Restaurants List -->
+  <div id="content-restaurants" class="tab-content">
+    <div class="mb-6 flex items-center justify-between">
+      <input 
+        type="text" 
+        id="searchRestaurants" 
+        placeholder="🔍 Hledat restauraci..."
+        class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none w-full max-w-md"
+      />
+      <div class="text-white/60 text-sm">
+        Celkem: <span id="totalCount" class="text-gurmaogold font-bold">0</span>
+      </div>
+    </div>
+
+    <div id="restaurantsList" class="space-y-4">
+      <div class="text-center py-12 text-white/40">
+        <div class="text-4xl mb-4">⏳</div>
+        Načítání restaurací...
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Add New -->
+  <div id="content-add" class="tab-content hidden">
+    <div class="max-w-3xl mx-auto">
+      <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
+        <h2 class="text-2xl mb-6">Přidat restauraci</h2>
+
+        <form id="addRestaurantForm" class="space-y-6">
+          <!-- Name -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Název restaurace *</label>
+            <input 
+              type="text" 
+              name="name" 
+              required
+              placeholder="např. Noir Table"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Vibe -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Vibe *</label>
+            <select 
+              name="vibe" 
+              required
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            >
+              <option value="">-- Vyber vibe --</option>
+              <option value="LUXE">🍷 LUXE</option>
+              <option value="DRAMA">🔥 DRAMA</option>
+              <option value="CHAOS">🌮 CHAOS</option>
+              <option value="DARK">🖤 DARK</option>
+              <option value="PURE">🌿 PURE</option>
+              <option value="CALM">🌊 CALM</option>
+            </select>
+          </div>
+
+          <!-- City & Tag -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">Město *</label>
+              <select 
+                name="city" 
+                required
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              >
+                <option value="">-- Vyber město --</option>
+                <option value="Praha">Praha</option>
+                <option value="Brno">Brno</option>
+                <option value="Ostrava">Ostrava</option>
+                <option value="Plzeň">Plzeň</option>
+                <option value="Liberec">Liberec</option>
+                <option value="Olomouc">Olomouc</option>
+                <option value="Hradec Králové">Hradec Králové</option>
+                <option value="České Budějovice">České Budějovice</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-2">Tag *</label>
+              <input 
+                type="text" 
+                name="tag" 
+                required
+                placeholder="např. fine dining"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Jednořádkový popis *</label>
+            <input 
+              type="text" 
+              name="description" 
+              required
+              placeholder="např. Místo, kde se čas zpomalí. Oheň, ticho, precizní servis."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Coordinates Picker -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Souřadnice (klikni na mapě) *</label>
+            <div id="coordMap" class="mb-2"></div>
+            <div class="grid grid-cols-2 gap-4">
+              <input 
+                type="number" 
+                name="lat" 
+                step="0.000001"
+                required
+                placeholder="Latitude (např. 50.0875)"
+                class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+              <input 
+                type="number" 
+                name="lng" 
+                step="0.000001"
+                required
+                placeholder="Longitude (např. 14.4213)"
+                class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+            <p class="text-xs text-white/40 mt-2">Klikni na mapu nebo zadej ručně</p>
+          </div>
+
+          <!-- Image URL -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL obrázku</label>
+            <input 
+              type="url" 
+              name="image_url" 
+              placeholder="https://..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+            <p class="text-xs text-white/40 mt-1">Nepovinné - můžeš přidat později</p>
+          </div>
+
+          <!-- Slug -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL slug *</label>
+            <input 
+              type="text" 
+              name="slug" 
+              required
+              placeholder="noir-table"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+            <p class="text-xs text-white/40 mt-1">Pro detail stránku: restaurace-[slug].html</p>
+          </div>
+
+          <!-- Submit -->
+          <div class="flex gap-4 pt-4">
+            <button 
+              type="submit" 
+              class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
+              ➕ Přidat restauraci
+            </button>
+            <button 
+              type="reset" 
+              class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
+              ↺ Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// Tab switching
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('active', 'border-gurmaogold');
+    btn.classList.add('border-transparent');
+  });
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.add('hidden');
+  });
+
+  document.getElementById(`tab-${tab}`).classList.add('active', 'border-gurmaogold');
+  document.getElementById(`tab-${tab}`).classList.remove('border-transparent');
+  document.getElementById(`content-${tab}`).classList.remove('hidden');
+}
+
+// Initialize coordinate picker map
+mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+
+let marker;
+const coordMap = new mapboxgl.Map({
+  container: 'coordMap',
+  style: 'mapbox://styles/mapbox/satellite-streets-v12',
+  center: [15.5, 49.8],
+  zoom: 6
+});
+
+coordMap.on('click', (e) => {
+  const { lng, lat } = e.lngLat;
+  
+  // Update inputs
+  document.querySelector('input[name="lat"]').value = lat.toFixed(6);
+  document.querySelector('input[name="lng"]').value = lng.toFixed(6);
+
+  // Remove old marker
+  if (marker) marker.remove();
+
+  // Add new marker
+  marker = new mapboxgl.Marker({ color: '#d4af37' })
+    .setLngLat([lng, lat])
+    .addTo(coordMap);
+});
+
+// Load restaurants
+async function loadRestaurants() {
+  try {
+    const { data, error } = await supabase
+      .from('restaurants')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    document.getElementById('totalCount').textContent = data.length;
+
+    const html = data.map(r => `
+      <div class="bg-white/5 rounded-2xl border border-white/10 p-6 hover:bg-white/10 transition">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h3 class="text-xl font-bold">${r.name}</h3>
+              <span class="text-sm text-gurmaogold">${r.vibe}</span>
+            </div>
+            <div class="text-white/60 text-sm mb-2">${r.city} · ${r.tag}</div>
+            <p class="text-white/80 text-sm mb-3">${r.description}</p>
+            <div class="text-xs text-white/40">
+              📍 ${r.lat}, ${r.lng} · 🔗 restaurace-${r.slug}.html
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="editRestaurant('${r.id}')" class="px-4 py-2 rounded-full bg-white/10 hover:bg-gurmaogold hover:text-black transition text-sm">
+              ✏️ Upravit
+            </button>
+            <button onclick="deleteRestaurant('${r.id}', '${r.name}')" class="px-4 py-2 rounded-full bg-white/10 hover:bg-gurmaored hover:text-white transition text-sm">
+              🗑️ Smazat
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('restaurantsList').innerHTML = html || '<div class="text-center py-12 text-white/40">Žádné restaurace</div>';
+  } catch (err) {
+    console.error('Error loading restaurants:', err);
+    window.toast.show('Chyba při načítání restaurací', 'error');
+  }
+}
+
+// Add restaurant
+document.getElementById('addRestaurantForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const data = {
+    name: formData.get('name'),
+    vibe: formData.get('vibe'),
+    city: formData.get('city'),
+    tag: formData.get('tag'),
+    description: formData.get('description'),
+    lat: parseFloat(formData.get('lat')),
+    lng: parseFloat(formData.get('lng')),
+    image_url: formData.get('image_url') || null,
+    slug: formData.get('slug')
+  };
+
+  try {
+    const { error } = await supabase
+      .from('restaurants')
+      .insert([data]);
+
+    if (error) throw error;
+
+    window.toast.show('✅ Restaurace přidána!', 'success');
+    e.target.reset();
+    if (marker) marker.remove();
+    
+    // Switch to list and reload
+    switchTab('restaurants');
+    loadRestaurants();
+  } catch (err) {
+    console.error('Error adding restaurant:', err);
+    window.toast.show('Chyba při přidávání: ' + err.message, 'error');
+  }
+});
+
+// Delete restaurant
+async function deleteRestaurant(id, name) {
+  if (!confirm(`Opravdu smazat "${name}"?`)) return;
+
+  try {
+    const { error } = await supabase
+      .from('restaurants')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    window.toast.show('🗑️ Restaurace smazána', 'success');
+    loadRestaurants();
+  } catch (err) {
+    console.error('Error deleting restaurant:', err);
+    window.toast.show('Chyba při mazání: ' + err.message, 'error');
+  }
+}
+
+// Edit restaurant (placeholder)
+function editRestaurant(id) {
+  window.toast.show('Editace zatím není implementována', 'info');
+  // TODO: Implement edit functionality
+}
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await supabase.auth.signOut();
+  window.location.href = 'login.html';
+});
+
+// Search
+document.getElementById('searchRestaurants').addEventListener('input', (e) => {
+  const query = e.target.value.toLowerCase();
+  document.querySelectorAll('#restaurantsList > div').forEach(card => {
+    const text = card.textContent.toLowerCase();
+    card.style.display = text.includes(query) ? 'block' : 'none';
+  });
+});
+
+// Load on page load
+loadRestaurants();
+</script>
+
+</body>
+</html>
