@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  
+  <!-- Primary Meta Tags -->
+  <title>Mapa restaurací – GURMAO | Kde najdeš nejlepší místa</title>
+  <meta name="title" content="Mapa restaurací – GURMAO | Kde najdeš nejlepší místa">
+  <meta name="description" content="Interaktivní mapa kurátorovaných restaurací v České republice. Najdi nejlepší místa ve tvém okolí." />
+  <meta name="keywords" content="mapa restaurací, restaurace Praha mapa, kde jít najíst, restaurace v okolí">
+  <link rel="canonical" href="https://gurmao.cz/mapa.html" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://gurmao.cz/mapa.html" />
+  <meta property="og:title" content="Mapa restaurací – GURMAO" />
+  <meta property="og:description" content="Interaktivní mapa kurátorovaných restaurací v České republice." />
+  <meta property="og:image" content="https://gurmao.cz/og-image.jpg" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gurmaoblack: '#0b0b0d',
+            gurmaogold: '#d4af37',
+            gurmaored: '#8b1d18',
+          },
+          boxShadow: { glow: '0 0 40px rgba(212,175,55,0.35)' }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Mapbox GL JS -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+  
+  <style>
+    body { font-family: 'Inter', sans-serif; margin: 0; }
+    h1,h2,h3 { font-family: 'Playfair Display', serif; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    
+    /* Mapbox popup styling */
+    .mapboxgl-popup-content {
+      background: #0b0b0d;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 1rem;
+      padding: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+    .mapboxgl-popup-close-button {
+      color: white;
+      font-size: 1.5rem;
+      padding: 0.5rem;
+    }
+    .mapboxgl-popup-close-button:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .mapboxgl-popup-tip {
+      border-top-color: #0b0b0d !important;
+    }
+  </style>
+</head>
+<body class="bg-gurmaoblack text-white">
+
+<!-- HEADER -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="text-2xl font-bold tracking-tight">GUR<span class="text-gurmaogold">M</span>AO</a>
+    
+    <nav class="hidden md:flex gap-6 text-sm items-center">
+      <a href="feed.html" class="hover:text-gurmaogold">Feed</a>
+      <a href="restaurace.html" class="hover:text-gurmaogold">Restaurace</a>
+      <a href="kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
+      <a href="gear.html" class="hover:text-gurmaogold">Gear</a>
+      <a href="ai.html" class="hover:text-gurmaogold">AI</a>
+      <a href="mapa.html" class="text-gurmaogold">Mapa</a>
+      <a href="collections.html" class="hover:text-gurmaogold">Sbírky</a>
+      
+      <!-- User menu (desktop) -->
+      <div id="userMenuDesktop" class="hidden">
+        <div class="flex items-center gap-3">
+          <span id="userNameDesktop" class="text-white/80"></span>
+          <button id="logoutBtnDesktop" class="px-4 py-2 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored text-sm transition">Odhlásit</button>
+        </div>
+      </div>
+      <a id="loginLinkDesktop" href="login.html" class="px-4 py-2 rounded-full border border-gurmaogold text-gurmaogold hover:bg-gurmaogold hover:text-black transition">Přihlásit se</a>
+    </nav>
+    
+    <button id="menuBtn" class="md:hidden w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition">☰</button>
+  </div>
+</header>
+
+<!-- Map container -->
+<div class="pt-[65px] h-screen">
+  <div id="map"></div>
+</div>
+
+<!-- Floating legend -->
+<div class="fixed bottom-6 left-6 bg-gurmaoblack/90 backdrop-blur border border-white/20 rounded-2xl p-4 shadow-2xl max-w-xs z-40">
+  <h3 class="font-bold mb-2 flex items-center gap-2">
+    <span class="text-xl">🗺️</span>
+    Legenda
+  </h3>
+  <div class="space-y-2 text-sm">
+    <div class="flex items-center gap-2">
+      <span class="text-gurmaogold text-xl">📍</span>
+      <span>Kurátorované restaurace</span>
+    </div>
+    <div class="text-white/60 text-xs mt-2">
+      Klikni na marker pro detail
+    </div>
+  </div>
+</div>
+
+<script>
+// Mapbox access token (public token for testing - get your own at mapbox.com)
+mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+
+// Restaurant data with coordinates
+const restaurants = [
+  {
+    id: 'noir-table',
+    name: 'Noir Table',
+    vibe: '🍷 LUXE',
+    city: 'Praha',
+    tag: 'fine dining',
+    description: 'Místo, kde se čas zpomalí. Oheň, ticho, precizní servis.',
+    href: 'restaurace-noir-table.html',
+    lng: 14.4213,
+    lat: 50.0875
+  },
+  {
+    id: 'ember-steak',
+    name: 'Ember Steak',
+    vibe: '🔥 DRAMA',
+    city: 'Brno',
+    tag: 'steakhouse',
+    description: 'Oheň, kouř, maso. Žádné výmluvy.',
+    href: 'restaurace-noir-table.html',
+    lng: 16.6068,
+    lat: 49.1951
+  },
+  {
+    id: 'la-calle',
+    name: 'La Calle',
+    vibe: '🌮 CHAOS',
+    city: 'Ostrava',
+    tag: 'street food',
+    description: 'Chaos s chuťovým smyslem.',
+    href: 'restaurace-noir-table.html',
+    lng: 18.2820,
+    lat: 49.8209
+  }
+];
+
+// Initialize map
+const map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/mapbox/dark-v11',
+  center: [15.5, 49.8], // Center of Czech Republic
+  zoom: 6.5,
+  pitch: 0,
+  bearing: 0
+});
+
+// Add navigation controls
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+// Add geolocate control
+map.addControl(
+  new mapboxgl.GeolocateControl({
+    positionOptions: {
+      enableHighAccuracy: true
+    },
+    trackUserLocation: true,
+    showUserHeading: true
+  }),
+  'top-right'
+);
+
+// Add markers
+restaurants.forEach(restaurant => {
+  // Create custom marker element
+  const el = document.createElement('div');
+  el.className = 'marker';
+  el.style.width = '40px';
+  el.style.height = '40px';
+  el.style.cursor = 'pointer';
+  el.style.fontSize = '32px';
+  el.style.filter = 'drop-shadow(0 2px 8px rgba(212, 175, 55, 0.5))';
+  el.textContent = '📍';
+
+  // Create popup content
+  const popupContent = `
+    <div class="min-w-[200px]">
+      <div class="text-xs text-gurmaogold mb-1">${restaurant.vibe}</div>
+      <h3 class="text-lg font-bold mb-1">${restaurant.name}</h3>
+      <div class="text-white/60 text-sm mb-2">${restaurant.city} · ${restaurant.tag}</div>
+      <p class="text-white/80 text-sm mb-3">${restaurant.description}</p>
+      <a href="${restaurant.href}" class="inline-block px-4 py-2 rounded-full bg-gurmaogold text-black text-sm font-semibold hover:scale-105 transition">
+        Zobrazit detail →
+      </a>
+    </div>
+  `;
+
+  // Create popup
+  const popup = new mapboxgl.Popup({ 
+    offset: 25,
+    closeButton: true,
+    closeOnClick: false
+  }).setHTML(popupContent);
+
+  // Create marker
+  new mapboxgl.Marker(el)
+    .setLngLat([restaurant.lng, restaurant.lat])
+    .setPopup(popup)
+    .addTo(map);
+});
+
+// Fit bounds to show all markers
+const bounds = new mapboxgl.LngLatBounds();
+restaurants.forEach(r => bounds.extend([r.lng, r.lat]));
+map.fitBounds(bounds, { padding: 80 });
+</script>
+
+<script src="app.js"></script>
+<script src="auth-ui.js"></script>
+</body>
+</html>
