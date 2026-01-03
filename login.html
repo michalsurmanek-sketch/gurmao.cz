@@ -32,6 +32,14 @@
 </head>
 <body class="bg-gurmaoblack text-white overflow-x-hidden">
 
+<script type="module">
+  // Redirect if already logged in
+  const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
+  if (user?.loggedIn) {
+    window.location.href = 'feed.html';
+  }
+</script>
+
 <header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
   <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
     <a href="index.html" class="text-2xl font-bold tracking-tight">GUR<span class="text-gurmaogold">M</span>AO</a>
@@ -227,8 +235,9 @@
         loggedIn: true
       }));
       
-      alert('✅ Přihlášení úspěšné!');
-      window.location.href = 'feed.html';
+      // Redirect to collections or return URL
+      const returnUrl = new URLSearchParams(window.location.search).get('return') || 'collections.html';
+      window.location.href = returnUrl;
     } catch (error) {
       console.error('Login error:', error);
       alert('❌ Chyba při přihlášení: ' + error.message);
