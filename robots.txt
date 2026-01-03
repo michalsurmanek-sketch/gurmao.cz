@@ -1,4 +1,12 @@
+# GURMAO.cz - robots.txt
+
+# Allow all crawlers
 User-agent: *
 Allow: /
 
+# Disallow user-specific pages (no SEO value)
+Disallow: /login.html
+Disallow: /collections.html
+
+# Sitemap location
 Sitemap: https://gurmao.cz/sitemap.xml

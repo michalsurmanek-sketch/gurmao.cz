@@ -4,12 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <title>GURMAO – Nejez. Prožij.</title>
-  <meta name="description" content="Kurátorovaný svět gastronomie. Pouze vybrané restaurace, kuchaři a zažitky. Nejez. Prožij." />
-  <meta property="og:title" content="GURMAO – Nejez. Prožij." />
-  <meta property="og:description" content="Kurátorovaný svět gastronomie. Pouze vybrané restaurace, kuchaři a zažitky." />
+  
+  <!-- Primary Meta Tags -->
+  <title>GURMAO – Nejlepší restaurace v ČR | Kurátorovaný gastronomický průvodce</title>
+  <meta name="title" content="GURMAO – Nejlepší restaurace v ČR | Kurátorovaný gastronomický průvodce">
+  <meta name="description" content="Objevte vybrané restaurace v Praze, Brně a celé ČR. Fine dining, steakhousy, bistros seřazené podle nálady a atmosféry. Nejez. Prožij." />
+  <meta name="keywords" content="restaurace Praha, fine dining Brno, nejlepší restaurace ČR, gastronomie, food guide, kurátor restaurací, kam na jídlo Praha, top restaurace">
+  <meta name="author" content="GURMAO.cz">
+  <link rel="canonical" href="https://gurmao.cz/" />
+  
+  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://gurmao.cz/" />
+  <meta property="og:title" content="GURMAO – Nejlepší restaurace v ČR | Kurátorovaný gastronomický průvodce" />
+  <meta property="og:description" content="Objevte vybrané restaurace v Praze, Brně a celé ČR. Fine dining, steakhousy, bistros seřazené podle nálady a atmosféry." />
+  <meta property="og:image" content="https://gurmao.cz/og-image.jpg" />
+  <meta property="og:locale" content="cs_CZ" />
+  <meta property="og:site_name" content="GURMAO" />
+  
+  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://gurmao.cz/" />
+  <meta name="twitter:title" content="GURMAO – Nejlepší restaurace v ČR" />
+  <meta name="twitter:description" content="Kurátorovaný svět gastronomie. Pouze vybrané restaurace." />
+  <meta name="twitter:image" content="https://gurmao.cz/og-image.jpg" />
 
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -369,6 +387,31 @@
 <footer class="py-10 border-t border-white/10 text-center text-sm text-white/40">
   © 2025 GURMAO.cz · Nejez. Prožij.
 </footer>
+
+<!-- Structured Data (JSON-LD) for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "GURMAO",
+  "description": "Kurátorovaný průvodce nejlepšími restauracemi v České republice",
+  "url": "https://gurmao.cz",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://gurmao.cz/feed.html?search={search_term_string}",
+    "query-input": "required name=search_term_string"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "GURMAO",
+    "url": "https://gurmao.cz",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://gurmao.cz/favicon.svg"
+    }
+  }
+}
+</script>
 
 <script src="app.js"></script>
 <script src="auth-ui.js"></script>
