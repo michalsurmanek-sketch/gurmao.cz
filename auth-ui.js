@@ -26,19 +26,31 @@
     if (userNameMobile) userNameMobile.textContent = `Přihlášen: ${userName}`;
     
     // Check for admin role and show admin link
-    try {
-      if (window.supabase) {
-        const { data: { user: supabaseUser } } = await supabase.auth.getUser();
-        const isAdmin = supabaseUser?.user_metadata?.role === 'admin' || supabaseUser?.email === 'michalsurmanek@seznam.cz';
-        
-        if (isAdmin) {
-          // Show admin links
-          const adminLinks = document.querySelectorAll('[data-admin-only]');
-          adminLinks.forEach(link => link.classList.remove('hidden'));
+    let isAdmin = false;
+    
+    // First check: email match in localStorage
+    if (user.email === 'michalsurmanek@seznam.cz') {
+      isAdmin = true;
+    }
+    
+    // Second check: Supabase user metadata (if available)
+    if (!isAdmin) {
+      try {
+        if (window.supabase) {
+          const { data: { user: supabaseUser } } = await supabase.auth.getUser();
+          if (supabaseUser?.user_metadata?.role === 'admin') {
+            isAdmin = true;
+          }
         }
+      } catch (error) {
+        console.error('Error checking admin role:', error);
       }
-    } catch (error) {
-      console.error('Error checking admin role:', error);
+    }
+    
+    // Show admin links if user is admin
+    if (isAdmin) {
+      const adminLinks = document.querySelectorAll('[data-admin-only]');
+      adminLinks.forEach(link => link.classList.remove('hidden'));
     }
     
     // Desktop dropdown toggle
