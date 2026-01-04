@@ -25,11 +25,33 @@
     if (userNameDesktop) userNameDesktop.textContent = userName;
     if (userNameMobile) userNameMobile.textContent = `Přihlášen: ${userName}`;
     
-    // Logout handlers
-    const logoutBtnDesktop = document.getElementById('logoutBtnDesktop');
-    const logoutBtnMobile = document.getElementById('logoutBtnMobile');
+    // Desktop dropdown toggle
+    const userDropdownBtn = document.getElementById('userDropdownBtn');
+    const userDropdownMenu = document.getElementById('userDropdownMenu');
     
-    [logoutBtnDesktop, logoutBtnMobile].filter(Boolean).forEach(btn => {
+    if (userDropdownBtn && userDropdownMenu) {
+      userDropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        userDropdownMenu.classList.toggle('hidden');
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', () => {
+        if (!userDropdownMenu.classList.contains('hidden')) {
+          userDropdownMenu.classList.add('hidden');
+        }
+      });
+      
+      // Prevent closing when clicking inside dropdown
+      userDropdownMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
+    
+    // Logout handlers
+    const logoutBtns = document.querySelectorAll('[data-logout-btn]');
+    
+    logoutBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         localStorage.removeItem('gurmao_user');
         window.location.href = 'index.html';
