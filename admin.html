@@ -40,20 +40,29 @@
 
 <script src="toast.js"></script>
 <script>
-  // DEBUG: Show localStorage content before guard runs
-  const debugUser = localStorage.getItem('gurmao_user');
-  console.log('🔍 DEBUG - localStorage gurmao_user:', debugUser);
-  if (debugUser) {
-    const parsed = JSON.parse(debugUser);
-    console.log('🔍 DEBUG - Parsed user:', parsed);
-    console.log('🔍 DEBUG - Email:', parsed.email);
-    console.log('🔍 DEBUG - Is admin email?', parsed.email === 'michalsurmanek@seznam.cz');
-  } else {
-    console.log('🔍 DEBUG - No user in localStorage!');
-  }
+  // Admin access control - inline check
+  (function() {
+    const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
+    
+    // Not logged in
+    if (!user || !user.loggedIn) {
+      alert('Pro přístup do admin panelu se musíš přihlásit.\n\nBudeš přesměrován na přihlášení.');
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    // Check admin email
+    if (user.email !== 'michalsurmanek@seznam.cz') {
+      alert('Nemáš oprávnění k admin panelu.\n\nTvůj email: ' + user.email + '\nAdmin email: michalsurmanek@seznam.cz\n\nBudeš přesměrován na homepage.');
+      window.location.href = 'index.html';
+      return;
+    }
+    
+    // Access granted
+    console.log('✅ Admin přístup povolen pro:', user.email);
+  })();
 </script>
 <script type="module" src="supabase-client.js"></script>
-<script src="admin-guard.js"></script>
 
 <!-- HEADER -->
 <header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
