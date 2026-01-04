@@ -37,6 +37,9 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   
+  <!-- Tooltip Styles -->
+  <link rel="stylesheet" href="tooltip.css">
+  
   <!-- Mapbox GL JS -->
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
@@ -231,9 +234,17 @@ restaurants.forEach(restaurant => {
   el.textContent = '📍';
 
   // Create popup content
+  const vibeTooltips = {
+    '🍷 LUXE': 'Elegantní zážitek, důraz na detail, klidná atmosféra',
+    '🔥 DRAMA': 'Výrazné chutě, silná osobnost, nezapomenutelné kombinace',
+    '🌮 CHAOS': 'Uvolěněný styl, pestrost, radost z jídla bez pravidel',
+    '🌿 PURE': 'Čisté suroviny, jednoduchost, chuť v hlavní roli',
+    '👤 DARK': 'Intimní atmosféra, večerní vibe, tlumené světlo'
+  };
+  
   const popupContent = `
     <div class="min-w-[200px]">
-      <div class="text-xs text-gurmaogold mb-1">${restaurant.vibe}</div>
+      <div class="vibe-tooltip text-xs text-gurmaogold mb-1" data-tooltip="${vibeTooltips[restaurant.vibe] || ''}">${restaurant.vibe}</div>
       <h3 class="text-lg font-bold mb-1">${restaurant.name}</h3>
       <div class="text-white/60 text-sm mb-2">${restaurant.city} · ${restaurant.tag}</div>
       <p class="text-white/80 text-sm mb-3">${restaurant.description}</p>
@@ -272,5 +283,9 @@ map.fitBounds(bounds, { padding: 80 });
 
 <script src="app.js"></script>
 <script src="auth-ui.js"></script>
+
+<!-- Vibe Tooltips -->
+<script src="vibe-tooltips.js"></script>
+
 </body>
 </html>

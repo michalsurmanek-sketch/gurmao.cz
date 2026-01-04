@@ -51,6 +51,9 @@
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
+  <!-- Tooltip Styles -->
+  <link rel="stylesheet" href="tooltip.css">
+
   <style>
     body { font-family: 'Inter', sans-serif; }
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
@@ -145,12 +148,12 @@
     <h2 class="text-3xl md:text-4xl mb-8">Vyber si <span class="text-gurmaogold">vibe</span></h2>
 
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-      <div class="rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer">🔥 DRAMA</div>
-      <div class="rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer">🖤 DARK</div>
-      <div class="rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer">🌿 PURE</div>
-      <div class="rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer">🍷 LUXE</div>
-      <div class="rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer">🌮 CHAOS</div>
-      <div class="rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer">🌊 CALM</div>
+      <div class="vibe-tooltip rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer" data-tooltip="Výrazné chutě, silná osobnost, nezapomenutelné kombinace">🔥 DRAMA</div>
+      <div class="vibe-tooltip rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer" data-tooltip="Intimní atmosféra, večerní vibe, tlumené světlo">🖤 DARK</div>
+      <div class="vibe-tooltip rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer" data-tooltip="Čisté suroviny, jednoduchost, chuť v hlavní roli">🌿 PURE</div>
+      <div class="vibe-tooltip rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer" data-tooltip="Elegantní zážitek, důraz na detail, klidná atmosféra">🍷 LUXE</div>
+      <div class="vibe-tooltip rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer" data-tooltip="Uvolněný styl, pestrost, radost z jídla bez pravidel">🌮 CHAOS</div>
+      <div class="vibe-tooltip rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer" data-tooltip="Klidná atmosféra, harmonie, pohoda">🌊 CALM</div>
     </div>
   </div>
 </section>
@@ -427,5 +430,9 @@
     }
   }
 </script>
+
+<!-- Vibe Tooltips -->
+<script src="vibe-tooltips.js"></script>
+
 </body>
 </html>

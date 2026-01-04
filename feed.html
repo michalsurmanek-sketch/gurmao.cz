@@ -48,6 +48,9 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   
+  <!-- Tooltip Styles -->
+  <link rel="stylesheet" href="tooltip.css">
+  
   <!-- Toast CSS -->
   <link rel="stylesheet" href="toast.css">
 
@@ -67,8 +70,8 @@
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23d4af37' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 1.5rem center;
-      padding-right: 3.5rem;
+      background-position: right 0.5rem center;
+      padding-right: 1.75rem;
       cursor: pointer;
     }
     
@@ -81,8 +84,6 @@
       background: #0b0b0d !important;
       border: 1px solid rgba(212, 175, 55, 0.3);
       border-radius: 1rem;
-      max-height: 300px;
-      overflow-y: auto;
       z-index: 100;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
       backdrop-filter: blur(20px);
@@ -194,7 +195,7 @@
     <div class="flex items-end justify-between gap-6">
       <div>
         <h1 class="text-4xl">Feed</h1>
-        <p class="text-white/60 mt-2">Kurátorovaný svět. Minimum slov. Maximum chuti.</p>
+        <p class="text-white/60 mt-2">Vybraný svět. Minimum slov. Maximum chuti.</p>
       </div>
       <div class="flex gap-3">
         <a href="ai.html" class="px-5 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">Kam dnes podle nálady</a>
@@ -217,7 +218,7 @@
       <div class="custom-select min-w-[160px]">
         <button 
           id="cityFilterBtn" 
-          class="custom-select-trigger w-full px-5 py-3 rounded-full bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white"
+          class="custom-select-trigger w-full pl-6 pr-5 py-3 rounded-full bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white"
         >
           Všechna města
         </button>
@@ -233,7 +234,7 @@
       <div class="custom-select min-w-[160px]">
         <button 
           id="vibeFilterBtn" 
-          class="custom-select-trigger w-full px-5 py-3 rounded-full bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white"
+          class="custom-select-trigger w-full pl-6 pr-5 py-3 rounded-full bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white"
         >
           Všechny vibes
         </button>
@@ -615,6 +616,9 @@
     });
   }
 </script>
+
+<!-- Vibe Tooltips -->
+<script src="vibe-tooltips.js"></script>
 
 </body>
 </html>

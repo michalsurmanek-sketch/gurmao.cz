@@ -25,6 +25,10 @@
   </script>
 
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Tooltip Styles -->
+  <link rel="stylesheet" href="tooltip.css">
+  
   <style>
     body { font-family: 'Inter', sans-serif; }
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
@@ -75,7 +79,7 @@
   <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
 
   <div class="relative max-w-6xl mx-auto px-6 pb-20">
-    <div class="text-gurmaogold text-sm mb-3">🧑‍🍳 Head Chef · 🍷 LUXE</div>
+    <div class="text-gurmaogold text-sm mb-3">🧑‍🍳 Head Chef · <span class="vibe-tooltip" data-tooltip="Elegantní zážitek, důraz na detail, klidná atmosféra">🍷 LUXE</span></div>
     <h1 class="text-5xl md:text-7xl font-bold">Adam Noir</h1>
     <p class="text-white/70 mt-4 max-w-xl">
       Kuchař posedlý detailem, ohněm a tichem v kuchyni.
@@ -160,5 +164,9 @@
 </footer>
 
 <script src="app.js"></script>
+
+<!-- Vibe Tooltips -->
+<script src="vibe-tooltips.js"></script>
+
 </body>
 </html>

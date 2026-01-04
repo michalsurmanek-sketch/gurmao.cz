@@ -21,8 +21,14 @@ class RatingManager {
 
   // Rate a restaurant (1-5 stars)
   rate(restaurantId, stars) {
+    // Check if user is logged in
+    const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
+    if (!user?.id) {
+      throw new Error('Pro hodnocení se musíte přihlásit');
+    }
+
     if (stars < 1 || stars > 5) {
-      throw new Error('Rating must be between 1 and 5');
+      throw new Error('Hodnocení musí být mezi 1 a 5');
     }
 
     if (!this.ratings[restaurantId]) {
@@ -33,11 +39,20 @@ class RatingManager {
       };
     }
 
-    // Add user's rating (in real app, would include user ID)
+    // Check if user already rated this restaurant
+    const existingRatingIndex = this.ratings[restaurantId].ratings.findIndex(
+      r => r.userId === user.id
+    );
+
+    if (existingRatingIndex !== -1) {
+      throw new Error('Tuto restauraci jste již ohodnotili');
+    }
+
+    // Add user's rating
     this.ratings[restaurantId].ratings.push({
       stars: stars,
       timestamp: Date.now(),
-      userId: this.getCurrentUserId()
+      userId: user.id
     });
 
     // Recalculate average
@@ -49,16 +64,33 @@ class RatingManager {
 
   // Get user's current rating for a restaurant
   getUserRating(restaurantId) {
-    const userId = this.getCurrentUserId();
+    const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
+    if (!user?.id) return null;
+    
     const restaurantRatings = this.ratings[restaurantId];
     
     if (!restaurantRatings) return null;
 
-    const userRating = restaurantRatings.ratings
-      .filter(r => r.userId === userId)
-      .sort((a, b) => b.timestamp - a.timestamp)[0];
+    const userRating = restaurantRatings.ratings.find(r => r.userId === user.id);
 
     return userRating ? userRating.stars : null;
+  }
+
+  // Check if user has already rated a restaurant
+  hasUserRated(restaurantId) {
+    const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
+    if (!user?.id) return false;
+    
+    const restaurantRatings = this.ratings[restaurantId];
+    if (!restaurantRatings) return false;
+
+    return restaurantRatings.ratings.some(r => r.userId === user.id);
+  }
+
+  // Check if user is logged in
+  isUserLoggedIn() {
+    const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
+    return !!user?.id;
   }
 
   // Get average rating for a restaurant
@@ -85,18 +117,10 @@ class RatingManager {
     restaurantRatings.count = restaurantRatings.ratings.length;
   }
 
-  // Get current user ID (from localStorage or generate temporary)
+  // Get current user ID
   getCurrentUserId() {
     const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
-    if (user?.id) return user.id;
-
-    // Generate temporary user ID for anonymous users
-    let tempId = localStorage.getItem('gurmao_temp_user_id');
-    if (!tempId) {
-      tempId = 'temp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('gurmao_temp_user_id', tempId);
-    }
-    return tempId;
+    return user?.id || null;
   }
 
   // Render star rating (static display)
@@ -134,12 +158,47 @@ class RatingManager {
 
   // Render interactive star rating
   renderInteractiveStars(restaurantId, currentRating = 0) {
+    const isLoggedIn = this.isUserLoggedIn();
+    const hasRated = this.hasUserRated(restaurantId);
+    const userRating = this.getUserRating(restaurantId);
+    const finalRating = userRating || currentRating;
+    
+    // If user already rated, show locked rating
+    if (hasRated) {
+      const html = `
+        <div class="rating-locked inline-flex items-center gap-1" data-restaurant="${restaurantId}">
+          ${[1, 2, 3, 4, 5].map(star => `
+            <span 
+              class="text-2xl ${star <= finalRating ? 'text-gurmaogold' : 'text-white/20'}"
+              title="Již jste ohodnotili ${finalRating} ${finalRating === 1 ? 'hvězdičkou' : finalRating < 5 ? 'hvězdičkami' : 'hvězdičkami'}"
+            >⭐</span>
+          `).join('')}
+          <span class="ml-2 text-xs text-white/40">Již ohodnoceno</span>
+        </div>
+      `;
+      return html;
+    }
+    
+    // If not logged in, show login prompt
+    if (!isLoggedIn) {
+      const html = `
+        <div class="rating-login inline-flex items-center gap-2">
+          ${[1, 2, 3, 4, 5].map(star => `
+            <span class="text-2xl text-white/10">⭐</span>
+          `).join('')}
+          <a href="login.html" class="ml-2 text-xs text-gurmaogold hover:underline">Přihlásit se k hodnocení</a>
+        </div>
+      `;
+      return html;
+    }
+    
+    // Show interactive rating
     const html = `
       <div class="rating-interactive inline-flex items-center gap-1" data-restaurant="${restaurantId}">
         ${[1, 2, 3, 4, 5].map(star => `
           <button 
             type="button"
-            class="rating-star text-2xl transition-all hover:scale-110 ${star <= currentRating ? 'text-gurmaogold' : 'text-white/20'}"
+            class="rating-star text-2xl transition-all hover:scale-110 ${star <= finalRating ? 'text-gurmaogold' : 'text-white/20'}"
             data-star="${star}"
             title="${star} ${star === 1 ? 'hvězdička' : star < 5 ? 'hvězdičky' : 'hvězdiček'}"
           >⭐</button>
@@ -160,7 +219,10 @@ class RatingManager {
       const stars = parseInt(star.dataset.star);
 
       try {
-        // Visual feedback
+        // Save rating
+        const result = this.rate(restaurantId, stars);
+        
+        // Update UI to locked state
         const allStars = container.querySelectorAll('.rating-star');
         allStars.forEach((s, idx) => {
           if (idx < stars) {
@@ -170,10 +232,17 @@ class RatingManager {
             s.classList.add('text-white/20');
             s.classList.remove('text-gurmaogold');
           }
+          // Disable buttons
+          s.disabled = true;
+          s.style.cursor = 'default';
+          s.classList.remove('hover:scale-110');
         });
-
-        // Save rating
-        const result = this.rate(restaurantId, stars);
+        
+        // Add locked message
+        const lockedMsg = document.createElement('span');
+        lockedMsg.className = 'ml-2 text-xs text-white/40';
+        lockedMsg.textContent = 'Již ohodnoceno';
+        container.appendChild(lockedMsg);
         
         // Show toast
         if (window.toastSuccess) {
@@ -188,7 +257,7 @@ class RatingManager {
       } catch (error) {
         console.error('Rating error:', error);
         if (window.toastError) {
-          window.toastError('Nepodařilo se ohodnotit');
+          window.toastError(error.message || 'Nepodařilo se ohodnotit');
         }
       }
     });

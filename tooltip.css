@@ -1,0 +1,83 @@
+/* Tooltip styles */
+.vibe-tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+}
+
+.vibe-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  
+  background: rgba(0, 0, 0, 0.95);
+  color: #d4af37;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 400;
+  white-space: nowrap;
+  
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.15);
+  
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+}
+
+.vibe-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 3px);
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  
+  border: 7px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.95);
+  
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1001;
+}
+
+.vibe-tooltip:hover::after,
+.vibe-tooltip:hover::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Alternative tooltip positions for edge cases */
+.vibe-tooltip.tooltip-bottom::after {
+  bottom: auto;
+  top: calc(100% + 10px);
+  transform: translateX(-50%) translateY(-5px);
+}
+
+.vibe-tooltip.tooltip-bottom::before {
+  bottom: auto;
+  top: calc(100% + 3px);
+  border-top-color: transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.95);
+  transform: translateX(-50%) translateY(-5px);
+}
+
+.vibe-tooltip.tooltip-bottom:hover::after,
+.vibe-tooltip.tooltip-bottom:hover::before {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .vibe-tooltip::after {
+    font-size: 12px;
+    padding: 8px 12px;
+    max-width: 200px;
+    white-space: normal;
+    text-align: center;
+  }
+}
