@@ -622,34 +622,9 @@
   © 2025 GURMAO.cz · Nejez. Prožij.
 </footer>
 
+<script type="module" src="supabase-client.js"></script>
 <script src="app.js"></script>
-
-<!-- User authentication UI -->
-<script>
-  // Check if user is logged in
-  const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
-  
-  if (user && user.loggedIn) {
-    // Show user menu
-    document.getElementById('userMenuDesktop').classList.remove('hidden');
-    document.getElementById('userMenuMobile').classList.remove('hidden');
-    document.getElementById('loginLinkDesktop').classList.add('hidden');
-    document.getElementById('loginLinkMobile').classList.add('hidden');
-    
-    // Display user name
-    const userName = user.name || user.email.split('@')[0];
-    document.getElementById('userNameDesktop').textContent = userName;
-    document.getElementById('userNameMobile').textContent = `Přihlášen: ${userName}`;
-    
-    // Logout handlers
-    [document.getElementById('logoutBtnDesktop'), document.getElementById('logoutBtnMobile')].forEach(btn => {
-      btn.addEventListener('click', () => {
-        localStorage.removeItem('gurmao_user');
-        window.location.href = 'index.html';
-      });
-    });
-  }
-</script>
+<script src="auth-ui.js"></script>
 
 </body>
 </html>
