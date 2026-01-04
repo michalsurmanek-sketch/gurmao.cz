@@ -10,8 +10,10 @@
   console.log('🔒 Admin Guard: User from localStorage:', localUser);
   
   if (!localUser || !localUser.loggedIn) {
-    console.warn('🔒 Admin Guard: No user logged in, redirecting to login');
-    window.location.href = 'login.html';
+    console.warn('🔒 Admin Guard: No user logged in');
+    // TEMPORARILY DISABLED FOR DEBUG
+    // window.location.href = 'login.html';
+    alert('DEBUG: Nejsi přihlášený! localStorage: ' + localStorage.getItem('gurmao_user'));
     return;
   }
 
@@ -27,6 +29,9 @@
   // If not admin email, block access
   console.warn('❌ Admin Guard: Access denied for', localUser.email);
   
+  // TEMPORARILY DISABLED FOR DEBUG
+  alert('DEBUG: Tvůj email "' + localUser.email + '" není admin email!');
+  /*
   if (window.toast) {
     window.toast.show('❌ Nemáš oprávnění k admin panelu', 'error');
   }
@@ -34,4 +39,5 @@
   setTimeout(() => {
     window.location.href = 'index.html';
   }, 2000);
+  */
 })();

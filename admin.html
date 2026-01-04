@@ -39,6 +39,19 @@
 <body class="bg-gurmaoblack text-white">
 
 <script src="toast.js"></script>
+<script>
+  // DEBUG: Show localStorage content before guard runs
+  const debugUser = localStorage.getItem('gurmao_user');
+  console.log('🔍 DEBUG - localStorage gurmao_user:', debugUser);
+  if (debugUser) {
+    const parsed = JSON.parse(debugUser);
+    console.log('🔍 DEBUG - Parsed user:', parsed);
+    console.log('🔍 DEBUG - Email:', parsed.email);
+    console.log('🔍 DEBUG - Is admin email?', parsed.email === 'michalsurmanek@seznam.cz');
+  } else {
+    console.log('🔍 DEBUG - No user in localStorage!');
+  }
+</script>
 <script type="module" src="supabase-client.js"></script>
 <script src="admin-guard.js"></script>
 
