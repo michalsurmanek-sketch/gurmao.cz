@@ -45,6 +45,58 @@
   <style>
     body { font-family: 'Inter', sans-serif; }
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
+    
+    /* Custom dropdown */
+    .custom-select {
+      position: relative;
+    }
+    
+    .custom-select-trigger {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23d4af37' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.5rem center;
+      padding-right: 1.75rem;
+      cursor: pointer;
+    }
+    
+    .custom-options {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: 0.5rem;
+      background: #0b0b0d !important;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 1rem;
+      z-index: 100;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(20px);
+    }
+    
+    .custom-option {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #ffffff !important;
+      background: transparent !important;
+    }
+    
+    .custom-option:hover {
+      background: rgba(212, 175, 55, 0.15) !important;
+      color: #d4af37 !important;
+    }
+    
+    .custom-option:first-child {
+      border-radius: 1rem 1rem 0 0;
+    }
+    
+    .custom-option:last-child {
+      border-radius: 0 0 1rem 1rem;
+    }
   </style>
 </head>
 <body class="bg-gurmaoblack text-white overflow-x-hidden">
@@ -114,15 +166,25 @@
           <label class="block text-sm font-semibold mb-2">
             <span class="text-gurmaogold">🎭</span> Nálada
           </label>
-          <select name="mood" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition">
-            <option value="">-- Vyber náladu --</option>
-            <option value="romantika">💕 Romantika</option>
-            <option value="oslava">🎉 Oslava</option>
-            <option value="business">💼 Business</option>
-            <option value="kamarádi">👥 S kamarády</option>
-            <option value="rychle">⚡ Rychle</option>
-            <option value="klid">🧘 Klid a pohoda</option>
-          </select>
+          <input type="hidden" name="mood" id="moodValue" value="">
+          <div class="custom-select">
+            <button 
+              type="button"
+              id="moodBtn" 
+              class="custom-select-trigger w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white"
+            >
+              -- Vyber náladu --
+            </button>
+            <div id="moodOptions" class="custom-options hidden">
+              <div class="custom-option" data-value="">-- Vyber náladu --</div>
+              <div class="custom-option" data-value="romantika">💕 Romantika</div>
+              <div class="custom-option" data-value="oslava">🎉 Oslava</div>
+              <div class="custom-option" data-value="business">💼 Business</div>
+              <div class="custom-option" data-value="kamarádi">👥 S kamarády</div>
+              <div class="custom-option" data-value="rychle">⚡ Rychle</div>
+              <div class="custom-option" data-value="klid">🧘 Klid a pohoda</div>
+            </div>
+          </div>
         </div>
 
         <!-- Occasion -->
@@ -130,16 +192,26 @@
           <label class="block text-sm font-semibold mb-2">
             <span class="text-gurmaogold">🎯</span> Příležitost
           </label>
-          <select name="occasion" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition">
-            <option value="">-- Vyber příležitost --</option>
-            <option value="rande">💑 Rande</option>
-            <option value="výročí">💍 Výročí</option>
-            <option value="narozeniny">🎂 Narozeniny</option>
-            <option value="business dinner">🍽️ Business dinner</option>
-            <option value="oběd">🥗 Oběd</option>
-            <option value="páteční večer">🍻 Páteční večer</option>
-            <option value="party">🎊 Party</option>
-          </select>
+          <input type="hidden" name="occasion" id="occasionValue" value="">
+          <div class="custom-select">
+            <button 
+              type="button"
+              id="occasionBtn" 
+              class="custom-select-trigger w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white"
+            >
+              -- Vyber příležitost --
+            </button>
+            <div id="occasionOptions" class="custom-options hidden">
+              <div class="custom-option" data-value="">-- Vyber příležitost --</div>
+              <div class="custom-option" data-value="rande">💑 Rande</div>
+              <div class="custom-option" data-value="výročí">💍 Výročí</div>
+              <div class="custom-option" data-value="narozeniny">🎂 Narozeniny</div>
+              <div class="custom-option" data-value="business dinner">🍽️ Business dinner</div>
+              <div class="custom-option" data-value="oběd">🥗 Oběd</div>
+              <div class="custom-option" data-value="páteční večer">🍻 Páteční večer</div>
+              <div class="custom-option" data-value="party">🎊 Party</div>
+            </div>
+          </div>
         </div>
 
         <!-- Group Size -->
@@ -147,14 +219,24 @@
           <label class="block text-sm font-semibold mb-2">
             <span class="text-gurmaogold">👥</span> Počet lidí
           </label>
-          <select name="groupSize" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition">
-            <option value="">-- Kolik vás bude? --</option>
-            <option value="1">1 (sólo)</option>
-            <option value="2">2 lidi</option>
-            <option value="4">4 lidi</option>
-            <option value="6">6 lidí</option>
-            <option value="8">8+ lidí</option>
-          </select>
+          <input type="hidden" name="groupSize" id="groupSizeValue" value="">
+          <div class="custom-select">
+            <button 
+              type="button"
+              id="groupSizeBtn" 
+              class="custom-select-trigger w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white"
+            >
+              -- Kolik vás bude? --
+            </button>
+            <div id="groupSizeOptions" class="custom-options hidden">
+              <div class="custom-option" data-value="">-- Kolik vás bude? --</div>
+              <div class="custom-option" data-value="1">1 (sólo)</div>
+              <div class="custom-option" data-value="2">2 lidi</div>
+              <div class="custom-option" data-value="4">4 lidi</div>
+              <div class="custom-option" data-value="6">6 lidí</div>
+              <div class="custom-option" data-value="8">8+ lidí</div>
+            </div>
+          </div>
         </div>
 
         <!-- City -->
@@ -162,12 +244,22 @@
           <label class="block text-sm font-semibold mb-2">
             <span class="text-gurmaogold">📍</span> Město
           </label>
-          <select name="city" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition">
-            <option value="">-- Kde hledáš? --</option>
-            <option value="Praha">Praha</option>
-            <option value="Brno">Brno</option>
-            <option value="Ostrava">Ostrava</option>
-          </select>
+          <input type="hidden" name="city" id="cityValue" value="">
+          <div class="custom-select">
+            <button 
+              type="button"
+              id="cityBtn" 
+              class="custom-select-trigger w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white"
+            >
+              -- Kde hledáš? --
+            </button>
+            <div id="cityOptions" class="custom-options hidden">
+              <div class="custom-option" data-value="">-- Kde hledáš? --</div>
+              <div class="custom-option" data-value="Praha">Praha</div>
+              <div class="custom-option" data-value="Brno">Brno</div>
+              <div class="custom-option" data-value="Ostrava">Ostrava</div>
+            </div>
+          </div>
         </div>
 
         <!-- Price Level -->
@@ -175,13 +267,23 @@
           <label class="block text-sm font-semibold mb-2">
             <span class="text-gurmaogold">💰</span> Cenová relace
           </label>
-          <select name="priceLevel" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition">
-            <option value="">-- Rozpočet --</option>
-            <option value="1">💵 Nízká (do 300 Kč)</option>
-            <option value="2">💵💵 Střední (300-600 Kč)</option>
-            <option value="3">💵💵💵 Vyšší (600-1000 Kč)</option>
-            <option value="4">💵💵💵💵 Premium (1000+ Kč)</option>
-          </select>
+          <input type="hidden" name="priceLevel" id="priceLevelValue" value="">
+          <div class="custom-select">
+            <button 
+              type="button"
+              id="priceLevelBtn" 
+              class="custom-select-trigger w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white"
+            >
+              -- Rozpočet --
+            </button>
+            <div id="priceLevelOptions" class="custom-options hidden">
+              <div class="custom-option" data-value="">-- Rozpočet --</div>
+              <div class="custom-option" data-value="1">💵 Nízká (do 300 Kč)</div>
+              <div class="custom-option" data-value="2">💵💵 Střední (300-600 Kč)</div>
+              <div class="custom-option" data-value="3">💵💵💵 Vyšší (600-1000 Kč)</div>
+              <div class="custom-option" data-value="4">💵💵💵💵 Premium (1000+ Kč)</div>
+            </div>
+          </div>
         </div>
 
         <!-- Free Text -->
@@ -226,6 +328,49 @@
 <footer class="py-10 border-t border-white/10 text-center text-sm text-white/40">
   © 2025 GURMAO.cz · Nejez. Prožij.
 </footer>
+
+<script>
+// Custom dropdown functionality
+function initCustomDropdown(btnId, optionsId, hiddenInputId) {
+  const btn = document.getElementById(btnId);
+  const options = document.getElementById(optionsId);
+  const hiddenInput = document.getElementById(hiddenInputId);
+  
+  if (!btn || !options || !hiddenInput) return;
+  
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    // Close other dropdowns
+    document.querySelectorAll('.custom-options').forEach(o => {
+      if (o !== options) o.classList.add('hidden');
+    });
+    options.classList.toggle('hidden');
+  });
+  
+  options.querySelectorAll('.custom-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const value = opt.dataset.value;
+      btn.textContent = opt.textContent;
+      options.classList.add('hidden');
+      hiddenInput.value = value;
+    });
+  });
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', () => {
+  document.querySelectorAll('.custom-options').forEach(o => o.classList.add('hidden'));
+});
+
+// Initialize all dropdowns
+document.addEventListener('DOMContentLoaded', () => {
+  initCustomDropdown('moodBtn', 'moodOptions', 'moodValue');
+  initCustomDropdown('occasionBtn', 'occasionOptions', 'occasionValue');
+  initCustomDropdown('groupSizeBtn', 'groupSizeOptions', 'groupSizeValue');
+  initCustomDropdown('cityBtn', 'cityOptions', 'cityValue');
+  initCustomDropdown('priceLevelBtn', 'priceLevelOptions', 'priceLevelValue');
+});
+</script>
 
 <script src="ai-recommendations.js"></script>
 <script src="app.js"></script>
