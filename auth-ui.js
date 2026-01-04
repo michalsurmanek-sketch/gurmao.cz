@@ -1,7 +1,7 @@
 // User Authentication UI Handler
 // Displays logged in user menu and logout button
 
-(function initAuthUI() {
+(async function initAuthUI() {
   // Check if user is logged in
   const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
   
@@ -24,6 +24,22 @@
     
     if (userNameDesktop) userNameDesktop.textContent = userName;
     if (userNameMobile) userNameMobile.textContent = `Přihlášen: ${userName}`;
+    
+    // Check for admin role and show admin link
+    try {
+      if (window.supabase) {
+        const { data: { user: supabaseUser } } = await supabase.auth.getUser();
+        const isAdmin = supabaseUser?.user_metadata?.role === 'admin' || supabaseUser?.email === 'michalsurmanek@seznam.cz';
+        
+        if (isAdmin) {
+          // Show admin links
+          const adminLinks = document.querySelectorAll('[data-admin-only]');
+          adminLinks.forEach(link => link.classList.remove('hidden'));
+        }
+      }
+    } catch (error) {
+      console.error('Error checking admin role:', error);
+    }
     
     // Desktop dropdown toggle
     const userDropdownBtn = document.getElementById('userDropdownBtn');
