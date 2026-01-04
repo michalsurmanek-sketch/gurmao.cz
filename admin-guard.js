@@ -10,31 +10,41 @@
     return;
   }
 
-  // Check if user has admin role in Supabase
-  try {
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
-      console.error('Auth error:', authError);
-      window.location.href = 'login.html';
-      return;
-    }
-
-    // Check user metadata for admin role
-    const isAdmin = user.user_metadata?.role === 'admin' || user.email === 'admin@gurmao.cz';
-    
-    if (!isAdmin) {
-      // Not an admin - show error and redirect
-      if (window.toast) {
-        window.toast.show('❌ Nemáš oprávnění k admin panelu', 'error');
+  // Check for admin access
+  let isAdmin = false;
+  
+  // Primary check: email match in localStorage
+  if (localUser.email === 'michalsurmanek@seznam.cz') {
+    isAdmin = true;
+  }
+  
+  // Secondary check: Supabase user metadata (if available)
+  if (!isAdmin) {
+    try {
+      if (window.supabase) {
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        
+        if (!authError && user) {
+          if (user.user_metadata?.role === 'admin' || user.email === 'michalsurmanek@seznam.cz') {
+            isAdmin = true;
+          }
+        }
       }
-      
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 2000);
+    } catch (error) {
+      console.error('Supabase check failed:', error);
+      // Continue to final check
     }
-  } catch (error) {
-    console.error('Admin check failed:', error);
-    window.location.href = 'index.html';
+  }
+  
+  // Final check: deny if not admin
+  if (!isAdmin) {
+    // Not an admin - show error and redirect
+    if (window.toast) {
+      window.toast.show('❌ Nemáš oprávnění k admin panelu', 'error');
+    }
+    
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 2000);
   }
 })();
