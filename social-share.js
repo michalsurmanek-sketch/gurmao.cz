@@ -218,7 +218,7 @@ class SocialShareManager {
         data-restaurant='${JSON.stringify(restaurant)}'
         title="Sdílet"
       >
-        📤
+        ⋮
       </button>
     `;
   }
