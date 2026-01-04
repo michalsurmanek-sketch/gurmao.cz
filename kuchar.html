@@ -108,6 +108,9 @@
             </button>
           </div>
         </div>
+        
+        <!-- Rating Section -->
+        <div data-chef-rating="adam-noir"></div>
       </div>
     </div>
 
@@ -134,6 +137,9 @@
             </button>
           </div>
         </div>
+        
+        <!-- Rating Section -->
+        <div data-chef-rating="marek-ember"></div>
       </div>
     </div>
 
@@ -160,6 +166,9 @@
             </button>
           </div>
         </div>
+        
+        <!-- Rating Section -->
+        <div data-chef-rating="sofia-calle"></div>
       </div>
     </div>
 
@@ -174,5 +183,73 @@
 <script src="app.js"></script>
 <script src="auth-ui.js"></script>
 <script src="social-share.js"></script>
+<script src="rating.js"></script>
+
+<script>
+// Initialize ratings for chefs
+document.addEventListener('DOMContentLoaded', () => {
+  const chefIds = ['adam-noir', 'marek-ember', 'sofia-calle'];
+  
+  chefIds.forEach(chefId => {
+    const container = document.querySelector(`[data-chef-rating="${chefId}"]`);
+    if (container) {
+      const stats = window.ratingManager.getRestaurantRating(chefId);
+      const userRating = window.ratingManager.getUserRating(chefId);
+      
+      let html = '<div class="border-t border-white/10 pt-3 mt-3">';
+      
+      if (stats.average > 0) {
+        html += `
+          <div class="flex items-center gap-2 mb-2">
+            ${window.ratingManager.renderStars(stats.average, 'sm')}
+            <span class="text-xs text-white/60">${stats.average.toFixed(1)} (${stats.count})</span>
+          </div>
+        `;
+      } else {
+        html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
+      }
+      
+      html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
+      html += window.ratingManager.renderInteractiveStars(chefId, userRating || 0);
+      html += '</div>';
+      
+      container.innerHTML = html;
+    }
+  });
+});
+</script>
+</body>
+</html>// Initialize ratings for chefs
+document.addEventListener('DOMContentLoaded', () => {
+  const chefIds = ['adam-noir', 'marek-ember', 'sofia-calle'];
+  
+  chefIds.forEach(chefId => {
+    const container = document.querySelector(`[data-chef-rating="${chefId}"]`);
+    if (container) {
+      const stats = window.ratingManager.getRestaurantRating(chefId);
+      const userRating = window.ratingManager.getUserRating(chefId);
+      
+      let html = '<div class="border-t border-white/10 pt-3 mt-3">';
+      
+      if (stats.average > 0) {
+        html += `
+          <div class="flex items-center gap-2 mb-2">
+            ${window.ratingManager.renderStars(stats.average, 'sm')}
+            <span class="text-xs text-white/60">${stats.average.toFixed(1)} (${stats.count})</span>
+          </div>
+        `;
+      } else {
+        html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
+      }
+      
+      html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
+      html += window.ratingManager.renderInteractiveStars(chefId, userRating || 0);
+      html += '</div>';
+      
+      container.innerHTML = html;
+    }
+  });
+});
+</script>
 </body>
 </html>

@@ -125,6 +125,9 @@
             </button>
           </div>
         </div>
+        
+        <!-- Rating Section -->
+        <div data-restaurant-rating="noir-table"></div>
       </div>
     </div>
 
@@ -151,6 +154,9 @@
             </button>
           </div>
         </div>
+        
+        <!-- Rating Section -->
+        <div data-restaurant-rating="ember-steak"></div>
       </div>
     </div>
 
@@ -177,6 +183,9 @@
             </button>
           </div>
         </div>
+        
+        <!-- Rating Section -->
+        <div data-restaurant-rating="la-calle"></div>
       </div>
     </div>
 
@@ -191,6 +200,41 @@
 <script src="app.js"></script>
 <script src="auth-ui.js"></script>
 <script src="social-share.js"></script>
+<script src="rating.js"></script>
+
+<script>
+// Initialize ratings for restaurants
+document.addEventListener('DOMContentLoaded', () => {
+  const restaurantIds = ['noir-table', 'ember-steak', 'la-calle'];
+  
+  restaurantIds.forEach(restaurantId => {
+    const container = document.querySelector(`[data-restaurant-rating="${restaurantId}"]`);
+    if (container) {
+      const stats = window.ratingManager.getRestaurantRating(restaurantId);
+      const userRating = window.ratingManager.getUserRating(restaurantId);
+      
+      let html = '<div class="border-t border-white/10 pt-3 mt-3">';
+      
+      if (stats.average > 0) {
+        html += `
+          <div class="flex items-center gap-2 mb-2">
+            ${window.ratingManager.renderStars(stats.average, 'sm')}
+            <span class="text-xs text-white/60">${stats.average.toFixed(1)} (${stats.count})</span>
+          </div>
+        `;
+      } else {
+        html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
+      }
+      
+      html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
+      html += window.ratingManager.renderInteractiveStars(restaurantId, userRating || 0);
+      html += '</div>';
+      
+      container.innerHTML = html;
+    }
+  });
+});
+</script>
 
 <!-- Vibe Tooltips -->
 <script src="vibe-tooltips.js"></script>
