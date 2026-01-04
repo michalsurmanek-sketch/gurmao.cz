@@ -1,7 +1,7 @@
 // Admin Guard - Protect admin routes
 // Only allows users with admin role to access
 
-(async function adminGuard() {
+(function adminGuard() {
   // First check if user is logged in
   const localUser = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
   
@@ -10,41 +10,21 @@
     return;
   }
 
-  // Check for admin access
-  let isAdmin = false;
-  
   // Primary check: email match in localStorage
+  // If email matches, allow access immediately
   if (localUser.email === 'michalsurmanek@seznam.cz') {
-    isAdmin = true;
+    console.log('Admin access granted via email match');
+    return; // Allow access
   }
   
-  // Secondary check: Supabase user metadata (if available)
-  if (!isAdmin) {
-    try {
-      if (window.supabase) {
-        const { data: { user }, error: authError } = await supabase.auth.getUser();
-        
-        if (!authError && user) {
-          if (user.user_metadata?.role === 'admin' || user.email === 'michalsurmanek@seznam.cz') {
-            isAdmin = true;
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Supabase check failed:', error);
-      // Continue to final check
-    }
+  // If not admin email, block access
+  console.warn('Access denied: not an admin email');
+  
+  if (window.toast) {
+    window.toast.show('❌ Nemáš oprávnění k admin panelu', 'error');
   }
   
-  // Final check: deny if not admin
-  if (!isAdmin) {
-    // Not an admin - show error and redirect
-    if (window.toast) {
-      window.toast.show('❌ Nemáš oprávnění k admin panelu', 'error');
-    }
-    
-    setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 2000);
-  }
+  setTimeout(() => {
+    window.location.href = 'index.html';
+  }, 2000);
 })();
