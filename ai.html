@@ -353,15 +353,11 @@ function initCustomDropdown(btnId, optionsId, hiddenInputId) {
     // Scroll into view when opening
     if (isOpening) {
       setTimeout(() => {
-        btn.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start',
-          inline: 'nearest'
+        const elementTop = btn.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({ 
+          top: elementTop - 100, 
+          behavior: 'smooth' 
         });
-        // Additional scroll offset
-        setTimeout(() => {
-          window.scrollBy({ top: -100, behavior: 'smooth' });
-        }, 100);
       }, 50);
     }
   });
