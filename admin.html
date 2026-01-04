@@ -99,15 +99,20 @@
   <div id="content-add" class="tab-content hidden">
     <div class="max-w-3xl mx-auto">
       <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
-        <h2 class="text-2xl mb-6">Přidat restauraci</h2>
+        <h2 class="text-2xl mb-6">
+          <span id="formTitle">Přidat restauraci</span>
+        </h2>
 
         <form id="addRestaurantForm" class="space-y-6">
+          <input type="hidden" name="id" id="editId" />
+          
           <!-- Name -->
           <div>
             <label class="block text-sm font-semibold mb-2">Název restaurace *</label>
             <input 
               type="text" 
               name="name" 
+              id="inputName"
               required
               placeholder="např. Noir Table"
               class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
@@ -119,6 +124,7 @@
             <label class="block text-sm font-semibold mb-2">Vibe *</label>
             <select 
               name="vibe" 
+              id="inputVibe"
               required
               class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
             >
@@ -138,6 +144,7 @@
               <label class="block text-sm font-semibold mb-2">Město *</label>
               <select 
                 name="city" 
+                id="inputCity"
                 required
                 class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
               >
@@ -158,6 +165,7 @@
               <input 
                 type="text" 
                 name="tag" 
+                id="inputTag"
                 required
                 placeholder="např. fine dining"
                 class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
@@ -171,6 +179,7 @@
             <input 
               type="text" 
               name="description" 
+              id="inputDescription"
               required
               placeholder="např. Místo, kde se čas zpomalí. Oheň, ticho, precizní servis."
               class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
@@ -185,6 +194,7 @@
               <input 
                 type="number" 
                 name="lat" 
+                id="inputLat"
                 step="0.000001"
                 required
                 placeholder="Latitude (např. 50.0875)"
@@ -193,6 +203,7 @@
               <input 
                 type="number" 
                 name="lng" 
+                id="inputLng"
                 step="0.000001"
                 required
                 placeholder="Longitude (např. 14.4213)"
@@ -208,6 +219,7 @@
             <input 
               type="url" 
               name="image_url" 
+              id="inputImageUrl"
               placeholder="https://..."
               class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
             />
@@ -220,6 +232,7 @@
             <input 
               type="text" 
               name="slug" 
+              id="inputSlug"
               required
               placeholder="noir-table"
               class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
@@ -231,11 +244,13 @@
           <div class="flex gap-4 pt-4">
             <button 
               type="submit" 
+              id="submitBtn"
               class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
-              ➕ Přidat restauraci
+              <span id="submitText">➕ Přidat restauraci</span>
             </button>
             <button 
-              type="reset" 
+              type="button"
+              onclick="resetForm()"
               class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
               ↺ Reset
             </button>
@@ -334,11 +349,12 @@ async function loadRestaurants() {
   }
 }
 
-// Add restaurant
+// Add/Update restaurant
 document.getElementById('addRestaurantForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   
   const formData = new FormData(e.target);
+  const editId = formData.get('id');
   const data = {
     name: formData.get('name'),
     vibe: formData.get('vibe'),
@@ -352,22 +368,31 @@ document.getElementById('addRestaurantForm').addEventListener('submit', async (e
   };
 
   try {
-    const { error } = await supabase
-      .from('restaurants')
-      .insert([data]);
+    if (editId) {
+      // Update existing
+      const { error } = await supabase
+        .from('restaurants')
+        .update(data)
+        .eq('id', editId);
 
-    if (error) throw error;
+      if (error) throw error;
+      window.toast.show('✅ Restaurace aktualizována!', 'success');
+    } else {
+      // Insert new
+      const { error } = await supabase
+        .from('restaurants')
+        .insert([data]);
 
-    window.toast.show('✅ Restaurace přidána!', 'success');
-    e.target.reset();
-    if (marker) marker.remove();
-    
-    // Switch to list and reload
+      if (error) throw error;
+      window.toast.show('✅ Restaurace přidána!', 'success');
+    }
+
+    resetForm();
     switchTab('restaurants');
     loadRestaurants();
   } catch (err) {
-    console.error('Error adding restaurant:', err);
-    window.toast.show('Chyba při přidávání: ' + err.message, 'error');
+    console.error('Error saving restaurant:', err);
+    window.toast.show('Chyba: ' + err.message, 'error');
   }
 });
 
@@ -391,10 +416,55 @@ async function deleteRestaurant(id, name) {
   }
 }
 
-// Edit restaurant (placeholder)
-function editRestaurant(id) {
-  window.toast.show('Editace zatím není implementována', 'info');
-  // TODO: Implement edit functionality
+// Edit restaurant
+async function editRestaurant(id) {
+  try {
+    const { data, error } = await supabase
+      .from('restaurants')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+
+    // Fill form
+    document.getElementById('editId').value = data.id;
+    document.getElementById('inputName').value = data.name;
+    document.getElementById('inputVibe').value = data.vibe;
+    document.getElementById('inputCity').value = data.city;
+    document.getElementById('inputTag').value = data.tag;
+    document.getElementById('inputDescription').value = data.description;
+    document.getElementById('inputLat').value = data.lat;
+    document.getElementById('inputLng').value = data.lng;
+    document.getElementById('inputImageUrl').value = data.image_url || '';
+    document.getElementById('inputSlug').value = data.slug;
+
+    // Update map marker
+    if (marker) marker.remove();
+    marker = new mapboxgl.Marker({ color: '#d4af37' })
+      .setLngLat([data.lng, data.lat])
+      .addTo(coordMap);
+    coordMap.flyTo({ center: [data.lng, data.lat], zoom: 12 });
+
+    // Update UI
+    document.getElementById('formTitle').textContent = 'Upravit restauraci';
+    document.getElementById('submitText').textContent = '💾 Uložit změny';
+
+    // Switch to form tab
+    switchTab('add');
+  } catch (err) {
+    console.error('Error loading restaurant:', err);
+    window.toast.show('Chyba při načítání: ' + err.message, 'error');
+  }
+}
+
+// Reset form
+function resetForm() {
+  document.getElementById('addRestaurantForm').reset();
+  document.getElementById('editId').value = '';
+  document.getElementById('formTitle').textContent = 'Přidat restauraci';
+  document.getElementById('submitText').textContent = '➕ Přidat restauraci';
+  if (marker) marker.remove();
 }
 
 // Logout
