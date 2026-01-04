@@ -328,8 +328,13 @@ coordMap.on('click', (e) => {
 
 // Load restaurants
 async function loadRestaurants() {
+  // Wait for supabase to be available
+  while (!window.supabase) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  
   try {
-    const { data, error } = await supabase
+    const { data, error } = await window.supabase
       .from('restaurants')
       .select('*')
       .order('created_at', { ascending: false });
@@ -491,7 +496,7 @@ function resetForm() {
 
 // Logout
 document.getElementById('logoutBtn').addEventListener('click', async () => {
-  await supabase.auth.signOut();
+  await window.window.supabase.auth.signOut();
   window.location.href = 'login.html';
 });
 
