@@ -32,9 +32,8 @@
    ```sql
    UPDATE auth.users
    SET raw_user_meta_data = raw_user_meta_data || '{"role": "admin"}'::jsonb
-   WHERE email = 'tvuj-email@example.com';
+   WHERE email = 'michalsurmanek@seznam.cz';
    ```
-   - Nahraď `tvuj-email@example.com` skutečným emailem admin uživatele
 
 ### Metoda 3: Při registraci (Pro development)
 
@@ -110,7 +109,7 @@ USING (
 ```sql
 UPDATE auth.users
 SET raw_user_meta_data = raw_user_meta_data - 'role'
-WHERE email = 'uzivatel@example.com';
+WHERE email = 'michalsurmanek@seznam.cz';
 ```
 
 ### Zobrazit všechny adminy
