@@ -197,9 +197,13 @@
             <div class="font-semibold text-sm">🔒 Admin Panel</div>
             <div class="text-xs text-white/60">Správa obsahu</div>
           </a>
-          <a href="#" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
+          <a href="profile.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
             <div class="font-semibold text-sm">Můj účet</div>
             <div class="text-xs text-white/60">Nastavení profilu</div>
+          </a>
+          <a href="admin.html" data-admin-only class="hidden px-4 py-3 rounded-2xl bg-gurmaogold/20 hover:bg-gurmaogold/30 block mb-2">
+            <div class="font-semibold text-sm">🔒 Admin Panel</div>
+            <div class="text-xs text-white/60">Správa obsahu</div>
           </a>
           <button data-logout-btn class="w-full px-4 py-3 rounded-2xl border border-gurmaored text-gurmaored hover:bg-gurmaored hover:text-white transition">
             <div class="font-semibold text-sm">Odhlásit se</div>
@@ -625,6 +629,14 @@
 <script type="module" src="supabase-client.js"></script>
 <script src="app.js"></script>
 <script src="auth-ui.js"></script>
+<script src="onboarding.js"></script>
+<script>
+  // Show onboarding for first-time visitors
+  if (window.OnboardingManager) {
+    const onboarding = new OnboardingManager();
+    onboarding.show();
+  }
+</script>
 
 </body>
 </html>

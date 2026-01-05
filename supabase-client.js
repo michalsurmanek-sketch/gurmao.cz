@@ -8,11 +8,13 @@
  * 2. Zkopíruj Project URL a anon key z Settings → API
  * 3. Nahraď SUPABASE_URL a SUPABASE_ANON_KEY níže
  * 4. Pro produkci: přesuň tyto hodnoty do environment variables
+ * 
+ * DEMO VALUES BELOW - REPLACE WITH YOUR OWN!
  */
 
-// Supabase credentials
-const SUPABASE_URL = 'https://txfuxrezyrgybjvjnhom.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_5G2YGZZrEmfJOZ61oE3ioQ_VuRdscIf';
+// Supabase credentials - TODO: Nahraď vlastními hodnotami!
+const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
+const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY_HERE';
 
 // Import Supabase client (CDN version)
 // V produkci můžeš použít npm: npm install @supabase/supabase-js

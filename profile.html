@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  
+  <!-- Primary Meta Tags -->
+  <title>Můj profil – GURMAO</title>
+  <meta name="title" content="Můj profil – GURMAO">
+  <meta name="description" content="Spravuj svůj GURMAO profil, nastav své preference a aktualizuj osobní údaje." />
+  <meta name="robots" content="noindex, follow" />
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gurmaoblack: '#0b0b0d',
+            gurmaogold: '#d4af37',
+            gurmaored: '#8b1d18',
+          },
+          boxShadow: { glow: '0 0 40px rgba(212,175,55,0.35)' }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="toast.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    h1,h2,h3 { font-family: 'Playfair Display', serif; }
+  </style>
+</head>
+<body class="bg-gurmaoblack text-white">
+
+<!-- Auth Guard -->
+<script src="auth-guard.js"></script>
+<script src="toast.js"></script>
+
+<!-- Supabase Client -->
+<script type="module">
+  import { supabase, getCurrentUser, updateUserProfile, updatePassword } from './supabase-client.js';
+
+  let currentUser = null;
+
+  // Load user data
+  async function loadUserData() {
+    try {
+      currentUser = await getCurrentUser();
+      
+      if (!currentUser) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Display user info
+      document.getElementById('userEmail').textContent = currentUser.email;
+      document.getElementById('displayName').value = currentUser.user_metadata?.display_name || '';
+      document.getElementById('bio').value = currentUser.user_metadata?.bio || '';
+      
+    } catch (error) {
+      console.error('Error loading user:', error);
+      window.toast.show('❌ Chyba při načítání profilu', 'error');
+    }
+  }
+
+  // Update profile
+  document.getElementById('profileForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const displayName = document.getElementById('displayName').value;
+    const bio = document.getElementById('bio').value;
+    
+    const submitBtn = document.getElementById('saveProfileBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Ukládám...';
+    
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        data: {
+          display_name: displayName,
+          bio: bio
+        }
+      });
+      
+      if (error) throw error;
+      
+      window.toast.show('✅ Profil byl aktualizován', 'success');
+      
+    } catch (error) {
+      console.error('Profile update error:', error);
+      window.toast.show('❌ Chyba při ukládání profilu', 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Uložit změny';
+    }
+  });
+
+  // Update password
+  document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    if (newPassword !== confirmPassword) {
+      window.toast.show('❌ Hesla se neshodují', 'error');
+      return;
+    }
+    
+    if (newPassword.length < 8) {
+      window.toast.show('❌ Heslo musí mít alespoň 8 znaků', 'error');
+      return;
+    }
+    
+    const submitBtn = document.getElementById('changePasswordBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Měním heslo...';
+    
+    try {
+      await updatePassword(newPassword);
+      
+      window.toast.show('✅ Heslo bylo změněno', 'success');
+      
+      // Reset form
+      document.getElementById('passwordForm').reset();
+      
+    } catch (error) {
+      console.error('Password change error:', error);
+      window.toast.show('❌ Chyba při změně hesla', 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Změnit heslo';
+    }
+  });
+
+  // Delete account
+  document.getElementById('deleteAccountBtn').addEventListener('click', async () => {
+    if (!confirm('Opravdu chceš smazat svůj účet? Tuto akci nelze vrátit zpět.')) {
+      return;
+    }
+    
+    if (!confirm('Poslední varování: Všechna tvoje data budou natrvalo smazána. Pokračovat?')) {
+      return;
+    }
+    
+    window.toast.show('⚠️ Funkce zatím není implementována', 'info');
+    // TODO: Implement account deletion
+  });
+
+  // Load data on page load
+  loadUserData();
+</script>
+
+<!-- Header -->
+<header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <a href="feed.html" class="flex items-center gap-2">
+      <span class="text-2xl">←</span>
+      <span class="font-semibold">Zpět na feed</span>
+    </a>
+    <a href="index.html" class="text-2xl font-bold">
+      <span class="text-white">GURMA</span><span class="text-gurmaogold">O</span>
+    </a>
+    <div class="w-20"></div> <!-- Spacer for centering -->
+  </div>
+</header>
+
+<main class="max-w-4xl mx-auto px-4 py-12">
+  
+  <!-- Page Title -->
+  <div class="mb-12">
+    <h1 class="text-5xl font-bold mb-4">Můj profil</h1>
+    <p class="text-white/60">Spravuj své údaje a nastavení</p>
+  </div>
+
+  <!-- User Info Card -->
+  <div class="bg-white/5 backdrop-blur border border-white/10 rounded-3xl p-8 mb-8">
+    <div class="flex items-center gap-6">
+      <div class="w-20 h-20 rounded-full bg-gurmaogold/20 flex items-center justify-center text-4xl">
+        👤
+      </div>
+      <div>
+        <p class="text-white/60 text-sm mb-1">Přihlášen jako</p>
+        <p id="userEmail" class="text-xl font-semibold">-</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Form -->
+  <div class="bg-white/5 backdrop-blur border border-white/10 rounded-3xl p-8 mb-8">
+    <h2 class="text-2xl font-bold mb-6">Osobní údaje</h2>
+    
+    <form id="profileForm" class="space-y-6">
+      <!-- Display Name -->
+      <div>
+        <label for="displayName" class="block text-sm font-medium mb-2">Zobrazované jméno</label>
+        <input
+          type="text"
+          id="displayName"
+          name="displayName"
+          class="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 focus:border-gurmaogold focus:outline-none transition"
+          placeholder="Jak se ti budeme říkat?"
+        />
+      </div>
+
+      <!-- Bio -->
+      <div>
+        <label for="bio" class="block text-sm font-medium mb-2">O mně</label>
+        <textarea
+          id="bio"
+          name="bio"
+          rows="4"
+          class="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 focus:border-gurmaogold focus:outline-none transition resize-none"
+          placeholder="Pár slov o sobě..."
+        ></textarea>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        id="saveProfileBtn"
+        class="px-8 py-3 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-105 transition"
+      >
+        Uložit změny
+      </button>
+    </form>
+  </div>
+
+  <!-- Password Change -->
+  <div class="bg-white/5 backdrop-blur border border-white/10 rounded-3xl p-8 mb-8">
+    <h2 class="text-2xl font-bold mb-6">Změna hesla</h2>
+    
+    <form id="passwordForm" class="space-y-6">
+      <!-- New Password -->
+      <div>
+        <label for="newPassword" class="block text-sm font-medium mb-2">Nové heslo</label>
+        <input
+          type="password"
+          id="newPassword"
+          name="newPassword"
+          minlength="8"
+          required
+          class="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 focus:border-gurmaogold focus:outline-none transition"
+          placeholder="Alespoň 8 znaků"
+        />
+      </div>
+
+      <!-- Confirm Password -->
+      <div>
+        <label for="confirmPassword" class="block text-sm font-medium mb-2">Potvrď heslo</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          minlength="8"
+          required
+          class="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 focus:border-gurmaogold focus:outline-none transition"
+          placeholder="Zadej heslo znovu"
+        />
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        id="changePasswordBtn"
+        class="px-8 py-3 rounded-full bg-white/10 border border-white/20 text-white font-semibold hover:bg-white/20 transition"
+      >
+        Změnit heslo
+      </button>
+    </form>
+  </div>
+
+  <!-- Danger Zone -->
+  <div class="bg-gurmaored/10 backdrop-blur border border-gurmaored/30 rounded-3xl p-8">
+    <h2 class="text-2xl font-bold mb-4 text-gurmaored">Nebezpečná zóna</h2>
+    <p class="text-white/60 mb-6">Jednou smazáno, navždy pryč. Nedá se vrátit zpět.</p>
+    
+    <button
+      id="deleteAccountBtn"
+      class="px-8 py-3 rounded-full bg-gurmaored/20 border border-gurmaored text-gurmaored font-semibold hover:bg-gurmaored hover:text-white transition"
+    >
+      Smazat účet
+    </button>
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="border-t border-white/10 mt-24 py-12">
+  <div class="max-w-7xl mx-auto px-4 text-center text-white/40 text-sm">
+    <p>© 2026 GURMAO.cz — Nejez. Prožij.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script src="auth-ui.js"></script>
+
+</body>
+</html>
