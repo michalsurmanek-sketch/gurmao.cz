@@ -101,7 +101,11 @@ function createRestaurantCard(restaurant) {
 
 // Initialize ratings for displayed restaurants
 function initializeRatings(restaurants) {
-  if (!window.ratingManager) return;
+  // Wait for ratingManager to be available
+  if (typeof window.ratingManager === 'undefined') {
+    console.log('Rating manager not yet loaded, skipping ratings initialization');
+    return;
+  }
   
   restaurants.forEach(restaurant => {
     const container = document.querySelector(`[data-restaurant-rating="${restaurant.slug}"]`);
