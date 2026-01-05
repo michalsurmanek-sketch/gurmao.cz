@@ -131,6 +131,11 @@ observer.observe(document.body, {
   subtree: true
 });
 
+// Export functions to window for Mapbox popup reinit
+window.initVibeTooltips = initVibeTooltips;
+window.addVibeTooltip = addVibeTooltip;
+window.wrapVibeWithTooltip = wrapVibeWithTooltip;
+
 // Export functions for external use
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {

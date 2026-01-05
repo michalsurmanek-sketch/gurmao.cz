@@ -47,7 +47,7 @@
   <style>
     body { font-family: 'Inter', sans-serif; margin: 0; }
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
-    #map { position: fixed; top: 65px; left: 0; right: 0; bottom: 0; width: 100%; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
     
     /* Mapbox popup styling */
     .mapboxgl-popup-content {
@@ -166,7 +166,9 @@
 </header>
 
 <!-- Map container -->
-<div id="map"></div>
+<div class="pt-[65px] h-screen">
+  <div id="map"></div>
+</div>
 
 <!-- Floating legend -->
 <div class="fixed bottom-6 left-6 bg-gurmaoblack/90 backdrop-blur border border-white/20 rounded-2xl p-4 shadow-2xl max-w-xs z-40">
@@ -267,7 +269,7 @@ restaurants.forEach(restaurant => {
   const vibeTooltips = {
     '🍷 LUXE': 'Elegantní zážitek, důraz na detail, klidná atmosféra',
     '🔥 DRAMA': 'Výrazné chutě, silná osobnost, nezapomenutelné kombinace',
-    '🌮 CHAOS': 'Uvolněný styl, pestrost, radost z jídla bez pravidel',
+    '🌮 CHAOS': 'Uvolěněný styl, pestrost, radost z jídla bez pravidel',
     '🌿 PURE': 'Čisté suroviny, jednoduchost, chuť v hlavní roli',
     '🖤 DARK': 'Intimní atmosféra, večerní vibe, tlumené světlo'
   };
@@ -297,11 +299,6 @@ restaurants.forEach(restaurant => {
     closeButton: true,
     closeOnClick: false
   }).setHTML(popupContent);
-  
-  // Reinitialize tooltips when popup opens
-  popup.on('open', () => {
-    if (window.initVibeTooltips) window.initVibeTooltips();
-  });
 
   // Create marker
   new mapboxgl.Marker(el)
