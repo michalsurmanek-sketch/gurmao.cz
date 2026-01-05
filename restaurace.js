@@ -64,7 +64,13 @@ function createRestaurantCard(restaurant) {
     '🖤 DARK': 'Intimní atmosféra, večerní vibe, tlumené světlo'
   };
   
-  const imageUrl = restaurant.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4';
+  // Try multiple image sources
+  const imageUrl = restaurant.image_url || 
+                   restaurant.image || 
+                   restaurant.photo_url ||
+                   'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800';
+  
+  console.log(`Restaurant ${restaurant.name}: image_url = ${restaurant.image_url}`);
   
   return `
     <div class="rounded-3xl bg-white/5 overflow-hidden">
