@@ -3,6 +3,7 @@ import { supabase } from './supabase-client.js';
 
 let allRestaurants = [];
 let currentFilter = 'all';
+let searchQuery = '';
 
 // Load and display restaurants
 async function loadRestaurants() {
@@ -26,6 +27,7 @@ async function loadRestaurants() {
     
     displayRestaurants(allRestaurants);
     initializeFilters();
+    initializeSearch();
   } catch (error) {
     console.error('Error loading restaurants:', error);
     showError();
@@ -172,19 +174,47 @@ function initializeFilters() {
       currentFilter = filter === 'Vše' ? 'all' : filter;
       
       // Filter restaurants
-      filterRestaurants();
+      applyFilters();
     });
   });
 }
 
-// Filter restaurants by vibe
-function filterRestaurants() {
-  if (currentFilter === 'all') {
-    displayRestaurants(allRestaurants);
-  } else {
-    const filtered = allRestaurants.filter(r => r.vibe === currentFilter);
-    displayRestaurants(filtered);
+// Initialize search
+function initializeSearch() {
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.toLowerCase().trim();
+      applyFilters();
+    });
   }
+}
+
+// Apply all filters (vibe + search)
+function applyFilters() {
+  let filtered = allRestaurants;
+  
+  // Apply vibe filter
+  if (currentFilter !== 'all') {
+    filtered = filtered.filter(r => r.vibe === currentFilter);
+  }
+  
+  // Apply search filter
+  if (searchQuery) {
+    filtered = filtered.filter(r => {
+      const cityMatch = r.city && r.city.toLowerCase().includes(searchQuery);
+      const nameMatch = r.name && r.name.toLowerCase().includes(searchQuery);
+      const tagMatch = r.tag && r.tag.toLowerCase().includes(searchQuery);
+      return cityMatch || nameMatch || tagMatch;
+    });
+  }
+  
+  displayRestaurants(filtered);
+}
+
+// Filter restaurants by vibe (kept for backwards compatibility)
+function filterRestaurants() {
+  applyFilters();
 }
 
 // Show error message

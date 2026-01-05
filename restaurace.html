@@ -85,22 +85,28 @@
   </div>
 </section>
 
-<!-- FILTERS -->
+<!-- SEARCH & FILTERS -->
 <section class="py-10 border-b border-white/10">
-  <div id="filters" class="max-w-6xl mx-auto px-6 flex flex-wrap gap-4">
-    <button class="px-5 py-2 rounded-full bg-gurmaogold text-black transition">Vše</button>
-    <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Elegantní zážitek, důraz na detail, klidná atmosféra">🍷 LUXE</button>
-    <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Výrazné chutě, silná osobnost, nezapomenutelné kombinace">🔥 DRAMA</button>
-    <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Uvolněný styl, pestrost, radost z jídla bez pravidel">🌮 CHAOS</button>
-    <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Čisté suroviny, jednoduchost, chuť v hlavní roli">🌿 PURE</button>
-    <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Intimní atmosféra, večerní vibe, tlumené světlo">🖤 DARK</button>
-  </div>
-</section>
-
-<!-- LIST -->
-<section class="py-20">
-  <div id="restaurantsList" class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-10">
-    <!-- Restaurants will be loaded here dynamically -->
+  <div class="max-w-6xl mx-auto px-6">
+    <!-- Search Box -->
+    <div class="mb-6">
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Hledat podle města nebo názvu restaurace..." 
+        class="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/15 text-white placeholder-white/40 focus:border-gurmaogold focus:outline-none transition"
+      />
+    </div>
+    
+    <!-- Vibe Filters -->
+    <div id="filters" class="flex flex-wrap gap-4">
+      <button class="px-5 py-2 rounded-full bg-gurmaogold text-black transition">Vše</button>
+      <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Elegantní zážitek, důraz na detail, klidná atmosféra">🍷 LUXE</button>
+      <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Výrazné chutě, silná osobnost, nezapomenutelné kombinace">🔥 DRAMA</button>
+      <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Uvolněný styl, pestrost, radost z jídla bez pravidel">🌮 CHAOS</button>
+      <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Čisté suroviny, jednoduchost, chuť v hlavní roli">🌿 PURE</button>
+      <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Intimní atmosféra, večerní vibe, tlumené světlo">🖤 DARK</button>
+    </div>
   </div>
 </section>
 
