@@ -1,36 +1,20 @@
 // GURMAO.cz - Supabase Client Configuration
 // © 2025 GURMAO.cz
 
-/**
- * SETUP INSTRUCTIONS:
- * 
- * 1. Vytvoř Supabase projekt na https://supabase.com
- * 2. Zkopíruj Project URL a anon key z Settings → API
- * 3. Nahraď SUPABASE_URL a SUPABASE_ANON_KEY níže
- * 4. Pro produkci: přesuň tyto hodnoty do environment variables
- * 
- * DEMO VALUES BELOW - REPLACE WITH YOUR OWN!
- */
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-// Supabase credentials - TODO: Nahraď vlastními hodnotami!
-const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY_HERE';
+// TODO: paste your Supabase Project URL from: Supabase -> Project Settings -> API
+const SUPABASE_URL = "https://txfuxrezyrgybjvjnhom.supabase.co";
 
-// Import Supabase client (CDN version)
-// V produkci můžeš použít npm: npm install @supabase/supabase-js
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+// TODO: paste your Supabase anon public key from: Supabase -> Project Settings -> API
+const SUPABASE_ANON_KEY = "sb_publishable_5G2YGZZrEmfJOZ61oE3ioQ_VuRdscIf";
 
-// Initialize Supabase client
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
-  }
-});
+// Create Supabase client
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Make supabase available globally for other scripts
+// Make supabase available globally for non-module scripts
 window.supabase = supabase;
+export { supabase };
 
 // ======================
 // AUTH HELPERS
