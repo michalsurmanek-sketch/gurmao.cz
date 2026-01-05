@@ -215,7 +215,7 @@
             <div class="grid grid-cols-2 gap-4">
               <input 
                 type="number" 
-                name="lat" 
+                name="latitude" 
                 id="inputLat"
                 step="0.000001"
                 required
@@ -224,7 +224,7 @@
               />
               <input 
                 type="number" 
-                name="lng" 
+                name="longitude" 
                 id="inputLng"
                 step="0.000001"
                 required
@@ -314,8 +314,8 @@ coordMap.on('click', (e) => {
   const { lng, lat } = e.lngLat;
   
   // Update inputs
-  document.querySelector('input[name="lat"]').value = lat.toFixed(6);
-  document.querySelector('input[name="lng"]').value = lng.toFixed(6);
+  document.querySelector('input[name="latitude"]').value = lat.toFixed(6);
+  document.querySelector('input[name="longitude"]').value = lng.toFixed(6);
 
   // Remove old marker
   if (marker) marker.remove();
@@ -354,7 +354,7 @@ async function loadRestaurants() {
             <div class="text-white/60 text-sm mb-2">${r.city} · ${r.tag}</div>
             <p class="text-white/80 text-sm mb-3">${r.description}</p>
             <div class="text-xs text-white/40">
-              📍 ${r.lat}, ${r.lng} · 🔗 restaurace-${r.slug}.html
+              📍 ${r.latitude}, ${r.longitude} · 🔗 restaurace-${r.slug}.html
             </div>
           </div>
           <div class="flex gap-2">
@@ -388,8 +388,8 @@ document.getElementById('addRestaurantForm').addEventListener('submit', async (e
     city: formData.get('city'),
     tag: formData.get('tag'),
     description: formData.get('description'),
-    lat: parseFloat(formData.get('lat')),
-    lng: parseFloat(formData.get('lng')),
+    latitude: parseFloat(formData.get('latitude')),
+    longitude: parseFloat(formData.get('longitude')),
     image_url: formData.get('image_url') || null,
     slug: formData.get('slug')
   };
@@ -461,17 +461,17 @@ async function editRestaurant(id) {
     document.getElementById('inputCity').value = data.city;
     document.getElementById('inputTag').value = data.tag;
     document.getElementById('inputDescription').value = data.description;
-    document.getElementById('inputLat').value = data.lat;
-    document.getElementById('inputLng').value = data.lng;
+    document.getElementById('inputLat').value = data.latitude;
+    document.getElementById('inputLng').value = data.longitude;
     document.getElementById('inputImageUrl').value = data.image_url || '';
     document.getElementById('inputSlug').value = data.slug;
 
     // Update map marker
     if (marker) marker.remove();
     marker = new mapboxgl.Marker({ color: '#d4af37' })
-      .setLngLat([data.lng, data.lat])
+      .setLngLat([data.longitude, data.latitude])
       .addTo(coordMap);
-    coordMap.flyTo({ center: [data.lng, data.lat], zoom: 12 });
+    coordMap.flyTo({ center: [data.longitude, data.latitude], zoom: 12 });
 
     // Update UI
     document.getElementById('formTitle').textContent = 'Upravit restauraci';
