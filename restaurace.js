@@ -41,8 +41,10 @@ function displayRestaurants(restaurants) {
   
   container.innerHTML = restaurants.map(restaurant => createRestaurantCard(restaurant)).join('');
   
-  // Initialize ratings after rendering
-  initializeRatings(restaurants);
+  // Initialize ratings after a short delay to ensure rating.js is loaded
+  setTimeout(() => {
+    initializeRatings(restaurants);
+  }, 100);
 }
 
 // Create restaurant card HTML
@@ -110,16 +112,17 @@ function initializeRatings(restaurants) {
   restaurants.forEach(restaurant => {
     const container = document.querySelector(`[data-restaurant-rating="${restaurant.slug}"]`);
     if (container) {
-      const stats = window.ratingManager.getRestaurantRating(restaurant.slug);
+      const average = window.ratingManager.getAverage(restaurant.slug);
+      const count = window.ratingManager.getCount(restaurant.slug);
       const userRating = window.ratingManager.getUserRating(restaurant.slug);
       
       let html = '<div class="border-t border-white/10 pt-3 mt-3">';
       
-      if (stats.average > 0) {
+      if (average > 0) {
         html += `
           <div class="flex items-center gap-2 mb-2">
-            ${window.ratingManager.renderStars(stats.average, 'sm')}
-            <span class="text-xs text-white/60">${stats.average.toFixed(1)} (${stats.count})</span>
+            ${window.ratingManager.renderStars(average, 'sm')}
+            <span class="text-xs text-white/60">${average.toFixed(1)} (${count})</span>
           </div>
         `;
       } else {
