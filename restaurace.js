@@ -6,11 +6,18 @@ let currentFilter = 'all';
 
 // Load and display restaurants
 async function loadRestaurants() {
+  console.log('loadRestaurants called');
+  const container = document.getElementById('restaurantsList');
+  console.log('Container found:', container);
+  
   try {
+    console.log('Fetching from Supabase...');
     const { data: restaurants, error } = await supabase
       .from('restaurants')
       .select('*')
       .order('created_at', { ascending: false });
+    
+    console.log('Supabase response:', { data: restaurants, error });
     
     if (error) throw error;
     
