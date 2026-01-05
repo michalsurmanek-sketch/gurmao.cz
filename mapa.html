@@ -234,7 +234,7 @@ async function loadRestaurants() {
     console.log('Restaurants with GPS:', restaurantsWithGPS);
     
     if (!restaurantsWithGPS || restaurantsWithGPS.length === 0) {
-      console.lWithGPSog('No restaurants with coordinates found');
+      console.log('No restaurants with coordinates found');
       return;
     }
     
@@ -294,12 +294,11 @@ async function loadRestaurants() {
       new mapboxgl.Marker(el)
         .setLngLat([restaurant.longitude, restaurant.latitude])
         .setPopup(popup)
-        .addTo(map);WithGPS.length > 0) {
-      const bounds = new mapboxgl.LngLatBounds();
-      restaurantsWithGPS
+        .addTo(map);
+    });
 
     // Fit bounds to show all markers
-    if (restaurants.length > 0) {
+    if (restaurantsWithGPS.length > 0) {
       const bounds = new mapboxgl.LngLatBounds();
       restaurantsWithGPS.forEach(r => bounds.extend([r.longitude, r.latitude]));
       map.fitBounds(bounds, { padding: 80 });
