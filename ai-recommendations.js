@@ -11,6 +11,15 @@ class AIRecommendationEngine {
     this.restaurants = [];
     this.loaded = false;
     
+    // City proximity map (which cities are "close" to each other)
+    this.cityProximity = {
+      'Praha': ['Kutná Hora', 'Karlštejn'],
+      'Brno': ['Znojmo', 'Kroměříž'],
+      'Ostrava': ['Olomouc'],
+      'Plzeň': ['Karlovy Vary'],
+      'Liberec': ['Jablonec nad Nisou']
+    };
+    
     this.moodProfiles = {
       'romantika': { vibes: ['🍷 LUXE', '🌿 PURE'], groupSize: 2, atmosphere: ['intimní', 'klidná', 'elegantní'] },
       'oslava': { vibes: ['🔥 DRAMA', '🌮 CHAOS'], groupSize: [4, 6, 8], atmosphere: ['živá', 'energická'] },
@@ -136,6 +145,21 @@ class AIRecommendationEngine {
   }
 
   /**
+   * Check if two cities are nearby
+   */
+  isNearbyCity(requestedCity, restaurantCity) {
+    const requested = requestedCity.toLowerCase();
+    const restaurant = restaurantCity.toLowerCase();
+    
+    // Check both directions
+    const nearby1 = this.cityProximity[requestedCity] || [];
+    const nearby2 = this.cityProximity[restaurantCity] || [];
+    
+    return nearby1.some(c => c.toLowerCase() === restaurant) ||
+           nearby2.some(c => c.toLowerCase() === requested);
+  }
+
+  /**
    * Get AI recommendations based on user input
    */
   async getRecommendations(query) {
@@ -192,11 +216,16 @@ class AIRecommendationEngine {
       }
 
       // City matching - high priority
-      if (city && restaurant.city.toLowerCase() === city.toLowerCase()) {
-        score += 50;
-        reasons.push(`Ve tvém městě: ${city}`);
-      } else if (city) {
-        score -= 100; // Strong penalty for wrong city
+      if (city) {
+        if (restaurant.city.toLowerCase() === city.toLowerCase()) {
+          score += 100; // Very high bonus for exact city match
+          reasons.push(`V ${city}`);
+        } else if (this.isNearbyCity(city, restaurant.city)) {
+          score += 20; // Small bonus for nearby cities
+          reasons.push(`Nedaleko: ${restaurant.city}`);
+        } else {
+          score -= 200; // Strong penalty for distant cities
+        }
       }
 
       // Price level matching
@@ -313,29 +342,72 @@ class AIRecommendationEngine {
         <div class="flex gap-2">
           <a href="${restaurant.href}" class="flex-1 px-4 py-2 rounded-full ${isTopPick ? 'bg-gurmaogold text-black' : 'bg-white/10 text-white'} text-center text-sm font-semibold hover:scale-105 transition">
             Zobrazit detail →
-          </a>
-          <button onclick="window.saveRestaurant && window.saveRestaurant('${restaurant.id}', '${restaurant.name}')" 
-                  class="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition">
-            💾
-          </button>
-        </div>
-      </div>
-    `;
-  }
-
-  /**
-   * Render all recommendations
-   */
-  async renderRecommendations(query) {
-    const recommendations = await this.getRecommendations(query);
-    const topPick = recommendations[0];
-
+    
     if (!recommendations || recommendations.length === 0) {
       return '<div class="text-center text-white/60 py-12">Žádné doporučení nenalezeno. Zkus změnit filtry.</div>';
     }
 
+    // Separate by city if city was specified
+    let mainResults = recommendations;
+    let nearbyResults = [];
+    
+    if (query.city) {
+      mainResults = recommendations.filter(r => 
+        r.city.toLowerCase() === query.city.toLowerCase()
+      );
+      nearbyResults = recommendations.filter(r => 
+        r.city.toLowerCase() !== query.city.toLowerCase() && r.score > 0
+      ).slice(0, 3);
+    }
+
+    // If no results in main city, show message
+    if (mainResults.length === 0 && query.city) {
+      return `
+        <div class="text-center py-12">
+          <div class="text-5xl mb-4">🤷</div>
+          <p class="text-white/80 mb-2">V ${query.city} jsme bohužel nenašli odpovídající restaurace.</p>
+          ${nearbyResults.length > 0 ? `
+            <p class="text-white/60 text-sm mb-6">Máme pro tebe ale tipy z okolí:</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              ${nearbyResults.map((r, i) => this.renderRecommendationCard(r, i)).join('')}
+            </div>
+          ` : '<p class="text-white/60 text-sm">Zkus změnit filtry nebo jiné město.</p>'}
+        </div>
+      `;
+    }
+
+    const topPick = mainResults[0];
     const explanation = this.generateExplanation(query, topPick);
 
+    let html = `
+      <div class="mb-8 p-6 bg-gradient-to-br from-gurmaogold/20 to-gurmaored/20 rounded-2xl border border-gurmaogold/30">
+        <div class="flex items-start gap-3">
+          <div class="text-3xl">🤖</div>
+          <div class="flex-1">
+            <h3 class="font-bold mb-2">AI Doporučení</h3>
+            <p class="text-white/90 text-sm leading-relaxed">${explanation}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        ${mainResults.slice(0, 6).map((r, i) => this.renderRecommendationCard(r, i)).join('')}
+      </div>
+    `;
+
+    // Add nearby alternatives if applicable
+    if (query.city && nearbyResults.length > 0 && mainResults.length < 3) {
+      html += `
+        <div class="mt-12">
+          <h3 class="text-xl font-bold mb-4 text-white/80">💡 Alternativy z okolí</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            ${nearbyResults.map((r, i) => this.renderRecommendationCard(r, i + 100)).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    return html
     return `
       <div class="mb-8 p-6 bg-gradient-to-br from-gurmaogold/20 to-gurmaored/20 rounded-2xl border border-gurmaogold/30">
         <div class="flex items-start gap-3">
