@@ -90,8 +90,14 @@
     <button onclick="switchTab('restaurants')" id="tab-restaurants" class="tab-btn active px-6 py-3 border-b-2 border-gurmaogold font-semibold">
       🍽️ Restaurace
     </button>
+    <button onclick="switchTab('chefs')" id="tab-chefs" class="tab-btn px-6 py-3 border-b-2 border-transparent hover:border-white/20 transition">
+      👨‍🍳 Kuchaři
+    </button>
     <button onclick="switchTab('add')" id="tab-add" class="tab-btn px-6 py-3 border-b-2 border-transparent hover:border-white/20 transition">
       ➕ Přidat novou
+    </button>
+    <button onclick="switchTab('add-chef')" id="tab-add-chef" class="tab-btn px-6 py-3 border-b-2 border-transparent hover:border-white/20 transition">
+      👨‍🍳 Přidat kuchaře
     </button>
   </div>
 
@@ -113,6 +119,28 @@
       <div class="text-center py-12 text-white/40">
         <div class="text-4xl mb-4">⏳</div>
         Načítání restaurací...
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Chefs List -->
+  <div id="content-chefs" class="tab-content hidden">
+    <div class="mb-6 flex items-center justify-between">
+      <input 
+        type="text" 
+        id="searchChefs" 
+        placeholder="🔍 Hledat kuchaře..."
+        class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none w-full max-w-md"
+      />
+      <div class="text-white/60 text-sm">
+        Celkem: <span id="totalChefsCount" class="text-gurmaogold font-bold">0</span>
+      </div>
+    </div>
+
+    <div id="chefsList" class="space-y-4">
+      <div class="text-center py-12 text-white/40">
+        <div class="text-4xl mb-4">⏳</div>
+        Načítání kuchařů...
       </div>
     </div>
   </div>
@@ -273,6 +301,117 @@
             <button 
               type="button"
               onclick="resetForm()"
+              class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
+              ↺ Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Add Chef -->
+  <div id="content-add-chef" class="tab-content hidden">
+    <div class="max-w-3xl mx-auto">
+      <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
+        <h2 class="text-2xl mb-6">
+          <span id="formTitleChef">Přidat kuchaře</span>
+        </h2>
+
+        <form id="addChefForm" class="space-y-6">
+          <input type="hidden" name="id" id="editChefId" />
+          
+          <!-- Name -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Jméno kuchaře *</label>
+            <input 
+              type="text" 
+              name="name" 
+              id="inputChefName"
+              required
+              placeholder="např. Adam Noir"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Restaurant & Role -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">Restaurace *</label>
+              <input 
+                type="text" 
+                name="restaurant" 
+                id="inputChefRestaurant"
+                required
+                placeholder="např. Noir Table"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-2">Role *</label>
+              <input 
+                type="text" 
+                name="role" 
+                id="inputChefRole"
+                required
+                placeholder="např. Šéfkuchař"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+          </div>
+
+          <!-- Bio -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Bio / Popis *</label>
+            <textarea 
+              name="bio" 
+              id="inputChefBio"
+              required
+              rows="4"
+              placeholder="Krátký popis kuchaře, jeho filozofie, zkušenosti..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Image URL -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL obrázku</label>
+            <input 
+              type="url" 
+              name="image_url" 
+              id="inputChefImageUrl"
+              placeholder="https://..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+            <p class="text-xs text-white/40 mt-1">Nepovinné - můžeš přidat později</p>
+          </div>
+
+          <!-- Slug -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL slug *</label>
+            <input 
+              type="text" 
+              name="slug" 
+              id="inputChefSlug"
+              required
+              placeholder="adam-noir"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+            <p class="text-xs text-white/40 mt-1">Pro detail stránku: kuchar-[slug].html</p>
+          </div>
+
+          <!-- Submit -->
+          <div class="flex gap-4 pt-4">
+            <button 
+              type="submit" 
+              id="submitChefBtn"
+              class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
+              <span id="submitChefText">➕ Přidat kuchaře</span>
+            </button>
+            <button 
+              type="button"
+              onclick="resetChefForm()"
               class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
               ↺ Reset
             </button>
@@ -511,6 +650,175 @@ document.getElementById('searchRestaurants').addEventListener('input', (e) => {
 
 // Load on page load
 loadRestaurants();
+
+// ========================================
+// CHEFS MANAGEMENT
+// ========================================
+
+// Load chefs
+async function loadChefs() {
+  while (!window.supabase) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  
+  try {
+    const { data, error } = await window.supabase
+      .from('chefs')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    document.getElementById('totalChefsCount').textContent = data.length;
+
+    const html = data.map(c => `
+      <div class="bg-white/5 rounded-2xl border border-white/10 p-6 hover:bg-white/10 transition">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h3 class="text-xl font-bold">${c.name}</h3>
+              <span class="text-sm text-white/60">${c.role}</span>
+            </div>
+            <div class="text-gurmaogold text-sm mb-2">${c.restaurant}</div>
+            <p class="text-white/80 text-sm mb-3">${c.bio}</p>
+            <div class="text-xs text-white/40">
+              🔗 kuchar-${c.slug}.html
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="editChef('${c.id}')" class="px-4 py-2 rounded-full bg-white/10 hover:bg-gurmaogold hover:text-black transition text-sm">
+              ✏️ Upravit
+            </button>
+            <button onclick="deleteChef('${c.id}', '${c.name}')" class="px-4 py-2 rounded-full bg-white/10 hover:bg-gurmaored hover:text-white transition text-sm">
+              🗑️ Smazat
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('chefsList').innerHTML = html || '<div class="text-center py-12 text-white/40">Žádní kuchaři</div>';
+  } catch (err) {
+    console.error('Error loading chefs:', err);
+    window.toast.show('Chyba při načítání kuchařů', 'error');
+  }
+}
+
+// Add/Update chef
+document.getElementById('addChefForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const editId = formData.get('id');
+  const data = {
+    name: formData.get('name'),
+    restaurant: formData.get('restaurant'),
+    role: formData.get('role'),
+    bio: formData.get('bio'),
+    image_url: formData.get('image_url') || null,
+    slug: formData.get('slug')
+  };
+
+  try {
+    if (editId) {
+      // Update existing
+      const { error } = await supabase
+        .from('chefs')
+        .update(data)
+        .eq('id', editId);
+
+      if (error) throw error;
+      window.toast.show('✅ Kuchař aktualizován!', 'success');
+    } else {
+      // Insert new
+      const { error } = await supabase
+        .from('chefs')
+        .insert([data]);
+
+      if (error) throw error;
+      window.toast.show('✅ Kuchař přidán!', 'success');
+    }
+
+    resetChefForm();
+    switchTab('chefs');
+    loadChefs();
+  } catch (err) {
+    console.error('Error saving chef:', err);
+    window.toast.show('Chyba: ' + err.message, 'error');
+  }
+});
+
+// Delete chef
+async function deleteChef(id, name) {
+  if (!confirm(`Opravdu smazat "${name}"?`)) return;
+
+  try {
+    const { error } = await supabase
+      .from('chefs')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    window.toast.show('🗑️ Kuchař smazán', 'success');
+    loadChefs();
+  } catch (err) {
+    console.error('Error deleting chef:', err);
+    window.toast.show('Chyba při mazání: ' + err.message, 'error');
+  }
+}
+
+// Edit chef
+async function editChef(id) {
+  try {
+    const { data, error } = await supabase
+      .from('chefs')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+
+    // Fill form
+    document.getElementById('editChefId').value = data.id;
+    document.getElementById('inputChefName').value = data.name;
+    document.getElementById('inputChefRestaurant').value = data.restaurant;
+    document.getElementById('inputChefRole').value = data.role;
+    document.getElementById('inputChefBio').value = data.bio;
+    document.getElementById('inputChefImageUrl').value = data.image_url || '';
+    document.getElementById('inputChefSlug').value = data.slug;
+
+    // Update UI
+    document.getElementById('formTitleChef').textContent = 'Upravit kuchaře';
+    document.getElementById('submitChefText').textContent = '💾 Uložit změny';
+
+    // Switch to form tab
+    switchTab('add-chef');
+  } catch (err) {
+    console.error('Error loading chef:', err);
+    window.toast.show('Chyba při načítání: ' + err.message, 'error');
+  }
+}
+
+// Reset chef form
+function resetChefForm() {
+  document.getElementById('addChefForm').reset();
+  document.getElementById('editChefId').value = '';
+  document.getElementById('formTitleChef').textContent = 'Přidat kuchaře';
+  document.getElementById('submitChefText').textContent = '➕ Přidat kuchaře';
+}
+
+// Search chefs
+document.getElementById('searchChefs').addEventListener('input', (e) => {
+  const query = e.target.value.toLowerCase();
+  document.querySelectorAll('#chefsList > div').forEach(card => {
+    const text = card.textContent.toLowerCase();
+    card.style.display = text.includes(query) ? 'block' : 'none';
+  });
+});
+
+// Load chefs on page load
+loadChefs();
 </script>
 
 </body>
