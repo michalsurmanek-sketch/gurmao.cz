@@ -6,8 +6,9 @@ let currentFilter = 'all';
 let searchQuery = '';
 let userLocation = null;
 let sortByDistance = false;
-// Desktop: 24 restaurací, Mobile: nekonečný scroll
-let perPage = window.innerWidth < 768 ? 999999 : 24;
+// Desktop: 24 restaurací, Mobile: 12 restaurací (pak infinite scroll)
+let perPage = window.innerWidth < 768 ? 12 : 24;
+let currentlyDisplayed = 0;
 
 // Load and display restaurants
 async function loadRestaurants() {
@@ -33,6 +34,7 @@ async function loadRestaurants() {
     initializeFilters();
     initializeSearch();
     initializePerPageButtons();
+    initializeInfiniteScroll();
   } catch (error) {
     console.error('Error loading restaurants:', error);
     showError();
@@ -60,11 +62,82 @@ function displayRestaurants(restaurants) {
     return;
   }
   
-  // Display only first perPage items (desktop limited, mobile unlimited)
-  const isMobile = window.innerWidth < 768;
-  const toShow = isMobile ? restaurants : restaurants.slice(0, perPage);
+  // Display only first perPage items, store filtered list for infinite scroll
+  window.filteredRestaurants = restaurants;
+  currentlyDisplayed = Math.min(perPage, restaurants.length);
+  const toShow = restaurants.slice(0, currentlyDisplayed);
   
   container.innerHTML = toShow.map(restaurant => createRestaurantCard(restaurant)).join('');
+  
+  // Show "Load more" button if there are more items
+  updateLoadMoreButton();
+  
+  // Initialize ratings after a short delay to ensure rating.js is loaded
+  setTimeout(() => {
+    initializeRatings(toShow);
+  }, 100);
+}
+
+// Update or create "Load more" button
+function updateLoadMoreButton() {
+  const container = document.getElementById('restaurantsList');
+  if (!container) return;
+  
+  const existingBtn = document.getElementById('loadMoreBtn');
+  if (existingBtn) existingBtn.remove();
+  
+  if (currentlyDisplayed < window.filteredRestaurants.length) {
+    const remaining = window.filteredRestaurants.length - currentlyDisplayed;
+    const btn = document.createElement('div');
+    btn.id = 'loadMoreBtn';
+    btn.className = 'col-span-full flex justify-center py-8';
+    btn.innerHTML = `
+      <button onclick="loadMore()" class="px-8 py-3 rounded-full bg-gurmaogold text-black font-semibold hover:bg-gurmaogold/80 transition">
+        Načíst další (ještě ${remaining})
+      </button>
+    `;
+    container.insertAdjacentElement('afterend', btn);
+  }
+}
+
+// Load more items
+window.loadMore = function() {
+  const nextBatch = Math.min(currentlyDisplayed + perPage, window.filteredRestaurants.length);
+  const newItems = window.filteredRestaurants.slice(currentlyDisplayed, nextBatch);
+  
+  const container = document.getElementById('restaurantsList');
+  container.innerHTML += newItems.map(restaurant => createRestaurantCard(restaurant)).join('');
+  
+  currentlyDisplayed = nextBatch;
+  updateLoadMoreButton();
+  
+  // Initialize ratings for new items
+  setTimeout(() => {
+    initializeRatings(newItems);
+  }, 100);
+}
+
+// Initialize infinite scroll for mobile
+function initializeInfiniteScroll() {
+  if (window.innerWidth >= 768) return; // Only on mobile
+  
+  let isLoading = false;
+  
+  window.addEventListener('scroll', () => {
+    if (isLoading) return;
+    if (currentlyDisplayed >= window.filteredRestaurants.length) return;
+    
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const pageHeight = document.documentElement.scrollHeight;
+    
+    // Load more when user is 500px from bottom
+    if (scrollPosition > pageHeight - 500) {
+      isLoading = true;
+      loadMore();
+      setTimeout(() => { isLoading = false; }, 300);
+    }
+  });
+}
   
   // Initialize ratings after a short delay to ensure rating.js is loaded
   setTimeout(() => {
@@ -223,11 +296,10 @@ function initializePerPageButtons() {
       button.classList.remove('bg-white/5');
       button.classList.add('bg-gurmaogold', 'text-black');
       
-      // Update perPage value (only affects desktop)
-      if (window.innerWidth >= 768) {
-        perPage = parseInt(button.dataset.count);
-        applyFilters();
-      }
+      // Update perPage value and reload
+      perPage = parseInt(button.dataset.count);
+      currentlyDisplayed = 0;
+      applyFilters();
     });
   });
 }
