@@ -7,7 +7,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const SUPABASE_URL = "https://txfuxrezyrgybjvjnhom.supabase.co";
 
 // Supabase anon public key (safe to expose in frontend)
-const SUPABASE_ANON_KEY = "sb_publishable_5G2YGZZrEmfJOZ61oE3ioQ_VuRdscIf";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4ZnV4cmV6eXJneWJqdmpuaG9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc0NDU5NzQsImV4cCI6MjA4MzAyMTk3NH0.bdQnuG4Ho32Sd4vqtdRCycp-skshTjNhDLOCXCQC53M";
 
 // Create Supabase client
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
