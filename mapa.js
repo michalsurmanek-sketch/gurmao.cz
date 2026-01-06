@@ -18,16 +18,24 @@ const map = new mapboxgl.Map({
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
 // Add geolocate control
-map.addControl(
-  new mapboxgl.GeolocateControl({
-    positionOptions: {
-      enableHighAccuracy: true
-    },
-    trackUserLocation: true,
-    showUserHeading: true
-  }),
-  'top-right'
-);
+const geolocate = new mapboxgl.GeolocateControl({
+  positionOptions: {
+    enableHighAccuracy: true
+  },
+  trackUserLocation: true,
+  showUserHeading: true
+});
+
+map.addControl(geolocate, 'top-right');
+
+// Custom zoom level when geolocate is triggered
+geolocate.on('geolocate', (e) => {
+  map.flyTo({
+    center: [e.coords.longitude, e.coords.latitude],
+    zoom: 12, // Wider zoom to see more restaurants around
+    essential: true
+  });
+});
 
 // Load restaurants from Supabase
 async function loadRestaurants() {
