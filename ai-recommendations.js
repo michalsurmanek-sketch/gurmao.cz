@@ -191,12 +191,12 @@ class AIRecommendationEngine {
         reasons.push(`Ideální pro ${groupSize} ${groupSize === 2 ? 'lidi' : 'lidí'}`);
       }
 
-      // City matching
+      // City matching - high priority
       if (city && restaurant.city.toLowerCase() === city.toLowerCase()) {
-        score += 15;
+        score += 50;
         reasons.push(`Ve tvém městě: ${city}`);
       } else if (city) {
-        score -= 10; // Penalty for wrong city
+        score -= 100; // Strong penalty for wrong city
       }
 
       // Price level matching
