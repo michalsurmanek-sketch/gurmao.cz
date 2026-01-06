@@ -334,28 +334,39 @@
             />
           </div>
 
-          <!-- Restaurant & Role -->
+          <!-- Restaurant -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Restaurace *</label>
+            <select 
+              name="restaurant_id" 
+              id="inputChefRestaurantId"
+              required
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            >
+              <option value="">-- Vyber restauraci --</option>
+            </select>
+          </div>
+
+          <!-- Vibe & Signature Style -->
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-semibold mb-2">Restaurace *</label>
+              <label class="block text-sm font-semibold mb-2">Vibe</label>
               <input 
                 type="text" 
-                name="restaurant" 
-                id="inputChefRestaurant"
-                required
-                placeholder="např. Noir Table"
+                name="vibe" 
+                id="inputChefVibe"
+                placeholder="např. Minimalistická elegance"
                 class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
               />
             </div>
 
             <div>
-              <label class="block text-sm font-semibold mb-2">Role *</label>
+              <label class="block text-sm font-semibold mb-2">Signature Style</label>
               <input 
                 type="text" 
-                name="role" 
-                id="inputChefRole"
-                required
-                placeholder="např. Šéfkuchař"
+                name="signature_style" 
+                id="inputChefSignatureStyle"
+                placeholder="např. Farm-to-table"
                 class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
               />
             </div>
@@ -655,6 +666,28 @@ loadRestaurants();
 // CHEFS MANAGEMENT
 // ========================================
 
+// Load restaurants into dropdown
+async function loadRestaurantsDropdown() {
+  while (!window.supabase) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  
+  try {
+    const { data, error } = await window.supabase
+      .from('restaurants')
+      .select('id, name')
+      .order('name');
+
+    if (error) throw error;
+
+    const dropdown = document.getElementById('inputChefRestaurantId');
+    const options = data.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+    dropdown.innerHTML = '<option value="">-- Vyber restauraci --</option>' + options;
+  } catch (err) {
+    console.error('Error loading restaurants:', err);
+  }
+}
+
 // Load chefs
 async function loadChefs() {
   while (!window.supabase) {
@@ -677,10 +710,10 @@ async function loadChefs() {
           <div class="flex-1">
             <div class="flex items-center gap-3 mb-2">
               <h3 class="text-xl font-bold">${c.name}</h3>
-              <span class="text-sm text-white/60">${c.role}</span>
+              ${c.signature_style ? `<span class="text-sm text-gurmaogold">${c.signature_style}</span>` : ''}
             </div>
-            <div class="text-gurmaogold text-sm mb-2">${c.restaurant}</div>
-            <p class="text-white/80 text-sm mb-3">${c.bio}</p>
+            ${c.vibe ? `<div class="text-white/60 text-sm mb-2">${c.vibe}</div>` : ''}
+            <p class="text-white/80 text-sm mb-3">${c.bio || ''}</p>
             <div class="text-xs text-white/40">
               🔗 kuchar-${c.slug}.html
             </div>
@@ -712,8 +745,9 @@ document.getElementById('addChefForm').addEventListener('submit', async (e) => {
   const editId = formData.get('id');
   const data = {
     name: formData.get('name'),
-    restaurant: formData.get('restaurant'),
-    role: formData.get('role'),
+    restaurant_id: formData.get('restaurant_id'),
+    vibe: formData.get('vibe') || null,
+    signature_style: formData.get('signature_style') || null,
     bio: formData.get('bio'),
     image_url: formData.get('image_url') || null,
     slug: formData.get('slug')
@@ -722,7 +756,7 @@ document.getElementById('addChefForm').addEventListener('submit', async (e) => {
   try {
     if (editId) {
       // Update existing
-      const { error } = await supabase
+      const { error } = await window.supabase
         .from('chefs')
         .update(data)
         .eq('id', editId);
@@ -731,7 +765,7 @@ document.getElementById('addChefForm').addEventListener('submit', async (e) => {
       window.toast.show('✅ Kuchař aktualizován!', 'success');
     } else {
       // Insert new
-      const { error } = await supabase
+      const { error } = await window.supabase
         .from('chefs')
         .insert([data]);
 
@@ -753,7 +787,7 @@ async function deleteChef(id, name) {
   if (!confirm(`Opravdu smazat "${name}"?`)) return;
 
   try {
-    const { error } = await supabase
+    const { error } = await window.supabase
       .from('chefs')
       .delete()
       .eq('id', id);
@@ -771,7 +805,7 @@ async function deleteChef(id, name) {
 // Edit chef
 async function editChef(id) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await window.supabase
       .from('chefs')
       .select('*')
       .eq('id', id)
@@ -782,8 +816,9 @@ async function editChef(id) {
     // Fill form
     document.getElementById('editChefId').value = data.id;
     document.getElementById('inputChefName').value = data.name;
-    document.getElementById('inputChefRestaurant').value = data.restaurant;
-    document.getElementById('inputChefRole').value = data.role;
+    document.getElementById('inputChefRestaurantId').value = data.restaurant_id || '';
+    document.getElementById('inputChefVibe').value = data.vibe || '';
+    document.getElementById('inputChefSignatureStyle').value = data.signature_style || '';
     document.getElementById('inputChefBio').value = data.bio;
     document.getElementById('inputChefImageUrl').value = data.image_url || '';
     document.getElementById('inputChefSlug').value = data.slug;
