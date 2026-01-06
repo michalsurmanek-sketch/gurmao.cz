@@ -312,13 +312,13 @@ function showError() {
         </button>
       </div>
     `;
-  
-  // Location button handler
-  const locationBtn = document.getElementById('locationBtn');
-  if (locationBtn) {
-    locationBtn.addEventListener('click', findNearestRestaurants);
   }
-  }
+}
+
+// Location button handler
+const locationBtn = document.getElementById('locationBtn');
+if (locationBtn) {
+  locationBtn.addEventListener('click', findNearestRestaurants);
 }
 
 // Initialize when DOM is loaded
