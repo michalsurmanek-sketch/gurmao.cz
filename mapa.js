@@ -164,35 +164,27 @@ async function loadRestaurants() {
 
 // Load restaurants when map is ready
 map.on('load', () => {
-  // Add Czech Republic border outline with better quality data
-  fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson')
+  // Add Czech Republic border outline with precise data
+  fetch('czech-border.geojson')
     .then(response => response.json())
     .then(data => {
-      // Filter only Czech Republic
-      const czechRepublic = {
-        type: 'FeatureCollection',
-        features: data.features.filter(f => f.properties.ADMIN === 'Czech Republic' || f.properties.ADMIN === 'Czechia')
-      };
-      
-      if (czechRepublic.features.length > 0) {
-        map.addSource('czech-border', {
-          type: 'geojson',
-          data: czechRepublic
-        });
+      map.addSource('czech-border', {
+        type: 'geojson',
+        data: data
+      });
 
-        map.addLayer({
-          id: 'czech-border-line',
-          type: 'line',
-          source: 'czech-border',
-          paint: {
-            'line-color': '#d4af37',
-            'line-width': 2.5,
-            'line-opacity': 0.7
-          }
-        });
-      }
+      map.addLayer({
+        id: 'czech-border-line',
+        type: 'line',
+        source: 'czech-border',
+        paint: {
+          'line-color': '#d4af37',
+          'line-width': 2,
+          'line-opacity': 0.8
+        }
+      });
     })
-    .catch(err => console.log('Border loading skipped:', err));
+    .catch(err => console.log('Border loading error:', err));
 
   // Load restaurants
   loadRestaurants();
