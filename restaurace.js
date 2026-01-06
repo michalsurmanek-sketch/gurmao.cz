@@ -249,7 +249,7 @@ function initializeFilters() {
   
   filterButtons.forEach(button => {
     button.addEventListener('click', () => {
-      // Remove active state from all buttons
+      // Remove active state from all filter buttons (but keep locationBtn state)
       filterButtons.forEach(btn => {
         btn.classList.remove('bg-gurmaogold', 'text-black');
         btn.classList.add('bg-white/5');
@@ -263,7 +263,7 @@ function initializeFilters() {
       const filter = button.textContent.trim();
       currentFilter = filter === 'Vše' ? 'all' : filter;
       
-      // Filter restaurants
+      // Filter restaurants (keeps distance sorting if active)
       applyFilters();
     });
   });
