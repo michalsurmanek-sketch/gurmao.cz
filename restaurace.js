@@ -243,6 +243,16 @@ function findNearestRestaurants() {
   const btn = document.getElementById('locationBtn');
   if (!btn) return;
   
+  // If already active, deactivate
+  if (sortByDistance) {
+    sortByDistance = false;
+    userLocation = null;
+    btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <span class="hidden md:inline">Blízko mě</span>';
+    btn.classList.remove('bg-gurmaogold', 'text-black', 'border-gurmaogold');
+    applyFilters();
+    return;
+  }
+  
   btn.disabled = true;
   btn.innerHTML = '<svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg> <span class="hidden md:inline">Hledám...</span>';
   
@@ -274,7 +284,7 @@ function findNearestRestaurants() {
         
         btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <span class="hidden md:inline">📍 Podle vzdálenosti</span>';
         btn.disabled = false;
-        btn.classList.add('bg-gurmaogold', 'text-black');
+        btn.classList.add('bg-gurmaogold', 'text-black', 'border-gurmaogold');
       },
       (error) => {
         console.error('Geolocation error:', error);
