@@ -77,7 +77,8 @@ function createRestaurantCard(restaurant) {
     '🔥 DRAMA': 'Výrazné chutě, silná osobnost, nezapomenutelné kombinace',
     '🌮 CHAOS': 'Uvolněný styl, pestrost, radost z jídla bez pravidel',
     '🌿 PURE': 'Čisté suroviny, jednoduchost, chuť v hlavní roli',
-    '🖤 DARK': 'Intimní atmosféra, večerní vibe, tlumené světlo'
+    '🖤 DARK': 'Intimní atmosféra, večerní vibe, tlumené světlo',
+    '🌊 CALM': 'Klidná atmosféra, harmonie, pohoda'
   };
   
   // Try multiple image sources

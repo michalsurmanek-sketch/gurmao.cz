@@ -80,6 +80,9 @@ async function loadRestaurants() {
         } else if (restaurant.vibe.includes('CHAOS')) {
           markerIcon = '🟠';
           markerFilter = 'drop-shadow(0 2px 8px rgba(255, 165, 0, 0.6))';
+        } else if (restaurant.vibe.includes('CALM')) {
+          markerIcon = '🔵';
+          markerFilter = 'drop-shadow(0 2px 8px rgba(0, 150, 255, 0.6))';
         }
       }
       
@@ -99,7 +102,8 @@ async function loadRestaurants() {
         '🔥 DRAMA': 'Výrazné chutě, silná osobnost, nezapomenutelné kombinace',
         '🌮 CHAOS': 'Uvolněný styl, pestrost, radost z jídla bez pravidel',
         '🌿 PURE': 'Čisté suroviny, jednoduchost, chuť v hlavní roli',
-        '🖤 DARK': 'Intimní atmosféra, večerní vibe, tlumené světlo'
+        '🖤 DARK': 'Intimní atmosféra, večerní vibe, tlumené světlo',
+        '🌊 CALM': 'Klidná atmosféra, harmonie, pohoda'
       };
       
       const popupContent = `
