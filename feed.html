@@ -214,13 +214,6 @@
 <!-- MOBILE SNAP FEED -->
 <main class="md:hidden">
   <div id="feed" class="snap-y h-[calc(100vh-65px)] overflow-y-auto"></div>
-
-  <!-- Floating actions -->
-  <div class="fixed right-4 bottom-6 flex flex-col gap-3">
-    <button id="btnSave" class="w-12 h-12 rounded-full bg-white/10 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" title="Uložit">🤍</button>
-    <button id="btnFire" class="w-12 h-12 rounded-full bg-white/10 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" title="WOW">🔥</button>
-    <button id="btnDrool" class="w-12 h-12 rounded-full bg-white/10 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" title="Chuť">🤤</button>
-  </div>
 </main>
 
 <!-- DESKTOP GRID -->
@@ -297,46 +290,72 @@
   </div>
 </main>
 
-<script>
-  // MVP data
-  const items = [
-    {
-      id:'noir-table',
-      vibe:'🍷 LUXE',
-      name:'Noir Table',
-      city:'Praha',
-      tag:'fine dining',
-      href:'restaurace-noir-table.html',
-      img:'https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=1200&q=80'
-    },
-    {
-      id:'ember-steak',
-      vibe:'🔥 DRAMA',
-      name:'Ember Steak',
-      city:'Brno',
-      tag:'steakhouse',
-      href:'restaurace-noir-table.html',
-      img:'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1200&q=80'
-    },
-    {
-      id:'la-calle',
-      vibe:'🌮 CHAOS',
-      name:'La Calle',
-      city:'Ostrava',
-      tag:'street food',
-      href:'restaurace-noir-table.html',
-      img:'https://images.unsplash.com/photo-1529692236671-f1dc2c0f2c0e?auto=format&fit=crop&w=1200&q=80'
-    },
-  ];
+<script type="module">
+  // Import Supabase client
+  import { supabase } from './supabase-client.js';
+  
+  // Load restaurants from Supabase
+  let items = [];
+  
+  async function loadRestaurants() {
+    try {
+      const { data: restaurants, error } = await supabase
+        .from('restaurants')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      // Transform to feed format
+      items = (restaurants || []).map(r => ({
+        id: r.slug,
+        vibe: r.vibe,
+        name: r.name,
+        city: r.city,
+        tag: r.tag || r.cuisine,
+        href: `restaurace-${r.slug}.html`,
+        img: r.image_url || r.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800'
+      }));
+      
+      console.log('Loaded restaurants for feed:', items.length);
+      renderFeed();
+      renderGrid();
+    } catch (error) {
+      console.error('Error loading restaurants:', error);
+      toastError('❌ Nepodařilo se načíst restaurace');
+    }
+  }
 
-  // Saved system
-  const lsKey = 'gurmao_saved';
-  const getSaved = () => new Set(JSON.parse(localStorage.getItem(lsKey) || '[]'));
-  const setSaved = (set) => localStorage.setItem(lsKey, JSON.stringify([...set]));
+  // Saved system - use GurmaoCollections from app.js
+  const getSaved = async () => {
+    if (typeof GurmaoCollections !== 'undefined') {
+      return await GurmaoCollections.getSaved();
+    }
+    // Fallback to localStorage
+    return new Set(JSON.parse(localStorage.getItem('gurmao_saved') || '[]'));
+  };
+  
+  const toggleSave = async (id) => {
+    if (typeof GurmaoCollections !== 'undefined') {
+      return await GurmaoCollections.toggle(id);
+    }
+    // Fallback
+    const saved = new Set(JSON.parse(localStorage.getItem('gurmao_saved') || '[]'));
+    if (saved.has(id)) {
+      saved.delete(id);
+      localStorage.setItem('gurmao_saved', JSON.stringify([...saved]));
+      return false;
+    } else {
+      saved.add(id);
+      localStorage.setItem('gurmao_saved', JSON.stringify([...saved]));
+      return true;
+    }
+  };
 
   // Mobile feed render
-  const feed = document.getElementById('feed');
-  if (feed) {
+  function renderFeed() {
+    const feed = document.getElementById('feed');
+    if (!feed || items.length === 0) return;
     feed.innerHTML = items.map(x=>`
       <article class="snap-start h-[calc(100vh-65px)] relative">
         <a href="${x.href}" class="absolute inset-0">
@@ -349,83 +368,36 @@
             <div class="text-white/70 mt-1">${x.city} · ${x.tag}</div>
           </div>
         </a>
+        <button data-save="${x.id}" class="save-btn absolute top-6 right-6 w-12 h-12 rounded-full bg-black/30 backdrop-blur border border-white/20 hover:border-gurmaogold text-2xl transition z-10" aria-label="Uložit" onclick="event.preventDefault(); event.stopPropagation();">🤍</button>
       </article>
     `).join('');
 
-    const currentIndex = () => Math.round(feed.scrollTop / feed.clientHeight);
-    const act = async (type) => {
-      const idx = Math.max(0, Math.min(items.length-1, currentIndex()));
-      const cur = items[idx];
-      if (!cur) return;
+    // Update save buttons after render
+    if (typeof window.updateSaveButtons === 'function') {
+      setTimeout(() => window.updateSaveButtons(), 100);
+    }
 
-      if (type === 'save') {
-        const btn = document.getElementById('btnSave');
-        const originalText = btn.textContent;
-        
-        try {
-          // Show loading
-          btn.classList.add('btn-loading');
-          btn.textContent = '⏳';
-          
-          // Simulate async save (replace with real Supabase call)
-          await new Promise(resolve => setTimeout(resolve, 500));
-          
-          const s = getSaved();
-          const isAdding = !s.has(cur.id);
-          
-          if (isAdding) {
-            s.add(cur.id);
-            btn.textContent = '🖤';
-            toastSuccess(`✅ ${cur.name} uloženo!`);
-          } else {
-            s.delete(cur.id);
-            btn.textContent = '🤍';
-            toastInfo(`${cur.name} odebráno`);
-          }
-          
-          setSaved(s);
-        } catch (error) {
-          btn.textContent = originalText;
-          toastError('❌ Nepodařilo se uložit');
-        } finally {
-          btn.classList.remove('btn-loading');
-        }
-      } else {
-        toastInfo(type === 'fire' ? '🔥 Zapsáno: WOW' : '🤤 Zapsáno: chuť');
-      }
-    };
-
-    // init save icon based on first card
-    const init = () => {
-      const s = getSaved();
-      const cur = items[0];
-      if(cur) document.getElementById('btnSave').textContent = s.has(cur.id) ? '❤️' : '🤍';
-    };
-    init();
-
-    document.getElementById('btnSave')?.addEventListener('click',()=>act('save'));
-    document.getElementById('btnFire')?.addEventListener('click',()=>act('fire'));
-    document.getElementById('btnDrool')?.addEventListener('click',()=>act('drool'));
-
-    // update save icon on scroll
-    feed.addEventListener('scroll', () => {
-      const idx = Math.max(0, Math.min(items.length-1, currentIndex()));
-      const s = getSaved();
-      document.getElementById('btnSave').textContent = s.has(items[idx].id) ? '❤️' : '🤍';
-    }, { passive: true });
+    initFeedActions();
   }
 
-  // Desktop grid render
+  function initFeedActions() {
+    const feed = document.getElementById('feed');
+    if (!feed) return;
+    // Floatingbuttons are removed - each card has its own save button now
+  }
+
+  // Desktop grid variables
   const grid = document.getElementById('grid');
   const noResults = document.getElementById('noResults');
   const resultsCount = document.getElementById('resultsCount');
-  
-  let filteredItems = [...items];
+  let filteredItems = [];
 
-  function renderGrid() {
-    if (!grid) return;
+  // Desktop grid render
+  async function renderGrid() {
+    if (!grid || items.length === 0) return;
     
-    const saved = getSaved();
+    filteredItems = [...items];
+    const saved = await getSaved();
     
     if (filteredItems.length === 0) {
       grid.classList.add('hidden');
@@ -439,9 +411,9 @@
     if (resultsCount) resultsCount.textContent = `Zobrazeno ${filteredItems.length} restaurací`;
     
     grid.innerHTML = filteredItems.map(x=>{
-      const avgRating = window.ratingManager.getAverage(x.id);
-      const ratingCount = window.ratingManager.getCount(x.id);
-      const userRating = window.ratingManager.getUserRating(x.id);
+      const avgRating = window.ratingManager?.getAverage(x.id) || 0;
+      const ratingCount = window.ratingManager?.getCount(x.id) || 0;
+      const userRating = window.ratingManager?.getUserRating(x.id) || 0;
       
       return `
       <div class="rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
@@ -480,43 +452,10 @@
     `;
     }).join('');
 
-    grid.querySelectorAll('[data-save]').forEach(btn=>{
-      btn.addEventListener('click', async (e)=>{
-        e.preventDefault();
-        const id = btn.getAttribute('data-save');
-        const originalText = btn.textContent;
-        const restaurant = items.find(x => x.id === id);
-        
-        try {
-          // Show loading
-          btn.classList.add('btn-loading');
-          btn.textContent = '⏳';
-          
-          // Simulate async save (replace with real Supabase call)
-          await new Promise(resolve => setTimeout(resolve, 500));
-          
-          const s = getSaved();
-          const isAdding = !s.has(id);
-          
-          if (isAdding) {
-            s.add(id);
-            btn.textContent = '🖤';
-            toastSuccess(`✅ ${restaurant?.name || 'Restaurace'} uloženo!`);
-          } else {
-            s.delete(id);
-            btn.textContent = '🤍';
-            toastInfo(`${restaurant?.name || 'Restaurace'} odebráno`);
-          }
-          
-          setSaved(s);
-        } catch (error) {
-          btn.textContent = originalText;
-          toastError('❌ Nepodařilo se uložit');
-        } finally {
-          btn.classList.remove('btn-loading');
-        }
-      });
-    });
+    // Update save buttons state
+    if (typeof window.updateSaveButtons === 'function') {
+      setTimeout(() => window.updateSaveButtons(), 100);
+    }
   }
 
   // Filter function
@@ -607,10 +546,8 @@
     applyFilters();
   });
 
-  // Initial render
-  if (grid) {
-    renderGrid();
-  }
+  // Initial load
+  loadRestaurants();
 
   // Listen for rating updates and re-render affected card
   window.addEventListener('ratingUpdated', (e) => {
