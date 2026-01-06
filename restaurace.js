@@ -171,6 +171,7 @@ function createRestaurantCard(restaurant) {
             <p class="text-white/60 text-sm mt-1">${restaurant.city} · ${restaurant.tag}</p>
           </div>
           <div class="flex gap-2 flex-shrink-0">
+            <button data-save="${restaurant.slug}" class="save-btn w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center" aria-label="Uložit">🤍</button>
             <button class="share-btn w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center" 
                     data-restaurant='${JSON.stringify({
                       id: restaurant.slug,
