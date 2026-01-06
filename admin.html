@@ -106,19 +106,19 @@
       ⚙️ Gear
     </button>
     <button onclick="switchTab('add')" id="tab-add" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
-      ➕ Přidat restauraci
+      ➕ Restauraci
     </button>
     <button onclick="switchTab('add-chef')" id="tab-add-chef" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
-      ➕ Přidat kuchaře
+      ➕ Kuchaře
     </button>
     <button onclick="switchTab('add-post')" id="tab-add-post" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
-      ➕ Přidat příspěvek
+      ➕ Příspěvek
     </button>
     <button onclick="switchTab('add-collection')" id="tab-add-collection" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
-      ➕ Přidat kolekci
+      ➕ Kolekci
     </button>
     <button onclick="switchTab('add-gear')" id="tab-add-gear" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
-      ➕ Přidat gear
+      ➕ Gear
     </button>
   </div>
 
@@ -265,7 +265,7 @@
     <div class="max-w-3xl mx-auto">
       <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
         <h2 class="text-2xl mb-6">
-          <span id="formTitle">Přidat restauraci</span>
+          <span id="formTitle">Restauraci</span>
         </h2>
 
         <form id="addRestaurantForm" class="space-y-6">
@@ -411,7 +411,7 @@
               type="submit" 
               id="submitBtn"
               class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
-              <span id="submitText">➕ Přidat restauraci</span>
+              <span id="submitText">➕ Restauraci</span>
             </button>
             <button 
               type="button"
@@ -430,7 +430,7 @@
     <div class="max-w-3xl mx-auto">
       <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
         <h2 class="text-2xl mb-6">
-          <span id="formTitleChef">Přidat kuchaře</span>
+          <span id="formTitleChef">Kuchaře</span>
         </h2>
 
         <form id="addChefForm" class="space-y-6">
@@ -533,7 +533,7 @@
               type="submit" 
               id="submitChefBtn"
               class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
-              <span id="submitChefText">➕ Přidat kuchaře</span>
+              <span id="submitChefText">➕ Kuchaře</span>
             </button>
             <button 
               type="button"
@@ -552,7 +552,7 @@
     <div class="max-w-3xl mx-auto">
       <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
         <h2 class="text-2xl mb-6">
-          <span id="formTitlePost">Přidat příspěvek</span>
+          <span id="formTitlePost">Příspěvek</span>
         </h2>
 
         <form id="addPostForm" class="space-y-6">
@@ -658,7 +658,7 @@
             <button 
               type="submit" 
               class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
-              <span id="submitPostText">➕ Přidat příspěvek</span>
+              <span id="submitPostText">➕ Příspěvek</span>
             </button>
             <button 
               type="button"
@@ -677,7 +677,7 @@
     <div class="max-w-3xl mx-auto">
       <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
         <h2 class="text-2xl mb-6">
-          <span id="formTitleCollection">Přidat kolekci</span>
+          <span id="formTitleCollection">Kolekci</span>
         </h2>
 
         <form id="addCollectionForm" class="space-y-6">
@@ -752,7 +752,7 @@
             <button 
               type="submit" 
               class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
-              <span id="submitCollectionText">➕ Přidat kolekci</span>
+              <span id="submitCollectionText">➕ Kolekci</span>
             </button>
             <button 
               type="button"
@@ -771,7 +771,7 @@
     <div class="max-w-3xl mx-auto">
       <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
         <h2 class="text-2xl mb-6">
-          <span id="formTitleGear">Přidat gear</span>
+          <span id="formTitleGear">Gear</span>
         </h2>
 
         <form id="addGearForm" class="space-y-6">
@@ -876,7 +876,7 @@
             <button 
               type="submit" 
               class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
-              <span id="submitGearText">➕ Přidat gear</span>
+              <span id="submitGearText">➕ Gear</span>
             </button>
             <button 
               type="button"
@@ -1097,8 +1097,8 @@ async function editRestaurant(id) {
 function resetForm() {
   document.getElementById('addRestaurantForm').reset();
   document.getElementById('editId').value = '';
-  document.getElementById('formTitle').textContent = 'Přidat restauraci';
-  document.getElementById('submitText').textContent = '➕ Přidat restauraci';
+  document.getElementById('formTitle').textContent = 'Restauraci';
+  document.getElementById('submitText').textContent = '➕ Restauraci';
   if (marker) marker.remove();
 }
 
@@ -1297,8 +1297,8 @@ async function editChef(id) {
 function resetChefForm() {
   document.getElementById('addChefForm').reset();
   document.getElementById('editChefId').value = '';
-  document.getElementById('formTitleChef').textContent = 'Přidat kuchaře';
-  document.getElementById('submitChefText').textContent = '➕ Přidat kuchaře';
+  document.getElementById('formTitleChef').textContent = 'Kuchaře';
+  document.getElementById('submitChefText').textContent = '➕ Kuchaře';
 }
 
 // Search chefs
@@ -1696,8 +1696,8 @@ function deletePost(id, name) {
 function resetPostForm() {
   document.getElementById('addPostForm').reset();
   document.getElementById('editPostId').value = '';
-  document.getElementById('formTitlePost').textContent = 'Přidat příspěvek';
-  document.getElementById('submitPostText').textContent = '➕ Přidat příspěvek';
+  document.getElementById('formTitlePost').textContent = 'Příspěvek';
+  document.getElementById('submitPostText').textContent = '➕ Příspěvek';
 }
 
 // ========================================
@@ -1787,8 +1787,8 @@ function deleteCollection(id, name) {
 function resetCollectionForm() {
   document.getElementById('addCollectionForm').reset();
   document.getElementById('editCollectionId').value = '';
-  document.getElementById('formTitleCollection').textContent = 'Přidat kolekci';
-  document.getElementById('submitCollectionText').textContent = '➕ Přidat kolekci';
+  document.getElementById('formTitleCollection').textContent = 'Kolekci';
+  document.getElementById('submitCollectionText').textContent = '➕ Kolekci';
   document.getElementById('inputCollectionPublic').checked = true;
 }
 
@@ -1883,8 +1883,8 @@ function deleteGear(id, name) {
 function resetGearForm() {
   document.getElementById('addGearForm').reset();
   document.getElementById('editGearId').value = '';
-  document.getElementById('formTitleGear').textContent = 'Přidat gear';
-  document.getElementById('submitGearText').textContent = '➕ Přidat gear';
+  document.getElementById('formTitleGear').textContent = 'Gear';
+  document.getElementById('submitGearText').textContent = '➕ Gear';
 }
 
 
