@@ -220,11 +220,8 @@ class AIRecommendationEngine {
         if (restaurant.city.toLowerCase() === city.toLowerCase()) {
           score += 100; // Very high bonus for exact city match
           reasons.push(`V ${city}`);
-        } else if (this.isNearbyCity(city, restaurant.city)) {
-          score += 20; // Small bonus for nearby cities
-          reasons.push(`Nedaleko: ${restaurant.city}`);
         } else {
-          score -= 200; // Strong penalty for distant cities
+          score -= 50; // Penalty for wrong city, but not too harsh
         }
       }
 
