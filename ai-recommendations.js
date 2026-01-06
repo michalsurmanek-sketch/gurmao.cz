@@ -3,169 +3,86 @@
  * Smart restaurant recommendations based on mood, occasion, and preferences
  */
 
-// Import Supabase client
-import { supabase } from './supabase-client.js';
-
 class AIRecommendationEngine {
   constructor() {
-    this.restaurants = [];
-    this.loaded = false;
-    
-    // City proximity map (which cities are "close" to each other)
-    this.cityProximity = {
-      'Praha': ['Kutná Hora', 'Karlštejn'],
-      'Brno': ['Znojmo', 'Kroměříž'],
-      'Ostrava': ['Olomouc'],
-      'Plzeň': ['Karlovy Vary'],
-      'Liberec': ['Jablonec nad Nisou']
-    };
-    
+    this.restaurants = [
+      {
+        id: 'noir-table',
+        name: 'Noir Table',
+        vibe: 'LUXE',
+        vibeEmoji: '🍷',
+        city: 'Praha',
+        tag: 'fine dining',
+        description: 'Místo, kde se čas zpomalí. Oheň, ticho, precizní servis.',
+        href: 'restaurace-noir-table.html',
+        priceLevel: 4,
+        mood: ['romantika', 'oslava', 'business'],
+        cuisine: ['modern european', 'fine dining'],
+        atmosphere: ['klidná', 'elegantní', 'intimní'],
+        occasion: ['výročí', 'rande', 'business dinner'],
+        groupSize: [2, 4],
+        keywords: ['oheň', 'ticho', 'luxus', 'wine pairing', 'degustační menu']
+      },
+      {
+        id: 'ember-steak',
+        name: 'Ember Steak',
+        vibe: 'DRAMA',
+        vibeEmoji: '🔥',
+        city: 'Brno',
+        tag: 'steakhouse',
+        description: 'Oheň, kouř, maso. Žádné výmluvy.',
+        href: 'restaurace-noir-table.html',
+        priceLevel: 3,
+        mood: ['hlad', 'kamarádi', 'oslava'],
+        cuisine: ['steakhouse', 'grill'],
+        atmosphere: ['živá', 'masivní', 'dominantní'],
+        occasion: ['narozeniny', 'party', 'páteční večer'],
+        groupSize: [2, 4, 6, 8],
+        keywords: ['maso', 'grill', 'steaky', 'bourbon', 'craft beer']
+      },
+      {
+        id: 'la-calle',
+        name: 'La Calle',
+        vibe: 'CHAOS',
+        vibeEmoji: '🌮',
+        city: 'Ostrava',
+        tag: 'street food',
+        description: 'Chaos s chuťovým smyslem.',
+        href: 'restaurace-noir-table.html',
+        priceLevel: 2,
+        mood: ['zábava', 'kamarádi', 'rychlé jídlo'],
+        cuisine: ['mexican', 'street food'],
+        atmosphere: ['rušná', 'casual', 'energická'],
+        occasion: ['oběd', 'rychlá večeře', 'after party'],
+        groupSize: [2, 4, 6],
+        keywords: ['tacos', 'street food', 'rychlé', 'casual', 'mexická kuchyně']
+      }
+    ];
+
     this.moodProfiles = {
-      'romantika': { vibes: ['🍷 LUXE', '🌿 PURE'], groupSize: 2, atmosphere: ['intimní', 'klidná', 'elegantní'] },
-      'oslava': { vibes: ['🔥 DRAMA', '🌮 CHAOS'], groupSize: [4, 6, 8], atmosphere: ['živá', 'energická'] },
-      'business': { vibes: ['🍷 LUXE', '🌿 PURE'], groupSize: [2, 4], atmosphere: ['klidná', 'elegantní'] },
-      'kamarádi': { vibes: ['🔥 DRAMA', '🌮 CHAOS'], groupSize: [4, 6], atmosphere: ['živá', 'casual'] },
-      'rychle': { vibes: ['🌮 CHAOS'], priceLevel: [1, 2], atmosphere: ['casual', 'rušná'] },
-      'klid': { vibes: ['🌿 PURE', '🍷 LUXE'], groupSize: [1, 2], atmosphere: ['klidná', 'intimní'] }
+      'romantika': { vibes: ['LUXE', 'PURE'], groupSize: 2, atmosphere: ['intimní', 'klidná', 'elegantní'] },
+      'oslava': { vibes: ['DRAMA', 'CHAOS'], groupSize: [4, 6, 8], atmosphere: ['živá', 'energická'] },
+      'business': { vibes: ['LUXE', 'CALM'], groupSize: [2, 4], atmosphere: ['klidná', 'elegantní'] },
+      'kamarádi': { vibes: ['DRAMA', 'CHAOS'], groupSize: [4, 6], atmosphere: ['živá', 'casual'] },
+      'rychle': { vibes: ['CHAOS'], priceLevel: [1, 2], atmosphere: ['casual', 'rušná'] },
+      'klid': { vibes: ['CALM', 'PURE'], groupSize: [1, 2], atmosphere: ['klidná', 'intimní'] }
     };
 
     this.occasionProfiles = {
-      'rande': { mood: 'romantika', vibes: ['🍷 LUXE'], priceLevel: [3, 4] },
-      'výročí': { mood: 'romantika', vibes: ['🍷 LUXE'], priceLevel: [4] },
-      'narozeniny': { mood: 'oslava', vibes: ['🔥 DRAMA', '🌮 CHAOS'], groupSize: [4, 6, 8] },
-      'business dinner': { mood: 'business', vibes: ['🍷 LUXE', '🌿 PURE'], priceLevel: [3, 4] },
-      'oběd': { mood: 'rychle', vibes: ['🌮 CHAOS'], priceLevel: [1, 2] },
-      'páteční večer': { mood: 'kamarádi', vibes: ['🔥 DRAMA'], groupSize: [4, 6] },
-      'party': { mood: 'oslava', vibes: ['🌮 CHAOS', '🔥 DRAMA'], groupSize: [6, 8] }
+      'rande': { mood: 'romantika', vibes: ['LUXE'], priceLevel: [3, 4] },
+      'výročí': { mood: 'romantika', vibes: ['LUXE'], priceLevel: [4] },
+      'narozeniny': { mood: 'oslava', vibes: ['DRAMA', 'CHAOS'], groupSize: [4, 6, 8] },
+      'business dinner': { mood: 'business', vibes: ['LUXE', 'CALM'], priceLevel: [3, 4] },
+      'oběd': { mood: 'rychle', vibes: ['CHAOS'], priceLevel: [1, 2] },
+      'páteční večer': { mood: 'kamarádi', vibes: ['DRAMA'], groupSize: [4, 6] },
+      'party': { mood: 'oslava', vibes: ['CHAOS', 'DRAMA'], groupSize: [6, 8] }
     };
-  }
-  
-  /**
-   * Load restaurants from Supabase
-   */
-  async loadRestaurants() {
-    if (this.loaded) return;
-    
-    try {
-      const { data: restaurants, error } = await supabase
-        .from('restaurants')
-        .select('*');
-      
-      if (error) throw error;
-      
-      // Transform to AI format
-      this.restaurants = restaurants.map(r => ({
-        id: r.slug,
-        name: r.name,
-        vibe: r.vibe,
-        city: r.city,
-        tag: r.tag,
-        description: r.description || '',
-        href: `restaurace-${r.slug}.html`,
-        image_url: r.image_url,
-        // Estimate price level based on vibe
-        priceLevel: this.estimatePriceLevel(r.vibe, r.tag),
-        // Extract keywords from tag and description
-        keywords: this.extractKeywords(r.tag, r.description),
-        // Assign group sizes based on vibe
-        groupSize: this.estimateGroupSize(r.vibe),
-        // Assign occasions based on vibe and tag
-        occasion: this.estimateOccasions(r.vibe, r.tag),
-        atmosphere: this.estimateAtmosphere(r.vibe)
-      }));
-      
-      this.loaded = true;
-      console.log('Loaded', this.restaurants.length, 'restaurants for AI');
-    } catch (error) {
-      console.error('Error loading restaurants:', error);
-    }
-  }
-  
-  estimatePriceLevel(vibe, tag) {
-    if (vibe === '🍷 LUXE' || tag.includes('fine dining')) return 4;
-    if (vibe === '🔥 DRAMA' || tag.includes('steak')) return 3;
-    if (vibe === '🖤 DARK') return 3;
-    if (vibe === '🌿 PURE') return 2;
-    if (vibe === '🌮 CHAOS') return 2;
-    return 2;
-  }
-  
-  extractKeywords(tag, description) {
-    const keywords = [];
-    const text = `${tag} ${description}`.toLowerCase();
-    
-    // Common keywords
-    const keywordMap = {
-      'steak': ['maso', 'steak', 'hovězí'],
-      'sushi': ['sushi', 'rybí', 'japonská'],
-      'pizza': ['pizza', 'italská'],
-      'burger': ['burger', 'grill'],
-      'víno': ['víno', 'wine', 'vinný'],
-      'pivo': ['pivo', 'pivnice', 'beer'],
-      'vegetarian': ['vegetariánská', 'vegan'],
-      'asijská': ['asijská', 'thai', 'vietnam', 'čína']
-    };
-    
-    for (const [key, values] of Object.entries(keywordMap)) {
-      if (values.some(v => text.includes(v))) {
-        keywords.push(key);
-      }
-    }
-    
-    return keywords;
-  }
-  
-  estimateGroupSize(vibe) {
-    if (vibe === '🍷 LUXE' || vibe === '🖤 DARK') return [1, 2, 4];
-    if (vibe === '🔥 DRAMA') return [2, 4, 6, 8];
-    if (vibe === '🌮 CHAOS') return [2, 4, 6, 8];
-    if (vibe === '🌿 PURE') return [1, 2, 4];
-    return [2, 4];
-  }
-  
-  estimateOccasions(vibe, tag) {
-    const occasions = [];
-    
-    if (vibe === '🍷 LUXE') occasions.push('rande', 'výročí', 'business dinner');
-    if (vibe === '🔥 DRAMA') occasions.push('narozeniny', 'páteční večer');
-    if (vibe === '🌮 CHAOS') occasions.push('oběd', 'party', 'páteční večer');
-    if (vibe === '🌿 PURE') occasions.push('oběd', 'rande');
-    if (vibe === '🖤 DARK') occasions.push('rande', 'výročí');
-    
-    return occasions;
-  }
-  
-  estimateAtmosphere(vibe) {
-    if (vibe === '🍷 LUXE') return ['elegantní', 'klidná', 'intimní'];
-    if (vibe === '🔥 DRAMA') return ['živá', 'energická', 'dominantní'];
-    if (vibe === '🌮 CHAOS') return ['rušná', 'casual', 'energická'];
-    if (vibe === '🌿 PURE') return ['klidná', 'čistá', 'harmonická'];
-    if (vibe === '🖤 DARK') return ['intimní', 'tlumená', 'tajemná'];
-    return ['příjemná'];
-  }
-
-  /**
-   * Check if two cities are nearby
-   */
-  isNearbyCity(requestedCity, restaurantCity) {
-    const requested = requestedCity.toLowerCase();
-    const restaurant = restaurantCity.toLowerCase();
-    
-    // Check both directions
-    const nearby1 = this.cityProximity[requestedCity] || [];
-    const nearby2 = this.cityProximity[restaurantCity] || [];
-    
-    return nearby1.some(c => c.toLowerCase() === restaurant) ||
-           nearby2.some(c => c.toLowerCase() === requested);
   }
 
   /**
    * Get AI recommendations based on user input
    */
-  async getRecommendations(query) {
-    // Ensure restaurants are loaded
-    await this.loadRestaurants();
-    
+  getRecommendations(query) {
     const {
       mood = null,
       occasion = null,
@@ -215,14 +132,12 @@ class AIRecommendationEngine {
         reasons.push(`Ideální pro ${groupSize} ${groupSize === 2 ? 'lidi' : 'lidí'}`);
       }
 
-      // City matching - high priority
-      if (city) {
-        if (restaurant.city.toLowerCase() === city.toLowerCase()) {
-          score += 100; // Very high bonus for exact city match
-          reasons.push(`V ${city}`);
-        } else {
-          score -= 50; // Penalty for wrong city, but not too harsh
-        }
+      // City matching
+      if (city && restaurant.city.toLowerCase() === city.toLowerCase()) {
+        score += 15;
+        reasons.push(`Ve tvém městě: ${city}`);
+      } else if (city) {
+        score -= 10; // Penalty for wrong city
       }
 
       // Price level matching
@@ -313,7 +228,7 @@ class AIRecommendationEngine {
         
         <div class="flex items-start justify-between mb-3">
           <div>
-            <div class="text-xs text-gurmaogold mb-1">${restaurant.vibe}</div>
+            <div class="text-xs text-gurmaogold mb-1">${restaurant.vibeEmoji} ${restaurant.vibe}</div>
             <h3 class="text-xl font-bold">${restaurant.name}</h3>
             <div class="text-white/60 text-sm mt-1">${restaurant.city} · ${restaurant.tag}</div>
           </div>
@@ -339,72 +254,29 @@ class AIRecommendationEngine {
         <div class="flex gap-2">
           <a href="${restaurant.href}" class="flex-1 px-4 py-2 rounded-full ${isTopPick ? 'bg-gurmaogold text-black' : 'bg-white/10 text-white'} text-center text-sm font-semibold hover:scale-105 transition">
             Zobrazit detail →
-    
+          </a>
+          <button onclick="window.saveRestaurant && window.saveRestaurant('${restaurant.id}', '${restaurant.name}')" 
+                  class="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition">
+            💾
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Render all recommendations
+   */
+  renderRecommendations(query) {
+    const recommendations = this.getRecommendations(query);
+    const topPick = recommendations[0];
+
     if (!recommendations || recommendations.length === 0) {
       return '<div class="text-center text-white/60 py-12">Žádné doporučení nenalezeno. Zkus změnit filtry.</div>';
     }
 
-    // Separate by city if city was specified
-    let mainResults = recommendations;
-    let nearbyResults = [];
-    
-    if (query.city) {
-      mainResults = recommendations.filter(r => 
-        r.city.toLowerCase() === query.city.toLowerCase()
-      );
-      nearbyResults = recommendations.filter(r => 
-        r.city.toLowerCase() !== query.city.toLowerCase() && r.score > 0
-      ).slice(0, 3);
-    }
-
-    // If no results in main city, show message
-    if (mainResults.length === 0 && query.city) {
-      return `
-        <div class="text-center py-12">
-          <div class="text-5xl mb-4">🤷</div>
-          <p class="text-white/80 mb-2">V ${query.city} jsme bohužel nenašli odpovídající restaurace.</p>
-          ${nearbyResults.length > 0 ? `
-            <p class="text-white/60 text-sm mb-6">Máme pro tebe ale tipy z okolí:</p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              ${nearbyResults.map((r, i) => this.renderRecommendationCard(r, i)).join('')}
-            </div>
-          ` : '<p class="text-white/60 text-sm">Zkus změnit filtry nebo jiné město.</p>'}
-        </div>
-      `;
-    }
-
-    const topPick = mainResults[0];
     const explanation = this.generateExplanation(query, topPick);
 
-    let html = `
-      <div class="mb-8 p-6 bg-gradient-to-br from-gurmaogold/20 to-gurmaored/20 rounded-2xl border border-gurmaogold/30">
-        <div class="flex items-start gap-3">
-          <div class="text-3xl">🤖</div>
-          <div class="flex-1">
-            <h3 class="font-bold mb-2">AI Doporučení</h3>
-            <p class="text-white/90 text-sm leading-relaxed">${explanation}</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        ${mainResults.slice(0, 6).map((r, i) => this.renderRecommendationCard(r, i)).join('')}
-      </div>
-    `;
-
-    // Add nearby alternatives if applicable
-    if (query.city && nearbyResults.length > 0 && mainResults.length < 3) {
-      html += `
-        <div class="mt-12">
-          <h3 class="text-xl font-bold mb-4 text-white/80">💡 Alternativy z okolí</h3>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            ${nearbyResults.map((r, i) => this.renderRecommendationCard(r, i + 100)).join('')}
-          </div>
-        </div>
-      `;
-    }
-
-    return html
     return `
       <div class="mb-8 p-6 bg-gradient-to-br from-gurmaogold/20 to-gurmaored/20 rounded-2xl border border-gurmaogold/30">
         <div class="flex items-start gap-3">
@@ -444,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
 
       // Simulate AI processing delay
-      setTimeout(async () => {
+      setTimeout(() => {
         const formData = new FormData(form);
         const query = {
           mood: formData.get('mood') || null,
@@ -455,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
           freeText: formData.get('freeText') || ''
         };
 
-        const html = await window.aiEngine.renderRecommendations(query);
+        const html = window.aiEngine.renderRecommendations(query);
         resultsContainer.innerHTML = html;
 
         // Scroll to results
