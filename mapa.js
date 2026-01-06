@@ -32,7 +32,7 @@ map.addControl(geolocate, 'top-right');
 geolocate.on('geolocate', (e) => {
   map.flyTo({
     center: [e.coords.longitude, e.coords.latitude],
-    zoom: 12, // Wider zoom to see more restaurants around
+    zoom: 10, // Much wider zoom to see restaurants in larger area (approx 10-15 km radius)
     essential: true
   });
 });
