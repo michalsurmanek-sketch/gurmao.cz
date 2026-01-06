@@ -7,7 +7,6 @@ let searchQuery = '';
 let userLocation = null;
 let sortByDistance = false;
 let perPage = 12;
-let currentPage = 1;
 
 // Load and display restaurants
 async function loadRestaurants() {
@@ -48,43 +47,26 @@ function displayRestaurants(restaurants) {
   const resultCount = document.getElementById('resultCount');
   if (resultCount) {
     const total = restaurants.length;
-    const showing = Math.min(perPage * currentPage, total);
-    resultCount.textContent = `Zobrazeno ${showing} z ${total} restaurací`;
+    resultCount.textContent = `Celkem: ${total} restaurací`;
   }
   
   if (restaurants.length === 0) {
     container.innerHTML = `
       <div class="col-span-full text-center py-20">
-        <p class="text-white/40 text-lg">Zatím nejsou přidány žádné restaurace.</p>
+        <p class="text-white/40 text-lg">Žádné restaurace neodpovídají vašim kritériím.</p>
       </div>
     `;
     return;
   }
   
-  // Paginate results
-  const paginatedRestaurants = restaurants.slice(0, perPage * currentPage);
+  // Display only first perPage items
+  const toShow = restaurants.slice(0, perPage);
   
-  container.innerHTML = paginatedRestaurants.map(restaurant => createRestaurantCard(restaurant)).join('');
-  
-  // Add "Load More" button if there are more results
-  if (paginatedRestaurants.length < restaurants.length) {
-    container.innerHTML += `
-      <div class="col-span-full text-center py-10">
-        <button id="loadMoreBtn" class="px-8 py-4 rounded-full bg-gurmaogold text-black hover:scale-105 transition">
-          Načíst další
-        </button>
-      </div>
-    `;
-    
-    document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
-      currentPage++;
-      displayRestaurants(restaurants);
-    });
-  }
+  container.innerHTML = toShow.map(restaurant => createRestaurantCard(restaurant)).join('');
   
   // Initialize ratings after a short delay to ensure rating.js is loaded
   setTimeout(() => {
-    initializeRatings(paginatedRestaurants);
+    initializeRatings(toShow);
   }, 100);
 }
 
@@ -240,7 +222,6 @@ function initializePerPageButtons() {
       
       // Update perPage value
       perPage = parseInt(button.dataset.count);
-      currentPage = 1; // Reset to first page
       applyFilters();
     });
   });
@@ -248,7 +229,6 @@ function initializePerPageButtons() {
 
 // Apply all filters (vibe + search)
 function applyFilters() {
-  currentPage = 1; // Reset to first page when filtering
   let filtered = allRestaurants;
   
   // Apply vibe filter
