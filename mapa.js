@@ -52,6 +52,29 @@ async function loadRestaurants() {
     
     // Add markers
     restaurants.forEach(restaurant => {
+      // Determine marker color based on vibe
+      let markerIcon = '📍'; // Default
+      let markerFilter = 'drop-shadow(0 2px 8px rgba(212, 175, 55, 0.5))';
+      
+      if (restaurant.vibe) {
+        if (restaurant.vibe.includes('DRAMA')) {
+          markerIcon = '🔴';
+          markerFilter = 'drop-shadow(0 2px 8px rgba(255, 0, 0, 0.6))';
+        } else if (restaurant.vibe.includes('LUXE')) {
+          markerIcon = '🟡';
+          markerFilter = 'drop-shadow(0 2px 8px rgba(255, 215, 0, 0.6))';
+        } else if (restaurant.vibe.includes('PURE')) {
+          markerIcon = '🟢';
+          markerFilter = 'drop-shadow(0 2px 8px rgba(0, 255, 0, 0.6))';
+        } else if (restaurant.vibe.includes('DARK')) {
+          markerIcon = '⚫';
+          markerFilter = 'drop-shadow(0 2px 8px rgba(255, 255, 255, 0.4))';
+        } else if (restaurant.vibe.includes('CHAOS')) {
+          markerIcon = '🟠';
+          markerFilter = 'drop-shadow(0 2px 8px rgba(255, 165, 0, 0.6))';
+        }
+      }
+      
       // Create custom marker element
       const el = document.createElement('div');
       el.className = 'marker';
@@ -59,8 +82,8 @@ async function loadRestaurants() {
       el.style.height = '40px';
       el.style.cursor = 'pointer';
       el.style.fontSize = '32px';
-      el.style.filter = 'drop-shadow(0 2px 8px rgba(212, 175, 55, 0.5))';
-      el.textContent = '📍';
+      el.style.filter = markerFilter;
+      el.textContent = markerIcon;
 
       // Create popup content
       const vibeTooltips = {
