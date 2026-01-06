@@ -398,12 +398,16 @@ function findNearestRestaurants() {
         console.error('Geolocation error:', error);
         alert('Nepodařilo se získat vaši polohu. Zkontrolujte oprávnění prohlížeče.');
         btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <span class="hidden md:inline">Blízko mě</span>';
+        btn.classList.remove('bg-gurmaogold', 'text-black', 'border-gurmaogold');
+        btn.classList.add('bg-white/5', 'border-white/15');
         btn.disabled = false;
       }
     );
   } else {
     alert('Váš prohlížeč nepodporuje geolokaci.');
     btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <span class="hidden md:inline">Blízko mě</span>';
+    btn.classList.remove('bg-gurmaogold', 'text-black', 'border-gurmaogold');
+    btn.classList.add('bg-white/5', 'border-white/15');
     btn.disabled = false;
   }
 }
