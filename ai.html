@@ -113,15 +113,20 @@
           <label class="block text-sm font-semibold mb-2">
             <span class="text-gurmaogold">🎭</span> Nálada
           </label>
-          <select name="mood" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition">
-            <option value="">-- Vyber náladu --</option>
-            <option value="romantika">💕 Romantika</option>
-            <option value="oslava">🎉 Oslava</option>
-            <option value="business">💼 Business</option>
-            <option value="kamarádi">👥 S kamarády</option>
-            <option value="rychle">⚡ Rychle</option>
-            <option value="klid">🧘 Klid a pohoda</option>
-          </select>
+          <div class="custom-select">
+            <button type="button" id="moodBtn" class="custom-select-trigger w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+              -- Vyber náladu --
+            </button>
+            <div id="moodOptions" class="custom-options hidden">
+              <div class="custom-option" data-value="">-- Vyber náladu --</div>
+              <div class="custom-option" data-value="romantika">💕 Romantika</div>
+              <div class="custom-option" data-value="oslava">🎉 Oslava</div>
+              <div class="custom-option" data-value="business">💼 Business</div>
+              <div class="custom-option" data-value="kamarádi">👥 S kamarády</div>
+              <div class="custom-option" data-value="rychle">⚡ Rychle</div>
+              <div class="custom-option" data-value="klid">🧘 Klid a pohoda</div>
+            </div>
+          </div>
         </div>
 
         <!-- Occasion -->
@@ -129,16 +134,21 @@
           <label class="block text-sm font-semibold mb-2">
             <span class="text-gurmaogold">🎯</span> Příležitost
           </label>
-          <select name="occasion" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition">
-            <option value="">-- Vyber příležitost --</option>
-            <option value="rande">💑 Rande</option>
-            <option value="výročí">💍 Výročí</option>
-            <option value="narozeniny">🎂 Narozeniny</option>
-            <option value="business dinner">🍽️ Business dinner</option>
-            <option value="oběd">🥗 Oběd</option>
-            <option value="páteční večer">🍻 Páteční večer</option>
-            <option value="party">🎊 Party</option>
-          </select>
+          <div class="custom-select">
+            <button type="button" id="occasionBtn" class="custom-select-trigger w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+              -- Vyber příležitost --
+            </button>
+            <div id="occasionOptions" class="custom-options hidden">
+              <div class="custom-option" data-value="">-- Vyber příležitost --</div>
+              <div class="custom-option" data-value="rande">💑 Rande</div>
+              <div class="custom-option" data-value="výročí">💍 Výročí</div>
+              <div class="custom-option" data-value="narozeniny">🎂 Narozeniny</div>
+              <div class="custom-option" data-value="business dinner">🍽️ Business dinner</div>
+              <div class="custom-option" data-value="oběd">🥗 Oběd</div>
+              <div class="custom-option" data-value="páteční večer">🍻 Páteční večer</div>
+              <div class="custom-option" data-value="party">🎊 Party</div>
+            </div>
+          </div>
         </div>
 
         <!-- Group Size -->
@@ -146,14 +156,19 @@
           <label class="block text-sm font-semibold mb-2">
             <span class="text-gurmaogold">👥</span> Počet lidí
           </label>
-          <select name="groupSize" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition">
-            <option value="">-- Kolik vás bude? --</option>
-            <option value="1">1 (sólo)</option>
-            <option value="2">2 lidi</option>
-            <option value="4">4 lidi</option>
-            <option value="6">6 lidí</option>
-            <option value="8">8+ lidí</option>
-          </select>
+          <div class="custom-select">
+            <button type="button" id="groupSizeBtn" class="custom-select-trigger w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+              -- Kolik vás bude? --
+            </button>
+            <div id="groupSizeOptions" class="custom-options hidden">
+              <div class="custom-option" data-value="">-- Kolik vás bude? --</div>
+              <div class="custom-option" data-value="1">1 (sólo)</div>
+              <div class="custom-option" data-value="2">2 lidi</div>
+              <div class="custom-option" data-value="4">4 lidi</div>
+              <div class="custom-option" data-value="6">6 lidí</div>
+              <div class="custom-option" data-value="8">8+ lidí</div>
+            </div>
+          </div>
         </div>
 
         <!-- City -->
@@ -161,12 +176,17 @@
           <label class="block text-sm font-semibold mb-2">
             <span class="text-gurmaogold">📍</span> Město
           </label>
-          <select name="city" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition">
-            <option value="">-- Kde hledáš? --</option>
-            <option value="Praha">Praha</option>
-            <option value="Brno">Brno</option>
-            <option value="Ostrava">Ostrava</option>
-          </select>
+          <div class="custom-select">
+            <button type="button" id="cityBtn" class="custom-select-trigger w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+              -- Kde hledáš? --
+            </button>
+            <div id="cityOptions" class="custom-options hidden">
+              <div class="custom-option" data-value="">-- Kde hledáš? --</div>
+              <div class="custom-option" data-value="Praha">📍 Praha</div>
+              <div class="custom-option" data-value="Brno">📍 Brno</div>
+              <div class="custom-option" data-value="Ostrava">📍 Ostrava</div>
+            </div>
+          </div>
         </div>
 
         <!-- Price Level -->
@@ -174,13 +194,18 @@
           <label class="block text-sm font-semibold mb-2">
             <span class="text-gurmaogold">💰</span> Cenová relace
           </label>
-          <select name="priceLevel" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none transition">
-            <option value="">-- Rozpočet --</option>
-            <option value="1">💵 Nízká (do 300 Kč)</option>
-            <option value="2">💵💵 Střední (300-600 Kč)</option>
-            <option value="3">💵💵💵 Vyšší (600-1000 Kč)</option>
-            <option value="4">💵💵💵💵 Premium (1000+ Kč)</option>
-          </select>
+          <div class="custom-select">
+            <button type="button" id="priceLevelBtn" class="custom-select-trigger w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+              -- Rozpočet --
+            </button>
+            <div id="priceLevelOptions" class="custom-options hidden">
+              <div class="custom-option" data-value="">-- Rozpočet --</div>
+              <div class="custom-option" data-value="1">💵 Nízká (do 300 Kč)</div>
+              <div class="custom-option" data-value="2">💵💵 Střední (300-600 Kč)</div>
+              <div class="custom-option" data-value="3">💵💵💵 Vyšší (600-1000 Kč)</div>
+              <div class="custom-option" data-value="4">💵💵💵💵 Premium (1000+ Kč)</div>
+            </div>
+          </div>
         </div>
 
         <!-- Free Text -->
@@ -229,5 +254,110 @@
 <script type="module" src="ai-recommendations.js"></script>
 <script src="app.js"></script>
 <script src="auth-ui.js"></script>
+
+<script>
+// Custom dropdown functionality
+let formValues = {
+  mood: '',
+  occasion: '',
+  groupSize: '',
+  city: '',
+  priceLevel: ''
+};
+
+function initCustomDropdown(btnId, optionsId, key) {
+  const btn = document.getElementById(btnId);
+  const options = document.getElementById(optionsId);
+  
+  if (!btn || !options) return;
+  
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    // Close other dropdowns
+    document.querySelectorAll('.custom-options').forEach(o => {
+      if (o !== options) o.classList.add('hidden');
+    });
+    options.classList.toggle('hidden');
+  });
+  
+  options.querySelectorAll('.custom-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const value = opt.dataset.value;
+      btn.textContent = opt.textContent;
+      options.classList.add('hidden');
+      formValues[key] = value;
+    });
+  });
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', () => {
+  document.querySelectorAll('.custom-options').forEach(o => o.classList.add('hidden'));
+});
+
+// Initialize all dropdowns
+document.addEventListener('DOMContentLoaded', () => {
+  initCustomDropdown('moodBtn', 'moodOptions', 'mood');
+  initCustomDropdown('occasionBtn', 'occasionOptions', 'occasion');
+  initCustomDropdown('groupSizeBtn', 'groupSizeOptions', 'groupSize');
+  initCustomDropdown('cityBtn', 'cityOptions', 'city');
+  initCustomDropdown('priceLevelBtn', 'priceLevelOptions', 'priceLevel');
+  
+  // Update form submit handler to use formValues
+  const form = document.getElementById('aiRecommendationForm');
+  const originalHandler = form?.onsubmit;
+  
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const resultsContainer = document.getElementById('aiResults');
+      if (!resultsContainer) return;
+      
+      // Show loading
+      resultsContainer.innerHTML = `
+        <div class="text-center py-12">
+          <div class="inline-block animate-spin text-4xl mb-4">🤖</div>
+          <div class="text-white/60">AI přemýšlí...</div>
+        </div>
+      `;
+      
+      // Simulate AI processing delay
+      setTimeout(async () => {
+        const query = {
+          mood: formValues.mood || null,
+          occasion: formValues.occasion || null,
+          groupSize: parseInt(formValues.groupSize) || null,
+          city: formValues.city || null,
+          priceLevel: parseInt(formValues.priceLevel) || null,
+          freeText: form.querySelector('[name="freeText"]')?.value || ''
+        };
+        
+        const html = await window.aiEngine.renderRecommendations(query);
+        resultsContainer.innerHTML = html;
+        
+        // Scroll to results
+        resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 1200);
+    });
+  }
+  
+  // Reset button
+  const resetBtn = document.getElementById('resetForm');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      formValues = { mood: '', occasion: '', groupSize: '', city: '', priceLevel: '' };
+      document.getElementById('moodBtn').textContent = '-- Vyber náladu --';
+      document.getElementById('occasionBtn').textContent = '-- Vyber příležitost --';
+      document.getElementById('groupSizeBtn').textContent = '-- Kolik vás bude? --';
+      document.getElementById('cityBtn').textContent = '-- Kde hledáš? --';
+      document.getElementById('priceLevelBtn').textContent = '-- Rozpočet --';
+      form.querySelector('[name="freeText"]').value = '';
+      document.getElementById('aiResults').innerHTML = '';
+    });
+  }
+});
+</script>
+
 </body>
 </html>
