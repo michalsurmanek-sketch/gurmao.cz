@@ -6,7 +6,8 @@ let currentFilter = 'all';
 let searchQuery = '';
 let userLocation = null;
 let sortByDistance = false;
-let perPage = 12;
+// Desktop: 24 restaurací, Mobile: nekonečný scroll
+let perPage = window.innerWidth < 768 ? 999999 : 24;
 
 // Load and display restaurants
 async function loadRestaurants() {
@@ -59,8 +60,9 @@ function displayRestaurants(restaurants) {
     return;
   }
   
-  // Display only first perPage items
-  const toShow = restaurants.slice(0, perPage);
+  // Display only first perPage items (desktop limited, mobile unlimited)
+  const isMobile = window.innerWidth < 768;
+  const toShow = isMobile ? restaurants : restaurants.slice(0, perPage);
   
   container.innerHTML = toShow.map(restaurant => createRestaurantCard(restaurant)).join('');
   
@@ -221,9 +223,11 @@ function initializePerPageButtons() {
       button.classList.remove('bg-white/5');
       button.classList.add('bg-gurmaogold', 'text-black');
       
-      // Update perPage value
-      perPage = parseInt(button.dataset.count);
-      applyFilters();
+      // Update perPage value (only affects desktop)
+      if (window.innerWidth >= 768) {
+        perPage = parseInt(button.dataset.count);
+        applyFilters();
+      }
     });
   });
 }
