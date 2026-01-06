@@ -111,6 +111,15 @@
     <button onclick="switchTab('add-chef')" id="tab-add-chef" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
       ➕ Přidat kuchaře
     </button>
+    <button onclick="switchTab('add-post')" id="tab-add-post" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      ➕ Přidat příspěvek
+    </button>
+    <button onclick="switchTab('add-collection')" id="tab-add-collection" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      ➕ Přidat kolekci
+    </button>
+    <button onclick="switchTab('add-gear')" id="tab-add-gear" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      ➕ Přidat gear
+    </button>
   </div>
 
   <!-- Tab Content: Restaurants List -->
@@ -529,6 +538,349 @@
             <button 
               type="button"
               onclick="resetChefForm()"
+              class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
+              ↺ Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Add Post -->
+  <div id="content-add-post" class="tab-content hidden">
+    <div class="max-w-3xl mx-auto">
+      <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
+        <h2 class="text-2xl mb-6">
+          <span id="formTitlePost">Přidat příspěvek</span>
+        </h2>
+
+        <form id="addPostForm" class="space-y-6">
+          <input type="hidden" name="id" id="editPostId" />
+          
+          <!-- Title -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Nadpis *</label>
+            <input 
+              type="text" 
+              name="title" 
+              id="inputPostTitle"
+              required
+              placeholder="např. 5 nejlepších steaků v Praze"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Slug -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL slug *</label>
+            <input 
+              type="text" 
+              name="slug" 
+              id="inputPostSlug"
+              required
+              placeholder="5-nejlepsich-steaku-v-praze"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Category & Status -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">Kategorie</label>
+              <select 
+                name="category" 
+                id="inputPostCategory"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              >
+                <option value="">-- Vyber --</option>
+                <option value="recepty">Recepty</option>
+                <option value="tipy">Tipy</option>
+                <option value="trendy">Trendy</option>
+                <option value="rozhovory">Rozhovory</option>
+                <option value="review">Review</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-2">Status *</label>
+              <select 
+                name="status" 
+                id="inputPostStatus"
+                required
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              >
+                <option value="draft">📝 Koncept</option>
+                <option value="published">✓ Publikováno</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Excerpt -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Perex</label>
+            <textarea 
+              name="excerpt" 
+              id="inputPostExcerpt"
+              rows="2"
+              placeholder="Krátký popis příspěvku..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Content -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Obsah *</label>
+            <textarea 
+              name="content" 
+              id="inputPostContent"
+              required
+              rows="10"
+              placeholder="Hlavní text příspěvku..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Image URL -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL obrázku</label>
+            <input 
+              type="url" 
+              name="image_url" 
+              id="inputPostImageUrl"
+              placeholder="https://..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Submit -->
+          <div class="flex gap-4 pt-4">
+            <button 
+              type="submit" 
+              class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
+              <span id="submitPostText">➕ Přidat příspěvek</span>
+            </button>
+            <button 
+              type="button"
+              onclick="resetPostForm()"
+              class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
+              ↺ Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Add Collection -->
+  <div id="content-add-collection" class="tab-content hidden">
+    <div class="max-w-3xl mx-auto">
+      <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
+        <h2 class="text-2xl mb-6">
+          <span id="formTitleCollection">Přidat kolekci</span>
+        </h2>
+
+        <form id="addCollectionForm" class="space-y-6">
+          <input type="hidden" name="id" id="editCollectionId" />
+          
+          <!-- Name -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Název kolekce *</label>
+            <input 
+              type="text" 
+              name="name" 
+              id="inputCollectionName"
+              required
+              placeholder="např. Nejlepší steaky"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Slug -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL slug *</label>
+            <input 
+              type="text" 
+              name="slug" 
+              id="inputCollectionSlug"
+              required
+              placeholder="nejlepsi-steaky"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Popis</label>
+            <textarea 
+              name="description" 
+              id="inputCollectionDescription"
+              rows="3"
+              placeholder="Popis kolekce..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Image URL -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL obrázku</label>
+            <input 
+              type="url" 
+              name="image_url" 
+              id="inputCollectionImageUrl"
+              placeholder="https://..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Visibility -->
+          <div>
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input 
+                type="checkbox" 
+                name="is_public" 
+                id="inputCollectionPublic"
+                checked
+                class="w-5 h-5 rounded bg-white/5 border border-white/10 checked:bg-gurmaogold"
+              />
+              <span class="text-sm">Veřejná kolekce</span>
+            </label>
+          </div>
+
+          <!-- Submit -->
+          <div class="flex gap-4 pt-4">
+            <button 
+              type="submit" 
+              class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
+              <span id="submitCollectionText">➕ Přidat kolekci</span>
+            </button>
+            <button 
+              type="button"
+              onclick="resetCollectionForm()"
+              class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
+              ↺ Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Add Gear -->
+  <div id="content-add-gear" class="tab-content hidden">
+    <div class="max-w-3xl mx-auto">
+      <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
+        <h2 class="text-2xl mb-6">
+          <span id="formTitleGear">Přidat gear</span>
+        </h2>
+
+        <form id="addGearForm" class="space-y-6">
+          <input type="hidden" name="id" id="editGearId" />
+          
+          <!-- Name -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Název produktu *</label>
+            <input 
+              type="text" 
+              name="name" 
+              id="inputGearName"
+              required
+              placeholder="např. Le Creuset Dutch Oven"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Slug -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL slug *</label>
+            <input 
+              type="text" 
+              name="slug" 
+              id="inputGearSlug"
+              required
+              placeholder="le-creuset-dutch-oven"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Category & Price -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">Kategorie</label>
+              <select 
+                name="category" 
+                id="inputGearCategory"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              >
+                <option value="">-- Vyber --</option>
+                <option value="kuchyne">Kuchyně</option>
+                <option value="noze">Nože</option>
+                <option value="nadobi">Nádobí</option>
+                <option value="grilovani">Grilování</option>
+                <option value="servir">Servírování</option>
+                <option value="ostatni">Ostatní</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-2">Cena (Kč)</label>
+              <input 
+                type="number" 
+                name="price" 
+                id="inputGearPrice"
+                step="0.01"
+                placeholder="2500"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Popis</label>
+            <textarea 
+              name="description" 
+              id="inputGearDescription"
+              rows="4"
+              placeholder="Popis produktu..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Image URL -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL obrázku</label>
+            <input 
+              type="url" 
+              name="image_url" 
+              id="inputGearImageUrl"
+              placeholder="https://..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Affiliate URL -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Affiliate link</label>
+            <input 
+              type="url" 
+              name="affiliate_url" 
+              id="inputGearAffiliateUrl"
+              placeholder="https://..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Submit -->
+          <div class="flex gap-4 pt-4">
+            <button 
+              type="submit" 
+              class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
+              <span id="submitGearText">➕ Přidat gear</span>
+            </button>
+            <button 
+              type="button"
+              onclick="resetGearForm()"
               class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
               ↺ Reset
             </button>
@@ -1252,8 +1604,85 @@ async function loadGear() {
   }
 }
 
-// Placeholder functions for edit/delete (to be implemented with forms)
-function editPost(id) { window.toast.show('Funkce v přípravě', 'info'); }
+// ========================================
+// POSTS FORM HANDLERS
+// ========================================
+
+// Add/Update post
+document.getElementById('addPostForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const editId = formData.get('id');
+  const data = {
+    title: formData.get('title'),
+    slug: formData.get('slug'),
+    excerpt: formData.get('excerpt') || null,
+    content: formData.get('content'),
+    image_url: formData.get('image_url') || null,
+    category: formData.get('category') || null,
+    status: formData.get('status'),
+    published_at: formData.get('status') === 'published' ? new Date().toISOString() : null
+  };
+
+  try {
+    if (editId) {
+      const { error } = await window.supabase
+        .from('posts')
+        .update(data)
+        .eq('id', editId);
+
+      if (error) throw error;
+      window.toast.show('✅ Příspěvek aktualizován!', 'success');
+    } else {
+      const { error } = await window.supabase
+        .from('posts')
+        .insert([data]);
+
+      if (error) throw error;
+      window.toast.show('✅ Příspěvek přidán!', 'success');
+    }
+
+    resetPostForm();
+    switchTab('posts');
+    loadPosts();
+  } catch (err) {
+    console.error('Error saving post:', err);
+    window.toast.show('Chyba: ' + err.message, 'error');
+  }
+});
+
+// Edit post
+async function editPost(id) {
+  try {
+    const { data, error } = await window.supabase
+      .from('posts')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+
+    document.getElementById('editPostId').value = data.id;
+    document.getElementById('inputPostTitle').value = data.title;
+    document.getElementById('inputPostSlug').value = data.slug;
+    document.getElementById('inputPostCategory').value = data.category || '';
+    document.getElementById('inputPostStatus').value = data.status;
+    document.getElementById('inputPostExcerpt').value = data.excerpt || '';
+    document.getElementById('inputPostContent').value = data.content || '';
+    document.getElementById('inputPostImageUrl').value = data.image_url || '';
+
+    document.getElementById('formTitlePost').textContent = 'Upravit příspěvek';
+    document.getElementById('submitPostText').textContent = '💾 Uložit změny';
+
+    switchTab('add-post');
+  } catch (err) {
+    console.error('Error loading post:', err);
+    window.toast.show('Chyba při načítání: ' + err.message, 'error');
+  }
+}
+
+// Delete post
 function deletePost(id, name) { 
   if (confirm(`Smazat příspěvek "${name}"?`)) {
     window.supabase.from('posts').delete().eq('id', id).then(() => {
@@ -1263,7 +1692,88 @@ function deletePost(id, name) {
   }
 }
 
-function editCollection(id) { window.toast.show('Funkce v přípravě', 'info'); }
+// Reset post form
+function resetPostForm() {
+  document.getElementById('addPostForm').reset();
+  document.getElementById('editPostId').value = '';
+  document.getElementById('formTitlePost').textContent = 'Přidat příspěvek';
+  document.getElementById('submitPostText').textContent = '➕ Přidat příspěvek';
+}
+
+// ========================================
+// COLLECTIONS FORM HANDLERS
+// ========================================
+
+// Add/Update collection
+document.getElementById('addCollectionForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const editId = formData.get('id');
+  const data = {
+    name: formData.get('name'),
+    slug: formData.get('slug'),
+    description: formData.get('description') || null,
+    image_url: formData.get('image_url') || null,
+    is_public: formData.get('is_public') === 'on'
+  };
+
+  try {
+    if (editId) {
+      const { error } = await window.supabase
+        .from('collections')
+        .update(data)
+        .eq('id', editId);
+
+      if (error) throw error;
+      window.toast.show('✅ Kolekce aktualizována!', 'success');
+    } else {
+      const { error } = await window.supabase
+        .from('collections')
+        .insert([data]);
+
+      if (error) throw error;
+      window.toast.show('✅ Kolekce přidána!', 'success');
+    }
+
+    resetCollectionForm();
+    switchTab('collections');
+    loadCollections();
+  } catch (err) {
+    console.error('Error saving collection:', err);
+    window.toast.show('Chyba: ' + err.message, 'error');
+  }
+});
+
+// Edit collection
+async function editCollection(id) {
+  try {
+    const { data, error } = await window.supabase
+      .from('collections')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+
+    document.getElementById('editCollectionId').value = data.id;
+    document.getElementById('inputCollectionName').value = data.name;
+    document.getElementById('inputCollectionSlug').value = data.slug;
+    document.getElementById('inputCollectionDescription').value = data.description || '';
+    document.getElementById('inputCollectionImageUrl').value = data.image_url || '';
+    document.getElementById('inputCollectionPublic').checked = data.is_public;
+
+    document.getElementById('formTitleCollection').textContent = 'Upravit kolekci';
+    document.getElementById('submitCollectionText').textContent = '💾 Uložit změny';
+
+    switchTab('add-collection');
+  } catch (err) {
+    console.error('Error loading collection:', err);
+    window.toast.show('Chyba při načítání: ' + err.message, 'error');
+  }
+}
+
+// Delete collection
 function deleteCollection(id, name) {
   if (confirm(`Smazat kolekci "${name}"?`)) {
     window.supabase.from('collections').delete().eq('id', id).then(() => {
@@ -1273,7 +1783,93 @@ function deleteCollection(id, name) {
   }
 }
 
-function editGear(id) { window.toast.show('Funkce v přípravě', 'info'); }
+// Reset collection form
+function resetCollectionForm() {
+  document.getElementById('addCollectionForm').reset();
+  document.getElementById('editCollectionId').value = '';
+  document.getElementById('formTitleCollection').textContent = 'Přidat kolekci';
+  document.getElementById('submitCollectionText').textContent = '➕ Přidat kolekci';
+  document.getElementById('inputCollectionPublic').checked = true;
+}
+
+// ========================================
+// GEAR FORM HANDLERS
+// ========================================
+
+// Add/Update gear
+document.getElementById('addGearForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const editId = formData.get('id');
+  const data = {
+    name: formData.get('name'),
+    slug: formData.get('slug'),
+    description: formData.get('description') || null,
+    category: formData.get('category') || null,
+    image_url: formData.get('image_url') || null,
+    affiliate_url: formData.get('affiliate_url') || null,
+    price: formData.get('price') ? parseFloat(formData.get('price')) : null
+  };
+
+  try {
+    if (editId) {
+      const { error } = await window.supabase
+        .from('gear')
+        .update(data)
+        .eq('id', editId);
+
+      if (error) throw error;
+      window.toast.show('✅ Gear aktualizován!', 'success');
+    } else {
+      const { error } = await window.supabase
+        .from('gear')
+        .insert([data]);
+
+      if (error) throw error;
+      window.toast.show('✅ Gear přidán!', 'success');
+    }
+
+    resetGearForm();
+    switchTab('gear');
+    loadGear();
+  } catch (err) {
+    console.error('Error saving gear:', err);
+    window.toast.show('Chyba: ' + err.message, 'error');
+  }
+});
+
+// Edit gear
+async function editGear(id) {
+  try {
+    const { data, error } = await window.supabase
+      .from('gear')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+
+    document.getElementById('editGearId').value = data.id;
+    document.getElementById('inputGearName').value = data.name;
+    document.getElementById('inputGearSlug').value = data.slug;
+    document.getElementById('inputGearCategory').value = data.category || '';
+    document.getElementById('inputGearPrice').value = data.price || '';
+    document.getElementById('inputGearDescription').value = data.description || '';
+    document.getElementById('inputGearImageUrl').value = data.image_url || '';
+    document.getElementById('inputGearAffiliateUrl').value = data.affiliate_url || '';
+
+    document.getElementById('formTitleGear').textContent = 'Upravit gear';
+    document.getElementById('submitGearText').textContent = '💾 Uložit změny';
+
+    switchTab('add-gear');
+  } catch (err) {
+    console.error('Error loading gear:', err);
+    window.toast.show('Chyba při načítání: ' + err.message, 'error');
+  }
+}
+
+// Delete gear
 function deleteGear(id, name) {
   if (confirm(`Smazat produkt "${name}"?`)) {
     window.supabase.from('gear').delete().eq('id', id).then(() => {
@@ -1282,6 +1878,15 @@ function deleteGear(id, name) {
     });
   }
 }
+
+// Reset gear form
+function resetGearForm() {
+  document.getElementById('addGearForm').reset();
+  document.getElementById('editGearId').value = '';
+  document.getElementById('formTitleGear').textContent = 'Přidat gear';
+  document.getElementById('submitGearText').textContent = '➕ Přidat gear';
+}
+
 
 // Load on tab switch
 const originalSwitchTab = switchTab;
