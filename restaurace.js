@@ -315,13 +315,13 @@ function showError() {
   }
 }
 
-// Location button handler
-const locationBtn = document.getElementById('locationBtn');
-if (locationBtn) {
-  locationBtn.addEventListener('click', findNearestRestaurants);
-}
-
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   loadRestaurants();
+  
+  // Location button handler
+  const locationBtn = document.getElementById('locationBtn');
+  if (locationBtn) {
+    locationBtn.addEventListener('click', findNearestRestaurants);
+  }
 });
