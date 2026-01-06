@@ -131,6 +131,16 @@ async function loadRestaurants() {
       // Reinitialize tooltips when popup opens
       popup.on('open', () => {
         if (window.initVibeTooltips) window.initVibeTooltips();
+        
+        // Auto-collapse legend on mobile when popup opens
+        if (window.innerWidth < 768) {
+          const legendContent = document.getElementById('legendContent');
+          const legendToggle = document.getElementById('legendToggle');
+          if (legendContent && legendToggle) {
+            legendContent.style.display = 'none';
+            legendToggle.textContent = '▶';
+          }
+        }
       });
 
       // Create marker
