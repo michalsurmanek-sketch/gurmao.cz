@@ -138,12 +138,6 @@ function initializeInfiniteScroll() {
     }
   });
 }
-  
-  // Initialize ratings after a short delay to ensure rating.js is loaded
-  setTimeout(() => {
-    initializeRatings(toShow);
-  }, 100);
-}
 
 // Create restaurant card HTML
 function createRestaurantCard(restaurant) {
