@@ -329,6 +329,13 @@ function initCustomDropdown(btnId, optionsId, key) {
       if (o !== options) o.classList.add('hidden');
     });
     options.classList.toggle('hidden');
+    
+    // Scroll dropdown into view when opened
+    if (!options.classList.contains('hidden')) {
+      setTimeout(() => {
+        options.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
   });
   
   options.querySelectorAll('.custom-option').forEach(opt => {
