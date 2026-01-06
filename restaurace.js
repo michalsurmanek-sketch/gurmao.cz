@@ -4,6 +4,8 @@ import { supabase } from './supabase-client.js';
 let allRestaurants = [];
 let currentFilter = 'all';
 let searchQuery = '';
+let userLocation = null;
+let sortByDistance = false;
 
 // Load and display restaurants
 async function loadRestaurants() {
@@ -210,11 +212,82 @@ function applyFilters() {
   }
   
   displayRestaurants(filtered);
+  
+  // Sort by distance if location is enabled
+  if (sortByDistance && userLocation) {
+    filtered.sort((a, b) => (a.distance || 999) - (b.distance || 999));
+    displayRestaurants(filtered);
+  }
 }
 
 // Filter restaurants by vibe (kept for backwards compatibility)
 function filterRestaurants() {
   applyFilters();
+}
+
+// Calculate distance between two coordinates (Haversine formula)
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Earth's radius in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+// Get user location and sort by distance
+function findNearestRestaurants() {
+  const btn = document.getElementById('locationBtn');
+  if (!btn) return;
+  
+  btn.disabled = true;
+  btn.innerHTML = '<svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg> <span class="hidden md:inline">Hledám...</span>';
+  
+  if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        userLocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        
+        sortByDistance = true;
+        
+        // Add distance to each restaurant
+        allRestaurants.forEach(r => {
+          if (r.latitude && r.longitude) {
+            r.distance = calculateDistance(
+              userLocation.lat,
+              userLocation.lng,
+              r.latitude,
+              r.longitude
+            );
+          } else {
+            r.distance = 999; // Unknown distance
+          }
+        });
+        
+        applyFilters();
+        
+        btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <span class="hidden md:inline">📍 Podle vzdálenosti</span>';
+        btn.disabled = false;
+        btn.classList.add('bg-gurmaogold', 'text-black');
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        alert('Nepodařilo se získat vaši polohu. Zkontrolujte oprávnění prohlížeče.');
+        btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <span class="hidden md:inline">Blízko mě</span>';
+        btn.disabled = false;
+      }
+    );
+  } else {
+    alert('Váš prohlížeč nepodporuje geolokaci.');
+    btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <span class="hidden md:inline">Blízko mě</span>';
+    btn.disabled = false;
+  }
 }
 
 // Show error message
@@ -229,6 +302,12 @@ function showError() {
         </button>
       </div>
     `;
+  
+  // Location button handler
+  const locationBtn = document.getElementById('locationBtn');
+  if (locationBtn) {
+    locationBtn.addEventListener('click', findNearestRestaurants);
+  }
   }
 }
 
