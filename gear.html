@@ -48,15 +48,16 @@
     </nav>
     <button id="menuBtn" class="md:hidden w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
   </div>
+</header>
 
-  <!-- Mobile menu -->
-  <div id="menuBackdrop" class="hidden md:hidden fixed inset-0 bg-black/70 z-[100]"></div>
-  <div id="mobileMenu" class="hidden md:hidden fixed inset-x-0 top-[65px] bottom-0 z-[110] overflow-y-auto">
-    <div class="mx-4 my-4 rounded-3xl border border-white/10 bg-gurmaoblack/95 backdrop-blur p-4">
-      <div class="flex items-center justify-between px-2 pb-3">
-        <div class="text-sm text-white/60">Navigace</div>
-        <button id="menuClose" class="w-10 h-10 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Zavřít menu">✕</button>
-      </div>
+<!-- Mobile menu (outside header for proper z-index) -->
+<div id="menuBackdrop" class="hidden md:hidden fixed inset-0 bg-black/70 z-[100]"></div>
+<div id="mobileMenu" class="hidden md:hidden fixed inset-x-0 top-[65px] bottom-0 z-[110] overflow-y-auto">
+  <div class="mx-4 my-4 rounded-3xl border border-white/10 bg-gurmaoblack/95 backdrop-blur p-4">
+    <div class="flex items-center justify-between px-2 pb-3">
+      <div class="text-sm text-white/60">Navigace</div>
+      <button id="menuClose" class="w-10 h-10 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Zavřít menu">✕</button>
+    </div>
       <nav class="grid gap-2">
         <a href="index.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Domů</a>
         <a href="feed.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Feed</a>
@@ -90,7 +91,7 @@
       </nav>
     </div>
   </div>
-</header>
+</div>
 
 <!-- HERO -->
 <section class="py-20 border-b border-white/10">
