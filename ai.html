@@ -131,8 +131,29 @@
         <a href="kuchar.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Kuchaři</a>
         <a href="gear.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Gear</a>
         <a href="ai.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">AI</a>
-        <a href="collections.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Sbírky</a>
-        <a href="login.html" class="px-4 py-3 rounded-2xl border border-white/20 hover:border-gurmaogold hover:text-gurmaogold">Přihlásit se</a>
+        <a href="mapa.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Mapa</a>
+        <!-- User menu (mobile) -->
+        <div id="userMenuMobile" class="hidden mt-2 pt-2 border-t border-white/10">
+          <div class="px-2 mb-2 text-sm text-white/60">
+            <span id="userNameMobile"></span>
+          </div>
+          <a href="collections.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
+            <div class="font-semibold text-sm">Můj výběr</div>
+            <div class="text-xs text-white/60">Uložené restaurace</div>
+          </a>
+          <a href="admin.html" data-admin-only class="hidden px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
+            <div class="font-semibold text-sm">🔒 Admin Panel</div>
+            <div class="text-xs text-white/60">Správa obsahu</div>
+          </a>
+          <a href="profile.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
+            <div class="font-semibold text-sm">Můj účet</div>
+            <div class="text-xs text-white/60">Nastavení profilu</div>
+          </a>
+          <button data-logout-btn class="w-full px-4 py-3 rounded-2xl border border-gurmaored text-gurmaored hover:bg-gurmaored hover:text-white transition">
+            <div class="font-semibold text-sm">Odhlásit se</div>
+          </button>
+        </div>
+        <a id="loginLinkMobile" href="login.html" class="px-4 py-3 rounded-2xl border border-white/20 hover:border-gurmaogold hover:text-gurmaogold">Přihlásit se</a>
       </nav>
     </div>
   </div>
