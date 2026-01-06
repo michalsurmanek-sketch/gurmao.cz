@@ -111,13 +111,24 @@
     </div>
     
     <!-- Vibe Filters -->
-    <div id="filters" class="flex flex-wrap gap-4">
+    <div id="filters" class="flex flex-wrap gap-4 mb-4">
       <button class="px-5 py-2 rounded-full bg-gurmaogold text-black transition">Vše</button>
       <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Elegantní zážitek, důraz na detail, klidná atmosféra">🍷 LUXE</button>
       <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Výrazné chutě, silná osobnost, nezapomenutelné kombinace">🔥 DRAMA</button>
       <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Uvolněný styl, pestrost, radost z jídla bez pravidel">🌮 CHAOS</button>
       <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Čisté suroviny, jednoduchost, chuť v hlavní roli">🌿 PURE</button>
       <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Intimní atmosféra, večerní vibe, tlumené světlo">🖤 DARK</button>
+    </div>
+    
+    <!-- Display Options -->
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2 text-sm">
+        <span class="text-white/60">Zobrazit:</span>
+        <button class="per-page-btn px-4 py-2 rounded-full bg-gurmaogold text-black transition" data-count="12">12</button>
+        <button class="per-page-btn px-4 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-count="24">24</button>
+        <button class="per-page-btn px-4 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-count="48">48</button>
+      </div>
+      <div id="resultCount" class="text-sm text-white/60"></div>
     </div>
   </div>
 </section>

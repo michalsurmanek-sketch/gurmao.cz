@@ -6,6 +6,8 @@ let currentFilter = 'all';
 let searchQuery = '';
 let userLocation = null;
 let sortByDistance = false;
+let perPage = 12;
+let currentPage = 1;
 
 // Load and display restaurants
 async function loadRestaurants() {
@@ -30,6 +32,7 @@ async function loadRestaurants() {
     displayRestaurants(allRestaurants);
     initializeFilters();
     initializeSearch();
+    initializePerPageButtons();
   } catch (error) {
     console.error('Error loading restaurants:', error);
     showError();
@@ -41,6 +44,14 @@ function displayRestaurants(restaurants) {
   const container = document.getElementById('restaurantsList');
   if (!container) return;
   
+  // Update result count
+  const resultCount = document.getElementById('resultCount');
+  if (resultCount) {
+    const total = restaurants.length;
+    const showing = Math.min(perPage * currentPage, total);
+    resultCount.textContent = `Zobrazeno ${showing} z ${total} restaurací`;
+  }
+  
   if (restaurants.length === 0) {
     container.innerHTML = `
       <div class="col-span-full text-center py-20">
@@ -50,11 +61,30 @@ function displayRestaurants(restaurants) {
     return;
   }
   
-  container.innerHTML = restaurants.map(restaurant => createRestaurantCard(restaurant)).join('');
+  // Paginate results
+  const paginatedRestaurants = restaurants.slice(0, perPage * currentPage);
+  
+  container.innerHTML = paginatedRestaurants.map(restaurant => createRestaurantCard(restaurant)).join('');
+  
+  // Add "Load More" button if there are more results
+  if (paginatedRestaurants.length < restaurants.length) {
+    container.innerHTML += `
+      <div class="col-span-full text-center py-10">
+        <button id="loadMoreBtn" class="px-8 py-4 rounded-full bg-gurmaogold text-black hover:scale-105 transition">
+          Načíst další
+        </button>
+      </div>
+    `;
+    
+    document.getElementById('loadMoreBtn')?.addEventListener('click', () => {
+      currentPage++;
+      displayRestaurants(restaurants);
+    });
+  }
   
   // Initialize ratings after a short delay to ensure rating.js is loaded
   setTimeout(() => {
-    initializeRatings(restaurants);
+    initializeRatings(paginatedRestaurants);
   }, 100);
 }
 
@@ -192,8 +222,33 @@ function initializeSearch() {
   }
 }
 
+// Initialize per-page buttons
+function initializePerPageButtons() {
+  const buttons = document.querySelectorAll('.per-page-btn');
+  
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Remove active state from all buttons
+      buttons.forEach(btn => {
+        btn.classList.remove('bg-gurmaogold', 'text-black');
+        btn.classList.add('bg-white/5');
+      });
+      
+      // Add active state to clicked button
+      button.classList.remove('bg-white/5');
+      button.classList.add('bg-gurmaogold', 'text-black');
+      
+      // Update perPage value
+      perPage = parseInt(button.dataset.count);
+      currentPage = 1; // Reset to first page
+      applyFilters();
+    });
+  });
+}
+
 // Apply all filters (vibe + search)
 function applyFilters() {
+  currentPage = 1; // Reset to first page when filtering
   let filtered = allRestaurants;
   
   // Apply vibe filter
