@@ -150,12 +150,8 @@ async function loadRestaurants() {
         .addTo(map);
     });
 
-    // Fit bounds to show all markers
-    if (restaurantsWithGPS.length > 0) {
-      const bounds = new mapboxgl.LngLatBounds();
-      restaurantsWithGPS.forEach(r => bounds.extend([r.longitude, r.latitude]));
-      map.fitBounds(bounds, { padding: 80 });
-    }
+    // Keep map centered on Czech Republic instead of fitting to markers
+    // Users can explore the map freely or use geolocate to find nearby restaurants
     
   } catch (error) {
     console.error('Error loading restaurants:', error);
