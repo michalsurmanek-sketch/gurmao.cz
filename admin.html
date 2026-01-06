@@ -80,9 +80,37 @@
 
 <main class="max-w-7xl mx-auto px-6 py-10">
   <!-- Header -->
-  <div class="mb-10">
-    <h1 class="text-4xl mb-2">Admin Panel</h1>
-    <p class="text-white/60">Správa restaurací, kuchařů a obsahu</p>
+  <div class="mb-10 flex items-start justify-between">
+    <div>
+      <h1 class="text-4xl mb-2">Admin Panel</h1>
+      <p class="text-white/60">Správa restaurací, kuchařů a obsahu</p>
+    </div>
+    <div class="flex gap-4 text-sm">
+      <div class="text-center px-4 py-2 bg-white/5 rounded-xl border border-white/10">
+        <div class="text-2xl font-bold text-gurmaogold" id="stat-restaurants">0</div>
+        <div class="text-white/60 text-xs">Restaurace</div>
+      </div>
+      <div class="text-center px-4 py-2 bg-white/5 rounded-xl border border-white/10">
+        <div class="text-2xl font-bold text-gurmaogold" id="stat-chefs">0</div>
+        <div class="text-white/60 text-xs">Kuchaři</div>
+      </div>
+      <div class="text-center px-4 py-2 bg-white/5 rounded-xl border border-white/10">
+        <div class="text-2xl font-bold text-gurmaogold" id="stat-posts">0</div>
+        <div class="text-white/60 text-xs">Příspěvky</div>
+      </div>
+      <div class="text-center px-4 py-2 bg-white/5 rounded-xl border border-white/10">
+        <div class="text-2xl font-bold text-gurmaogold" id="stat-collections">0</div>
+        <div class="text-white/60 text-xs">Kolekce</div>
+      </div>
+      <div class="text-center px-4 py-2 bg-white/5 rounded-xl border border-white/10">
+        <div class="text-2xl font-bold text-gurmaogold" id="stat-gear">0</div>
+        <div class="text-white/60 text-xs">Gear</div>
+      </div>
+      <div class="text-center px-4 py-2 bg-white/5 rounded-xl border border-white/10">
+        <div class="text-2xl font-bold text-gurmaogold" id="stat-reviews">0</div>
+        <div class="text-white/60 text-xs">Recenze</div>
+      </div>
+    </div>
   </div>
 
   <!-- Tabs -->
@@ -950,6 +978,7 @@ async function loadRestaurants() {
     if (error) throw error;
 
     document.getElementById('totalCount').textContent = data.length;
+    document.getElementById('stat-restaurants').textContent = data.length;
 
     const html = data.map(r => `
       <div class="bg-white/5 rounded-2xl border border-white/10 p-6 hover:bg-white/10 transition">
@@ -1120,6 +1149,18 @@ document.getElementById('searchRestaurants').addEventListener('input', (e) => {
 // Load on page load
 loadRestaurants();
 
+// Load all stats on init
+(async function loadAllStats() {
+  while (!window.supabase) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  loadChefs();
+  loadPosts();
+  loadCollections();
+  loadReviews();
+  loadGear();
+})();
+
 // ========================================
 // CHEFS MANAGEMENT
 // ========================================
@@ -1161,6 +1202,7 @@ async function loadChefs() {
     if (error) throw error;
 
     document.getElementById('totalChefsCount').textContent = data.length;
+    document.getElementById('stat-chefs').textContent = data.length;
 
     const html = data.map(c => `
       <div class="bg-white/5 rounded-2xl border border-white/10 p-6 hover:bg-white/10 transition">
@@ -1333,6 +1375,7 @@ async function loadPosts() {
     if (error) throw error;
 
     document.getElementById('totalPostsCount').textContent = data?.length || 0;
+    document.getElementById('stat-posts').textContent = data?.length || 0;
 
     if (!data || data.length === 0) {
       document.getElementById('postsList').innerHTML = `
@@ -1396,6 +1439,7 @@ async function loadCollections() {
     if (error) throw error;
 
     document.getElementById('totalCollectionsCount').textContent = data?.length || 0;
+    document.getElementById('stat-collections').textContent = data?.length || 0;
 
     if (!data || data.length === 0) {
       document.getElementById('collectionsList').innerHTML = `
@@ -1463,6 +1507,7 @@ async function loadReviews(status = 'all') {
     if (error) throw error;
 
     document.getElementById('totalReviewsCount').textContent = data?.length || 0;
+    document.getElementById('stat-reviews').textContent = data?.length || 0;
 
     if (!data || data.length === 0) {
       document.getElementById('reviewsList').innerHTML = `
@@ -1567,6 +1612,7 @@ async function loadGear() {
     if (error) throw error;
 
     document.getElementById('totalGearCount').textContent = data?.length || 0;
+    document.getElementById('stat-gear').textContent = data?.length || 0;
 
     if (!data || data.length === 0) {
       document.getElementById('gearList').innerHTML = `
