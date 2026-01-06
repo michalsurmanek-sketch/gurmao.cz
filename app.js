@@ -150,43 +150,55 @@ const GurmaoCollections = {
   }
 };
 
-// Initialize save buttons
+// Initialize save buttons with event delegation
 document.addEventListener('DOMContentLoaded', async () => {
-  const saveButtons = document.querySelectorAll('[data-save]');
+  // Initial update for existing buttons
+  await updateAllSaveButtons();
   
-  for (const btn of saveButtons) {
+  // Event delegation for all save buttons (including dynamically added)
+  document.body.addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-save]');
+    if (!btn) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
     const id = btn.getAttribute('data-save');
     
-    // Update button state
+    const user = GurmaoCollections.getUser();
+    if (!user || !user.loggedIn) {
+      showToast('⚠️ Přihlaš se pro synchronizaci');
+      // Still works with localStorage
+    }
+    
+    const nowSaved = await GurmaoCollections.toggle(id);
+    btn.textContent = nowSaved ? '❤️' : '🤍';
+    
+    if (nowSaved) {
+      btn.classList.add('saved');
+      showToast('Uloženo do sbírek ✓');
+    } else {
+      btn.classList.remove('saved');
+      showToast('Odebráno ze sbírek');
+    }
+  });
+});
+
+// Update all save buttons state
+async function updateAllSaveButtons() {
+  const saveButtons = document.querySelectorAll('[data-save]');
+  for (const btn of saveButtons) {
+    const id = btn.getAttribute('data-save');
     const isSaved = await GurmaoCollections.isSaved(id);
     if (isSaved) {
       btn.textContent = '❤️';
       btn.classList.add('saved');
     }
-    
-    btn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      const user = GurmaoCollections.getUser();
-      if (!user || !user.loggedIn) {
-        showToast('⚠️ Přihlaš se pro synchronizaci');
-        // Still works with localStorage
-      }
-      
-      const nowSaved = await GurmaoCollections.toggle(id);
-      btn.textContent = nowSaved ? '❤️' : '🤍';
-      
-      if (nowSaved) {
-        btn.classList.add('saved');
-        showToast('Uloženo do sbírek ✓');
-      } else {
-        btn.classList.remove('saved');
-        showToast('Odebráno ze sbírek');
-      }
-    });
   }
-});
+}
+
+// Export function to be called after dynamic content loads
+window.updateSaveButtons = updateAllSaveButtons;
 
 // ======================
 // TOAST NOTIFICATIONS

@@ -76,6 +76,13 @@ function displayRestaurants(restaurants) {
   setTimeout(() => {
     initializeRatings(toShow);
   }, 100);
+  
+  // Update save buttons state
+  if (typeof window.updateSaveButtons === 'function') {
+    setTimeout(() => {
+      window.updateSaveButtons();
+    }, 100);
+  }
 }
 
 // Update or create "Load more" button
@@ -115,6 +122,13 @@ window.loadMore = function() {
   setTimeout(() => {
     initializeRatings(newItems);
   }, 100);
+  
+  // Update save buttons state for new items
+  if (typeof window.updateSaveButtons === 'function') {
+    setTimeout(() => {
+      window.updateSaveButtons();
+    }, 100);
+  }
 }
 
 // Initialize infinite scroll for mobile
