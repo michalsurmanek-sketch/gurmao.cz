@@ -173,6 +173,13 @@
       width: 6px;
       opacity: 1;
     }
+    
+    /* Location filter button active state */
+    #locationBtn.active {
+      border-color: #d4af37;
+      background: rgba(212, 175, 55, 0.15);
+      color: #d4af37;
+    }
   </style>
 </head>
 <body class="bg-gurmaoblack text-white overflow-x-hidden">
@@ -226,7 +233,15 @@
     </nav>
 
     <!-- Mobile hamburger -->
-    <button id="menuBtn" class="md:hidden w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
+    <div class="md:hidden flex gap-2">
+      <button id="locationBtn" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Restaurace v okolí" title="Zobrazit restaurace v okolí">
+        <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </button>
+      <button id="menuBtn" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
+    </div>
   </div>
 </header>
 
@@ -414,14 +429,25 @@
   };
 
   // Mobile feed render
-  async function renderFeed() {
+  async function renderFeed(nearbyFilter = null) {
     const feed = document.getElementById('feed');
     if (!feed || items.length === 0) return;
+    
+    // Filter items if location filter is active
+    let displayItems = items;
+    if (nearbyFilter) {
+      displayItems = items.filter(x => nearbyFilter.has(x.id));
+    }
+    
+    if (displayItems.length === 0) {
+      feed.innerHTML = '<div class="flex items-center justify-center h-[calc(100vh-65px)] text-white/60">Žádné restaurace v okolí</div>';
+      return;
+    }
     
     // Get saved restaurants
     const saved = await getSaved();
     
-    feed.innerHTML = items.map(x=>{
+    feed.innerHTML = displayItems.map(x=>{
       const isSaved = saved.has(x.id);
       const saveIcon = isSaved ? '🖤' : '🤍';
       const saveMenuText = isSaved ? '🖤 Uloženo' : '🤍 Uložit do výběru';
@@ -711,10 +737,12 @@
   let filteredItems = [];
 
   // Desktop grid render
-  async function renderGrid() {
+  async function renderGrid(nearbyFilter = null) {
     if (!grid || items.length === 0) return;
     
-    filteredItems = [...items];
+    // Filter items if location filter is active
+    filteredItems = nearbyFilter ? items.filter(x => nearbyFilter.has(x.id)) : [...items];
+    
     const saved = await getSaved();
     
     if (filteredItems.length === 0) {
@@ -862,6 +890,114 @@
     if (document.getElementById('cityFilter')) document.getElementById('cityFilter').value = '';
     if (document.getElementById('vibeFilter')) document.getElementById('vibeFilter').value = '';
     applyFilters();
+  });
+
+  // Location-based filtering
+  let userLocation = null;
+  let locationFilterActive = false;
+  const NEARBY_RADIUS_KM = 25; // 25 km radius
+  
+  // Calculate distance between two coordinates (Haversine formula)
+  function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+  
+  // Location button handler
+  document.getElementById('locationBtn')?.addEventListener('click', async () => {
+    const btn = document.getElementById('locationBtn');
+    
+    if (locationFilterActive) {
+      // Deactivate location filter
+      locationFilterActive = false;
+      btn.classList.remove('active');
+      renderFeed();
+      renderGrid();
+      showToast('✓', 'Zobrazeny všechny restaurace');
+      return;
+    }
+    
+    // Request location
+    if (!navigator.geolocation) {
+      showToast('✕', 'Geolokace není podporována');
+      return;
+    }
+    
+    btn.disabled = true;
+    showToast('📍', 'Získávám vaši polohu...');
+    
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        userLocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        
+        // Fetch restaurant coordinates from Supabase
+        try {
+          const { data: restaurants, error } = await supabase
+            .from('restaurants')
+            .select('slug, latitude, longitude')
+            .not('latitude', 'is', null)
+            .not('longitude', 'is', null);
+          
+          if (error) throw error;
+          
+          // Calculate distances and filter nearby
+          const nearbyRestaurants = new Set();
+          restaurants.forEach(r => {
+            const distance = calculateDistance(
+              userLocation.lat, 
+              userLocation.lng, 
+              r.latitude, 
+              r.longitude
+            );
+            if (distance <= NEARBY_RADIUS_KM) {
+              nearbyRestaurants.add(r.slug);
+            }
+          });
+          
+          if (nearbyRestaurants.size === 0) {
+            showToast('📍', 'Žádné restaurace v okolí ' + NEARBY_RADIUS_KM + ' km');
+            btn.disabled = false;
+            return;
+          }
+          
+          // Filter items and activate
+          locationFilterActive = true;
+          btn.classList.add('active');
+          btn.disabled = false;
+          
+          // Apply filter
+          renderFeed(nearbyRestaurants);
+          renderGrid(nearbyRestaurants);
+          
+          showToast('✓', 'Nalezeno ' + nearbyRestaurants.size + ' restaurací v okolí');
+          
+        } catch (error) {
+          console.error('Error filtering by location:', error);
+          showToast('✕', 'Chyba při filtrování');
+          btn.disabled = false;
+        }
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        showToast('✕', 'Nepodařilo se získat polohu');
+        btn.disabled = false;
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // Cache for 5 minutes
+      }
+    );
   });
 
   // Initial load
