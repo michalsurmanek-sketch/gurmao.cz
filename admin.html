@@ -34,6 +34,59 @@
     body { font-family: 'Inter', sans-serif; }
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
     #coordMap { height: 300px; border-radius: 1rem; overflow: hidden; }
+    
+    /* Custom dropdown */
+    .custom-select {
+      position: relative;
+    }
+    
+    .custom-select-trigger {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23d4af37' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1.5rem center;
+      cursor: pointer;
+    }
+    
+    .custom-options {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: 0.5rem;
+      background: #0b0b0d !important;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 1rem;
+      z-index: 100;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(20px);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .custom-option {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #ffffff !important;
+      background: transparent !important;
+    }
+    
+    .custom-option:hover {
+      background: rgba(212, 175, 55, 0.15) !important;
+      color: #d4af37 !important;
+    }
+    
+    .custom-option:first-child {
+      border-radius: 1rem 1rem 0 0;
+    }
+    
+    .custom-option:last-child {
+      border-radius: 0 0 1rem 1rem;
+    }
   </style>
 </head>
 <body class="bg-gurmaoblack text-white">
@@ -247,12 +300,18 @@
         placeholder="🔍 Hledat recenzi..."
         class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none flex-1 max-w-md"
       />
-      <select id="filterReviewStatus" class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none">
-        <option value="all">Všechny</option>
-        <option value="pending">Čekající</option>
-        <option value="approved">Schválené</option>
-        <option value="rejected">Zamítnuté</option>
-      </select>
+      <div class="custom-select" style="min-width: 150px;">
+        <button type="button" id="filterReviewStatusBtn" class="custom-select-trigger w-full pl-4 pr-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+          Všechny
+        </button>
+        <div id="filterReviewStatusOptions" class="custom-options hidden">
+          <div class="custom-option" data-value="all">Všechny</div>
+          <div class="custom-option" data-value="pending">Čekající</div>
+          <div class="custom-option" data-value="approved">Schválené</div>
+          <div class="custom-option" data-value="rejected">Zamítnuté</div>
+        </div>
+      </div>
+      <input type="hidden" id="filterReviewStatus" value="all" />
       <div class="text-white/60 text-sm whitespace-nowrap">
         Celkem: <span id="totalReviewsCount" class="text-gurmaogold font-bold">0</span>
       </div>
@@ -315,42 +374,44 @@
           <!-- Vibe -->
           <div>
             <label class="block text-sm font-semibold mb-2">Vibe *</label>
-            <select 
-              name="vibe" 
-              id="inputVibe"
-              required
-              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
-            >
-              <option value="">-- Vyber vibe --</option>
-              <option value="LUXE">🍷 LUXE</option>
-              <option value="DRAMA">🔥 DRAMA</option>
-              <option value="CHAOS">🌮 CHAOS</option>
-              <option value="DARK">🖤 DARK</option>
-              <option value="PURE">🌿 PURE</option>
-              <option value="CALM">🌊 CALM</option>
-            </select>
+            <div class="custom-select">
+              <button type="button" id="vibeBtn" class="custom-select-trigger w-full pl-4 pr-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+                -- Vyber vibe --
+              </button>
+              <div id="vibeOptions" class="custom-options hidden">
+                <div class="custom-option" data-value="">-- Vyber vibe --</div>
+                <div class="custom-option" data-value="LUXE">🍷 LUXE</div>
+                <div class="custom-option" data-value="DRAMA">🔥 DRAMA</div>
+                <div class="custom-option" data-value="CHAOS">🌮 CHAOS</div>
+                <div class="custom-option" data-value="DARK">🖤 DARK</div>
+                <div class="custom-option" data-value="PURE">🌿 PURE</div>
+                <div class="custom-option" data-value="CALM">🌊 CALM</div>
+              </div>
+            </div>
+            <input type="hidden" name="vibe" id="inputVibe" required />
           </div>
 
           <!-- City & Tag -->
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-semibold mb-2">Město *</label>
-              <select 
-                name="city" 
-                id="inputCity"
-                required
-                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
-              >
-                <option value="">-- Vyber město --</option>
-                <option value="Praha">Praha</option>
-                <option value="Brno">Brno</option>
-                <option value="Ostrava">Ostrava</option>
-                <option value="Plzeň">Plzeň</option>
-                <option value="Liberec">Liberec</option>
-                <option value="Olomouc">Olomouc</option>
-                <option value="Hradec Králové">Hradec Králové</option>
-                <option value="České Budějovice">České Budějovice</option>
-              </select>
+              <div class="custom-select">
+                <button type="button" id="cityBtn" class="custom-select-trigger w-full pl-4 pr-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+                  -- Vyber město --
+                </button>
+                <div id="cityOptions" class="custom-options hidden">
+                  <div class="custom-option" data-value="">-- Vyber město --</div>
+                  <div class="custom-option" data-value="Praha">Praha</div>
+                  <div class="custom-option" data-value="Brno">Brno</div>
+                  <div class="custom-option" data-value="Ostrava">Ostrava</div>
+                  <div class="custom-option" data-value="Plzeň">Plzeň</div>
+                  <div class="custom-option" data-value="Liberec">Liberec</div>
+                  <div class="custom-option" data-value="Olomouc">Olomouc</div>
+                  <div class="custom-option" data-value="Hradec Králové">Hradec Králové</div>
+                  <div class="custom-option" data-value="České Budějovice">České Budějovice</div>
+                </div>
+              </div>
+              <input type="hidden" name="city" id="inputCity" required />
             </div>
 
             <div>
@@ -616,31 +677,34 @@
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-semibold mb-2">Kategorie</label>
-              <select 
-                name="category" 
-                id="inputPostCategory"
-                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
-              >
-                <option value="">-- Vyber --</option>
-                <option value="recepty">Recepty</option>
-                <option value="tipy">Tipy</option>
-                <option value="trendy">Trendy</option>
-                <option value="rozhovory">Rozhovory</option>
-                <option value="review">Review</option>
-              </select>
+              <div class="custom-select">
+                <button type="button" id="postCategoryBtn" class="custom-select-trigger w-full pl-4 pr-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+                  -- Vyber --
+                </button>
+                <div id="postCategoryOptions" class="custom-options hidden">
+                  <div class="custom-option" data-value="">-- Vyber --</div>
+                  <div class="custom-option" data-value="recepty">Recepty</div>
+                  <div class="custom-option" data-value="tipy">Tipy</div>
+                  <div class="custom-option" data-value="trendy">Trendy</div>
+                  <div class="custom-option" data-value="rozhovory">Rozhovory</div>
+                  <div class="custom-option" data-value="review">Review</div>
+                </div>
+              </div>
+              <input type="hidden" name="category" id="inputPostCategory" />
             </div>
 
             <div>
               <label class="block text-sm font-semibold mb-2">Status *</label>
-              <select 
-                name="status" 
-                id="inputPostStatus"
-                required
-                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
-              >
-                <option value="draft">📝 Koncept</option>
-                <option value="published">✓ Publikováno</option>
-              </select>
+              <div class="custom-select">
+                <button type="button" id="postStatusBtn" class="custom-select-trigger w-full pl-4 pr-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+                  📝 Koncept
+                </button>
+                <div id="postStatusOptions" class="custom-options hidden">
+                  <div class="custom-option" data-value="draft">📝 Koncept</div>
+                  <div class="custom-option" data-value="published">✓ Publikováno</div>
+                </div>
+              </div>
+              <input type="hidden" name="status" id="inputPostStatus" value="draft" required />
             </div>
           </div>
 
@@ -835,19 +899,21 @@
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-semibold mb-2">Kategorie</label>
-              <select 
-                name="category" 
-                id="inputGearCategory"
-                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
-              >
-                <option value="">-- Vyber --</option>
-                <option value="kuchyne">Kuchyně</option>
-                <option value="noze">Nože</option>
-                <option value="nadobi">Nádobí</option>
-                <option value="grilovani">Grilování</option>
-                <option value="servir">Servírování</option>
-                <option value="ostatni">Ostatní</option>
-              </select>
+              <div class="custom-select">
+                <button type="button" id="gearCategoryBtn" class="custom-select-trigger w-full pl-4 pr-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+                  -- Vyber --
+                </button>
+                <div id="gearCategoryOptions" class="custom-options hidden">
+                  <div class="custom-option" data-value="">-- Vyber --</div>
+                  <div class="custom-option" data-value="kuchyne">Kuchyně</div>
+                  <div class="custom-option" data-value="noze">Nože</div>
+                  <div class="custom-option" data-value="nadobi">Nádobí</div>
+                  <div class="custom-option" data-value="grilovani">Grilování</div>
+                  <div class="custom-option" data-value="servir">Servírování</div>
+                  <div class="custom-option" data-value="ostatni">Ostatní</div>
+                </div>
+              </div>
+              <input type="hidden" name="category" id="inputGearCategory" />
             </div>
 
             <div>
@@ -1103,6 +1169,17 @@ async function editRestaurant(id) {
     document.getElementById('inputImageUrl').value = data.image_url || '';
     document.getElementById('inputSlug').value = data.slug;
 
+    // Update custom dropdown buttons
+    const vibeOption = document.querySelector(`#vibeOptions [data-value="${data.vibe}"]`);
+    if (vibeOption) {
+      document.getElementById('vibeBtn').textContent = vibeOption.textContent;
+    }
+    
+    const cityOption = document.querySelector(`#cityOptions [data-value="${data.city}"]`);
+    if (cityOption) {
+      document.getElementById('cityBtn').textContent = cityOption.textContent;
+    }
+
     // Update map marker
     if (marker) marker.remove();
     marker = new mapboxgl.Marker({ color: '#d4af37' })
@@ -1129,6 +1206,10 @@ function resetForm() {
   document.getElementById('formTitle').textContent = 'Restauraci';
   document.getElementById('submitText').textContent = '➕ Restauraci';
   if (marker) marker.remove();
+  
+  // Reset custom dropdowns
+  document.getElementById('vibeBtn').textContent = '-- Vyber vibe --';
+  document.getElementById('cityBtn').textContent = '-- Vyber město --';
 }
 
 // Logout
@@ -1718,6 +1799,21 @@ async function editPost(id) {
     document.getElementById('inputPostContent').value = data.content || '';
     document.getElementById('inputPostImageUrl').value = data.image_url || '';
 
+    // Update custom dropdown buttons
+    if (data.category) {
+      const categoryOption = document.querySelector(`#postCategoryOptions [data-value="${data.category}"]`);
+      if (categoryOption) {
+        document.getElementById('postCategoryBtn').textContent = categoryOption.textContent;
+      }
+    }
+    
+    if (data.status) {
+      const statusOption = document.querySelector(`#postStatusOptions [data-value="${data.status}"]`);
+      if (statusOption) {
+        document.getElementById('postStatusBtn').textContent = statusOption.textContent;
+      }
+    }
+
     document.getElementById('formTitlePost').textContent = 'Upravit příspěvek';
     document.getElementById('submitPostText').textContent = '💾 Uložit změny';
 
@@ -1744,6 +1840,10 @@ function resetPostForm() {
   document.getElementById('editPostId').value = '';
   document.getElementById('formTitlePost').textContent = 'Příspěvek';
   document.getElementById('submitPostText').textContent = '➕ Příspěvek';
+  
+  // Reset custom dropdowns
+  document.getElementById('postCategoryBtn').textContent = '-- Vyber --';
+  document.getElementById('postStatusBtn').textContent = '📝 Koncept';
 }
 
 // ========================================
@@ -1905,6 +2005,14 @@ async function editGear(id) {
     document.getElementById('inputGearImageUrl').value = data.image_url || '';
     document.getElementById('inputGearAffiliateUrl').value = data.affiliate_url || '';
 
+    // Update custom dropdown button
+    if (data.category) {
+      const categoryOption = document.querySelector(`#gearCategoryOptions [data-value="${data.category}"]`);
+      if (categoryOption) {
+        document.getElementById('gearCategoryBtn').textContent = categoryOption.textContent;
+      }
+    }
+
     document.getElementById('formTitleGear').textContent = 'Upravit gear';
     document.getElementById('submitGearText').textContent = '💾 Uložit změny';
 
@@ -1931,6 +2039,9 @@ function resetGearForm() {
   document.getElementById('editGearId').value = '';
   document.getElementById('formTitleGear').textContent = 'Gear';
   document.getElementById('submitGearText').textContent = '➕ Gear';
+  
+  // Reset custom dropdown
+  document.getElementById('gearCategoryBtn').textContent = '-- Vyber --';
 }
 
 
@@ -1945,6 +2056,67 @@ switchTab = function(tab) {
   if (tab === 'reviews') loadReviews();
   if (tab === 'gear') loadGear();
 };
+
+// ========================================
+// CUSTOM DROPDOWN FUNCTIONALITY
+// ========================================
+
+function initCustomDropdown(btnId, optionsId, hiddenInputId) {
+  const btn = document.getElementById(btnId);
+  const options = document.getElementById(optionsId);
+  const hiddenInput = document.getElementById(hiddenInputId);
+  
+  if (!btn || !options) return;
+  
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    // Close other dropdowns
+    document.querySelectorAll('.custom-options').forEach(o => {
+      if (o !== options) o.classList.add('hidden');
+    });
+    options.classList.toggle('hidden');
+    
+    // Scroll dropdown into view when opened
+    if (!options.classList.contains('hidden')) {
+      setTimeout(() => {
+        options.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
+  });
+  
+  options.querySelectorAll('.custom-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const value = opt.dataset.value;
+      btn.textContent = opt.textContent;
+      options.classList.add('hidden');
+      if (hiddenInput) {
+        hiddenInput.value = value;
+      }
+    });
+  });
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', () => {
+  document.querySelectorAll('.custom-options').forEach(o => o.classList.add('hidden'));
+});
+
+// Initialize all dropdowns on page load
+document.addEventListener('DOMContentLoaded', () => {
+  // Restaurant form
+  initCustomDropdown('vibeBtn', 'vibeOptions', 'inputVibe');
+  initCustomDropdown('cityBtn', 'cityOptions', 'inputCity');
+  
+  // Post form
+  initCustomDropdown('postCategoryBtn', 'postCategoryOptions', 'inputPostCategory');
+  initCustomDropdown('postStatusBtn', 'postStatusOptions', 'inputPostStatus');
+  
+  // Gear form
+  initCustomDropdown('gearCategoryBtn', 'gearCategoryOptions', 'inputGearCategory');
+  
+  // Reviews filter
+  initCustomDropdown('filterReviewStatusBtn', 'filterReviewStatusOptions', 'filterReviewStatus');
+});
 
 </script>
 
