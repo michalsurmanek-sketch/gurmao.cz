@@ -112,6 +112,44 @@
     .custom-option:last-child {
       border-radius: 0 0 1rem 1rem;
     }
+    
+    /* Swipe menu styles */
+    .swipe-menu {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 280px;
+      background: linear-gradient(to left, rgba(11, 11, 13, 0.98), rgba(11, 11, 13, 0.95));
+      backdrop-filter: blur(20px);
+      border-left: 1px solid rgba(212, 175, 55, 0.2);
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 20;
+      overflow-y: auto;
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+    }
+    
+    .swipe-menu.active {
+      transform: translateX(0);
+    }
+    
+    .swipe-indicator {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 60px;
+      background: rgba(212, 175, 55, 0.3);
+      border-radius: 4px 0 0 4px;
+      transition: all 0.2s;
+    }
+    
+    .swipe-indicator.visible {
+      background: rgba(212, 175, 55, 0.6);
+      width: 6px;
+    }
   </style>
 </head>
 <body class="bg-gurmaoblack text-white overflow-x-hidden">
@@ -357,7 +395,7 @@
     const feed = document.getElementById('feed');
     if (!feed || items.length === 0) return;
     feed.innerHTML = items.map(x=>`
-      <article class="snap-start h-[calc(100vh-65px)] relative">
+      <article class="snap-start h-[calc(100vh-65px)] relative" data-restaurant="${x.id}">
         <a href="${x.href}" class="absolute inset-0">
           <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(212,175,55,0.12),transparent_70%)]"></div>
           <div class="absolute inset-0 bg-cover bg-center" style="background-image:url('${x.img}')"></div>
@@ -369,6 +407,47 @@
           </div>
         </a>
         <button data-save="${x.id}" class="save-btn absolute top-6 right-6 w-12 h-12 rounded-full bg-black/30 backdrop-blur border border-white/20 hover:border-gurmaogold text-2xl transition z-10" aria-label="Uložit" onclick="event.preventDefault(); event.stopPropagation();">🤍</button>
+        
+        <!-- Swipe indicator -->
+        <div class="swipe-indicator pointer-events-none"></div>
+        
+        <!-- Swipe menu -->
+        <div class="swipe-menu">
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold">Menu & Info</h3>
+              <button class="close-menu w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 transition text-xl">✕</button>
+            </div>
+            
+            <div class="space-y-4">
+              <!-- Quick Info -->
+              <div class="p-4 rounded-xl bg-white/5 border border-white/10">
+                <div class="text-sm text-gurmaogold mb-2">🍽️ Typ kuchyně</div>
+                <div class="text-white">${x.tag}</div>
+              </div>
+              
+              <div class="p-4 rounded-xl bg-white/5 border border-white/10">
+                <div class="text-sm text-gurmaogold mb-2">📍 Poloha</div>
+                <div class="text-white">${x.city}</div>
+              </div>
+              
+              <div class="p-4 rounded-xl bg-white/5 border border-white/10">
+                <div class="text-sm text-gurmaogold mb-2">✨ Vibe</div>
+                <div class="text-white">${x.vibe}</div>
+              </div>
+              
+              <!-- Actions -->
+              <div class="pt-2 space-y-2">
+                <a href="${x.href}" class="block w-full px-4 py-3 rounded-full bg-gurmaogold text-black font-semibold text-center hover:scale-105 transition">
+                  📖 Zobrazit detail
+                </a>
+                <button data-save="${x.id}" class="save-menu-btn w-full px-4 py-3 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition">
+                  🤍 Uložit do výběru
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </article>
     `).join('');
 
@@ -378,12 +457,104 @@
     }
 
     initFeedActions();
+    initSwipeGestures();
   }
 
   function initFeedActions() {
     const feed = document.getElementById('feed');
     if (!feed) return;
     // Floatingbuttons are removed - each card has its own save button now
+  }
+  
+  // Initialize swipe gestures
+  function initSwipeGestures() {
+    const articles = document.querySelectorAll('#feed article');
+    
+    articles.forEach(article => {
+      const menu = article.querySelector('.swipe-menu');
+      const closeBtn = article.querySelector('.close-menu');
+      const indicator = article.querySelector('.swipe-indicator');
+      const mainLink = article.querySelector('a');
+      
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchEndX = 0;
+      let touchEndY = 0;
+      let isDragging = false;
+      
+      article.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+        isDragging = false;
+      }, { passive: true });
+      
+      article.addEventListener('touchmove', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        
+        const diffX = touchStartX - touchEndX;
+        const diffY = Math.abs(touchStartY - touchEndY);
+        
+        // Detect horizontal swipe (not vertical scroll)
+        if (Math.abs(diffX) > 10 && diffY < 30) {
+          isDragging = true;
+          
+          // Show indicator when swiping left
+          if (diffX > 20 && indicator) {
+            indicator.classList.add('visible');
+          } else if (indicator) {
+            indicator.classList.remove('visible');
+          }
+        }
+      }, { passive: true });
+      
+      article.addEventListener('touchend', (e) => {
+        if (!isDragging) return;
+        
+        const diffX = touchStartX - touchEndX;
+        const diffY = Math.abs(touchStartY - touchEndY);
+        
+        // Swipe left to open menu (min 80px swipe)
+        if (diffX > 80 && diffY < 50) {
+          e.preventDefault();
+          menu?.classList.add('active');
+          if (indicator) indicator.classList.remove('visible');
+        }
+        
+        isDragging = false;
+      });
+      
+      // Close menu button
+      closeBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        menu?.classList.remove('active');
+      });
+      
+      // Close menu when clicking outside (on main link)
+      mainLink?.addEventListener('click', (e) => {
+        if (menu?.classList.contains('active')) {
+          e.preventDefault();
+          menu.classList.remove('active');
+        }
+      });
+      
+      // Save button in menu
+      const saveMenuBtn = article.querySelector('.save-menu-btn');
+      saveMenuBtn?.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = e.currentTarget.dataset.save;
+        const isSaved = await toggleSave(id);
+        
+        // Update both buttons
+        const mainSaveBtn = article.querySelector(`.save-btn[data-save="${id}"]`);
+        if (mainSaveBtn) mainSaveBtn.textContent = isSaved ? '🖤' : '🤍';
+        e.currentTarget.textContent = isSaved ? '🖤 Uloženo' : '🤍 Uložit do výběru';
+        
+        window.toast?.show(isSaved ? '🖤 Přidáno do výběru' : '🤍 Odebráno z výběru', 'success');
+      });
+    });
   }
 
   // Desktop grid variables
