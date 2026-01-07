@@ -153,7 +153,7 @@
       </div>
       <div class="text-center px-4 py-2 bg-white/5 rounded-xl border border-white/10">
         <div class="text-2xl font-bold text-gurmaogold" id="stat-collections">0</div>
-        <div class="text-white/60 text-xs">Kolekce</div>
+        <div class="text-white/60 text-xs">Můj výběr</div>
       </div>
       <div class="text-center px-4 py-2 bg-white/5 rounded-xl border border-white/10">
         <div class="text-2xl font-bold text-gurmaogold" id="stat-gear">0</div>
@@ -187,7 +187,7 @@
       ➕ Příspěvek
     </button>
     <button onclick="switchTab('collections')" id="tab-collections" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
-      📚 Kolekce
+      📚 Můj výběr
     </button>
     <button onclick="switchTab('add-collection')" id="tab-add-collection" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
       ➕ Kolekci
@@ -275,7 +275,7 @@
       <input 
         type="text" 
         id="searchCollections" 
-        placeholder="🔍 Hledat kolekci..."
+        placeholder="🔍 Hledat ve výběru..."
         class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none w-full max-w-md"
       />
       <div class="text-white/60 text-sm">
@@ -286,7 +286,7 @@
     <div id="collectionsList" class="space-y-4">
       <div class="text-center py-12 text-white/40">
         <div class="text-4xl mb-4">📚</div>
-        Žádné kolekce
+        Žádný výběr
       </div>
     </div>
   </div>
@@ -777,7 +777,7 @@
           
           <!-- Name -->
           <div>
-            <label class="block text-sm font-semibold mb-2">Název kolekce *</label>
+            <label class="block text-sm font-semibold mb-2">Název výběru *</label>
             <input 
               type="text" 
               name="name" 
@@ -808,7 +808,7 @@
               name="description" 
               id="inputCollectionDescription"
               rows="3"
-              placeholder="Popis kolekce..."
+              placeholder="Popis výběru..."
               class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none resize-none"
             ></textarea>
           </div>
@@ -835,7 +835,7 @@
                 checked
                 class="w-5 h-5 rounded bg-white/5 border border-white/10 checked:bg-gurmaogold"
               />
-              <span class="text-sm">Veřejná kolekce</span>
+              <span class="text-sm">Veřejný výběr</span>
             </label>
           </div>
 
@@ -1526,7 +1526,7 @@ async function loadCollections() {
       document.getElementById('collectionsList').innerHTML = `
         <div class="text-center py-12 text-white/40">
           <div class="text-4xl mb-4">📚</div>
-          Žádné kolekce
+          Žádný výběr
         </div>`;
       return;
     }
@@ -1872,14 +1872,14 @@ document.getElementById('addCollectionForm').addEventListener('submit', async (e
         .eq('id', editId);
 
       if (error) throw error;
-      window.toast.show('✅ Kolekce aktualizována!', 'success');
+      window.toast.show('✅ Výběr aktualizován!', 'success');
     } else {
       const { error } = await window.supabase
         .from('collections')
         .insert([data]);
 
       if (error) throw error;
-      window.toast.show('✅ Kolekce přidána!', 'success');
+      window.toast.show('✅ Výběr přidán!', 'success');
     }
 
     resetCollectionForm();

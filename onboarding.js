@@ -61,7 +61,7 @@ class OnboardingManager {
               </div>
               <div>
                 <h3 class="text-xl font-semibold mb-1">Přihlásit se (volitelně)</h3>
-                <p class="text-white/60 text-sm">Synchronizuj sbírky napříč zařízeními a získej AI doporučení.</p>
+                <p class="text-white/60 text-sm">Synchronizuj Můj výběr napříč zařízeními a získej AI doporučení.</p>
               </div>
             </div>
           </div>

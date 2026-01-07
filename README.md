@@ -12,7 +12,7 @@ GURMAO je minimalistická dark-mode platforma pro objevování vybraných restau
 
 - **Vibe systém** - kategorizace podle atmosféry a nálady
 - **AI doporučení** - jedno místo podle aktuální nálady, bez scrollování
-- **Sbírky** - osobní chuťová paměť uložených míst
+- **Můj výběr** - osobní chuťová paměť uložených míst
 - **Feed** - kurátorovaný obsah s mobile-first přístupem
 - **Gear** - vybavení doporučené profesionály
 
@@ -55,7 +55,7 @@ gurmaored: #8b1d18     /* Červená - minimálně použito */
 ├── kuchar.html                   # Seznam kuchařů
 ├── gear.html                     # Vybavení
 ├── ai.html                       # AI doporučení
-├── collections.html              # Osobní sbírky
+├── collections.html              # Můj výběr
 ├── onboarding.html               # Registrační formulář
 ├── restaurace-noir-table.html    # Detail restaurace
 ├── kuchar-adam-noir.html         # Profil kuchaře

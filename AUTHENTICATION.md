@@ -237,7 +237,7 @@ async function saveRestaurant(userId, restaurantId) {
   });
 }
 
-// Načíst sbírky
+// Načíst Můj výběr
 async function getSavedRestaurants(userId) {
   const snapshot = await getDocs(collection(db, 'users', userId, 'saved'));
   return snapshot.docs.map(doc => doc.data().restaurantId);
@@ -264,7 +264,7 @@ async function getSavedRestaurants(userId) {
   
   <!-- Dropdown -->
   <div class="hidden absolute right-0 mt-2 w-48 rounded-2xl bg-gurmaoblack border border-white/10 p-2">
-    <a href="collections.html" class="block px-4 py-2 rounded-xl hover:bg-white/5">Sbírky</a>
+    <a href="collections.html" class="block px-4 py-2 rounded-xl hover:bg-white/5">Můj výběr</a>
     <a href="profile.html" class="block px-4 py-2 rounded-xl hover:bg-white/5">Profil</a>
     <button id="btnLogout" class="w-full text-left px-4 py-2 rounded-xl hover:bg-white/5 text-red-400">Odhlásit se</button>
   </div>
