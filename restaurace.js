@@ -223,18 +223,21 @@ function createRestaurantCard(restaurant) {
                     <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
                   </svg>
                 </button>
-                <button class="flip-btn w-11 h-11 rounded-full bg-gurmaogold text-black hover:bg-gurmaogold/80 transition flex items-center justify-center" title="Zobrazit menu" aria-label="Zobrazit menu">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="9" y1="9" x2="15" y2="9"></line>
-                    <line x1="9" y1="15" x2="15" y2="15"></line>
-                  </svg>
-                </button>
               </div>
             </div>
             
             <!-- Rating Section -->
             <div data-restaurant-rating="${restaurant.slug}"></div>
+            
+            <!-- Flip to Menu Button -->
+            <button class="flip-btn w-full mt-3 px-4 py-2.5 rounded-full bg-gurmaogold text-black font-semibold hover:bg-gurmaogold/80 transition flex items-center justify-center gap-2" title="Zobrazit menu" aria-label="Zobrazit menu">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="9" x2="15" y2="9"></line>
+                <line x1="9" y1="15" x2="15" y2="15"></line>
+              </svg>
+              <span>Zobrazit menu</span>
+            </button>
           </div>
         </div>
 
