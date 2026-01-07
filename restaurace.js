@@ -192,9 +192,34 @@ function createRestaurantCard(restaurant) {
         
         <!-- FRONT SIDE -->
         <div class="card-front rounded-3xl bg-white/5 overflow-hidden" style="backface-visibility: hidden;">
-          <a href="restaurace-${restaurant.slug}.html" class="block">
-            <div class="aspect-[3/4] bg-cover bg-center" style="background-image: url('${imageUrl}')"></div>
-          </a>
+          <div class="relative">
+            <a href="restaurace-${restaurant.slug}.html" class="block">
+              <div class="aspect-[3/4] bg-cover bg-center" style="background-image: url('${imageUrl}')"></div>
+            </a>
+            <!-- Buttons on image -->
+            <div class="absolute bottom-3 right-3 flex gap-2">
+              <button data-save="${restaurant.slug}" class="save-btn w-11 h-11 rounded-full bg-black/30 backdrop-blur border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center" aria-label="Uložit">🤍</button>
+              <button class="share-btn w-11 h-11 rounded-full bg-black/30 backdrop-blur border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center" 
+                      data-restaurant='${JSON.stringify({
+                        id: restaurant.slug,
+                        name: restaurant.name,
+                        vibe: restaurant.vibe,
+                        city: restaurant.city,
+                        tag: restaurant.tag,
+                        img: imageUrl,
+                        href: `restaurace-${restaurant.slug}.html`
+                      })}' 
+                      title="Sdílet">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="18" cy="5" r="3"></circle>
+                  <circle cx="6" cy="12" r="3"></circle>
+                  <circle cx="18" cy="19" r="3"></circle>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
           <div class="p-6">
             <div class="flex items-start justify-between gap-3 mb-2">
               <div class="flex-1">
@@ -202,35 +227,13 @@ function createRestaurantCard(restaurant) {
                 <h3 class="text-xl font-semibold">${restaurant.name}</h3>
                 <p class="text-white/60 text-sm mt-1">${restaurant.city} · ${restaurant.tag}</p>
               </div>
-              <div class="flex gap-2 flex-shrink-0">
-                <button data-save="${restaurant.slug}" class="save-btn w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center" aria-label="Uložit">🤍</button>
-                <button class="share-btn w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center" 
-                        data-restaurant='${JSON.stringify({
-                          id: restaurant.slug,
-                          name: restaurant.name,
-                          vibe: restaurant.vibe,
-                          city: restaurant.city,
-                          tag: restaurant.tag,
-                          img: imageUrl,
-                          href: `restaurace-${restaurant.slug}.html`
-                        })}' 
-                        title="Sdílet">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="18" cy="5" r="3"></circle>
-                    <circle cx="6" cy="12" r="3"></circle>
-                    <circle cx="18" cy="19" r="3"></circle>
-                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                  </svg>
-                </button>
-                <button class="flip-btn hidden md:flex w-11 h-11 rounded-full bg-gurmaogold text-black hover:bg-gurmaogold/80 transition items-center justify-center" title="Zobrazit menu" aria-label="Zobrazit menu">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="9" y1="9" x2="15" y2="9"></line>
-                    <line x1="9" y1="15" x2="15" y2="15"></line>
-                  </svg>
-                </button>
-              </div>
+              <button class="flip-btn hidden md:flex w-11 h-11 rounded-full bg-gurmaogold text-black hover:bg-gurmaogold/80 transition items-center justify-center flex-shrink-0" title="Zobrazit menu" aria-label="Zobrazit menu">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="9" y1="9" x2="15" y2="9"></line>
+                  <line x1="9" y1="15" x2="15" y2="15"></line>
+                </svg>
+              </button>
             </div>
             
             <!-- Rating Section -->
