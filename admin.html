@@ -35,6 +35,37 @@
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
     #coordMap { height: 300px; border-radius: 1rem; overflow: hidden; }
     
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(11, 11, 13, 0.3);
+      border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: rgba(212, 175, 55, 0.3);
+      border-radius: 5px;
+      transition: background 0.2s;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(212, 175, 55, 0.5);
+    }
+    
+    ::-webkit-scrollbar-thumb:active {
+      background: rgba(212, 175, 55, 0.7);
+    }
+    
+    /* Firefox scrollbar */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(212, 175, 55, 0.3) rgba(11, 11, 13, 0.3);
+    }
+    
     /* Custom dropdown */
     .custom-select {
       position: relative;
