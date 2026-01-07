@@ -272,11 +272,21 @@
   }
 </script>
 
-<footer class="py-10 border-t border-white/10 text-center text-sm text-white/40">© 2025 GURMAO.cz · Nejez. Prožij.</footer>
+<footer class="py-10 border-t border-white/10 text-center">
+  <div class="flex flex-wrap justify-center gap-4 md:gap-6 text-xs md:text-sm text-white/60 mb-4">
+    <a href="legal.html" class="hover:text-gurmaogold transition">Právní informace</a>
+    <a href="legal.html#gdpr" class="hover:text-gurmaogold transition">GDPR</a>
+    <a href="legal.html#cookies" class="hover:text-gurmaogold transition">Cookies</a>
+    <a href="#" onclick="localStorage.removeItem('gurmao-cookie-consent'); location.reload(); return false;" class="hover:text-gurmaogold transition">Nastavení cookies</a>
+    <a href="mailto:info@gurmao.cz" class="hover:text-gurmaogold transition">Kontakt</a>
+  </div>
+  <p class="text-white/40 text-sm">© 2025 GURMAO.cz · Nejez. Prožij.</p>
+</footer>
 
 <script src="auth-guard.js"></script>
 <script src="app.js"></script>
 <script src="auth-ui.js"></script>
+<script src="cookie-consent.js"></script>
 
 </body>
 </html>

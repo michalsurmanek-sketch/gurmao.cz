@@ -231,6 +231,16 @@
 
 <!-- Vibe Tooltips -->
 <script src="vibe-tooltips.js"></script>
+<script src="cookie-consent.js"></script>
+
+<footer class="fixed bottom-0 left-0 right-0 bg-gurmaoblack/90 backdrop-blur border-t border-white/10 py-3 z-40">
+  <div class="flex flex-wrap justify-center gap-3 md:gap-4 text-xs text-white/60">
+    <a href="legal.html" class="hover:text-gurmaogold transition">Právní informace</a>
+    <a href="legal.html#gdpr" class="hover:text-gurmaogold transition">GDPR</a>
+    <a href="legal.html#cookies" class="hover:text-gurmaogold transition">Cookies</a>
+    <a href="#" onclick="localStorage.removeItem('gurmao-cookie-consent'); location.reload(); return false;" class="hover:text-gurmaogold transition">Nastavení cookies</a>
+  </div>
+</footer>
 
 </body>
 </html>
