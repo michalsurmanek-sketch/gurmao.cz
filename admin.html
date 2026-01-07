@@ -572,14 +572,16 @@
           <!-- Restaurant -->
           <div>
             <label class="block text-sm font-semibold mb-2">Restaurace *</label>
-            <select 
-              name="restaurant_id" 
-              id="inputChefRestaurantId"
-              required
-              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
-            >
-              <option value="">-- Vyber restauraci --</option>
-            </select>
+            <div class="relative">
+              <button type="button" id="chefRestaurantBtn" class="custom-dropdown-btn w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold focus:border-gurmaogold outline-none text-left flex items-center justify-between transition">
+                <span class="dropdown-text">-- Vyber restauraci --</span>
+                <span class="dropdown-arrow text-xs transition-transform duration-200">▼</span>
+              </button>
+              <div id="chefRestaurantOptions" class="custom-dropdown-options hidden absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto bg-gurmaoblack border border-white/20 rounded-xl shadow-2xl z-50">
+                <!-- Options populated dynamically -->
+              </div>
+              <input type="hidden" name="restaurant_id" id="inputChefRestaurantId" required />
+            </div>
           </div>
 
           <!-- Vibe & Signature Style -->
@@ -1291,9 +1293,15 @@ async function loadRestaurantsDropdown() {
 
     if (error) throw error;
 
-    const dropdown = document.getElementById('inputChefRestaurantId');
-    const options = data.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
-    dropdown.innerHTML = '<option value="">-- Vyber restauraci --</option>' + options;
+    // Populate custom dropdown
+    const optionsContainer = document.getElementById('chefRestaurantOptions');
+    const options = data.map(r => 
+      `<div class="dropdown-option px-4 py-3 hover:bg-white/10 cursor-pointer transition" data-value="${r.id}">${r.name}</div>`
+    ).join('');
+    optionsContainer.innerHTML = options;
+    
+    // Initialize custom dropdown
+    initCustomDropdown('chefRestaurantBtn', 'chefRestaurantOptions', 'inputChefRestaurantId');
   } catch (err) {
     console.error('Error loading restaurants:', err);
   }
@@ -1434,6 +1442,21 @@ async function editChef(id) {
     document.getElementById('inputChefBio').value = data.bio;
     document.getElementById('inputChefImageUrl').value = data.image_url || '';
     document.getElementById('inputChefSlug').value = data.slug;
+    
+    // Update custom dropdown button text
+    if (data.restaurant_id) {
+      const { data: restaurant, error: restError } = await window.supabase
+        .from('restaurants')
+        .select('name')
+        .eq('id', data.restaurant_id)
+        .single();
+      
+      if (!restError && restaurant) {
+        const btn = document.getElementById('chefRestaurantBtn');
+        const textSpan = btn?.querySelector('.dropdown-text');
+        if (textSpan) textSpan.textContent = restaurant.name;
+      }
+    }
 
     // Update UI
     document.getElementById('formTitleChef').textContent = 'Upravit kuchaře';
@@ -1453,6 +1476,11 @@ function resetChefForm() {
   document.getElementById('editChefId').value = '';
   document.getElementById('formTitleChef').textContent = 'Kuchaře';
   document.getElementById('submitChefText').textContent = '➕ Kuchaře';
+  
+  // Reset custom dropdown
+  const btn = document.getElementById('chefRestaurantBtn');
+  const textSpan = btn?.querySelector('.dropdown-text');
+  if (textSpan) textSpan.textContent = '-- Vyber restauraci --';
 }
 
 // Search chefs
