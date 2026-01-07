@@ -176,10 +176,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     if (nowSaved) {
       btn.classList.add('saved');
-      showToast('Uloženo do sbírek ✓');
+      showToast('🖤 Přidáno do výběru');
     } else {
       btn.classList.remove('saved');
-      showToast('Odebráno ze sbírek');
+      showToast('🤍 Odebráno z výběru');
     }
   });
 });

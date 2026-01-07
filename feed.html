@@ -113,30 +113,32 @@
       border-radius: 0 0 1rem 1rem;
     }
     
-    /* Swipe menu styles */
+    /* Swipe menu styles - fullscreen */
     .swipe-menu {
-      position: absolute;
+      position: fixed;
       top: 0;
+      left: 0;
       right: 0;
       bottom: 0;
-      width: 280px;
-      background: linear-gradient(to left, rgba(11, 11, 13, 0.98), rgba(11, 11, 13, 0.95));
-      backdrop-filter: blur(20px);
-      border-left: 1px solid rgba(212, 175, 55, 0.2);
+      background: #0b0b0d;
       transform: translateX(100%);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 20;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 50;
       overflow-y: auto;
-      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+      -webkit-overflow-scrolling: touch;
     }
     
     .swipe-menu.active {
       transform: translateX(0);
     }
     
+    .swipe-menu.transitioning {
+      pointer-events: none;
+    }
+    
     .swipe-indicator {
       position: absolute;
-      right: 0;
+      right: 10px;
       top: 50%;
       transform: translateY(-50%);
       width: 4px;
@@ -144,11 +146,32 @@
       background: rgba(212, 175, 55, 0.3);
       border-radius: 4px 0 0 4px;
       transition: all 0.2s;
+      pointer-events: none;
     }
     
     .swipe-indicator.visible {
       background: rgba(212, 175, 55, 0.6);
       width: 6px;
+    }
+    
+    .swipe-back-indicator {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 60px;
+      background: rgba(212, 175, 55, 0.3);
+      border-radius: 0 4px 4px 0;
+      transition: all 0.2s;
+      pointer-events: none;
+      opacity: 0;
+    }
+    
+    .swipe-back-indicator.visible {
+      background: rgba(212, 175, 55, 0.6);
+      width: 6px;
+      opacity: 1;
     }
   </style>
 </head>
@@ -391,10 +414,19 @@
   };
 
   // Mobile feed render
-  function renderFeed() {
+  async function renderFeed() {
     const feed = document.getElementById('feed');
     if (!feed || items.length === 0) return;
-    feed.innerHTML = items.map(x=>`
+    
+    // Get saved restaurants
+    const saved = await getSaved();
+    
+    feed.innerHTML = items.map(x=>{
+      const isSaved = saved.has(x.id);
+      const saveIcon = isSaved ? '🖤' : '🤍';
+      const saveMenuText = isSaved ? '🖤 Uloženo' : '🤍 Uložit do výběru';
+      
+      return `
       <article class="snap-start h-[calc(100vh-65px)] relative" data-restaurant="${x.id}">
         <a href="${x.href}" class="absolute inset-0">
           <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(212,175,55,0.12),transparent_70%)]"></div>
@@ -406,55 +438,75 @@
             <div class="text-white/70 mt-1">${x.city} · ${x.tag}</div>
           </div>
         </a>
-        <button data-save="${x.id}" class="save-btn absolute top-6 right-6 w-12 h-12 rounded-full bg-black/30 backdrop-blur border border-white/20 hover:border-gurmaogold text-2xl transition z-10" aria-label="Uložit" onclick="event.preventDefault(); event.stopPropagation();">🤍</button>
+        <button data-save="${x.id}" class="save-btn absolute top-6 right-6 w-12 h-12 rounded-full bg-black/30 backdrop-blur border border-white/20 hover:border-gurmaogold text-2xl transition z-10" aria-label="Uložit">${saveIcon}</button>
         
         <!-- Swipe indicator -->
         <div class="swipe-indicator pointer-events-none"></div>
         
-        <!-- Swipe menu -->
+        <!-- Swipe menu - fullscreen -->
         <div class="swipe-menu">
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-xl font-bold">Menu & Info</h3>
-              <button class="close-menu w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 transition text-xl">✕</button>
+          <!-- Swipe back indicator -->
+          <div class="swipe-back-indicator"></div>
+          
+          <div class="min-h-full flex flex-col">
+            <!-- Header -->
+            <div class="sticky top-0 bg-gurmaoblack/95 backdrop-blur border-b border-white/10 px-6 py-4 z-10">
+              <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold">${x.name}</h2>
+                <button class="close-menu w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 transition text-xl flex items-center justify-center">✕</button>
+              </div>
+              <div class="text-sm text-gurmaogold mt-1">${x.vibe} · ${x.city}</div>
             </div>
             
-            <div class="space-y-4">
-              <!-- Quick Info -->
-              <div class="p-4 rounded-xl bg-white/5 border border-white/10">
-                <div class="text-sm text-gurmaogold mb-2">🍽️ Typ kuchyně</div>
-                <div class="text-white">${x.tag}</div>
+            <!-- Content -->
+            <div class="flex-1 px-6 py-6">
+              <div class="max-w-2xl mx-auto space-y-6">
+                <!-- Image -->
+                <div class="aspect-[4/3] rounded-2xl overflow-hidden">
+                  <img src="${x.img}" alt="${x.name}" class="w-full h-full object-cover" />
+                </div>
+                
+                <!-- Info Cards -->
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="p-4 rounded-xl bg-white/5 border border-white/10">
+                    <div class="text-xs text-gurmaogold mb-1">🍽️ Kuchyně</div>
+                    <div class="text-white font-medium">${x.tag}</div>
+                  </div>
+                  
+                  <div class="p-4 rounded-xl bg-white/5 border border-white/10">
+                    <div class="text-xs text-gurmaogold mb-1">📍 Město</div>
+                    <div class="text-white font-medium">${x.city}</div>
+                  </div>
+                </div>
+                
+                <div class="p-4 rounded-xl bg-white/5 border border-white/10">
+                  <div class="text-xs text-gurmaogold mb-1">✨ Atmosféra</div>
+                  <div class="text-white font-medium">${x.vibe}</div>
+                </div>
+                
+                <!-- Tip -->
+                <div class="p-4 rounded-xl bg-gurmaogold/10 border border-gurmaogold/30">
+                  <div class="text-xs text-gurmaogold mb-1">💡 Tip</div>
+                  <div class="text-white/80 text-sm">Potáhni prstem zpět (zleva doprava) pro návrat do feedu</div>
+                </div>
               </div>
-              
-              <div class="p-4 rounded-xl bg-white/5 border border-white/10">
-                <div class="text-sm text-gurmaogold mb-2">📍 Poloha</div>
-                <div class="text-white">${x.city}</div>
-              </div>
-              
-              <div class="p-4 rounded-xl bg-white/5 border border-white/10">
-                <div class="text-sm text-gurmaogold mb-2">✨ Vibe</div>
-                <div class="text-white">${x.vibe}</div>
-              </div>
-              
-              <!-- Actions -->
-              <div class="pt-2 space-y-2">
-                <a href="${x.href}" class="block w-full px-4 py-3 rounded-full bg-gurmaogold text-black font-semibold text-center hover:scale-105 transition">
-                  📖 Zobrazit detail
+            </div>
+            
+            <!-- Actions Footer -->
+            <div class="sticky bottom-0 bg-gurmaoblack/95 backdrop-blur border-t border-white/10 px-6 py-4">
+              <div class="max-w-2xl mx-auto space-y-3">
+                <a href="${x.href}" class="block w-full px-6 py-4 rounded-full bg-gurmaogold text-black font-bold text-center hover:scale-105 transition text-lg">
+                  📖 Zobrazit celý detail
                 </a>
-                <button data-save="${x.id}" class="save-menu-btn w-full px-4 py-3 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition">
-                  🤍 Uložit do výběru
+                <button data-save="${x.id}" class="save-menu-btn w-full px-6 py-4 rounded-full border-2 border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition font-semibold">
+                  ${saveMenuText}
                 </button>
               </div>
             </div>
           </div>
         </div>
       </article>
-    `).join('');
-
-    // Update save buttons after render
-    if (typeof window.updateSaveButtons === 'function') {
-      setTimeout(() => window.updateSaveButtons(), 100);
-    }
+    `}).join('');
 
     initFeedActions();
     initSwipeGestures();
@@ -474,28 +526,34 @@
       const menu = article.querySelector('.swipe-menu');
       const closeBtn = article.querySelector('.close-menu');
       const indicator = article.querySelector('.swipe-indicator');
+      const backIndicator = menu?.querySelector('.swipe-back-indicator');
       const mainLink = article.querySelector('a');
+      const restaurantId = article.dataset.restaurant;
       
       let touchStartX = 0;
       let touchStartY = 0;
       let touchEndX = 0;
       let touchEndY = 0;
       let isDragging = false;
+      let isMenuOpen = false;
       
+      // Touch events on article (for opening menu)
       article.addEventListener('touchstart', (e) => {
+        if (isMenuOpen) return;
         touchStartX = e.changedTouches[0].screenX;
         touchStartY = e.changedTouches[0].screenY;
         isDragging = false;
       }, { passive: true });
       
       article.addEventListener('touchmove', (e) => {
+        if (isMenuOpen) return;
         touchEndX = e.changedTouches[0].screenX;
         touchEndY = e.changedTouches[0].screenY;
         
         const diffX = touchStartX - touchEndX;
         const diffY = Math.abs(touchStartY - touchEndY);
         
-        // Detect horizontal swipe (not vertical scroll)
+        // Detect horizontal swipe left (not vertical scroll)
         if (Math.abs(diffX) > 10 && diffY < 30) {
           isDragging = true;
           
@@ -509,7 +567,7 @@
       }, { passive: true });
       
       article.addEventListener('touchend', (e) => {
-        if (!isDragging) return;
+        if (isMenuOpen || !isDragging) return;
         
         const diffX = touchStartX - touchEndX;
         const diffY = Math.abs(touchStartY - touchEndY);
@@ -517,26 +575,101 @@
         // Swipe left to open menu (min 80px swipe)
         if (diffX > 80 && diffY < 50) {
           e.preventDefault();
-          menu?.classList.add('active');
-          if (indicator) indicator.classList.remove('visible');
+          openMenu();
         }
         
         isDragging = false;
+        if (indicator) indicator.classList.remove('visible');
       });
+      
+      // Touch events on menu (for closing)
+      if (menu) {
+        let menuTouchStartX = 0;
+        let menuTouchStartY = 0;
+        let menuTouchEndX = 0;
+        let menuTouchEndY = 0;
+        let isMenuDragging = false;
+        
+        menu.addEventListener('touchstart', (e) => {
+          if (!isMenuOpen) return;
+          menuTouchStartX = e.changedTouches[0].screenX;
+          menuTouchStartY = e.changedTouches[0].screenY;
+          isMenuDragging = false;
+        }, { passive: true });
+        
+        menu.addEventListener('touchmove', (e) => {
+          if (!isMenuOpen) return;
+          menuTouchEndX = e.changedTouches[0].screenX;
+          menuTouchEndY = e.changedTouches[0].screenY;
+          
+          const diffX = menuTouchEndX - menuTouchStartX;
+          const diffY = Math.abs(menuTouchEndY - menuTouchStartY);
+          
+          // Detect horizontal swipe right (not vertical scroll)
+          if (Math.abs(diffX) > 10 && diffY < 30) {
+            isMenuDragging = true;
+            
+            // Show back indicator when swiping right
+            if (diffX > 20 && backIndicator) {
+              backIndicator.classList.add('visible');
+            } else if (backIndicator) {
+              backIndicator.classList.remove('visible');
+            }
+          }
+        }, { passive: true });
+        
+        menu.addEventListener('touchend', (e) => {
+          if (!isMenuOpen || !isMenuDragging) return;
+          
+          const diffX = menuTouchEndX - menuTouchStartX;
+          const diffY = Math.abs(menuTouchEndY - menuTouchStartY);
+          
+          // Swipe right to close menu (min 80px swipe)
+          if (diffX > 80 && diffY < 50) {
+            e.preventDefault();
+            closeMenu();
+          }
+          
+          isMenuDragging = false;
+          if (backIndicator) backIndicator.classList.remove('visible');
+        });
+      }
+      
+      function openMenu() {
+        menu?.classList.add('active');
+        isMenuOpen = true;
+        // Disable scrolling on feed when menu is open
+        const feed = document.getElementById('feed');
+        if (feed) feed.style.overflow = 'hidden';
+      }
+      
+      function closeMenu() {
+        menu?.classList.add('transitioning');
+        menu?.classList.remove('active');
+        isMenuOpen = false;
+        
+        setTimeout(() => {
+          menu?.classList.remove('transitioning');
+        }, 350);
+        
+        // Re-enable scrolling on feed
+        const feed = document.getElementById('feed');
+        if (feed) feed.style.overflow = '';
+      }
       
       // Close menu button
       closeBtn?.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        menu?.classList.remove('active');
+        closeMenu();
       });
       
-      // Close menu when clicking outside (on main link)
-      mainLink?.addEventListener('click', (e) => {
-        if (menu?.classList.contains('active')) {
-          e.preventDefault();
-          menu.classList.remove('active');
-        }
+      // Main save button (top right)
+      const mainSaveBtn = article.querySelector('.save-btn');
+      mainSaveBtn?.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        await handleSaveToggle(restaurantId, article);
       });
       
       // Save button in menu
@@ -544,17 +677,31 @@
       saveMenuBtn?.addEventListener('click', async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        const id = e.currentTarget.dataset.save;
-        const isSaved = await toggleSave(id);
-        
-        // Update both buttons
-        const mainSaveBtn = article.querySelector(`.save-btn[data-save="${id}"]`);
-        if (mainSaveBtn) mainSaveBtn.textContent = isSaved ? '🖤' : '🤍';
-        e.currentTarget.textContent = isSaved ? '🖤 Uloženo' : '🤍 Uložit do výběru';
-        
-        window.toast?.show(isSaved ? '🖤 Přidáno do výběru' : '🤍 Odebráno z výběru', 'success');
+        await handleSaveToggle(restaurantId, article);
       });
     });
+  }
+  
+  // Handle save toggle for both buttons
+  async function handleSaveToggle(restaurantId, article) {
+    if (typeof GurmaoCollections === 'undefined') {
+      window.toast?.show('❌ Chyba při ukládání', 'error');
+      return;
+    }
+    
+    const isSaved = await GurmaoCollections.toggle(restaurantId);
+    
+    // Update both buttons in the article
+    const mainSaveBtn = article.querySelector(`.save-btn[data-save="${restaurantId}"]`);
+    const menuSaveBtn = article.querySelector(`.save-menu-btn[data-save="${restaurantId}"]`);
+    
+    const icon = isSaved ? '🖤' : '🤍';
+    const menuText = isSaved ? '🖤 Uloženo' : '🤍 Uložit do výběru';
+    
+    if (mainSaveBtn) mainSaveBtn.textContent = icon;
+    if (menuSaveBtn) menuSaveBtn.textContent = menuText;
+    
+    window.toast?.show(isSaved ? '🖤 Přidáno do výběru' : '🤍 Odebráno z výběru', 'success');
   }
 
   // Desktop grid variables
