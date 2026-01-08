@@ -118,6 +118,88 @@
     .custom-option:last-child {
       border-radius: 0 0 1rem 1rem;
     }
+    
+    /* Notification Bell */
+    .notification-bell {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .notification-bell:hover {
+      transform: scale(1.1) rotate(15deg);
+    }
+    
+    .notification-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: white;
+      border-radius: 9999px;
+      min-width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0 6px;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+      animation: pulse-notification 2s ease-in-out infinite;
+      border: 2px solid #0b0b0d;
+    }
+    
+    @keyframes pulse-notification {
+      0%, 100% { 
+        box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+        transform: scale(1);
+      }
+      50% { 
+        box-shadow: 0 0 20px rgba(239, 68, 68, 0.9);
+        transform: scale(1.1);
+      }
+    }
+    
+    .notification-panel {
+      position: absolute;
+      top: calc(100% + 1rem);
+      right: 0;
+      width: 400px;
+      max-width: 90vw;
+      max-height: 500px;
+      overflow-y: auto;
+      background: linear-gradient(135deg, #1a1a1f 0%, #0b0b0d 100%);
+      border: 2px solid rgba(212, 175, 55, 0.3);
+      border-radius: 1rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(212, 175, 55, 0.2);
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+    }
+    
+    .notification-panel.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+    
+    .notification-item {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    
+    .notification-item:hover {
+      background: rgba(212, 175, 55, 0.1);
+    }
+    
+    .notification-item:last-child {
+      border-bottom: none;
+    }
   </style>
 </head>
 <body class="bg-gurmaoblack text-white">
@@ -155,6 +237,37 @@
     
     <div class="flex items-center gap-4">
       <span class="text-gurmaored text-sm font-semibold">🔒 ADMIN</span>
+      
+      <!-- Notification Bell -->
+      <div class="relative">
+        <button id="notificationBtn" class="notification-bell p-2 rounded-full border border-white/20 hover:border-gurmaogold hover:bg-gurmaogold/10 transition relative">
+          <span class="text-xl">🔔</span>
+          <span id="notificationBadge" class="notification-badge hidden">0</span>
+        </button>
+        
+        <!-- Notification Panel -->
+        <div id="notificationPanel" class="notification-panel">
+          <div class="p-4 border-b border-gurmaogold/20 sticky top-0 bg-gradient-to-r from-gurmaogold/10 to-transparent backdrop-blur-sm">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-gurmaogold">📬 Nové zprávy</h3>
+              <button id="closeNotifications" class="text-gray-400 hover:text-white transition text-xl">×</button>
+            </div>
+          </div>
+          <div id="notificationList">
+            <!-- Notifications will be inserted here -->
+          </div>
+          <div id="noNotifications" class="hidden p-6 text-center text-gray-500">
+            <div class="text-4xl mb-2">✅</div>
+            <div>Žádné nové zprávy</div>
+          </div>
+          <div class="p-3 border-t border-gurmaogold/20 text-center">
+            <a href="admin-contact.html" class="text-sm text-gurmaogold hover:text-yellow-300 transition font-medium">
+              Zobrazit všechny zprávy →
+            </a>
+          </div>
+        </div>
+      </div>
+      
       <button id="logoutBtn" class="px-4 py-2 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored text-sm transition">
         Odhlásit
       </button>
@@ -2179,6 +2292,119 @@ document.addEventListener('DOMContentLoaded', () => {
   // Reviews filter
   initCustomDropdown('filterReviewStatusBtn', 'filterReviewStatusOptions', 'filterReviewStatus');
 });
+
+// ========================================
+// NOTIFICATION SYSTEM
+// ========================================
+(async function initNotifications() {
+  let notificationMessages = [];
+  
+  // Load contact messages for notifications
+  async function loadNotifications() {
+    try {
+      const { getContactMessages } = await import('./supabase-client.js');
+      notificationMessages = await getContactMessages();
+      updateNotificationBadge();
+      renderNotifications();
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    }
+  }
+  
+  // Update notification badge
+  function updateNotificationBadge() {
+    const newCount = notificationMessages.filter(m => m.status === 'new').length;
+    const badge = document.getElementById('notificationBadge');
+    
+    if (newCount > 0) {
+      badge.textContent = newCount > 99 ? '99+' : newCount;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  }
+  
+  // Render notification list
+  function renderNotifications() {
+    const newMessages = notificationMessages.filter(m => m.status === 'new').slice(0, 10);
+    const list = document.getElementById('notificationList');
+    const noNotif = document.getElementById('noNotifications');
+    
+    if (newMessages.length === 0) {
+      list.innerHTML = '';
+      noNotif.classList.remove('hidden');
+      return;
+    }
+    
+    noNotif.classList.add('hidden');
+    list.innerHTML = newMessages.map(msg => {
+      const date = new Date(msg.created_at);
+      const now = new Date();
+      const diff = now - date;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      let timeText = '';
+      if (days === 0) timeText = 'Dnes';
+      else if (days === 1) timeText = 'Včera';
+      else if (days < 7) timeText = `Před ${days} dny`;
+      else timeText = date.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'short' });
+      
+      const subject = msg.subject.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const name = msg.name.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const email = msg.email.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      
+      return `
+        <div class="notification-item" data-id="${msg.id}">
+          <div class="flex items-start gap-3">
+            <div class="text-2xl">📩</div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-white text-sm mb-1 truncate">${subject}</div>
+              <div class="text-xs text-gray-400 mb-1">${name} • ${email}</div>
+              <div class="text-xs text-gray-500">${timeText}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    // Add click handlers
+    list.querySelectorAll('.notification-item').forEach(item => {
+      item.addEventListener('click', () => {
+        window.location.href = 'admin-contact.html';
+      });
+    });
+  }
+  
+  // Toggle notification panel
+  document.getElementById('notificationBtn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const panel = document.getElementById('notificationPanel');
+    panel.classList.toggle('active');
+    if (panel.classList.contains('active')) {
+      loadNotifications(); // Refresh when opening
+    }
+  });
+  
+  // Close notification panel
+  document.getElementById('closeNotifications')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('notificationPanel').classList.remove('active');
+  });
+  
+  // Close panel when clicking outside
+  document.addEventListener('click', (e) => {
+    const panel = document.getElementById('notificationPanel');
+    const btn = document.getElementById('notificationBtn');
+    if (panel && btn && !panel.contains(e.target) && !btn.contains(e.target)) {
+      panel.classList.remove('active');
+    }
+  });
+  
+  // Initial load
+  loadNotifications();
+  
+  // Refresh notifications every 30 seconds
+  setInterval(loadNotifications, 30000);
+})();
 
 </script>
 
