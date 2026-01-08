@@ -165,7 +165,6 @@
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      line-clamp: 2;
     }
     
     /* Notification Bell */
@@ -192,7 +191,32 @@
       align-items: center;
       justify-content: center;
       font-size: 0.7rem;
-      font-weight: 700;
+      font-!-- Notification Bell -->
+          <div class="relative">
+            <button id="notificationBtn" class="notification-bell p-3 bg-gradient-to-r from-gurmaogold/20 to-gurmaogold/10 hover:from-gurmaogold/30 hover:to-gurmaogold/20 rounded-xl transition-all duration-300 border border-gurmaogold/20 hover:border-gurmaogold/40 relative">
+              <span class="text-2xl">🔔</span>
+              <span id="notificationBadge" class="notification-badge hidden">0</span>
+            </button>
+            
+            <!-- Notification Panel -->
+            <div id="notificationPanel" class="notification-panel">
+              <div class="p-4 border-b border-gurmaogold/20 sticky top-0 bg-gradient-to-r from-gurmaogold/10 to-transparent backdrop-blur-sm">
+                <div class="flex items-center justify-between">
+                  <h3 class="font-bold text-gurmaogold">📬 Nové zprávy</h3>
+                  <button id="closeNotifications" class="text-gray-400 hover:text-white transition text-xl">×</button>
+                </div>
+              </div>
+              <div id="notificationList">
+                <!-- Notifications will be inserted here -->
+              </div>
+              <div id="noNotifications" class="hidden p-6 text-center text-gray-500">
+                <div class="text-4xl mb-2">✅</div>
+                <div>Žádné nové zprávy</div>
+              </div>
+            </div>
+          </div>
+          
+          <weight: 700;
       padding: 0 6px;
       box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
       animation: pulse-notification 2s ease-in-out infinite;
@@ -274,31 +298,6 @@
           </h1>
         </div>
         <div class="flex items-center gap-3">
-          <!-- Notification Bell -->
-          <div class="relative">
-            <button id="notificationBtn" class="notification-bell p-3 bg-gradient-to-r from-gurmaogold/20 to-gurmaogold/10 hover:from-gurmaogold/30 hover:to-gurmaogold/20 rounded-xl transition-all duration-300 border border-gurmaogold/20 hover:border-gurmaogold/40 relative">
-              <span class="text-2xl">🔔</span>
-              <span id="notificationBadge" class="notification-badge hidden">0</span>
-            </button>
-            
-            <!-- Notification Panel -->
-            <div id="notificationPanel" class="notification-panel">
-              <div class="p-4 border-b border-gurmaogold/20 sticky top-0 bg-gradient-to-r from-gurmaogold/10 to-transparent backdrop-blur-sm">
-                <div class="flex items-center justify-between">
-                  <h3 class="font-bold text-gurmaogold">📬 Nové zprávy</h3>
-                  <button id="closeNotifications" class="text-gray-400 hover:text-white transition text-xl">×</button>
-                </div>
-              </div>
-              <div id="notificationList">
-                <!-- Notifications will be inserted here -->
-              </div>
-              <div id="noNotifications" class="hidden p-6 text-center text-gray-500">
-                <div class="text-4xl mb-2">✅</div>
-                <div>Žádné nové zprávy</div>
-              </div>
-            </div>
-          </div>
-          
           <button id="refreshBtn" class="px-5 py-2.5 bg-gradient-to-r from-gurmaogold/20 to-gurmaogold/10 hover:from-gurmaogold/30 hover:to-gurmaogold/20 rounded-xl transition-all duration-300 font-medium border border-gurmaogold/20 hover:border-gurmaogold/40 hover:shadow-lg hover:shadow-gurmaogold/20">
             🔄 Obnovit
           </button>
@@ -307,11 +306,7 @@
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6">
-    
-    <!-- Stats & Filters -->
-    <div class="mb-8 space-y-6">
+  <!-- Main Content -->6">
       <!-- Stats -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="stat-card border border-gurmaogold/20 rounded-2xl p-6 relative overflow-hidden">
@@ -323,7 +318,81 @@
           <div class="absolute top-0 right-0 w-20 h-20 bg-yellow-500/5 rounded-full -mr-10 -mt-10"></div>
           <div class="text-xs font-semibold text-gray-400 mb-2 uppercase tracking-wider">Nové</div>
           <div class="text-4xl font-bold text-yellow-400" id="stat-new">0</div>
+       Update notification badge
+    function updateNotificationBadge() {
+      const newCount = allMessages.filter(m => m.status === 'new').length;
+      const badge = document.getElementById('notificationBadge');
+      
+      if (newCount > 0) {
+        badge.textContent = newCount > 99 ? '99+' : newCount;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    // RupdateNotificationBadge();
+        renderNotifications();
+        ender notification list
+    function renderNotifications() {
+      const newMessages = allMessages.filter(m => m.status === 'new').slice(0, 10); // Max 10 latest
+      const list = document.getElementById('notificationList');
+      const noNotif = document.getElementById('noNotifications');
+      
+      if (newMessages.length === 0) {
+        list.innerHTML = '';
+        noNotif.classList.remove('hidden');
+        return;
+      }
+      
+      noNotif.classList.add('hidden');
+      list.innerHTML = newMessages.map(msg => `
+        <div class="notification-item" data-id="${msg.id}">
+          <div class="flex items-start gap-3">
+            <div class="text-2xl">📩</div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-white text-sm mb-1 truncate">${escapeHtml(msg.subject)}</div>
+              <div class="text-xs text-gray-400 mb-1">${escapeHtml(msg.name)} • ${escapeHtml(msg.email)}</div>
+              <div class="text-xs text-gray-500">${formatDate(msg.created_at)}</div>
+            </div>
+          </div>
         </div>
+      `).join('');
+      
+      // Add click handlers
+      list.querySelectorAll('.notification-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const id = item.dataset.id;
+          document.getElementById('notificationPanel').classList.remove('active');
+          showMessageDetail(id);
+        });
+      });
+    }
+
+    // Toggle notification panel
+    document.getElementById('notificationBtn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const panel = document.getElementById('notificationPanel');
+      panel.classList.toggle('active');
+      renderNotifications();
+    });
+
+    // Close notification panel
+    document.getElementById('closeNotifications').addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.getElementById('notificationPanel').classList.remove('active');
+    });
+
+    // Close panel when clicking outside
+    document.addEventListener('click', (e) => {
+      const panel = document.getElementById('notificationPanel');
+      const btn = document.getElementById('notificationBtn');
+      if (!panel.contains(e.target) && !btn.contains(e.target)) {
+        panel.classList.remove('active');
+      }
+    });
+
+    //  </div>
         <div class="stat-card border border-blue-500/20 rounded-2xl p-6 relative overflow-hidden">
           <div class="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-full -mr-10 -mt-10"></div>
           <div class="text-xs font-semibold text-gray-400 mb-2 uppercase tracking-wider">Zpracovávané</div>
@@ -332,7 +401,11 @@
         <div class="stat-card border border-green-500/20 rounded-2xl p-6 relative overflow-hidden">
           <div class="absolute top-0 right-0 w-20 h-20 bg-green-500/5 rounded-full -mr-10 -mt-10"></div>
           <div class="text-xs font-semibold text-gray-400 mb-2 uppercase tracking-wider">Vyřízené</div>
-          <div class="text-4xl font-bold text-green-400" id="stat-resolved">0</div>
+          <div class="text-4xl font-bold text-blue-400" id="stat-progress">0</div>
+        </div>
+        <div class="bg-gray-900 border border-gurmaogold/20 rounded-xl p-6">
+          <div class="text-sm text-gray-400 mb-1">Vyřízené</div>
+          <div class="text-3xl font-bold text-green-400" id="stat-resolved">0</div>
         </div>
       </div>
 
@@ -426,78 +499,6 @@
     let currentFilter = 'all';
     let currentMessageId = null;
 
-    // Update notification badge
-    function updateNotificationBadge() {
-      const newCount = allMessages.filter(m => m.status === 'new').length;
-      const badge = document.getElementById('notificationBadge');
-      
-      if (newCount > 0) {
-        badge.textContent = newCount > 99 ? '99+' : newCount;
-        badge.classList.remove('hidden');
-      } else {
-        badge.classList.add('hidden');
-      }
-    }
-
-    // Render notification list
-    function renderNotifications() {
-      const newMessages = allMessages.filter(m => m.status === 'new').slice(0, 10);
-      const list = document.getElementById('notificationList');
-      const noNotif = document.getElementById('noNotifications');
-      
-      if (newMessages.length === 0) {
-        list.innerHTML = '';
-        noNotif.classList.remove('hidden');
-        return;
-      }
-      
-      noNotif.classList.add('hidden');
-      list.innerHTML = newMessages.map(msg => `
-        <div class="notification-item" data-id="${msg.id}">
-          <div class="flex items-start gap-3">
-            <div class="text-2xl">📩</div>
-            <div class="flex-1 min-w-0">
-              <div class="font-semibold text-white text-sm mb-1 truncate">${escapeHtml(msg.subject)}</div>
-              <div class="text-xs text-gray-400 mb-1">${escapeHtml(msg.name)} • ${escapeHtml(msg.email)}</div>
-              <div class="text-xs text-gray-500">${formatDate(msg.created_at)}</div>
-            </div>
-          </div>
-        </div>
-      `).join('');
-      
-      // Add click handlers
-      list.querySelectorAll('.notification-item').forEach(item => {
-        item.addEventListener('click', () => {
-          const id = item.dataset.id;
-          document.getElementById('notificationPanel').classList.remove('active');
-          showMessageDetail(id);
-        });
-      });
-    }
-
-    // Toggle notification panel
-    document.getElementById('notificationBtn').addEventListener('click', (e) => {
-      e.stopPropagation();
-      const panel = document.getElementById('notificationPanel');
-      panel.classList.toggle('active');
-      renderNotifications();
-    });
-
-    // Close notification panel
-    document.getElementById('closeNotifications').addEventListener('click', (e) => {
-      e.stopPropagation();
-      document.getElementById('notificationPanel').classList.remove('active');
-    });
-
-    // Close panel when clicking outside
-    document.addEventListener('click', (e) => {
-      const panel = document.getElementById('notificationPanel');
-      const btn = document.getElementById('notificationBtn');
-      if (!panel.contains(e.target) && !btn.contains(e.target)) {
-        panel.classList.remove('active');
-      }
-    });
-
     // Load messages
     async function loadMessages() {
       try {
@@ -511,8 +512,6 @@
         
         updateStats();
         renderMessages();
-        updateNotificationBadge();
-        renderNotifications();
         
       } catch (error) {
         console.error('Error loading messages:', error);
@@ -537,6 +536,7 @@
       document.getElementById('stat-progress').textContent = stats.in_progress;
       document.getElementById('stat-resolved').textContent = stats.resolved;
 
+      document.getElementById('count-all').textContent = stats.total;
       document.getElementById('count-all').textContent = stats.total;
       document.getElementById('count-new').textContent = stats.new;
       document.getElementById('count-progress').textContent = stats.in_progress;
@@ -639,8 +639,6 @@
 
         updateStats();
         renderMessages();
-        updateNotificationBadge();
-        renderNotifications();
         closeModal();
         
         window.toast?.show('✅ Status aktualizován', 'success');
