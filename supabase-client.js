@@ -492,5 +492,31 @@ export function getAvatarUrl(avatarPath) {
   return getPublicUrl('avatars', avatarPath);
 }
 
+// ======================
+// CONTACT MESSAGES
+// ======================
+
+/**
+ * Submit contact form message
+ */
+export async function submitContactMessage(messageData) {
+  const { name, email, subject, message } = messageData;
+  
+  const { data, error } = await supabase
+    .from('contact_messages')
+    .insert({
+      name: name,
+      email: email,
+      subject: subject,
+      message: message,
+      status: 'new'
+    })
+    .select()
+    .single();
+  
+  if (error) throw error;
+  return data;
+}
+
 // Export client as default
 export default supabase;

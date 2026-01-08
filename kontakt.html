@@ -307,10 +307,20 @@
 <script src="auth-ui.js"></script>
 <script src="cookie-consent.js"></script>
 
-<script>
+<script type="module">
+  import { submitContactMessage } from './supabase-client.js';
+  
   // Contact form handling
-  document.getElementById('contactForm').addEventListener('submit', async (e) => {
+  const contactForm = document.getElementById('contactForm');
+  const submitButton = contactForm.querySelector('button[type="submit"]');
+  const originalButtonText = submitButton.textContent;
+  
+  contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    
+    // Disable form during submission
+    submitButton.disabled = true;
+    submitButton.textContent = '⏳ Odesílám...';
     
     const formData = new FormData(e.target);
     const data = {
@@ -320,33 +330,30 @@
       message: formData.get('message')
     };
     
-    // TODO: Implement actual form submission to backend/email service
-    // For now, just show a success message
-    console.log('Form data:', data);
-    
-    showToast('✅ Zpráva odeslána! Odpovíme co nejdříve.');
-    e.target.reset();
-    
-    // In production, you would send this to a backend endpoint:
-    /*
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
+      // Submit to Supabase
+      await submitContactMessage(data);
       
-      if (response.ok) {
-        showToast('✅ Zpráva odeslána! Odpovíme co nejdříve.');
-        e.target.reset();
-      } else {
-        showToast('❌ Chyba při odesílání. Zkuste to prosím znovu.');
+      // Show success message
+      showToast('✅ Zpráva odeslána! Odpovíme co nejdříve.');
+      
+      // Reset form
+      e.target.reset();
+      
+      // Optional: Track submission with analytics
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'contact_form_submission', {
+          subject: data.subject
+        });
       }
     } catch (error) {
-      console.error('Error:', error);
-      showToast('❌ Chyba při odesílání. Zkuste to prosím znovu.');
+      console.error('Error submitting contact form:', error);
+      showToast('❌ Chyba při odesílání. Zkuste to prosím znovu nebo napište přímo na info@gurmao.cz');
+    } finally {
+      // Re-enable form
+      submitButton.disabled = false;
+      submitButton.textContent = originalButtonText;
     }
-    */
   });
 </script>
 
