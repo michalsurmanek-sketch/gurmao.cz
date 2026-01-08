@@ -195,7 +195,7 @@
             <span class="text-gurmaogold">▼</span>
           </button>
           <input type="hidden" name="subject" id="subjectValue" required>
-          <div id="subjectDropdown" class="hidden absolute z-10 w-full mt-2 rounded-xl bg-gurmaoblack border border-white/20 overflow-hidden max-h-64 overflow-y-auto">
+          <div id="subjectDropdown" class="hidden absolute z-10 w-full mt-2 rounded-xl bg-gurmaoblack border border-white/20 overflow-hidden">
             <div data-value="restaurace" class="px-4 py-3 hover:bg-white/10 cursor-pointer transition">Návrh nové restaurace</div>
             <div data-value="chyba" class="px-4 py-3 hover:bg-white/10 cursor-pointer transition">Nahlášení chyby</div>
             <div data-value="feedback" class="px-4 py-3 hover:bg-white/10 cursor-pointer transition">Zpětná vazba</div>
@@ -368,6 +368,23 @@
 
   subjectButton.addEventListener('click', () => {
     subjectDropdown.classList.toggle('hidden');
+    
+    // Scroll to show the entire dropdown when opened
+    if (!subjectDropdown.classList.contains('hidden')) {
+      setTimeout(() => {
+        const dropdownRect = subjectDropdown.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        
+        // Check if dropdown goes below viewport
+        if (dropdownRect.bottom > viewportHeight) {
+          subjectDropdown.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'end',
+            inline: 'nearest'
+          });
+        }
+      }, 10);
+    }
   });
 
   // Close dropdown when clicking outside
