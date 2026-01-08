@@ -18,11 +18,27 @@ class SocialShareManager {
     }
 
     try {
-      await navigator.share({
+      // Prepare share data with image if available
+      const shareData = {
         title: data.title || 'GURMAO',
         text: data.text || 'Podívej se na tuto restauraci!',
         url: data.url || window.location.href
-      });
+      };
+
+      // Try to fetch and add image if provided
+      if (data.image) {
+        try {
+          const response = await fetch(data.image);
+          const blob = await response.blob();
+          const file = new File([blob], 'restaurant.jpg', { type: blob.type });
+          shareData.files = [file];
+        } catch (err) {
+          console.warn('Could not load image for sharing:', err);
+          // Continue without image
+        }
+      }
+
+      await navigator.share(shareData);
       return true;
     } catch (error) {
       if (error.name === 'AbortError') {
@@ -37,8 +53,9 @@ class SocialShareManager {
   async shareRestaurant(restaurant) {
     const shareData = {
       title: `${restaurant.name} – GURMAO`,
-      text: `${restaurant.vibe} ${restaurant.name} v ${restaurant.city}. ${restaurant.tag}. Nejez. Prožij.`,
-      url: `${this.baseUrl}/${restaurant.href || 'feed.html'}`
+      text: `${restaurant.name} v ${restaurant.city} ${restaurant.vibe}\n\n${restaurant.tag}\n\nNejez. Prožij. 👉`,
+      url: `${this.baseUrl}/${restaurant.href || 'feed.html'}`,
+      image: restaurant.photo_url || restaurant.img || null
     };
 
     // Try native share first (mobile)
@@ -66,19 +83,23 @@ class SocialShareManager {
     const encodedUrl = encodeURIComponent(shareData.url);
     const encodedText = encodeURIComponent(shareData.text);
     const encodedTitle = encodeURIComponent(shareData.title);
+    const imageUrl = shareData.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80';
 
     const modalHTML = `
       <div id="shareModal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-fadeIn" style="background: rgba(11, 11, 13, 0.95); backdrop-filter: blur(8px);">
         <div class="bg-gurmaoblack border border-white/20 rounded-3xl max-w-md w-full shadow-2xl">
-          <!-- Header -->
-          <div class="p-6 pb-4 border-b border-white/10 flex items-center justify-between">
-            <div>
-              <h3 class="text-xl font-bold">Sdílet restauraci</h3>
-              <p class="text-white/60 text-sm mt-1">${restaurant.name}</p>
+          <!-- Header with Image Preview -->
+          <div class="relative">
+            <div class="h-40 bg-cover bg-center rounded-t-3xl" style="background-image: url('${imageUrl}')"></div>
+            <div class="absolute top-4 right-4">
+              <button id="closeShareModal" class="w-10 h-10 rounded-full bg-black/60 backdrop-blur hover:bg-black/80 transition">
+                ✕
+              </button>
             </div>
-            <button id="closeShareModal" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 transition">
-              ✕
-            </button>
+          </div>
+          <div class="p-6 pb-4 border-b border-white/10">
+            <h3 class="text-xl font-bold">Sdílet restauraci</h3>
+            <p class="text-white/60 text-sm mt-1">${restaurant.name}</p>
           </div>
 
           <!-- Share Options -->
