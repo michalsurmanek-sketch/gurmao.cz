@@ -10,11 +10,11 @@ class RatingManager {
 
   async initSupabase() {
     try {
-      const { default: supabase, rateRestaurant, getUserRating, getRestaurantRatingStats } = await import('./supabase-client.js');
-      this.supabase = supabase;
-      this._rateRestaurant = rateRestaurant;
-      this._getUserRating = getUserRating;
-      this._getRestaurantRatingStats = getRestaurantRatingStats;
+      const module = await import('./supabase-client.js');
+      this.supabase = module.default;
+      this.rateRestaurantFn = module.rateRestaurant;
+      this.getUserRatingFn = module.getUserRating;
+      this.getRatingStatsFn = module.getRestaurantRatingStats;
     } catch (error) {
       console.error('Failed to load Supabase:', error);
     }
@@ -22,7 +22,7 @@ class RatingManager {
 
   // Rate a restaurant (1-5 stars)
   async rate(restaurantId, stars) {
-    if (!this._rateRestaurant) {
+    if (!this.rateRestaurantFn) {
       throw new Error('Systém hodnocení se načítá...');
     }
 
@@ -31,7 +31,7 @@ class RatingManager {
     }
 
     try {
-      const result = await this._rateRestaurant(restaurantId, stars);
+      const result = await this.rateRestaurantFn(restaurantId, stars);
       return result;
     } catch (error) {
       throw error;
@@ -40,10 +40,10 @@ class RatingManager {
 
   // Get user's current rating for a restaurant
   async getUserRating(restaurantId) {
-    if (!this._getUserRating) return null;
+    if (!this.getUserRatingFn) return null;
     
     try {
-      return await this._getUserRating(restaurantId);
+      return await this.getUserRatingFn(restaurantId);
     } catch (error) {
       console.error('Error getting user rating:', error);
       return null;
@@ -64,10 +64,10 @@ class RatingManager {
 
   // Get average rating for a restaurant
   async getAverage(restaurantId) {
-    if (!this._getRestaurantRatingStats) return 0;
+    if (!this.getRatingStatsFn) return 0;
     
     try {
-      const stats = await this._getRestaurantRatingStats(restaurantId);
+      const stats = await this.getRatingStatsFn(restaurantId);
       return stats.average_rating || 0;
     } catch (error) {
       console.error('Error getting rating stats:', error);
@@ -77,10 +77,10 @@ class RatingManager {
 
   // Get rating count
   async getCount(restaurantId) {
-    if (!this._getRestaurantRatingStats) return 0;
+    if (!this.getRatingStatsFn) return 0;
     
     try {
-      const stats = await this._getRestaurantRatingStats(restaurantId);
+      const stats = await this.getRatingStatsFn(restaurantId);
       return stats.rating_count || 0;
     } catch (error) {
       console.error('Error getting rating count:', error);
@@ -90,7 +90,7 @@ class RatingManager {
 
   // Get rating statistics
   async getRestaurantRatingStats(restaurantId) {
-    if (!this._getRestaurantRatingStats) {
+    if (!this.getRatingStatsFn) {
       return {
         restaurant_id: restaurantId,
         rating_count: 0,
@@ -99,7 +99,7 @@ class RatingManager {
     }
     
     try {
-      return await this._getRestaurantRatingStats(restaurantId);
+      return await this.getRatingStatsFn(restaurantId);
     } catch (error) {
       console.error('Error getting rating stats:', error);
       return {

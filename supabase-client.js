@@ -281,45 +281,45 @@ export async function isRestaurantSaved(userId, restaurantId) {
 }
 
 // ======================
-// REVIEWS HELPERS - DISABLED (tabulka reviews neexistuje)
+// REVIEWS HELPERS
 // ======================
 
 /**
- * Add review
+ * Add review (optional - requires reviews table)
  */
-// export async function addReview(userId, restaurantId, rating, title, text) {
-//   const { data, error } = await supabase
-//     .from('reviews')
-//     .insert({
-//       user_id: userId,
-//       restaurant_id: restaurantId,
-//       rating: rating,
-//       title: title,
-//       text: text
-//     })
-//     .select()
-//     .single();
+export async function addReview(userId, restaurantId, rating, title, text) {
+  const { data, error } = await supabase
+    .from('reviews')
+    .insert({
+      user_id: userId,
+      restaurant_id: restaurantId,
+      rating: rating,
+      title: title,
+      text: text
+    })
+    .select()
+    .single();
   
-//   if (error) throw error;
-//   return data;
-// }
+  if (error) throw error;
+  return data;
+}
 
 /**
- * Get restaurant reviews
+ * Get restaurant reviews (optional - requires reviews table)
  */
-// export async function getRestaurantReviews(restaurantId) {
-//   const { data, error } = await supabase
-//     .from('reviews')
-//     .select(`
-//       *,
-//       profiles (display_name, avatar_url)
-//     `)
-//     .eq('restaurant_id', restaurantId)
-//     .order('created_at', { ascending: false });
+export async function getRestaurantReviews(restaurantId) {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select(`
+      *,
+      profiles (display_name, avatar_url)
+    `)
+    .eq('restaurant_id', restaurantId)
+    .order('created_at', { ascending: false });
   
-//   if (error) throw error;
-//   return data;
-// }
+  if (error) throw error;
+  return data;
+}
 
 // ======================
 // REAL-TIME SUBSCRIPTIONS
@@ -608,13 +608,37 @@ export async function getUserRating(restaurantId) {
  * Get rating statistics for a restaurant
  */
 export async function getRestaurantRatingStats(restaurantId) {
-  // Get all ratings for this restaurant
+  // Try to get from rating_stats view first
+  const { data: viewData, error: viewError } = await supabase
+    .from('rating_stats')
+    .select('*')
+    .eq('restaurant_id', restaurantId)
+    .maybeSingle();
+  
+  // If view exists and has data, use it
+  if (!viewError && viewData) {
+    return viewData;
+  }
+  
+  // Fallback: calculate from ratings table
   const { data: ratings, error } = await supabase
     .from('ratings')
     .select('stars')
     .eq('restaurant_id', restaurantId);
   
-  if (error) throw error;
+  if (error) {
+    console.error('Error fetching ratings:', error);
+    return {
+      restaurant_id: restaurantId,
+      rating_count: 0,
+      average_rating: 0,
+      five_stars: 0,
+      four_stars: 0,
+      three_stars: 0,
+      two_stars: 0,
+      one_star: 0
+    };
+  }
   
   // If no ratings, return zero stats
   if (!ratings || ratings.length === 0) {
