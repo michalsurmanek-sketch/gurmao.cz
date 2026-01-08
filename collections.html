@@ -200,7 +200,7 @@
 </main>
 
 <script type="module">
-  import { getSavedRestaurants, getAllRestaurants } from './supabase-client.js';
+  import { getSavedRestaurants, getRestaurants } from './supabase-client.js';
 
   // Vibe tooltip helper
   const getVibeTooltip = (vibe) => {
@@ -229,7 +229,7 @@
         
         // Load recommended restaurants for empty state
         try {
-          const allRestaurants = await getAllRestaurants();
+          const allRestaurants = await getRestaurants();
           const recommendedRestaurants = allRestaurants.slice(0, 3);
           
           if (recommendedGrid && recommendedRestaurants.length) {
