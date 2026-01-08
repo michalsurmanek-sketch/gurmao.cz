@@ -169,6 +169,9 @@ const GurmaoCollections = {
   }
 };
 
+// Make GurmaoCollections globally available (for module scripts in feed.html etc)
+window.GurmaoCollections = GurmaoCollections;
+
 // Initialize save buttons with event delegation
 document.addEventListener('DOMContentLoaded', async () => {
   // Initial update for existing buttons
@@ -195,7 +198,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     if (nowSaved) {
       btn.classList.add('saved');
-      showToast('🖤 Přidáno do výběru');
+      showToast('❤️ Přidáno do výběru');
     } else {
       btn.classList.remove('saved');
       showToast('🤍 Odebráno z výběru');

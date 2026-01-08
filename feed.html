@@ -366,6 +366,9 @@
   </div>
 </main>
 
+<!-- Load app.js BEFORE inline scripts to make GurmaoCollections available -->
+<script src="app.js"></script>
+
 <script type="module">
   // Import Supabase client
   import { supabase } from './supabase-client.js';
@@ -402,31 +405,7 @@
     }
   }
 
-  // Saved system - use GurmaoCollections from app.js
-  const getSaved = async () => {
-    if (typeof GurmaoCollections !== 'undefined') {
-      return await GurmaoCollections.getSaved();
-    }
-    // Fallback to localStorage
-    return new Set(JSON.parse(localStorage.getItem('gurmao_saved') || '[]'));
-  };
-  
-  const toggleSave = async (id) => {
-    if (typeof GurmaoCollections !== 'undefined') {
-      return await GurmaoCollections.toggle(id);
-    }
-    // Fallback
-    const saved = new Set(JSON.parse(localStorage.getItem('gurmao_saved') || '[]'));
-    if (saved.has(id)) {
-      saved.delete(id);
-      localStorage.setItem('gurmao_saved', JSON.stringify([...saved]));
-      return false;
-    } else {
-      saved.add(id);
-      localStorage.setItem('gurmao_saved', JSON.stringify([...saved]));
-      return true;
-    }
-  };
+  // Saved system - using GurmaoCollections from app.js (loaded globally)
 
   // Mobile feed render
   async function renderFeed(nearbyFilter = null) {
@@ -445,12 +424,12 @@
     }
     
     // Get saved restaurants
-    const saved = await getSaved();
+    const saved = await GurmaoCollections.getSaved();
     
     feed.innerHTML = displayItems.map(x=>{
       const isSaved = saved.has(x.id);
-      const saveIcon = isSaved ? '🖤' : '🤍';
-      const saveMenuText = isSaved ? '🖤 Uloženo' : '🤍 Uložit do výběru';
+      const saveIcon = isSaved ? '❤️' : '🤍';
+      const saveMenuText = isSaved ? '❤️ Uloženo' : '🤍 Uložit do výběru';
       
       return `
       <article class="snap-start h-[calc(100vh-65px)] relative" data-restaurant="${x.id}">
@@ -721,13 +700,13 @@
     const mainSaveBtn = article.querySelector(`.save-btn[data-save="${restaurantId}"]`);
     const menuSaveBtn = article.querySelector(`.save-menu-btn[data-save="${restaurantId}"]`);
     
-    const icon = isSaved ? '🖤' : '🤍';
-    const menuText = isSaved ? '🖤 Uloženo' : '🤍 Uložit do výběru';
+    const icon = isSaved ? '❤️' : '🤍';
+    const menuText = isSaved ? '❤️ Uloženo' : '🤍 Uložit do výběru';
     
     if (mainSaveBtn) mainSaveBtn.textContent = icon;
     if (menuSaveBtn) menuSaveBtn.textContent = menuText;
     
-    window.toast?.show(isSaved ? '🖤 Přidáno do výběru' : '🤍 Odebráno z výběru', 'success');
+    window.toast?.show(isSaved ? '❤️ Přidáno do výběru' : '🤍 Odebráno z výběru', 'success');
   }
 
   // Desktop grid variables
@@ -743,7 +722,7 @@
     // Filter items if location filter is active
     filteredItems = nearbyFilter ? items.filter(x => nearbyFilter.has(x.id)) : [...items];
     
-    const saved = await getSaved();
+    const saved = await GurmaoCollections.getSaved();
     
     if (filteredItems.length === 0) {
       grid.classList.add('hidden');
@@ -775,7 +754,7 @@
             </div>
             <div class="flex gap-2 flex-shrink-0">
               <button data-save="${x.id}" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" title="Uložit">
-                ${saved.has(x.id) ? '🖤' : '🤍'}
+                ${saved.has(x.id) ? '❤️' : '🤍'}
               </button>
               ${window.socialShare.renderShareButton(x, 'md')}
             </div>
@@ -1021,7 +1000,6 @@
 </footer>
 
 <script type="module" src="supabase-client.js"></script>
-<script src="app.js"></script>
 <script src="auth-ui.js"></script>
 <script src="onboarding.js"></script>
 <script src="cookie-consent.js"></script>
