@@ -200,7 +200,11 @@
 </main>
 
 <script type="module">
-  import { getSavedRestaurants, getRestaurants } from './supabase-client.js';
+  import { getSavedRestaurants, getRestaurants, unsaveRestaurant } from './supabase-client.js';
+  
+  // Make toast functions available
+  const toastInfo = window.toastInfo || ((msg) => alert(msg));
+  const toastError = window.toastError || ((msg) => alert(msg));
 
   // Vibe tooltip helper
   const getVibeTooltip = (vibe) => {
@@ -288,13 +292,14 @@
               
               await new Promise(resolve => setTimeout(resolve, 300));
               
-              // Use GurmaoCollections API
-              await GurmaoCollections.remove(slug);
+              // Remove from Supabase
+              await unsaveRestaurant(slug);
               
               toastInfo(`${restaurant?.restaurants?.name || 'Restaurace'} odebráno`);
               
               setTimeout(() => location.reload(), 500);
             } catch (error) {
+              console.error('Error removing restaurant:', error);
               btn.textContent = originalText;
               btn.classList.remove('btn-loading');
               toastError('❌ Nepodařilo se odebrat');
@@ -302,9 +307,6 @@
           });
         });
       }
-    } catch (error) {
-      console.error('Error loading collections:', error);
-      empty.classList.remove('hidden');
     } catch (error) {
       console.error('Error loading collections:', error);
       empty.classList.remove('hidden');
