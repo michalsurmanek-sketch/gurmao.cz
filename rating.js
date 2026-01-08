@@ -1,126 +1,91 @@
 // Rating System for GURMAO.cz
 // © 2025 GURMAO.cz
+// Now uses Supabase for persistent storage
 
 class RatingManager {
   constructor() {
-    this.storageKey = 'gurmao_ratings';
-    this.ratings = this.loadRatings();
+    this.supabase = null;
+    this.initSupabase();
   }
 
-  loadRatings() {
+  async initSupabase() {
     try {
-      return JSON.parse(localStorage.getItem(this.storageKey) || '{}');
-    } catch {
-      return {};
+      const { default: supabase, rateRestaurant, getUserRating, getRestaurantRatingStats } = await import('./supabase-client.js');
+      this.supabase = supabase;
+      this.rateRestaurant = rateRestaurant;
+      this.getUserRating = getUserRating;
+      this.getRestaurantRatingStats = getRestaurantRatingStats;
+    } catch (error) {
+      console.error('Failed to load Supabase:', error);
     }
   }
 
-  saveRatings() {
-    localStorage.setItem(this.storageKey, JSON.stringify(this.ratings));
-  }
-
   // Rate a restaurant (1-5 stars)
-  rate(restaurantId, stars) {
-    // Check if user is logged in
-    const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
-    if (!user?.id) {
-      throw new Error('Pro hodnocení se musíte přihlásit');
+  async rate(restaurantId, stars) {
+    if (!this.rateRestaurant) {
+      throw new Error('Systém hodnocení se načítá...');
     }
 
     if (stars < 1 || stars > 5) {
       throw new Error('Hodnocení musí být mezi 1 a 5');
     }
 
-    if (!this.ratings[restaurantId]) {
-      this.ratings[restaurantId] = {
-        ratings: [],
-        average: 0,
-        count: 0
-      };
+    try {
+      const result = await this.rateRestaurant(restaurantId, stars);
+      return result;
+    } catch (error) {
+      throw error;
     }
-
-    // Check if user already rated this restaurant
-    const existingRatingIndex = this.ratings[restaurantId].ratings.findIndex(
-      r => r.userId === user.id
-    );
-
-    if (existingRatingIndex !== -1) {
-      throw new Error('Tuto restauraci jste již ohodnotili');
-    }
-
-    // Add user's rating
-    this.ratings[restaurantId].ratings.push({
-      stars: stars,
-      timestamp: Date.now(),
-      userId: user.id
-    });
-
-    // Recalculate average
-    this.recalculateAverage(restaurantId);
-    this.saveRatings();
-
-    return this.ratings[restaurantId];
   }
 
   // Get user's current rating for a restaurant
-  getUserRating(restaurantId) {
-    const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
-    if (!user?.id) return null;
+  async getUserRating(restaurantId) {
+    if (!this.getUserRating) return null;
     
-    const restaurantRatings = this.ratings[restaurantId];
-    
-    if (!restaurantRatings) return null;
-
-    const userRating = restaurantRatings.ratings.find(r => r.userId === user.id);
-
-    return userRating ? userRating.stars : null;
-  }
-
-  // Check if user has already rated a restaurant
-  hasUserRated(restaurantId) {
-    const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
-    if (!user?.id) return false;
-    
-    const restaurantRatings = this.ratings[restaurantId];
-    if (!restaurantRatings) return false;
-
-    return restaurantRatings.ratings.some(r => r.userId === user.id);
+    try {
+      return await this.getUserRating(restaurantId);
+    } catch (error) {
+      console.error('Error getting user rating:', error);
+      return null;
+    }
   }
 
   // Check if user is logged in
-  isUserLoggedIn() {
-    const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
-    return !!user?.id;
+  async isUserLoggedIn() {
+    if (!this.supabase) return false;
+    
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser();
+      return !!user;
+    } catch {
+      return false;
+    }
   }
 
   // Get average rating for a restaurant
-  getAverage(restaurantId) {
-    return this.ratings[restaurantId]?.average || 0;
+  async getAverage(restaurantId) {
+    if (!this.getRestaurantRatingStats) return 0;
+    
+    try {
+      const stats = await this.getRestaurantRatingStats(restaurantId);
+      return stats.average_rating || 0;
+    } catch (error) {
+      console.error('Error getting rating stats:', error);
+      return 0;
+    }
   }
 
   // Get rating count
-  getCount(restaurantId) {
-    return this.ratings[restaurantId]?.count || 0;
-  }
-
-  // Recalculate average rating
-  recalculateAverage(restaurantId) {
-    const restaurantRatings = this.ratings[restaurantId];
-    if (!restaurantRatings || restaurantRatings.ratings.length === 0) {
-      restaurantRatings.average = 0;
-      restaurantRatings.count = 0;
-      return;
+  async getCount(restaurantId) {
+    if (!this.getRestaurantRatingStats) return 0;
+    
+    try {
+      const stats = await this.getRestaurantRatingStats(restaurantId);
+      return stats.rating_count || 0;
+    } catch (error) {
+      console.error('Error getting rating count:', error);
+      return 0;
     }
-
-    const sum = restaurantRatings.ratings.reduce((acc, r) => acc + r.stars, 0);
-    restaurantRatings.average = Math.round((sum / restaurantRatings.ratings.length) * 10) / 10;
-    restaurantRatings.count = restaurantRatings.ratings.length;
-  }
-
-  // Get current user ID
-  getCurrentUserId() {
-    const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
-    return user?.id || null;
   }
 
   // Render star rating (static display)
@@ -157,10 +122,10 @@ class RatingManager {
   }
 
   // Render interactive star rating
-  renderInteractiveStars(restaurantId, currentRating = 0) {
-    const isLoggedIn = this.isUserLoggedIn();
-    const hasRated = this.hasUserRated(restaurantId);
-    const userRating = this.getUserRating(restaurantId);
+  async renderInteractiveStars(restaurantId, currentRating = 0) {
+    const isLoggedIn = await this.isUserLoggedIn();
+    const userRating = isLoggedIn ? await this.getUserRating(restaurantId) : null;
+    const hasRated = userRating !== null;
     const finalRating = userRating || currentRating;
     
     // If user already rated, show locked rating
@@ -245,19 +210,20 @@ class RatingManager {
         container.appendChild(lockedMsg);
         
         // Show toast
-        if (window.toastSuccess) {
-          window.toastSuccess(`Ohodnoceno ${stars} ${stars === 1 ? 'hvězdičkou' : stars < 5 ? 'hvězdičkami' : 'hvězdičkami'}!`);
+        if (window.toast) {
+          window.toast.show(`⭐ Ohodnoceno ${stars} ${stars === 1 ? 'hvězdičkou' : stars < 5 ? 'hvězdičkami' : 'hvězdičkami'}!`, 'success');
         }
 
         // Trigger update event
+        const stats = await window.ratingManager.getRestaurantRatingStats(restaurantId);
         window.dispatchEvent(new CustomEvent('ratingUpdated', { 
-          detail: { restaurantId, stars, average: result.average }
+          detail: { restaurantId, stars, average: stats?.average_rating || stars }
         }));
 
       } catch (error) {
         console.error('Rating error:', error);
-        if (window.toastError) {
-          window.toastError(error.message || 'Nepodařilo se ohodnotit');
+        if (window.toast) {
+          window.toast.show(error.message || 'Nepodařilo se ohodnotit', 'error');
         }
       }
     });

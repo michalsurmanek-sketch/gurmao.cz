@@ -546,5 +546,126 @@ export async function updateContactMessageStatus(messageId, status) {
   return data;
 }
 
+// ======================
+// RATINGS
+// ======================
+
+/**
+ * Add or update user rating for a restaurant
+ */
+export async function rateRestaurant(restaurantId, stars) {
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    throw new Error('Pro hodnocení se musíte přihlásit');
+  }
+  
+  if (stars < 1 || stars > 5) {
+    throw new Error('Hodnocení musí být mezi 1 a 5');
+  }
+  
+  // Upsert - insert or update if exists
+  const { data, error } = await supabase
+    .from('ratings')
+    .upsert({
+      user_id: user.id,
+      restaurant_id: restaurantId,
+      stars: stars
+    }, {
+      onConflict: 'user_id,restaurant_id'
+    })
+    .select()
+    .single();
+  
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Get user's rating for a restaurant
+ */
+export async function getUserRating(restaurantId) {
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) return null;
+  
+  const { data, error } = await supabase
+    .from('ratings')
+    .select('stars')
+    .eq('user_id', user.id)
+    .eq('restaurant_id', restaurantId)
+    .single();
+  
+  if (error) {
+    if (error.code === 'PGRST116') return null; // No rows found
+    throw error;
+  }
+  
+  return data?.stars || null;
+}
+
+/**
+ * Get rating statistics for a restaurant
+ */
+export async function getRestaurantRatingStats(restaurantId) {
+  const { data, error } = await supabase
+    .from('rating_stats')
+    .select('*')
+    .eq('restaurant_id', restaurantId)
+    .single();
+  
+  if (error) {
+    if (error.code === 'PGRST116') {
+      // No ratings yet
+      return {
+        restaurant_id: restaurantId,
+        rating_count: 0,
+        average_rating: 0,
+        five_stars: 0,
+        four_stars: 0,
+        three_stars: 0,
+        two_stars: 0,
+        one_star: 0
+      };
+    }
+    throw error;
+  }
+  
+  return data;
+}
+
+/**
+ * Get all ratings for a restaurant
+ */
+export async function getRestaurantRatings(restaurantId) {
+  const { data, error } = await supabase
+    .from('ratings')
+    .select('*')
+    .eq('restaurant_id', restaurantId)
+    .order('created_at', { ascending: false });
+  
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Delete user's rating
+ */
+export async function deleteRating(restaurantId) {
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    throw new Error('Musíte být přihlášeni');
+  }
+  
+  const { error } = await supabase
+    .from('ratings')
+    .delete()
+    .eq('user_id', user.id)
+    .eq('restaurant_id', restaurantId);
+  
+  if (error) throw error;
+}
+
 // Export client as default
 export default supabase;
