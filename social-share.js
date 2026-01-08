@@ -120,6 +120,22 @@ class SocialShareManager {
               <div class="text-white/40">→</div>
             </a>
 
+            <!-- Messenger -->
+            <a 
+              href="https://www.facebook.com/dialog/send?link=${encodedUrl}&app_id=&redirect_uri=${encodedUrl}"
+              target="_blank"
+              class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 hover:bg-[#0084FF]/20 hover:border-[#0084FF] border border-white/10 transition group"
+            >
+              <div class="w-12 h-12 rounded-full bg-[#0084FF]/20 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                💌
+              </div>
+              <div class="flex-1">
+                <div class="font-semibold">Messenger</div>
+                <div class="text-white/60 text-sm">Poslat na Messengeru</div>
+              </div>
+              <div class="text-white/40">→</div>
+            </a>
+
             <!-- Facebook -->
             <a 
               href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}"
