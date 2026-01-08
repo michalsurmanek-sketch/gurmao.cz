@@ -213,45 +213,59 @@ class RatingManager {
       const restaurantId = container.dataset.restaurant;
       const stars = parseInt(star.dataset.star);
 
+      // Okamžitě aktualizuj UI (optimisticky)
+      const allStars = container.querySelectorAll('.rating-star');
+      allStars.forEach((s, idx) => {
+        if (idx < stars) {
+          s.classList.remove('text-white/20');
+          s.classList.add('text-gurmaogold');
+        } else {
+          s.classList.add('text-white/20');
+          s.classList.remove('text-gurmaogold');
+        }
+        // Disable buttons
+        s.disabled = true;
+        s.style.cursor = 'default';
+        s.classList.remove('hover:scale-110');
+      });
+      
+      // Add locked message
+      const lockedMsg = document.createElement('span');
+      lockedMsg.className = 'ml-2 text-xs text-white/40';
+      lockedMsg.textContent = 'Ukládání...';
+      container.appendChild(lockedMsg);
+
       try {
-        // Save rating
-        const result = await this.rate(restaurantId, stars);
+        // Save rating na pozadí
+        await this.rate(restaurantId, stars);
         
-        // Update UI to locked state
-        const allStars = container.querySelectorAll('.rating-star');
-        allStars.forEach((s, idx) => {
-          if (idx < stars) {
-            s.classList.remove('text-white/20');
-            s.classList.add('text-gurmaogold');
-          } else {
-            s.classList.add('text-white/20');
-            s.classList.remove('text-gurmaogold');
-          }
-          // Disable buttons
-          s.disabled = true;
-          s.style.cursor = 'default';
-          s.classList.remove('hover:scale-110');
-        });
-        
-        // Add locked message
-        const lockedMsg = document.createElement('span');
-        lockedMsg.className = 'ml-2 text-xs text-white/40';
+        // Update locked message
         lockedMsg.textContent = 'Již ohodnoceno';
-        container.appendChild(lockedMsg);
         
         // Show toast
         if (window.toast) {
-          window.toast.show(`⭐ Ohodnoceno ${stars} ${stars === 1 ? 'hvězdičkou' : stars < 5 ? 'hvězdičkami' : 'hvězdičkami'}!`, 'success');
+          window.toast.show(`⭐ Uloženo ${stars} ${stars === 1 ? 'hvězdičkou' : stars < 5 ? 'hvězdičkami' : 'hvězdičkami'}!`, 'success');
         }
 
-        // Trigger update event
-        const stats = await window.ratingManager.getRestaurantRatingStats(restaurantId);
-        window.dispatchEvent(new CustomEvent('ratingUpdated', { 
-          detail: { restaurantId, stars, average: stats?.average_rating || stars }
-        }));
+        // Trigger update event (na pozadí načti statistiky)
+        this.getRestaurantRatingStats(restaurantId).then(stats => {
+          window.dispatchEvent(new CustomEvent('ratingUpdated', { 
+            detail: { restaurantId, stars, average: stats?.average_rating || stars }
+          }));
+        }).catch(err => console.error('Error loading stats:', err));
 
       } catch (error) {
         console.error('Rating error:', error);
+        lockedMsg.textContent = 'Chyba!';
+        lockedMsg.classList.add('text-red-500');
+        
+        // Vrátit UI zpět
+        allStars.forEach(s => {
+          s.disabled = false;
+          s.style.cursor = 'pointer';
+          s.classList.add('hover:scale-110');
+        });
+        
         if (window.toast) {
           window.toast.show(error.message || 'Nepodařilo se ohodnotit', 'error');
         }
