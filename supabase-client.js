@@ -281,45 +281,45 @@ export async function isRestaurantSaved(userId, restaurantId) {
 }
 
 // ======================
-// REVIEWS HELPERS
+// REVIEWS HELPERS - DISABLED (tabulka reviews neexistuje)
 // ======================
 
 /**
  * Add review
  */
-export async function addReview(userId, restaurantId, rating, title, text) {
-  const { data, error } = await supabase
-    .from('reviews')
-    .insert({
-      user_id: userId,
-      restaurant_id: restaurantId,
-      rating: rating,
-      title: title,
-      text: text
-    })
-    .select()
-    .single();
+// export async function addReview(userId, restaurantId, rating, title, text) {
+//   const { data, error } = await supabase
+//     .from('reviews')
+//     .insert({
+//       user_id: userId,
+//       restaurant_id: restaurantId,
+//       rating: rating,
+//       title: title,
+//       text: text
+//     })
+//     .select()
+//     .single();
   
-  if (error) throw error;
-  return data;
-}
+//   if (error) throw error;
+//   return data;
+// }
 
 /**
  * Get restaurant reviews
  */
-export async function getRestaurantReviews(restaurantId) {
-  const { data, error } = await supabase
-    .from('reviews')
-    .select(`
-      *,
-      profiles (display_name, avatar_url)
-    `)
-    .eq('restaurant_id', restaurantId)
-    .order('created_at', { ascending: false });
+// export async function getRestaurantReviews(restaurantId) {
+//   const { data, error } = await supabase
+//     .from('reviews')
+//     .select(`
+//       *,
+//       profiles (display_name, avatar_url)
+//     `)
+//     .eq('restaurant_id', restaurantId)
+//     .order('created_at', { ascending: false });
   
-  if (error) throw error;
-  return data;
-}
+//   if (error) throw error;
+//   return data;
+// }
 
 // ======================
 // REAL-TIME SUBSCRIPTIONS
@@ -608,30 +608,43 @@ export async function getUserRating(restaurantId) {
  * Get rating statistics for a restaurant
  */
 export async function getRestaurantRatingStats(restaurantId) {
-  const { data, error } = await supabase
-    .from('rating_stats')
-    .select('*')
-    .eq('restaurant_id', restaurantId)
-    .single();
+  // Get all ratings for this restaurant
+  const { data: ratings, error } = await supabase
+    .from('ratings')
+    .select('stars')
+    .eq('restaurant_id', restaurantId);
   
-  if (error) {
-    if (error.code === 'PGRST116') {
-      // No ratings yet
-      return {
-        restaurant_id: restaurantId,
-        rating_count: 0,
-        average_rating: 0,
-        five_stars: 0,
-        four_stars: 0,
-        three_stars: 0,
-        two_stars: 0,
-        one_star: 0
-      };
-    }
-    throw error;
+  if (error) throw error;
+  
+  // If no ratings, return zero stats
+  if (!ratings || ratings.length === 0) {
+    return {
+      restaurant_id: restaurantId,
+      rating_count: 0,
+      average_rating: 0,
+      five_stars: 0,
+      four_stars: 0,
+      three_stars: 0,
+      two_stars: 0,
+      one_star: 0
+    };
   }
   
-  return data;
+  // Calculate statistics
+  const rating_count = ratings.length;
+  const sum = ratings.reduce((acc, r) => acc + r.stars, 0);
+  const average_rating = Math.round((sum / rating_count) * 10) / 10;
+  
+  return {
+    restaurant_id: restaurantId,
+    rating_count,
+    average_rating,
+    five_stars: ratings.filter(r => r.stars === 5).length,
+    four_stars: ratings.filter(r => r.stars === 4).length,
+    three_stars: ratings.filter(r => r.stars === 3).length,
+    two_stars: ratings.filter(r => r.stars === 2).length,
+    one_star: ratings.filter(r => r.stars === 1).length
+  };
 }
 
 /**

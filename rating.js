@@ -88,6 +88,28 @@ class RatingManager {
     }
   }
 
+  // Get rating statistics
+  async getRestaurantRatingStats(restaurantId) {
+    if (!this._getRestaurantRatingStats) {
+      return {
+        restaurant_id: restaurantId,
+        rating_count: 0,
+        average_rating: 0
+      };
+    }
+    
+    try {
+      return await this._getRestaurantRatingStats(restaurantId);
+    } catch (error) {
+      console.error('Error getting rating stats:', error);
+      return {
+        restaurant_id: restaurantId,
+        rating_count: 0,
+        average_rating: 0
+      };
+    }
+  }
+
   // Render star rating (static display)
   renderStars(rating, size = 'md') {
     const sizeClass = {
