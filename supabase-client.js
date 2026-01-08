@@ -518,5 +518,33 @@ export async function submitContactMessage(messageData) {
   return data;
 }
 
+/**
+ * Get all contact messages (admin only)
+ */
+export async function getContactMessages() {
+  const { data, error } = await supabase
+    .from('contact_messages')
+    .select('*')
+    .order('created_at', { ascending: false });
+  
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Update contact message status (admin only)
+ */
+export async function updateContactMessageStatus(messageId, status) {
+  const { data, error } = await supabase
+    .from('contact_messages')
+    .update({ status: status })
+    .eq('id', messageId)
+    .select()
+    .single();
+  
+  if (error) throw error;
+  return data;
+}
+
 // Export client as default
 export default supabase;
