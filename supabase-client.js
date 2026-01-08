@@ -686,6 +686,95 @@ export async function getRestaurantRatings(restaurantId) {
 }
 
 /**
+ * Get all ratings stats at once (bulk load)
+ */
+export async function getAllRatingsStats() {
+  try {
+    // Try to get from rating_stats view
+    const { data: viewData, error: viewError } = await supabase
+      .from('rating_stats')
+      .select('*');
+    
+    if (!viewError && viewData) {
+      // Convert to Map for quick lookup
+      const statsMap = new Map();
+      viewData.forEach(stat => {
+        statsMap.set(stat.restaurant_id, stat);
+      });
+      return statsMap;
+    }
+  } catch (error) {
+    console.log('Rating stats view not available, using fallback');
+  }
+  
+  // Fallback: get all ratings and calculate
+  const { data: allRatings, error } = await supabase
+    .from('ratings')
+    .select('restaurant_id, stars');
+  
+  if (error) {
+    console.error('Error fetching all ratings:', error);
+    return new Map();
+  }
+  
+  // Group by restaurant and calculate stats
+  const statsMap = new Map();
+  const grouped = {};
+  
+  allRatings?.forEach(rating => {
+    if (!grouped[rating.restaurant_id]) {
+      grouped[rating.restaurant_id] = [];
+    }
+    grouped[rating.restaurant_id].push(rating.stars);
+  });
+  
+  Object.entries(grouped).forEach(([restaurantId, stars]) => {
+    const count = stars.length;
+    const sum = stars.reduce((a, b) => a + b, 0);
+    const avg = Math.round((sum / count) * 10) / 10;
+    
+    statsMap.set(restaurantId, {
+      restaurant_id: restaurantId,
+      rating_count: count,
+      average_rating: avg,
+      five_stars: stars.filter(s => s === 5).length,
+      four_stars: stars.filter(s => s === 4).length,
+      three_stars: stars.filter(s => s === 3).length,
+      two_stars: stars.filter(s => s === 2).length,
+      one_star: stars.filter(s => s === 1).length
+    });
+  });
+  
+  return statsMap;
+}
+
+/**
+ * Get all user ratings at once
+ */
+export async function getAllUserRatings() {
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) return new Map();
+  
+  const { data, error } = await supabase
+    .from('ratings')
+    .select('restaurant_id, stars')
+    .eq('user_id', user.id);
+  
+  if (error) {
+    console.error('Error fetching user ratings:', error);
+    return new Map();
+  }
+  
+  const ratingsMap = new Map();
+  data?.forEach(rating => {
+    ratingsMap.set(rating.restaurant_id, rating.stars);
+  });
+  
+  return ratingsMap;
+}
+
+/**
  * Delete user's rating
  */
 export async function deleteRating(restaurantId) {

@@ -8,8 +8,15 @@ class RatingManager {
     this.rateRestaurantFn = null;
     this.getUserRatingFn = null;
     this.getRatingStatsFn = null;
+    this.getAllRatingsStatsFn = null;
+    this.getAllUserRatingsFn = null;
     this.ready = false;
     this.initPromise = this.initSupabase();
+    
+    // Cache
+    this.statsCache = new Map();
+    this.userRatingsCache = new Map();
+    this.cacheLoaded = false;
   }
 
   async initSupabase() {
@@ -19,6 +26,8 @@ class RatingManager {
       this.rateRestaurantFn = module.rateRestaurant;
       this.getUserRatingFn = module.getUserRating;
       this.getRatingStatsFn = module.getRestaurantRatingStats;
+      this.getAllRatingsStatsFn = module.getAllRatingsStats;
+      this.getAllUserRatingsFn = module.getAllUserRatings;
       this.ready = true;
       console.log('Rating system initialized successfully');
     } catch (error) {
@@ -33,6 +42,28 @@ class RatingManager {
     }
     if (!this.ready) {
       throw new Error('Rating systém se nepodařilo načíst');
+    }
+  }
+  
+  async loadAllRatings() {
+    if (this.cacheLoaded) return;
+    
+    await this.ensureReady();
+    
+    try {
+      // Load all stats and user ratings in parallel
+      const [statsMap, userRatingsMap] = await Promise.all([
+        this.getAllRatingsStatsFn(),
+        this.getAllUserRatingsFn()
+      ]);
+      
+      this.statsCache = statsMap;
+      this.userRatingsCache = userRatingsMap;
+      this.cacheLoaded = true;
+      
+      console.log(`Loaded ${statsMap.size} rating stats and ${userRatingsMap.size} user ratings`);
+    } catch (error) {
+      console.error('Error loading all ratings:', error);
     }
   }
 
@@ -55,6 +86,11 @@ class RatingManager {
   // Get user's current rating for a restaurant
   async getUserRating(restaurantId) {
     await this.ensureReady();
+    
+    // Use cache if available
+    if (this.cacheLoaded && this.userRatingsCache.has(restaurantId)) {
+      return this.userRatingsCache.get(restaurantId);
+    }
     
     try {
       return await this.getUserRatingFn(restaurantId);
@@ -80,6 +116,11 @@ class RatingManager {
   async getAverage(restaurantId) {
     await this.ensureReady();
     
+    // Use cache if available
+    if (this.cacheLoaded && this.statsCache.has(restaurantId)) {
+      return this.statsCache.get(restaurantId).average_rating || 0;
+    }
+    
     try {
       const stats = await this.getRatingStatsFn(restaurantId);
       return stats.average_rating || 0;
@@ -93,6 +134,11 @@ class RatingManager {
   async getCount(restaurantId) {
     await this.ensureReady();
     
+    // Use cache if available
+    if (this.cacheLoaded && this.statsCache.has(restaurantId)) {
+      return this.statsCache.get(restaurantId).rating_count || 0;
+    }
+    
     try {
       const stats = await this.getRatingStatsFn(restaurantId);
       return stats.rating_count || 0;
@@ -105,6 +151,11 @@ class RatingManager {
   // Get rating statistics
   async getRestaurantRatingStats(restaurantId) {
     await this.ensureReady();
+    
+    // Use cache if available
+    if (this.cacheLoaded && this.statsCache.has(restaurantId)) {
+      return this.statsCache.get(restaurantId);
+    }
     
     try {
       return await this.getRatingStatsFn(restaurantId);
