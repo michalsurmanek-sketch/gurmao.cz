@@ -199,7 +199,9 @@
   </div>
 </main>
 
-<script>
+<script type="module">
+  import { getSavedRestaurants, getAllRestaurants } from './supabase-client.js';
+
   // Vibe tooltip helper
   const getVibeTooltip = (vibe) => {
     const tooltips = {
@@ -213,91 +215,99 @@
     return tooltips[vibe] || '';
   };
 
-  // MVP katalog – v ostrém provozu z DB
-  const catalog=[
-    {id:'noir-table',vibe:'🍷 LUXE',name:'Noir Table',city:'Praha',tag:'fine dining',href:'restaurace-noir-table.html',img:'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=80'},
-    {id:'ember-steak',vibe:'🔥 DRAMA',name:'Ember Steak',city:'Brno',tag:'steakhouse',href:'restaurace-noir-table.html',img:'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1200&q=80'},
-    {id:'la-calle',vibe:'🌮 CHAOS',name:'La Calle',city:'Ostrava',tag:'street food',href:'restaurace-noir-table.html',img:'https://images.unsplash.com/photo-1529692236671-f1dc2c0f2c0e?auto=format&fit=crop&w=1200&q=80'},
-  ];
-
   async function loadCollections() {
-    // Use GurmaoCollections API from app.js
-    const savedSet = await GurmaoCollections.getSaved();
-    
-    const items = catalog.filter(x => savedSet.has(x.id));
     const grid = document.getElementById('savedGrid');
     const empty = document.getElementById('empty');
     const recommendedGrid = document.getElementById('recommendedGrid');
 
-    if(!items.length){
-      empty.classList.remove('hidden');
+    try {
+      // Get saved restaurants from database
+      const savedRestaurants = await getSavedRestaurants();
       
-      // Show GURMAO picks (first 3 restaurants)
-      if (recommendedGrid) {
-        recommendedGrid.innerHTML = catalog.slice(0, 3).map(x=>{
-          const tooltip = getVibeTooltip(x.vibe);
-          return `
-          <div class="rounded-2xl overflow-hidden bg-white/5 hover:bg-white/10 transition border border-white/10">
-            <a href="${x.href}" class="block">
-              <div class="aspect-[4/3] bg-cover bg-center" style="background-image:url('${x.img}')"></div>
-            </a>
-            <div class="p-4">
-              <div class="vibe-tooltip text-xs text-gurmaogold mb-1" data-tooltip="${tooltip}">${x.vibe}</div>
-              <div class="text-lg font-semibold">${x.name}</div>
-              <div class="text-white/60 text-sm mt-1">${x.city} · ${x.tag}</div>
-              <a href="feed.html" class="mt-3 block text-center px-4 py-2 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition text-sm">
-                Zobrazit ve feedu
-              </a>
-            </div>
-          </div>
-        `}).join('');
-      }
-    } else {
-      grid.innerHTML = items.map(x=>{
-        const tooltip = getVibeTooltip(x.vibe);
-        return `
-        <div class="rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
-          <a href="${x.href}" class="block">
-            <div class="aspect-[3/4] bg-cover bg-center" style="background-image:url('${x.img}')"></div>
-          </a>
-          <div class="p-5 flex items-start justify-between gap-4">
-            <div>
-              <div class="vibe-tooltip text-sm text-gurmaogold mb-1" data-tooltip="${tooltip}">${x.vibe}</div>
-              <div class="text-xl font-semibold">${x.name}</div>
-              <div class="text-white/60 text-sm mt-1">${x.city} · ${x.tag}</div>
-            </div>
-            <button data-remove="${x.id}" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition">❤️</button>
-          </div>
-        </div>
-      `;
-      }).join('');
-
-      grid.querySelectorAll('[data-remove]').forEach(btn=>{
-        btn.addEventListener('click', async (e)=>{
-          e.preventDefault();
-          const id=btn.getAttribute('data-remove');
-          const restaurant = catalog.find(x => x.id === id);
-          const originalText = btn.textContent;
+      if(!savedRestaurants.length){
+        empty.classList.remove('hidden');
+        
+        // Load recommended restaurants for empty state
+        try {
+          const allRestaurants = await getAllRestaurants();
+          const recommendedRestaurants = allRestaurants.slice(0, 3);
           
-          try {
-            btn.classList.add('btn-loading');
-            btn.textContent = '⏳';
-            
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            // Use GurmaoCollections API
-            await GurmaoCollections.remove(id);
-            
-            toastInfo(`${restaurant?.name || 'Restaurace'} odebráno`);
-            
-            setTimeout(() => location.reload(), 500);
-          } catch (error) {
-            btn.textContent = originalText;
-            btn.classList.remove('btn-loading');
-            toastError('❌ Nepodařilo se odebrat');
+          if (recommendedGrid && recommendedRestaurants.length) {
+            recommendedGrid.innerHTML = recommendedRestaurants.map(r => {
+              const tooltip = getVibeTooltip(r.vibe);
+              return `
+              <div class="rounded-2xl overflow-hidden bg-white/5 hover:bg-white/10 transition border border-white/10">
+                <a href="restaurace-${r.slug}.html" class="block">
+                  <div class="aspect-[4/3] bg-cover bg-center" style="background-image:url('${r.image_url}')"></div>
+                </a>
+                <div class="p-4">
+                  <div class="vibe-tooltip text-xs text-gurmaogold mb-1" data-tooltip="${tooltip}">${r.vibe}</div>
+                  <div class="text-lg font-semibold">${r.name}</div>
+                  <div class="text-white/60 text-sm mt-1">${r.location} · ${r.category}</div>
+                  <a href="feed.html" class="mt-3 block text-center px-4 py-2 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition text-sm">
+                    Zobrazit ve feedu
+                  </a>
+                </div>
+              </div>
+            `}).join('');
           }
+        } catch (error) {
+          console.error('Error loading recommended restaurants:', error);
+        }
+      } else {
+        grid.innerHTML = savedRestaurants.map(item => {
+          const r = item.restaurants;
+          const tooltip = getVibeTooltip(r.vibe);
+          return `
+          <div class="rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
+            <a href="restaurace-${r.slug}.html" class="block">
+              <div class="aspect-[3/4] bg-cover bg-center" style="background-image:url('${r.image_url}')"></div>
+            </a>
+            <div class="p-5 flex items-start justify-between gap-4">
+              <div>
+                <div class="vibe-tooltip text-sm text-gurmaogold mb-1" data-tooltip="${tooltip}">${r.vibe}</div>
+                <div class="text-xl font-semibold">${r.name}</div>
+                <div class="text-white/60 text-sm mt-1">${r.location} · ${r.category}</div>
+              </div>
+              <button data-remove="${r.slug}" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition">❤️</button>
+            </div>
+          </div>
+        `;
+        }).join('');
+
+        grid.querySelectorAll('[data-remove]').forEach(btn=>{
+          btn.addEventListener('click', async (e)=>{
+            e.preventDefault();
+            const slug = btn.getAttribute('data-remove');
+            const restaurant = savedRestaurants.find(item => item.restaurants.slug === slug);
+            const originalText = btn.textContent;
+            
+            try {
+              btn.classList.add('btn-loading');
+              btn.textContent = '⏳';
+              
+              await new Promise(resolve => setTimeout(resolve, 300));
+              
+              // Use GurmaoCollections API
+              await GurmaoCollections.remove(slug);
+              
+              toastInfo(`${restaurant?.restaurants?.name || 'Restaurace'} odebráno`);
+              
+              setTimeout(() => location.reload(), 500);
+            } catch (error) {
+              btn.textContent = originalText;
+              btn.classList.remove('btn-loading');
+              toastError('❌ Nepodařilo se odebrat');
+            }
+          });
         });
-      });
+      }
+    } catch (error) {
+      console.error('Error loading collections:', error);
+      empty.classList.remove('hidden');
+    } catch (error) {
+      console.error('Error loading collections:', error);
+      empty.classList.remove('hidden');
     }
   }
 
