@@ -6,9 +6,11 @@ class SocialShareManager {
     this.baseUrl = 'https://gurmao.cz';
   }
 
-  // Check if Web Share API is available
+  // Check if Web Share API is available (only use on mobile)
   canUseNativeShare() {
-    return navigator.share !== undefined;
+    // Only use native share on mobile devices, not on desktop (Windows/Mac/Linux)
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    return navigator.share !== undefined && isMobile;
   }
 
   // Share using native Web Share API (mobile devices)
