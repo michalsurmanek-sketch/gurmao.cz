@@ -243,27 +243,43 @@
 <script src="app.js"></script>
 <script src="auth-ui.js"></script>
 <script src="social-share.js"></script>
-<script src="rating.js"></script>
+<script type="module" src="rating.js"></script>
 <script src="cookie-consent.js"></script>
 
 <script>
 // Initialize ratings for chefs
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // Wait for rating manager
+  if (!window.ratingManager) {
+    console.error('Rating manager not available');
+    return;
+  }
+  
+  try {
+    await window.ratingManager.ensureReady();
+  } catch (error) {
+    console.error('Failed to initialize rating system:', error);
+    return;
+  }
+  
   const chefIds = ['adam-noir', 'marek-ember', 'sofia-calle'];
   
-  chefIds.forEach(chefId => {
+  for (const chefId of chefIds) {
     const container = document.querySelector(`[data-chef-rating="${chefId}"]`);
-    if (container) {
-      const stats = window.ratingManager.getRestaurantRating(chefId);
-      const userRating = window.ratingManager.getUserRating(chefId);
+    if (!container) continue;
+    
+    try {
+      const average = await window.ratingManager.getAverage(chefId);
+      const count = await window.ratingManager.getCount(chefId);
+      const userRating = await window.ratingManager.getUserRating(chefId);
       
       let html = '<div class="border-t border-white/10 pt-3 mt-3">';
       
-      if (stats.average > 0) {
+      if (average > 0) {
         html += `
           <div class="flex items-center gap-2 mb-2">
-            ${window.ratingManager.renderStars(stats.average, 'sm')}
-            <span class="text-xs text-white/60">${stats.average.toFixed(1)} (${stats.count})</span>
+            ${window.ratingManager.renderStars(average, 'sm')}
+            <span class="text-xs text-white/60">${average.toFixed(1)} (${count})</span>
           </div>
         `;
       } else {
@@ -271,12 +287,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
-      html += window.ratingManager.renderInteractiveStars(chefId, userRating || 0);
+      html += await window.ratingManager.renderInteractiveStars(chefId, userRating || 0);
       html += '</div>';
       
       container.innerHTML = html;
+    } catch (error) {
+      console.error(`Error initializing rating for ${chefId}:`, error);
+      container.innerHTML = '<div class="border-t border-white/10 pt-3 mt-3"><div class="text-xs text-white/40">Hodnocení není dostupné</div></div>';
     }
-  });
+  }
 });
 </script>
 </body>

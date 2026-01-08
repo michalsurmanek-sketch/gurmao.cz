@@ -5,26 +5,40 @@
 class RatingManager {
   constructor() {
     this.supabase = null;
-    this.initSupabase();
+    this.rateRestaurantFn = null;
+    this.getUserRatingFn = null;
+    this.getRatingStatsFn = null;
+    this.ready = false;
+    this.initPromise = this.initSupabase();
   }
 
   async initSupabase() {
     try {
       const module = await import('./supabase-client.js');
-      this.supabase = module.default;
+      this.supabase = module.supabase;
       this.rateRestaurantFn = module.rateRestaurant;
       this.getUserRatingFn = module.getUserRating;
       this.getRatingStatsFn = module.getRestaurantRatingStats;
+      this.ready = true;
+      console.log('Rating system initialized successfully');
     } catch (error) {
       console.error('Failed to load Supabase:', error);
+      this.ready = false;
+    }
+  }
+
+  async ensureReady() {
+    if (!this.ready) {
+      await this.initPromise;
+    }
+    if (!this.ready) {
+      throw new Error('Rating systém se nepodařilo načíst');
     }
   }
 
   // Rate a restaurant (1-5 stars)
   async rate(restaurantId, stars) {
-    if (!this.rateRestaurantFn) {
-      throw new Error('Systém hodnocení se načítá...');
-    }
+    await this.ensureReady();
 
     if (stars < 1 || stars > 5) {
       throw new Error('Hodnocení musí být mezi 1 a 5');
@@ -40,7 +54,7 @@ class RatingManager {
 
   // Get user's current rating for a restaurant
   async getUserRating(restaurantId) {
-    if (!this.getUserRatingFn) return null;
+    await this.ensureReady();
     
     try {
       return await this.getUserRatingFn(restaurantId);
@@ -52,7 +66,7 @@ class RatingManager {
 
   // Check if user is logged in
   async isUserLoggedIn() {
-    if (!this.supabase) return false;
+    await this.ensureReady();
     
     try {
       const { data: { user } } = await this.supabase.auth.getUser();
@@ -64,7 +78,7 @@ class RatingManager {
 
   // Get average rating for a restaurant
   async getAverage(restaurantId) {
-    if (!this.getRatingStatsFn) return 0;
+    await this.ensureReady();
     
     try {
       const stats = await this.getRatingStatsFn(restaurantId);
@@ -77,7 +91,7 @@ class RatingManager {
 
   // Get rating count
   async getCount(restaurantId) {
-    if (!this.getRatingStatsFn) return 0;
+    await this.ensureReady();
     
     try {
       const stats = await this.getRatingStatsFn(restaurantId);
@@ -90,13 +104,7 @@ class RatingManager {
 
   // Get rating statistics
   async getRestaurantRatingStats(restaurantId) {
-    if (!this.getRatingStatsFn) {
-      return {
-        restaurant_id: restaurantId,
-        rating_count: 0,
-        average_rating: 0
-      };
-    }
+    await this.ensureReady();
     
     try {
       return await this.getRatingStatsFn(restaurantId);
@@ -253,12 +261,19 @@ class RatingManager {
 }
 
 // Global instance
-window.ratingManager = new RatingManager();
+const ratingManager = new RatingManager();
+window.ratingManager = ratingManager;
+export default ratingManager;
 
 // Auto-initialize
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    window.ratingManager.initializeInteractive();
+  });
+} else {
+  // DOM already loaded
   window.ratingManager.initializeInteractive();
-});
+}
 
 // Convenience functions
 window.rateRestaurant = (id, stars) => window.ratingManager.rate(id, stars);

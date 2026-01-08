@@ -263,30 +263,41 @@
   </div>
 </section>
 
-<script src="rating.js"></script>
-<script>
+<script type="module" src="rating.js"></script>
+<script type="module">
   const restaurantId = 'noir-table';
   let selectedRating = 0;
 
-  // Initialize rating manager
-  const ratingManager = new RatingManager();
+  // Wait for rating manager to be ready
+  async function initRatingSystem() {
+    if (!window.ratingManager) {
+      console.error('Rating manager not available');
+      return;
+    }
+    
+    try {
+      await window.ratingManager.ensureReady();
+    } catch (error) {
+      console.error('Failed to initialize rating system:', error);
+      return;
+    }
 
-  // Check if user is logged in
-  const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
+    // Check if user is logged in
+    const isLoggedIn = await window.ratingManager.isUserLoggedIn();
   
-  if (user?.loggedIn) {
-    document.getElementById('writeReviewSection').classList.remove('hidden');
-    document.getElementById('loginPrompt').classList.add('hidden');
-  } else {
-    document.getElementById('writeReviewSection').classList.add('hidden');
-    document.getElementById('loginPrompt').classList.remove('hidden');
-  }
+    if (isLoggedIn) {
+      document.getElementById('writeReviewSection').classList.remove('hidden');
+      document.getElementById('loginPrompt').classList.add('hidden');
+    } else {
+      document.getElementById('writeReviewSection').classList.add('hidden');
+      document.getElementById('loginPrompt').classList.remove('hidden');
+    }
 
-  // Star rating interaction
-  const starButtons = document.querySelectorAll('[data-star]');
-  starButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
+    // Star rating interaction
+    const starButtons = document.querySelectorAll('[data-star]');
+    starButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
       const rating = parseInt(btn.dataset.star);
       selectedRating = rating;
       document.getElementById('ratingValue').value = rating;
@@ -305,7 +316,7 @@
   });
 
   // Submit review
-  document.getElementById('reviewForm')?.addEventListener('submit', (e) => {
+  document.getElementById('reviewForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     if (!selectedRating) {
@@ -317,7 +328,7 @@
     const text = document.getElementById('reviewText').value;
 
     try {
-      ratingManager.rate(restaurantId, selectedRating);
+      await window.ratingManager.rate(restaurantId, selectedRating);
       
       if (window.toast) window.toast.show('✅ Recenze byla přidána!', 'success');
       
@@ -330,7 +341,7 @@
       });
       
       // Reload reviews
-      loadReviews();
+      await loadReviews();
       
     } catch (error) {
       if (window.toast) window.toast.show(error.message, 'error');
@@ -338,9 +349,9 @@
   });
 
   // Load and display reviews
-  function loadReviews() {
-    const avg = ratingManager.getAverage(restaurantId);
-    const count = ratingManager.ratings[restaurantId]?.count || 0;
+  async function loadReviews() {
+    const avg = await window.ratingManager.getAverage(restaurantId);
+    const count = await window.ratingManager.getCount(restaurantId);
     
     if (avg > 0) {
       document.getElementById('avgRating').textContent = avg.toFixed(1);
@@ -361,7 +372,8 @@
   }
 
   // Initial load
-  loadReviews();
+  initRatingSystem().then(() => loadReviews());
+  }
 </script>
 
 <!-- FOOTER -->

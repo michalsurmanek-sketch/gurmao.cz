@@ -185,7 +185,7 @@
 <body class="bg-gurmaoblack text-white overflow-x-hidden">
 
 <script src="toast.js"></script>
-<script src="rating.js"></script>
+<script type="module" src="rating.js"></script>
 <script src="social-share.js"></script>
 
 <!-- HEADER / NAV + HAMBURGER -->
@@ -735,13 +735,9 @@
     noResults?.classList.add('hidden');
     if (resultsCount) resultsCount.textContent = `Zobrazeno ${filteredItems.length} restaurací`;
     
-    grid.innerHTML = filteredItems.map(x=>{
-      const avgRating = window.ratingManager?.getAverage(x.id) || 0;
-      const ratingCount = window.ratingManager?.getCount(x.id) || 0;
-      const userRating = window.ratingManager?.getUserRating(x.id) || 0;
-      
-      return `
-      <div class="rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
+    // First render without ratings (for speed)
+    grid.innerHTML = filteredItems.map(x=>`
+      <div class="rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition" data-restaurant-card="${x.id}">
         <a href="${x.href}" class="block">
           <div class="aspect-[3/4] bg-cover bg-center" style="background-image:url('${x.img}')"></div>
         </a>
@@ -760,24 +756,59 @@
             </div>
           </div>
           
-          <!-- Rating Section -->
-          <div class="border-t border-white/10 pt-3">
-            ${avgRating > 0 ? `
-              <div class="flex items-center gap-2 mb-2">
-                ${window.ratingManager.renderStars(avgRating, 'sm')}
-                <span class="text-xs text-white/60">${avgRating.toFixed(1)} (${ratingCount})</span>
-              </div>
-            ` : '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>'}
-            
-            <div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>
-            ${window.ratingManager.renderInteractiveStars(x.id, userRating || 0)}
+          <!-- Rating Section - will be populated -->
+          <div class="border-t border-white/10 pt-3" data-rating-container="${x.id}">
+            <div class="text-xs text-white/40">Načítání hodnocení...</div>
           </div>
         </div>
       </div>
-    `;
-    }).join('');
+    `).join('');
 
     // Update save buttons state
+    if (typeof window.updateSaveButtons === 'function') {
+      setTimeout(() => window.updateSaveButtons(), 100);
+    }
+    
+    // Load ratings asynchronously
+    if (window.ratingManager) {
+      try {
+        await window.ratingManager.ensureReady();
+        
+        for (const x of filteredItems) {
+          const container = document.querySelector(`[data-rating-container="${x.id}"]`);
+          if (!container) continue;
+          
+          try {
+            const avgRating = await window.ratingManager.getAverage(x.id);
+            const ratingCount = await window.ratingManager.getCount(x.id);
+            const userRating = await window.ratingManager.getUserRating(x.id);
+            
+            let html = '';
+            if (avgRating > 0) {
+              html += `
+                <div class="flex items-center gap-2 mb-2">
+                  ${window.ratingManager.renderStars(avgRating, 'sm')}
+                  <span class="text-xs text-white/60">${avgRating.toFixed(1)} (${ratingCount})</span>
+                </div>
+              `;
+            } else {
+              html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
+            }
+            
+            html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
+            html += await window.ratingManager.renderInteractiveStars(x.id, userRating || 0);
+            
+            container.innerHTML = html;
+          } catch (error) {
+            console.error(`Error loading rating for ${x.id}:`, error);
+            container.innerHTML = '<div class="text-xs text-white/40">Hodnocení není dostupné</div>';
+          }
+        }
+      } catch (error) {
+        console.error('Rating manager not available:', error);
+      }
+    }
+  }
     if (typeof window.updateSaveButtons === 'function') {
       setTimeout(() => window.updateSaveButtons(), 100);
     }

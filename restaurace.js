@@ -284,15 +284,30 @@ function createRestaurantCard(restaurant) {
 
 // Initialize ratings for displayed restaurants
 async function initializeRatings(restaurants) {
-  // Wait for ratingManager to be available
+  // Wait for ratingManager to be available and ready
   if (typeof window.ratingManager === 'undefined') {
-    console.log('Rating manager not yet loaded, skipping ratings initialization');
+    console.log('Rating manager not yet loaded, waiting...');
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+  
+  if (typeof window.ratingManager === 'undefined') {
+    console.error('Rating manager still not available');
+    return;
+  }
+  
+  // Wait for rating manager to be ready
+  try {
+    await window.ratingManager.ensureReady();
+  } catch (error) {
+    console.error('Rating manager failed to initialize:', error);
     return;
   }
   
   for (const restaurant of restaurants) {
     const container = document.querySelector(`[data-restaurant-rating="${restaurant.slug}"]`);
-    if (container) {
+    if (!container) continue;
+    
+    try {
       const average = await window.ratingManager.getAverage(restaurant.slug);
       const count = await window.ratingManager.getCount(restaurant.slug);
       const userRating = await window.ratingManager.getUserRating(restaurant.slug);
@@ -315,6 +330,9 @@ async function initializeRatings(restaurants) {
       html += '</div>';
       
       container.innerHTML = html;
+    } catch (error) {
+      console.error(`Error initializing rating for ${restaurant.slug}:`, error);
+      container.innerHTML = '<div class="border-t border-white/10 pt-3 mt-3"><div class="text-xs text-white/40">Hodnocení není dostupné</div></div>';
     }
   }
 }
