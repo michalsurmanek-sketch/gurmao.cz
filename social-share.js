@@ -60,20 +60,7 @@ class SocialShareManager {
       image: restaurant.photo_url || restaurant.img || null
     };
 
-    // Try native share first (mobile)
-    if (this.canUseNativeShare()) {
-      try {
-        const shared = await this.nativeShare(shareData);
-        if (shared && window.toastSuccess) {
-          window.toastSuccess('✅ Sdíleno!');
-        }
-        return;
-      } catch (error) {
-        console.error('Native share failed:', error);
-      }
-    }
-
-    // Fallback: Show share modal with options
+    // ALWAYS show our custom modal (native share disabled due to poor UX on Windows)
     this.showShareModal(shareData, restaurant);
   }
 
