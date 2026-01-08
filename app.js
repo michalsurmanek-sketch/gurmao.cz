@@ -67,23 +67,34 @@ const GurmaoCollections = {
   async getSaved() {
     const user = this.getUser();
     
-    if (!user || !user.loggedIn) {
-      // Fallback to localStorage for non-logged users
-      return new Set(JSON.parse(localStorage.getItem(this.storageKey) || '[]'));
-    }
-    
     // Use cache if available
     if (this.savedCache) return this.savedCache;
+    
+    // Get localStorage data
+    const localSaved = new Set(JSON.parse(localStorage.getItem(this.storageKey) || '[]'));
+    
+    if (!user || !user.loggedIn) {
+      // Fallback to localStorage for non-logged users
+      this.savedCache = localSaved;
+      return this.savedCache;
+    }
     
     try {
       // Dynamically import Supabase client
       const { getSavedRestaurants } = await import('./supabase-client.js');
       const savedRestaurants = await getSavedRestaurants();
-      this.savedCache = new Set(savedRestaurants.map(r => r.restaurant_id));
+      // savedRestaurants contains: {restaurant_id: slug, restaurants: {...}}
+      const supabaseSaved = new Set(savedRestaurants.map(r => r.restaurant_id));
+      
+      // Merge Supabase and localStorage data
+      const merged = new Set([...supabaseSaved, ...localSaved]);
+      this.savedCache = merged;
       return this.savedCache;
     } catch (error) {
       console.error('Error fetching saved restaurants:', error);
-      return new Set();
+      // Fallback to localStorage on error
+      this.savedCache = localSaved;
+      return this.savedCache;
     }
   },
   
@@ -104,9 +115,13 @@ const GurmaoCollections = {
       if (this.savedCache) this.savedCache.add(restaurantId);
       return true;
     } catch (error) {
-      console.error('Error saving restaurant:', error);
-      showToast('❌ Chyba při ukládání');
-      return false;
+      console.error('Error saving restaurant to Supabase:', error);
+      // Fallback to localStorage if Supabase fails (e.g., restaurant not in DB yet)
+      const saved = new Set(JSON.parse(localStorage.getItem(this.storageKey) || '[]'));
+      saved.add(restaurantId);
+      localStorage.setItem(this.storageKey, JSON.stringify([...saved]));
+      if (this.savedCache) this.savedCache.add(restaurantId);
+      return true;
     }
   },
   
@@ -127,9 +142,13 @@ const GurmaoCollections = {
       if (this.savedCache) this.savedCache.delete(restaurantId);
       return true;
     } catch (error) {
-      console.error('Error removing restaurant:', error);
-      showToast('❌ Chyba při odebírání');
-      return false;
+      console.error('Error removing restaurant from Supabase:', error);
+      // Fallback to localStorage if Supabase fails
+      const saved = new Set(JSON.parse(localStorage.getItem(this.storageKey) || '[]'));
+      saved.delete(restaurantId);
+      localStorage.setItem(this.storageKey, JSON.stringify([...saved]));
+      if (this.savedCache) this.savedCache.delete(restaurantId);
+      return true;
     }
   },
   
