@@ -114,179 +114,186 @@
 </div>
 
 <!-- MAIN CONTENT -->
-<main class="max-w-4xl mx-auto px-6 py-12 md:py-20">
+<main class="max-w-7xl mx-auto px-6 py-12 md:py-20">
   <!-- Hero -->
-  <div class="text-center mb-16">
-    <div class="inline-block px-4 py-2 rounded-full bg-gurmaogold/10 border border-gurmaogold/30 text-gurmaogold text-sm mb-6">
+  <div class="text-center mb-12 md:mb-16">
+    <div class="inline-block px-4 py-2 rounded-full bg-gurmaogold/10 border border-gurmaogold/30 text-gurmaogold text-sm mb-4">
       ✉️ Spojme se
     </div>
-    <h1 class="text-4xl md:text-6xl font-bold mb-6">
+    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
       Máte dotaz?<br>
       <span class="text-gurmaogold">Napište nám.</span>
     </h1>
-    <p class="text-xl text-white/60 max-w-2xl mx-auto">
+    <p class="text-lg md:text-xl text-white/60 max-w-2xl mx-auto">
       Rádi uslyšíme vaše návrhy na restaurace, zpětnou vazbu nebo odpovíme na jakékoliv otázky.
     </p>
   </div>
 
-  <!-- Contact Cards -->
-  <div class="grid md:grid-cols-2 gap-6 mb-12">
-    <!-- General Contact -->
-    <div class="rounded-3xl bg-white/5 border border-white/10 p-8 hover:bg-white/10 transition">
-      <div class="text-4xl mb-4">💬</div>
-      <h3 class="text-2xl font-semibold mb-3">Obecné dotazy</h3>
-      <p class="text-white/60 mb-6">
-        Otázky k funkčnosti, návrhy na nové restaurace, spolupráce
-      </p>
-      <a href="mailto:info@gurmao.cz" class="inline-flex items-center gap-2 text-gurmaogold hover:underline">
-        <span>info@gurmao.cz</span>
-        <span>→</span>
-      </a>
-    </div>
-
-    <!-- GDPR Contact -->
-    <div class="rounded-3xl bg-white/5 border border-white/10 p-8 hover:bg-white/10 transition">
-      <div class="text-4xl mb-4">🔒</div>
-      <h3 class="text-2xl font-semibold mb-3">GDPR a soukromí</h3>
-      <p class="text-white/60 mb-6">
-        Dotazy k ochraně osobních údajů, žádosti o výmaz dat
-      </p>
-      <a href="mailto:gdpr@gurmao.cz" class="inline-flex items-center gap-2 text-gurmaogold hover:underline">
-        <span>gdpr@gurmao.cz</span>
-        <span>→</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- Contact Form -->
-  <div class="rounded-3xl bg-white/5 border border-white/10 p-8 md:p-12">
-    <h2 class="text-3xl font-bold mb-2">Napište nám přímo</h2>
-    <p class="text-white/60 mb-8">Odpovíme co nejdříve, obvykle do 48 hodin.</p>
-    
-    <form id="contactForm" class="space-y-6">
-      <div class="grid md:grid-cols-2 gap-6">
-        <div>
-          <label class="block text-sm font-semibold mb-2">Jméno *</label>
-          <input 
-            type="text" 
-            name="name" 
-            required 
-            class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/20 focus:border-gurmaogold focus:outline-none transition"
-            placeholder="Vaše jméno"
-          />
+  <!-- Two Column Layout -->
+  <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-12">
+    <!-- Left: Contact Cards + Form -->
+    <div class="space-y-8">
+      <!-- Contact Cards -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-1 gap-4">
+        <!-- General Contact -->
+        <div class="rounded-2xl bg-white/5 border border-white/10 p-6 hover:bg-white/10 transition">
+          <div class="text-3xl mb-3">💬</div>
+          <h3 class="text-xl font-semibold mb-2">Obecné dotazy</h3>
+          <p class="text-white/60 text-sm mb-4">
+            Otázky k funkčnosti, návrhy na nové restaurace, spolupráce
+          </p>
+          <a href="mailto:info@gurmao.cz" class="inline-flex items-center gap-2 text-gurmaogold hover:underline text-sm font-semibold">
+            <span>info@gurmao.cz</span>
+            <span>→</span>
+          </a>
         </div>
-        <div>
-          <label class="block text-sm font-semibold mb-2">E-mail *</label>
-          <input 
-            type="email" 
-            name="email" 
-            required 
-            class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/20 focus:border-gurmaogold focus:outline-none transition"
-            placeholder="vas@email.cz"
-          />
+
+        <!-- GDPR Contact -->
+        <div class="rounded-2xl bg-white/5 border border-white/10 p-6 hover:bg-white/10 transition">
+          <div class="text-3xl mb-3">🔒</div>
+          <h3 class="text-xl font-semibold mb-2">GDPR a soukromí</h3>
+          <p class="text-white/60 text-sm mb-4">
+            Dotazy k ochraně osobních údajů, žádosti o výmaz dat
+          </p>
+          <a href="mailto:gdpr@gurmao.cz" class="inline-flex items-center gap-2 text-gurmaogold hover:underline text-sm font-semibold">
+            <span>gdpr@gurmao.cz</span>
+            <span>→</span>
+          </a>
         </div>
       </div>
 
-      <div>
-        <label class="block text-sm font-semibold mb-2">Předmět *</label>
-        <div class="relative">
-          <button type="button" id="subjectButton" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/20 hover:border-gurmaogold focus:border-gurmaogold focus:outline-none transition text-left flex items-center justify-between">
-            <span id="subjectText" class="text-white/40">Vyberte předmět...</span>
-            <span class="text-gurmaogold">▼</span>
-          </button>
-          <input type="hidden" name="subject" id="subjectValue" required>
-          <div id="subjectDropdown" class="hidden absolute z-10 w-full mt-2 rounded-xl bg-gurmaoblack border border-white/20 overflow-hidden">
-            <div data-value="restaurace" class="px-4 py-3 hover:bg-white/10 cursor-pointer transition">Návrh nové restaurace</div>
-            <div data-value="chyba" class="px-4 py-3 hover:bg-white/10 cursor-pointer transition">Nahlášení chyby</div>
-            <div data-value="feedback" class="px-4 py-3 hover:bg-white/10 cursor-pointer transition">Zpětná vazba</div>
-            <div data-value="spoluprace" class="px-4 py-3 hover:bg-white/10 cursor-pointer transition">Obchodní spolupráce</div>
-            <div data-value="gdpr" class="px-4 py-3 hover:bg-white/10 cursor-pointer transition">GDPR dotaz</div>
-            <div data-value="jine" class="px-4 py-3 hover:bg-white/10 cursor-pointer transition">Jiné</div>
+      <!-- Contact Form -->
+      <div class="rounded-2xl bg-white/5 border border-white/10 p-6">
+        <h2 class="text-2xl font-bold mb-2">Napište nám přímo</h2>
+        <p class="text-white/60 mb-6 text-sm">Odpovíme co nejdříve, obvykle do 48 hodin.</p>
+        
+        <form id="contactForm" class="space-y-4">
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">Jméno *</label>
+              <input 
+                type="text" 
+                name="name" 
+                required 
+                class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/20 focus:border-gurmaogold focus:outline-none transition text-sm"
+                placeholder="Vaše jméno"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-2">E-mail *</label>
+              <input 
+                type="email" 
+                name="email" 
+                required 
+                class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/20 focus:border-gurmaogold focus:outline-none transition text-sm"
+                placeholder="vas@email.cz"
+              />
+            </div>
           </div>
-        </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-2">Předmět *</label>
+            <div class="relative">
+              <button type="button" id="subjectButton" class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/20 hover:border-gurmaogold focus:border-gurmaogold focus:outline-none transition text-left flex items-center justify-between text-sm">
+                <span id="subjectText" class="text-white/40">Vyberte předmět...</span>
+                <span class="text-gurmaogold">▼</span>
+              </button>
+              <input type="hidden" name="subject" id="subjectValue" required>
+              <div id="subjectDropdown" class="hidden absolute z-10 w-full mt-2 rounded-xl bg-gurmaoblack border border-white/20 overflow-hidden">
+                <div data-value="restaurace" class="px-4 py-2.5 hover:bg-white/10 cursor-pointer transition text-sm">Návrh nové restaurace</div>
+                <div data-value="chyba" class="px-4 py-2.5 hover:bg-white/10 cursor-pointer transition text-sm">Nahlášení chyby</div>
+                <div data-value="feedback" class="px-4 py-2.5 hover:bg-white/10 cursor-pointer transition text-sm">Zpětná vazba</div>
+                <div data-value="spoluprace" class="px-4 py-2.5 hover:bg-white/10 cursor-pointer transition text-sm">Obchodní spolupráce</div>
+                <div data-value="gdpr" class="px-4 py-2.5 hover:bg-white/10 cursor-pointer transition text-sm">GDPR dotaz</div>
+                <div data-value="jine" class="px-4 py-2.5 hover:bg-white/10 cursor-pointer transition text-sm">Jiné</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-2">Zpráva *</label>
+            <textarea 
+              name="message" 
+              required 
+              rows="5"
+              class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/20 focus:border-gurmaogold focus:outline-none transition resize-none text-sm"
+              placeholder="Napište nám svůj dotaz nebo zpětnou vazbu..."
+            ></textarea>
+          </div>
+
+          <button 
+            type="submit" 
+            class="w-full px-6 py-3 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-105 transition"
+          >
+            Odeslat zprávu
+          </button>
+        </form>
       </div>
+    </div>
 
-      <div>
-        <label class="block text-sm font-semibold mb-2">Zpráva *</label>
-        <textarea 
-          name="message" 
-          required 
-          rows="6"
-          class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/20 focus:border-gurmaogold focus:outline-none transition resize-none"
-          placeholder="Napište nám svůj dotaz nebo zpětnou vazbu..."
-        ></textarea>
+    <!-- Right: FAQ -->
+    <div>
+      <h2 class="text-2xl md:text-3xl font-bold mb-6">Časté dotazy</h2>
+      
+      <div class="space-y-3">
+      <div class="space-y-3">
+        <details class="rounded-xl bg-white/5 border border-white/10 p-5 hover:bg-white/10 transition group">
+          <summary class="font-semibold cursor-pointer list-none flex items-center justify-between text-sm">
+            <span>Jak mohu navrhnout novou restauraci?</span>
+            <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
+          </summary>
+          <p class="text-white/60 mt-3 text-sm">
+            Napište nám na <a href="mailto:info@gurmao.cz" class="text-gurmaogold hover:underline">info@gurmao.cz</a> 
+            s názvem restaurace, městem a krátkým popisem, proč by měla být v GURMAO. Rádi ji přidáme!
+          </p>
+        </details>
+
+        <details class="rounded-xl bg-white/5 border border-white/10 p-5 hover:bg-white/10 transition group">
+          <summary class="font-semibold cursor-pointer list-none flex items-center justify-between text-sm">
+            <span>Jak funguje AI doporučení?</span>
+            <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
+          </summary>
+          <p class="text-white/60 mt-3 text-sm">
+            AI analyzuje vaše uložené restaurace a hodnocení, aby pochopila vaše preference. 
+            Pak doporučí místa s podobným vibe a stylem, které byste mohli mít rádi.
+          </p>
+        </details>
+
+        <details class="rounded-xl bg-white/5 border border-white/10 p-5 hover:bg-white/10 transition group">
+          <summary class="font-semibold cursor-pointer list-none flex items-center justify-between text-sm">
+            <span>Jsou moje data v bezpečí?</span>
+            <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
+          </summary>
+          <p class="text-white/60 mt-3 text-sm">
+            Ano! Vaše data jsou šifrovaná a bezpečně uložená v Supabase. Nikdy je neprodáváme třetím stranám. 
+            Přečtěte si naše <a href="legal.html#gdpr" class="text-gurmaogold hover:underline">GDPR zásady</a>.
+          </p>
+        </details>
+
+        <details class="rounded-xl bg-white/5 border border-white/10 p-5 hover:bg-white/10 transition group">
+          <summary class="font-semibold cursor-pointer list-none flex items-center justify-between text-sm">
+            <span>Můžu se zapojit do projektu?</span>
+            <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
+          </summary>
+          <p class="text-white/60 mt-3 text-sm">
+            Určitě! Hledáme nadšence do gastronomie, fotografy, či developery. 
+            Napište nám na <a href="mailto:info@gurmao.cz" class="text-gurmaogold hover:underline">info@gurmao.cz</a> 
+            a řekněte nám, jak byste chtěli pomoci.
+          </p>
+        </details>
       </div>
-
-      <button 
-        type="submit" 
-        class="w-full md:w-auto px-8 py-4 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-105 transition"
-      >
-        Odeslat zprávu
-      </button>
-    </form>
-  </div>
-
-  <!-- FAQ Section -->
-  <div class="mt-16">
-    <h2 class="text-3xl font-bold mb-8 text-center">Časté dotazy</h2>
-    
-    <div class="space-y-4">
-      <details class="rounded-2xl bg-white/5 border border-white/10 p-6 hover:bg-white/10 transition group">
-        <summary class="font-semibold cursor-pointer list-none flex items-center justify-between">
-          <span>Jak mohu navrhnout novou restauraci?</span>
-          <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
-        </summary>
-        <p class="text-white/60 mt-4">
-          Napište nám na <a href="mailto:info@gurmao.cz" class="text-gurmaogold hover:underline">info@gurmao.cz</a> 
-          s názvem restaurace, městem a krátkým popisem, proč by měla být v GURMAO. Rádi ji přidáme!
-        </p>
-      </details>
-
-      <details class="rounded-2xl bg-white/5 border border-white/10 p-6 hover:bg-white/10 transition group">
-        <summary class="font-semibold cursor-pointer list-none flex items-center justify-between">
-          <span>Jak funguje AI doporučení?</span>
-          <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
-        </summary>
-        <p class="text-white/60 mt-4">
-          AI analyzuje vaše uložené restaurace a hodnocení, aby pochopila vaše preference. 
-          Pak doporučí místa s podobným vibe a stylem, které byste mohli mít rádi.
-        </p>
-      </details>
-
-      <details class="rounded-2xl bg-white/5 border border-white/10 p-6 hover:bg-white/10 transition group">
-        <summary class="font-semibold cursor-pointer list-none flex items-center justify-between">
-          <span>Jsou moje data v bezpečí?</span>
-          <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
-        </summary>
-        <p class="text-white/60 mt-4">
-          Ano! Vaše data jsou šifrovaná a bezpečně uložená v Supabase. Nikdy je neprodáváme třetím stranám. 
-          Přečtěte si naše <a href="legal.html#gdpr" class="text-gurmaogold hover:underline">GDPR zásady</a>.
-        </p>
-      </details>
-
-      <details class="rounded-2xl bg-white/5 border border-white/10 p-6 hover:bg-white/10 transition group">
-        <summary class="font-semibold cursor-pointer list-none flex items-center justify-between">
-          <span>Můžu se zapojit do projektu?</span>
-          <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
-        </summary>
-        <p class="text-white/60 mt-4">
-          Určitě! Hledáme nadšence do gastronomie, fotografy, či developery. 
-          Napište nám na <a href="mailto:info@gurmao.cz" class="text-gurmaogold hover:underline">info@gurmao.cz</a> 
-          a řekněte nám, jak byste chtěli pomoci.
-        </p>
-      </details>
     </div>
   </div>
 
-  <!-- Social Links -->
-  <div class="mt-16 text-center">
-    <h3 class="text-2xl font-semibold mb-6">Sledujte nás</h3>
-    <div class="flex justify-center gap-4">
-      <a href="#" class="w-12 h-12 rounded-full bg-white/5 border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center text-xl">
+  <!-- Social Links xl font-semibold mb-4">Sledujte nás</h3>
+    <div class="flex justify-center gap-3">
+      <a href="#" class="w-10 h-10 rounded-full bg-white/5 border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center text-lg">
         📷
       </a>
-      <a href="#" class="w-12 h-12 rounded-full bg-white/5 border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center text-xl">
+      <a href="#" class="w-10 h-10 rounded-full bg-white/5 border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center text-lg">
         🐦
+      </a>
+      <a href="#" class="w-10 h-10 rounded-full bg-white/5 border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center text-lg
       </a>
       <a href="#" class="w-12 h-12 rounded-full bg-white/5 border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center text-xl">
         📘
