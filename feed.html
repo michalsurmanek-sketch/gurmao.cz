@@ -774,36 +774,57 @@
       try {
         await window.ratingManager.ensureReady();
         
-        for (const x of filteredItems) {
-          const container = document.querySelector(`[data-rating-container="${x.id}"]`);
-          if (!container) continue;
-          
-          try {
-            const avgRating = await window.ratingManager.getAverage(x.id);
-            const ratingCount = await window.ratingManager.getCount(x.id);
-            const userRating = await window.ratingManager.getUserRating(x.id);
-            
-            let html = '';
-            if (avgRating > 0) {
-              html += `
-                <div class="flex items-center gap-2 mb-2">
-                  ${window.ratingManager.renderStars(avgRating, 'sm')}
-                  <span class="text-xs text-white/60">${avgRating.toFixed(1)} (${ratingCount})</span>
-                </div>
-              `;
-            } else {
-              html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
+        // Use Intersection Observer for lazy loading
+        const observer = new IntersectionObserver(async (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              const container = entry.target;
+              const restaurantId = container.dataset.ratingContainer;
+              
+              // Unobserve to prevent multiple loads
+              observer.unobserve(container);
+              
+              const restaurant = filteredItems.find(x => x.id === restaurantId);
+              if (!restaurant) continue;
+              
+              try {
+                const avgRating = await window.ratingManager.getAverage(restaurantId);
+                const ratingCount = await window.ratingManager.getCount(restaurantId);
+                const userRating = await window.ratingManager.getUserRating(restaurantId);
+                
+                let html = '';
+                if (avgRating > 0) {
+                  html += `
+                    <div class="flex items-center gap-2 mb-2">
+                      ${window.ratingManager.renderStars(avgRating, 'sm')}
+                      <span class="text-xs text-white/60">${avgRating.toFixed(1)} (${ratingCount})</span>
+                    </div>
+                  `;
+                } else {
+                  html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
+                }
+                
+                html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
+                html += await window.ratingManager.renderInteractiveStars(restaurantId, userRating || 0);
+                
+                container.innerHTML = html;
+              } catch (error) {
+                console.error(`Error loading rating for ${restaurantId}:`, error);
+                container.innerHTML = '<div class="text-xs text-white/40">Hodnocení není dostupné</div>';
+              }
             }
-            
-            html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
-            html += await window.ratingManager.renderInteractiveStars(x.id, userRating || 0);
-            
-            container.innerHTML = html;
-          } catch (error) {
-            console.error(`Error loading rating for ${x.id}:`, error);
-            container.innerHTML = '<div class="text-xs text-white/40">Hodnocení není dostupné</div>';
           }
-        }
+        }, {
+          rootMargin: '200px'
+        });
+        
+        // Observe all containers
+        filteredItems.forEach(x => {
+          const container = document.querySelector(`[data-rating-container="${x.id}"]`);
+          if (container) {
+            observer.observe(container);
+          }
+        });
       } catch (error) {
         console.error('Rating manager not available:', error);
       }

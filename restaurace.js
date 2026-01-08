@@ -237,7 +237,11 @@ function createRestaurantCard(restaurant) {
             </div>
             
             <!-- Rating Section -->
-            <div data-restaurant-rating="${restaurant.slug}"></div>
+            <div data-restaurant-rating="${restaurant.slug}">
+              <div class="border-t border-white/10 pt-3 mt-3">
+                <div class="text-xs text-white/40">Načítání...</div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -303,36 +307,58 @@ async function initializeRatings(restaurants) {
     return;
   }
   
+  // Use Intersection Observer to load ratings only when visible
+  const observer = new IntersectionObserver(async (entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        const container = entry.target;
+        const restaurantSlug = container.dataset.restaurantRating;
+        
+        // Unobserve immediately to prevent multiple loads
+        observer.unobserve(container);
+        
+        // Find restaurant data
+        const restaurant = restaurants.find(r => r.slug === restaurantSlug);
+        if (!restaurant) continue;
+        
+        try {
+          const average = await window.ratingManager.getAverage(restaurant.slug);
+          const count = await window.ratingManager.getCount(restaurant.slug);
+          const userRating = await window.ratingManager.getUserRating(restaurant.slug);
+          
+          let html = '<div class="border-t border-white/10 pt-3 mt-3">';
+          
+          if (average > 0) {
+            html += `
+              <div class="flex items-center gap-2 mb-2">
+                ${window.ratingManager.renderStars(average, 'sm')}
+                <span class="text-xs text-white/60">${average.toFixed(1)} (${count})</span>
+              </div>
+            `;
+          } else {
+            html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
+          }
+          
+          html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
+          html += await window.ratingManager.renderInteractiveStars(restaurant.slug, userRating || 0);
+          html += '</div>';
+          
+          container.innerHTML = html;
+        } catch (error) {
+          console.error(`Error initializing rating for ${restaurant.slug}:`, error);
+          container.innerHTML = '<div class="border-t border-white/10 pt-3 mt-3"><div class="text-xs text-white/40">Hodnocení není dostupné</div></div>';
+        }
+      }
+    }
+  }, {
+    rootMargin: '200px' // Start loading 200px before it comes into view
+  });
+  
+  // Observe all rating containers
   for (const restaurant of restaurants) {
     const container = document.querySelector(`[data-restaurant-rating="${restaurant.slug}"]`);
-    if (!container) continue;
-    
-    try {
-      const average = await window.ratingManager.getAverage(restaurant.slug);
-      const count = await window.ratingManager.getCount(restaurant.slug);
-      const userRating = await window.ratingManager.getUserRating(restaurant.slug);
-      
-      let html = '<div class="border-t border-white/10 pt-3 mt-3">';
-      
-      if (average > 0) {
-        html += `
-          <div class="flex items-center gap-2 mb-2">
-            ${window.ratingManager.renderStars(average, 'sm')}
-            <span class="text-xs text-white/60">${average.toFixed(1)} (${count})</span>
-          </div>
-        `;
-      } else {
-        html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
-      }
-      
-      html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
-      html += await window.ratingManager.renderInteractiveStars(restaurant.slug, userRating || 0);
-      html += '</div>';
-      
-      container.innerHTML = html;
-    } catch (error) {
-      console.error(`Error initializing rating for ${restaurant.slug}:`, error);
-      container.innerHTML = '<div class="border-t border-white/10 pt-3 mt-3"><div class="text-xs text-white/40">Hodnocení není dostupné</div></div>';
+    if (container) {
+      observer.observe(container);
     }
   }
 }
