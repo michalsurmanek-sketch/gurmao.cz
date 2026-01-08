@@ -115,21 +115,76 @@
 
 <!-- MAIN CONTENT -->
 <main class="max-w-7xl mx-auto px-6 py-12 md:py-20">
-  <!-- Hero -->
-  <div class="text-center mb-12 md:mb-16">
-    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-      Máte dotaz?<br>
-      <span class="text-gurmaogold">Napište nám.</span>
-    </h1>
-    <p class="text-lg md:text-xl text-white/60 max-w-2xl mx-auto">
-      Rádi uslyšíme vaše návrhy na restaurace, zpětnou vazbu nebo odpovíme na jakékoliv otázky.
-    </p>
-  </div>
-
   <!-- Two Column Layout -->
   <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-12">
-    <!-- Left: Contact Form -->
+    <!-- Left: Hero + FAQ -->
     <div class="space-y-8">
+      <!-- Hero -->
+      <div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+          Máte dotaz?<br>
+          <span class="text-gurmaogold">Napište nám.</span>
+        </h1>
+        <p class="text-lg md:text-xl text-white/60">
+          Rádi uslyšíme vaše návrhy na restaurace, zpětnou vazbu nebo odpovíme na jakékoliv otázky.
+        </p>
+      </div>
+
+      <!-- FAQ -->
+      <div>
+        <h2 class="text-2xl md:text-3xl font-bold mb-6">Časté dotazy</h2>
+        
+        <div class="space-y-3">
+          <details class="rounded-xl bg-white/5 border border-white/10 p-5 hover:bg-white/10 transition group">
+            <summary class="font-semibold cursor-pointer list-none flex items-center justify-between text-sm">
+              <span>Jak mohu navrhnout novou restauraci?</span>
+              <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
+            </summary>
+            <p class="text-white/60 mt-3 text-sm">
+              Napište nám na <a href="mailto:info@gurmao.cz" class="text-gurmaogold hover:underline">info@gurmao.cz</a> 
+              s názvem restaurace, městem a krátkým popisem, proč by měla být v GURMAO. Rádi ji přidáme!
+            </p>
+          </details>
+
+          <details class="rounded-xl bg-white/5 border border-white/10 p-5 hover:bg-white/10 transition group">
+            <summary class="font-semibold cursor-pointer list-none flex items-center justify-between text-sm">
+              <span>Jak funguje AI doporučení?</span>
+              <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
+            </summary>
+            <p class="text-white/60 mt-3 text-sm">
+              AI analyzuje vaše uložené restaurace a hodnocení, aby pochopila vaše preference. 
+              Pak doporučí místa s podobným vibe a stylem, které byste mohli mít rádi.
+            </p>
+          </details>
+
+          <details class="rounded-xl bg-white/5 border border-white/10 p-5 hover:bg-white/10 transition group">
+            <summary class="font-semibold cursor-pointer list-none flex items-center justify-between text-sm">
+              <span>Jsou moje data v bezpečí?</span>
+              <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
+            </summary>
+            <p class="text-white/60 mt-3 text-sm">
+              Ano! Vaše data jsou šifrovaná a bezpečně uložená v Supabase. Nikdy je neprodáváme třetím stranám. 
+              Přečtěte si naše <a href="legal.html#gdpr" class="text-gurmaogold hover:underline">GDPR zásady</a>.
+            </p>
+          </details>
+
+          <details class="rounded-xl bg-white/5 border border-white/10 p-5 hover:bg-white/10 transition group">
+            <summary class="font-semibold cursor-pointer list-none flex items-center justify-between text-sm">
+              <span>Můžu se zapojit do projektu?</span>
+              <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
+            </summary>
+            <p class="text-white/60 mt-3 text-sm">
+              Určitě! Hledáme nadšence do gastronomie, fotografy, či developery. 
+              Napište nám na <a href="mailto:info@gurmao.cz" class="text-gurmaogold hover:underline">info@gurmao.cz</a> 
+              a řekněte nám, jak byste chtěli pomoci.
+            </p>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Contact Form -->
+    <div>
       <!-- Contact Form -->
       <div class="rounded-2xl bg-white/5 border border-white/10 p-6">
         <h2 class="text-2xl font-bold mb-2">Napište nám přímo</h2>
@@ -196,58 +251,6 @@
             Odeslat zprávu
           </button>
         </form>
-      </div>
-    </div>
-
-    <!-- Right: FAQ -->
-    <div>
-      <h2 class="text-2xl md:text-3xl font-bold mb-6">Časté dotazy</h2>
-      
-      <div class="space-y-3">
-        <details class="rounded-xl bg-white/5 border border-white/10 p-5 hover:bg-white/10 transition group">
-          <summary class="font-semibold cursor-pointer list-none flex items-center justify-between text-sm">
-            <span>Jak mohu navrhnout novou restauraci?</span>
-            <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
-          </summary>
-          <p class="text-white/60 mt-3 text-sm">
-            Napište nám na <a href="mailto:info@gurmao.cz" class="text-gurmaogold hover:underline">info@gurmao.cz</a> 
-            s názvem restaurace, městem a krátkým popisem, proč by měla být v GURMAO. Rádi ji přidáme!
-          </p>
-        </details>
-
-        <details class="rounded-xl bg-white/5 border border-white/10 p-5 hover:bg-white/10 transition group">
-          <summary class="font-semibold cursor-pointer list-none flex items-center justify-between text-sm">
-            <span>Jak funguje AI doporučení?</span>
-            <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
-          </summary>
-          <p class="text-white/60 mt-3 text-sm">
-            AI analyzuje vaše uložené restaurace a hodnocení, aby pochopila vaše preference. 
-            Pak doporučí místa s podobným vibe a stylem, které byste mohli mít rádi.
-          </p>
-        </details>
-
-        <details class="rounded-xl bg-white/5 border border-white/10 p-5 hover:bg-white/10 transition group">
-          <summary class="font-semibold cursor-pointer list-none flex items-center justify-between text-sm">
-            <span>Jsou moje data v bezpečí?</span>
-            <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
-          </summary>
-          <p class="text-white/60 mt-3 text-sm">
-            Ano! Vaše data jsou šifrovaná a bezpečně uložená v Supabase. Nikdy je neprodáváme třetím stranám. 
-            Přečtěte si naše <a href="legal.html#gdpr" class="text-gurmaogold hover:underline">GDPR zásady</a>.
-          </p>
-        </details>
-
-        <details class="rounded-xl bg-white/5 border border-white/10 p-5 hover:bg-white/10 transition group">
-          <summary class="font-semibold cursor-pointer list-none flex items-center justify-between text-sm">
-            <span>Můžu se zapojit do projektu?</span>
-            <span class="text-gurmaogold group-open:rotate-180 transition">▼</span>
-          </summary>
-          <p class="text-white/60 mt-3 text-sm">
-            Určitě! Hledáme nadšence do gastronomie, fotografy, či developery. 
-            Napište nám na <a href="mailto:info@gurmao.cz" class="text-gurmaogold hover:underline">info@gurmao.cz</a> 
-            a řekněte nám, jak byste chtěli pomoci.
-          </p>
-        </details>
       </div>
     </div>
   </div>
