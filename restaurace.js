@@ -283,19 +283,19 @@ function createRestaurantCard(restaurant) {
 }
 
 // Initialize ratings for displayed restaurants
-function initializeRatings(restaurants) {
+async function initializeRatings(restaurants) {
   // Wait for ratingManager to be available
   if (typeof window.ratingManager === 'undefined') {
     console.log('Rating manager not yet loaded, skipping ratings initialization');
     return;
   }
   
-  restaurants.forEach(restaurant => {
+  for (const restaurant of restaurants) {
     const container = document.querySelector(`[data-restaurant-rating="${restaurant.slug}"]`);
     if (container) {
-      const average = window.ratingManager.getAverage(restaurant.slug);
-      const count = window.ratingManager.getCount(restaurant.slug);
-      const userRating = window.ratingManager.getUserRating(restaurant.slug);
+      const average = await window.ratingManager.getAverage(restaurant.slug);
+      const count = await window.ratingManager.getCount(restaurant.slug);
+      const userRating = await window.ratingManager.getUserRating(restaurant.slug);
       
       let html = '<div class="border-t border-white/10 pt-3 mt-3">';
       
@@ -311,12 +311,12 @@ function initializeRatings(restaurants) {
       }
       
       html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
-      html += window.ratingManager.renderInteractiveStars(restaurant.slug, userRating || 0);
+      html += await window.ratingManager.renderInteractiveStars(restaurant.slug, userRating || 0);
       html += '</div>';
       
       container.innerHTML = html;
     }
-  });
+  }
 }
 
 // Initialize filters
