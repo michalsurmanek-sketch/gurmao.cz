@@ -47,9 +47,9 @@ class RatingManager {
   async loadAllRatings() {
     if (this.cacheLoaded) return;
     
-    await this.ensureReady();
-    
     try {
+      await this.ensureReady();
+      
       // Load all stats and user ratings in parallel
       const [statsMap, userRatingsMap] = await Promise.all([
         this.getAllRatingsStatsFn(),
@@ -61,7 +61,11 @@ class RatingManager {
       this.cacheLoaded = true;
       
     } catch (error) {
-      console.error('Error loading all ratings:', error);
+      // Silent fail - rating system not critical for feed
+      console.warn('Rating system unavailable');
+      this.statsCache = new Map();
+      this.userRatingsCache = new Map();
+      this.cacheLoaded = true; // Mark as loaded to prevent retries
     }
   }
 

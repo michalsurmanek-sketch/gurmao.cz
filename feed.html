@@ -190,6 +190,7 @@
 <body class="bg-gurmaoblack text-white overflow-x-hidden">
 
 <script src="toast.js"></script>
+<script type="module" src="rating.js"></script>
 <script src="social-share.js"></script>
 
 <!-- HEADER / NAV + HAMBURGER -->
@@ -855,6 +856,11 @@
               ${window.socialShare.renderShareButton(x, 'md')}
             </div>
           </div>
+          
+          <!-- Rating Section -->
+          <div class="border-t border-white/10 pt-3" data-rating-container="${x.id}">
+            <div class="text-xs text-white/40"></div>
+          </div>
         </div>
       </div>
     `).join('');
@@ -908,6 +914,11 @@
               </button>
               ${window.socialShare.renderShareButton(x, 'md')}
             </div>
+          </div>
+          
+          <!-- Rating Section -->
+          <div class="border-t border-white/10 pt-3" data-rating-container="${x.id}">
+            <div class="text-xs text-white/40"></div>
           </div>
         </div>
       </div>
