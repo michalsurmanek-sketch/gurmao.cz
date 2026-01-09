@@ -452,18 +452,17 @@ function initializeFilters() {
   
   filterButtons.forEach(button => {
     button.addEventListener('click', () => {
-      // Remove active state from all filter buttons (but keep locationBtn state)
+      // Remove active state from all filter buttons
       filterButtons.forEach(btn => {
-        btn.classList.remove('bg-gurmaogold', 'text-black');
-        btn.classList.add('bg-white/5');
+        btn.classList.remove('is-active');
       });
       
       // Add active state to clicked button
-      button.classList.remove('bg-white/5');
-      button.classList.add('bg-gurmaogold', 'text-black');
+      button.classList.add('is-active');
       
-      // Get filter value
-      const filter = button.textContent.trim();
+      // Get filter value from vibe-name div or text content
+      const vibeNameEl = button.querySelector('.vibe-name');
+      const filter = vibeNameEl ? vibeNameEl.textContent.trim() : button.textContent.trim();
       currentFilter = filter === 'Vše' ? 'all' : filter;
       
       // Filter restaurants (keeps distance sorting if active)
