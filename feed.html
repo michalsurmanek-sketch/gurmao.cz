@@ -190,7 +190,8 @@
 <body class="bg-gurmaoblack text-white overflow-x-hidden">
 
 <script src="toast.js"></script>
-<script type="module" src="rating.js"></script>
+<!-- RATING DOČASNĚ VYPNUTO - způsobuje 700+ API errors (chybí rating_stats view v Supabase) -->
+<!-- <script type="module" src="rating.js"></script> -->
 <script src="social-share.js"></script>
 
 <!-- HEADER / NAV + HAMBURGER -->
@@ -851,9 +852,9 @@
             </div>
           </div>
           
-          <!-- Rating Section - will be populated -->
-          <div class="border-t border-white/10 pt-3" data-rating-container="${x.id}">
-            <div class="text-xs text-white/40">Načítání hodnocení...</div>
+          <!-- Rating placeholder -->
+          <div class="border-t border-white/10 pt-3">
+            <div class="text-xs text-white/40">💫 Hodnocení brzy</div>
           </div>
         </div>
       </div>
@@ -868,53 +869,6 @@
     if (isDesktop && displayItems.length < filteredItems.length) {
       initGridInfiniteScroll();
     }
-    
-    // DOČASNĚ VYPNUTO - způsobovalo 700+ API requestů
-    // Load ratings asynchronously for displayed items only
-    /* 
-    if (window.ratingManager) {
-      try {
-        await window.ratingManager.ensureReady();
-        
-        // Load all ratings at once
-        await window.ratingManager.loadAllRatings();
-        
-        // Now render ratings only for displayed items
-        for (const x of displayItems) {
-          const container = document.querySelector(`[data-rating-container="${x.id}"]`);
-          if (!container) continue;
-          
-          try {
-            const avgRating = await window.ratingManager.getAverage(x.id);
-            const ratingCount = await window.ratingManager.getCount(x.id);
-            const userRating = await window.ratingManager.getUserRating(x.id);
-            
-            let html = '';
-            if (avgRating > 0) {
-              html += `
-                <div class="flex items-center gap-2 mb-2">
-                  ${window.ratingManager.renderStars(avgRating, 'sm')}
-                  <span class="text-xs text-white/60">${avgRating.toFixed(1)} (${ratingCount})</span>
-                </div>
-              `;
-            } else {
-              html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
-            }
-            
-            html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
-            html += await window.ratingManager.renderInteractiveStars(x.id, userRating || 0);
-            
-            container.innerHTML = html;
-          } catch (error) {
-            console.error(`Error loading rating for ${x.id}:`, error);
-            container.innerHTML = '<div class="text-xs text-white/40">Hodnocení není dostupné</div>';
-          }
-        }
-      } catch (error) {
-        console.error('Rating manager not available:', error);
-      }
-    }
-    */
     
     // Store how many items we're showing
     currentlyDisplayedInGrid = displayItems.length;
@@ -957,9 +911,9 @@
             </div>
           </div>
           
-          <!-- Rating Section - will be populated -->
-          <div class="border-t border-white/10 pt-3" data-rating-container="${x.id}">
-            <div class="text-xs text-white/40">Načítání hodnocení...</div>
+          <!-- Rating placeholder -->
+          <div class="border-t border-white/10 pt-3">
+            <div class="text-xs text-white/40">💫 Hodnocení brzy</div>
           </div>
         </div>
       </div>
@@ -978,49 +932,6 @@
     if (typeof window.updateSaveButtons === 'function') {
       setTimeout(() => window.updateSaveButtons(), 100);
     }
-    
-    // DOČASNĚ VYPNUTO - load ratings for new items
-    /*
-    if (window.ratingManager) {
-      try {
-        await window.ratingManager.ensureReady();
-        await window.ratingManager.loadAllRatings();
-        
-        for (const x of newItems) {
-          const container = document.querySelector(`[data-rating-container="${x.id}"]`);
-          if (!container) continue;
-          
-          try {
-            const avgRating = await window.ratingManager.getAverage(x.id);
-            const ratingCount = await window.ratingManager.getCount(x.id);
-            const userRating = await window.ratingManager.getUserRating(x.id);
-            
-            let html = '';
-            if (avgRating > 0) {
-              html += `
-                <div class="flex items-center gap-2 mb-2">
-                  ${window.ratingManager.renderStars(avgRating, 'sm')}
-                  <span class="text-xs text-white/60">${avgRating.toFixed(1)} (${ratingCount})</span>
-                </div>
-              `;
-            } else {
-              html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
-            }
-            
-            html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
-            html += await window.ratingManager.renderInteractiveStars(x.id, userRating || 0);
-            
-            container.innerHTML = html;
-          } catch (error) {
-            console.error(`Error loading rating for ${x.id}:`, error);
-            container.innerHTML = '<div class="text-xs text-white/40">Hodnocení není dostupné</div>';
-          }
-        }
-      } catch (error) {
-        console.error('Rating manager error:', error);
-      }
-    }
-    */
   }
   
   // Initialize infinite scroll for grid (desktop only)
