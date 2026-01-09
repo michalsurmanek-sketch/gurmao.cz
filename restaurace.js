@@ -462,8 +462,22 @@ function initializeFilters() {
       
       // Get filter value from vibe-name div or text content
       const vibeNameEl = button.querySelector('.vibe-name');
-      const filter = vibeNameEl ? vibeNameEl.textContent.trim() : button.textContent.trim();
-      currentFilter = filter === 'Vše' ? 'all' : filter;
+      const filterText = vibeNameEl ? vibeNameEl.textContent.trim() : button.textContent.trim();
+      
+      // Map filter text to database vibe format (with emoji)
+      const vibeMap = {
+        'Vše': 'all',
+        'LUXE': '🍷 LUXE',
+        'DRAMA': '🔥 DRAMA',
+        'CHAOS': '🌮 CHAOS',
+        'PURE': '🌿 PURE',
+        'DARK': '🖤 DARK',
+        'CALM': '🌊 CALM'
+      };
+      
+      currentFilter = vibeMap[filterText] || 'all';
+      
+      console.log('Filter clicked:', filterText, '→ DB value:', currentFilter);
       
       // Filter restaurants (keeps distance sorting if active)
       applyFilters();
