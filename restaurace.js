@@ -314,7 +314,26 @@ function createRestaurantCard(restaurant) {
             <!-- Rating Section -->
             <div data-restaurant-rating="${restaurant.slug}">
               <div class="border-t border-white/10 pt-3 mt-3">
-                <div class="text-xs text-white/40">Načítání...</div>
+                <!-- Average rating (populated later) -->
+                <div class="flex items-center gap-2 mb-2">
+                  <div class="inline-flex items-center gap-0.5 text-sm">
+                    <span class="text-white/20">⭐</span>
+                    <span class="text-white/20">⭐</span>
+                    <span class="text-white/20">⭐</span>
+                    <span class="text-white/20">⭐</span>
+                    <span class="text-white/20">⭐</span>
+                  </div>
+                  <span class="text-xs text-white/40">—</span>
+                </div>
+                <!-- User rating (populated later) -->
+                <div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>
+                <div class="inline-flex items-center gap-1 text-base">
+                  <span class="text-white/20 cursor-pointer hover:scale-110 transition">⭐</span>
+                  <span class="text-white/20 cursor-pointer hover:scale-110 transition">⭐</span>
+                  <span class="text-white/20 cursor-pointer hover:scale-110 transition">⭐</span>
+                  <span class="text-white/20 cursor-pointer hover:scale-110 transition">⭐</span>
+                  <span class="text-white/20 cursor-pointer hover:scale-110 transition">⭐</span>
+                </div>
               </div>
             </div>
           </div>
