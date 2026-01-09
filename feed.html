@@ -869,7 +869,9 @@
       initGridInfiniteScroll();
     }
     
+    // DOČASNĚ VYPNUTO - způsobovalo 700+ API requestů
     // Load ratings asynchronously for displayed items only
+    /* 
     if (window.ratingManager) {
       try {
         await window.ratingManager.ensureReady();
@@ -912,6 +914,7 @@
         console.error('Rating manager not available:', error);
       }
     }
+    */
     
     // Store how many items we're showing
     currentlyDisplayedInGrid = displayItems.length;
@@ -976,7 +979,8 @@
       setTimeout(() => window.updateSaveButtons(), 100);
     }
     
-    // Load ratings for new items
+    // DOČASNĚ VYPNUTO - load ratings for new items
+    /*
     if (window.ratingManager) {
       try {
         await window.ratingManager.ensureReady();
@@ -1016,6 +1020,7 @@
         console.error('Rating manager error:', error);
       }
     }
+    */
   }
   
   // Initialize infinite scroll for grid (desktop only)
