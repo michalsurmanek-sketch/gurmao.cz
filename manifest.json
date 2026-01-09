@@ -1,0 +1,122 @@
+{
+  "name": "GURMAO - Gastronomický průvodce",
+  "short_name": "GURMAO",
+  "description": "Objevte nejlepší restaurace v České republice. Kurátorovaný svět gastronomie podle nálady a atmosféry.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0b0b0d",
+  "theme_color": "#d4af37",
+  "orientation": "portrait-primary",
+  "lang": "cs-CZ",
+  "dir": "ltr",
+  "categories": ["food", "lifestyle", "entertainment"],
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "GURMAO Homepage"
+    },
+    {
+      "src": "/screenshots/mobile-feed.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Restaurant Feed"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Feed restaurací",
+      "short_name": "Feed",
+      "description": "Prohlížet nejnovější restaurace",
+      "url": "/feed.html",
+      "icons": [{ "src": "/icons/shortcut-feed.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Mapa",
+      "short_name": "Mapa",
+      "description": "Najít restaurace na mapě",
+      "url": "/mapa.html",
+      "icons": [{ "src": "/icons/shortcut-map.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Můj výběr",
+      "short_name": "Výběr",
+      "description": "Uložené oblíbené restaurace",
+      "url": "/collections.html",
+      "icons": [{ "src": "/icons/shortcut-saved.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "iarc_rating_id": "",
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+gurmao",
+      "url": "/restaurant?id=%s"
+    }
+  ]
+}
