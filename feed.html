@@ -359,6 +359,25 @@
 
     <div id="resultsCount" class="mt-4 text-sm text-white/40"></div>
     <div id="grid" class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="hidden mt-8 text-center py-8">
+      <div class="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/5 border border-white/10">
+        <svg class="animate-spin h-5 w-5 text-gurmaogold" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span class="text-white/60">Načítám restaurace...</span>
+      </div>
+    </div>
+    
+    <!-- Load More Button -->
+    <div id="loadMoreBtn" class="hidden mt-8 text-center">
+      <button onclick="loadRestaurants(true)" class="px-8 py-4 rounded-full bg-gurmaogold text-black font-semibold hover:bg-gurmaogold/80 transition shadow-glow">
+        <span>Načíst další</span>
+      </button>
+    </div>
+    
     <div id="noResults" class="hidden mt-10 text-center text-white/40">
       <div class="text-4xl mb-3">🤷</div>
       <p>Nic jsme nenašli. Zkus jiný filtr.</p>
@@ -376,17 +395,37 @@
   // Load restaurants from Supabase
   let items = [];
   
-  async function loadRestaurants() {
+  // Pagination setup
+  let currentPage = 0;
+  const ITEMS_PER_PAGE = 20; // Desktop: 20, Mobile feed: 10
+  let totalCount = 0;
+  let isLoading = false;
+  let hasMoreItems = true;
+
+  async function loadRestaurants(append = false) {
+    if (isLoading || !hasMoreItems) return;
+    
+    isLoading = true;
+    showLoadingIndicator();
+    
     try {
-      const { data: restaurants, error } = await supabase
+      // Calculate range for pagination
+      const from = currentPage * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
+      
+      const { data: restaurants, error, count } = await supabase
         .from('restaurants')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(from, to);
       
       if (error) throw error;
       
+      // Store total count
+      totalCount = count || 0;
+      
       // Transform to feed format
-      items = (restaurants || []).map(r => ({
+      const newItems = (restaurants || []).map(r => ({
         id: r.slug,
         vibe: r.vibe,
         name: r.name,
@@ -396,12 +435,51 @@
         img: r.image_url || r.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800'
       }));
       
-      console.log('Loaded restaurants for feed:', items.length);
+      // Append or replace items
+      if (append) {
+        items = [...items, ...newItems];
+      } else {
+        items = newItems;
+      }
+      
+      // Check if there are more items
+      hasMoreItems = (from + newItems.length) < totalCount;
+      currentPage++;
+      
       renderFeed();
       renderGrid();
+      updateLoadMoreButton();
+      
+      hideLoadingIndicator();
     } catch (error) {
       console.error('Error loading restaurants:', error);
       toastError('❌ Nepodařilo se načíst restaurace');
+      hideLoadingIndicator();
+    } finally {
+      isLoading = false;
+    }
+  }
+  
+  function showLoadingIndicator() {
+    const indicator = document.getElementById('loadingIndicator');
+    if (indicator) indicator.classList.remove('hidden');
+  }
+  
+  function hideLoadingIndicator() {
+    const indicator = document.getElementById('loadingIndicator');
+    if (indicator) indicator.classList.add('hidden');
+  }
+  
+  function updateLoadMoreButton() {
+    const btn = document.getElementById('loadMoreBtn');
+    if (!btn) return;
+    
+    if (hasMoreItems) {
+      btn.classList.remove('hidden');
+      const remaining = totalCount - items.length;
+      btn.querySelector('span').textContent = `Načíst další (${remaining} zbývá)`;
+    } else {
+      btn.classList.add('hidden');
     }
   }
 
@@ -1012,6 +1090,55 @@
 
   // Initial load
   loadRestaurants();
+  
+  // Infinite Scroll - Desktop
+  function initInfiniteScroll() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && hasMoreItems && !isLoading) {
+          loadRestaurants(true); // Append mode
+        }
+      });
+    }, {
+      rootMargin: '200px', // Start loading 200px before reaching bottom
+      threshold: 0.1
+    });
+    
+    // Observe load more button
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    if (loadMoreBtn) {
+      observer.observe(loadMoreBtn);
+    }
+  }
+  
+  // Mobile Feed Infinite Scroll
+  function initMobileFeedScroll() {
+    const feed = document.getElementById('feed');
+    if (!feed) return;
+    
+    let lastScrollTop = 0;
+    
+    feed.addEventListener('scroll', () => {
+      const scrollTop = feed.scrollTop;
+      const scrollHeight = feed.scrollHeight;
+      const clientHeight = feed.clientHeight;
+      
+      // Check if scrolled near bottom (within 100px)
+      if (scrollHeight - scrollTop - clientHeight < 100) {
+        if (hasMoreItems && !isLoading) {
+          loadRestaurants(true);
+        }
+      }
+      
+      lastScrollTop = scrollTop;
+    });
+  }
+  
+  // Initialize infinite scroll after initial load
+  setTimeout(() => {
+    initInfiniteScroll();
+    initMobileFeedScroll();
+  }, 1000);
 
   // Listen for rating updates and re-render affected card
   window.addEventListener('ratingUpdated', (e) => {

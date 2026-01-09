@@ -10,30 +10,77 @@ let sortByDistance = false;
 let perPage = window.innerWidth < 768 ? 12 : 24;
 let currentlyDisplayed = 0;
 
-// Load and display restaurants
-async function loadRestaurants() {
+// Pagination for server-side
+let currentPage = 0;
+const PAGE_SIZE = 50; // Načíst po 50 restauracích
+let totalCount = 0;
+let isLoading = false;
+let hasMoreData = true;
+
+// Load and display restaurants with pagination
+async function loadRestaurants(append = false) {
+  if (isLoading || !hasMoreData) return;
+  
   const container = document.getElementById('restaurantsList');
+  isLoading = true;
+  
+  // Show loading indicator
+  if (append) {
+    showLoadingSpinner();
+  }
   
   try {
-    const { data: restaurants, error } = await supabase
-      .from('restaurants')
-      .select('*')
-      .order('created_at', { ascending: false });
+    const from = currentPage * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
     
+    const { data: restaurants, error, count } = await supabase
+      .from('restaurants')
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(from, to);
     
     if (error) throw error;
     
-    allRestaurants = restaurants || [];
+    totalCount = count || 0;
+    
+    // Append or replace
+    if (append) {
+      allRestaurants = [...allRestaurants, ...(restaurants || [])];
+    } else {
+      allRestaurants = restaurants || [];
+    }
+    
+    // Check if more data available
+    hasMoreData = (from + (restaurants || []).length) < totalCount;
+    currentPage++;
     
     displayRestaurants(allRestaurants);
-    initializeFilters();
-    initializeSearch();
-    initializePerPageButtons();
-    initializeInfiniteScroll();
+    
+    if (!append) {
+      initializeFilters();
+      initializeSearch();
+      initializePerPageButtons();
+      initializeInfiniteScroll();
+    }
+    
+    hideLoadingSpinner();
   } catch (error) {
     console.error('Error loading restaurants:', error);
     showError();
+    hideLoadingSpinner();
+  } finally {
+    isLoading = false;
   }
+}
+
+function showLoadingSpinner() {
+  const spinner = document.getElementById('loadingSpinner');
+  if (spinner) spinner.classList.remove('hidden');
+}
+
+function hideLoadingSpinner() {
+  const spinner = document.getElementById('loadingSpinner');
+  if (spinner) spinner.classList.add('hidden');
 }
 
 // Display restaurants
@@ -41,10 +88,10 @@ function displayRestaurants(restaurants) {
   const container = document.getElementById('restaurantsList');
   if (!container) return;
   
-  // Update result count
+  // Update result count (use server total if available)
   const resultCount = document.getElementById('resultCount');
   if (resultCount) {
-    const total = restaurants.length;
+    const total = totalCount > 0 ? totalCount : restaurants.length;
     resultCount.textContent = `Celkem: ${total} restaurací`;
   }
   
@@ -91,21 +138,43 @@ function updateLoadMoreButton() {
   const existingBtn = document.getElementById('loadMoreBtn');
   if (existingBtn) existingBtn.remove();
   
-  if (currentlyDisplayed < window.filteredRestaurants.length) {
-    const remaining = window.filteredRestaurants.length - currentlyDisplayed;
+  // Check if there are more items locally or on server
+  const hasMoreLocal = currentlyDisplayed < window.filteredRestaurants.length;
+  const hasMoreServer = hasMoreData;
+  
+  if (hasMoreLocal || hasMoreServer) {
+    const remaining = hasMoreServer ? 
+      (totalCount - allRestaurants.length) : 
+      (window.filteredRestaurants.length - currentlyDisplayed);
+    
     const btn = document.createElement('div');
     btn.id = 'loadMoreBtn';
     btn.className = 'col-span-full flex justify-center py-8';
     btn.innerHTML = `
-      <button onclick="loadMore()" class="px-8 py-3 rounded-full bg-gurmaogold text-black font-semibold hover:bg-gurmaogold/80 transition">
-        Načíst další (ještě ${remaining})
+      <button onclick="loadMoreData()" class="px-8 py-3 rounded-full bg-gurmaogold text-black font-semibold hover:bg-gurmaogold/80 transition">
+        ${hasMoreServer ? 'Načíst další ze serveru' : `Načíst další (ještě ${remaining})`}
       </button>
     `;
     container.insertAdjacentElement('afterend', btn);
   }
 }
+    container.insertAdjacentElement('afterend', btn);
+  }
+}
 
-// Load more items
+// Load more items (either from local cache or server)
+window.loadMoreData = async function() {
+  // First try to show more from local filtered results
+  if (currentlyDisplayed < window.filteredRestaurants.length) {
+    loadMore(); // Use existing loadMore for local data
+  } 
+  // If all local shown, fetch more from server
+  else if (hasMoreData) {
+    await loadRestaurants(true); // append mode
+  }
+}
+
+// Load more items from local cache
 window.loadMore = function() {
   const nextBatch = Math.min(currentlyDisplayed + perPage, window.filteredRestaurants.length);
   const newItems = window.filteredRestaurants.slice(currentlyDisplayed, nextBatch);
@@ -132,25 +201,44 @@ window.loadMore = function() {
   initializeFlipCards();
 }
 
-// Initialize infinite scroll for mobile
+// Initialize infinite scroll
 function initializeInfiniteScroll() {
-  if (window.innerWidth >= 768) return; // Only on mobile
-  
-  let isLoading = false;
-  
-  window.addEventListener('scroll', () => {
-    if (isLoading) return;
-    if (currentlyDisplayed >= window.filteredRestaurants.length) return;
+  // Desktop: use IntersectionObserver on trigger element
+  const trigger = document.getElementById('scrollTrigger');
+  if (trigger && window.innerWidth >= 768) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !isLoading && (currentlyDisplayed < window.filteredRestaurants.length || hasMoreData)) {
+          loadMoreData();
+        }
+      });
+    }, {
+      rootMargin: '200px' // Trigger 200px before reaching bottom
+    });
     
-    const scrollPosition = window.innerHeight + window.scrollY;
-    const pageHeight = document.documentElement.scrollHeight;
+    observer.observe(trigger);
+  }
+  
+  // Mobile: use scroll event
+  if (window.innerWidth < 768) {
+    let scrollIsLoading = false;
     
-    // Load more when user is 500px from bottom
-    if (scrollPosition > pageHeight - 500) {
-      isLoading = true;
-      loadMore();
-      setTimeout(() => { isLoading = false; }, 300);
-    }
+    window.addEventListener('scroll', () => {
+      if (scrollIsLoading) return;
+      if (currentlyDisplayed >= window.filteredRestaurants.length && !hasMoreData) return;
+      
+      const scrollPosition = window.innerHeight + window.scrollY;
+      const pageHeight = document.documentElement.scrollHeight;
+      
+      // Load more when user is 500px from bottom
+      if (scrollPosition > pageHeight - 500) {
+        scrollIsLoading = true;
+        loadMoreData();
+        setTimeout(() => { scrollIsLoading = false; }, 300);
+      }
+    });
+  }
+}
   });
 }
 
