@@ -218,11 +218,6 @@ async function loadChefs() {
       </div>
     `).join('');
     
-    // Initialize share buttons
-    if (window.socialShare) {
-      window.socialShare.init();
-    }
-    
     // Initialize ratings
     initRatings(chefs.map(c => c.slug));
     
