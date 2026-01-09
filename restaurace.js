@@ -667,4 +667,47 @@ document.addEventListener('DOMContentLoaded', () => {
   if (locationBtn) {
     locationBtn.addEventListener('click', findNearestRestaurants);
   }
+  
+  // Listen for rating updates and refresh that specific restaurant's rating display
+  window.addEventListener('ratingUpdated', async (event) => {
+    const { restaurantId } = event.detail;
+    const container = document.querySelector(`[data-restaurant-rating="${restaurantId}"]`);
+    if (!container || !window.ratingManager) return;
+    
+    try {
+      // Reload stats for this restaurant
+      const avgRating = await window.ratingManager.getAverage(restaurantId);
+      const count = await window.ratingManager.getCount(restaurantId);
+      const userRating = await window.ratingManager.getUserRating(restaurantId);
+      
+      let html = '<div class="border-t border-white/10 pt-3 mt-3">';
+      
+      if (avgRating > 0) {
+        html += `
+          <div class="flex items-center gap-2 mb-2">
+            ${window.ratingManager.renderStars(avgRating, 'sm')}
+            <span class="text-xs text-white/60">${avgRating.toFixed(1)} (${count})</span>
+          </div>
+        `;
+      }
+      
+      if (userRating > 0) {
+        html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
+        html += await window.ratingManager.renderInteractiveStars(restaurantId, userRating);
+      } else if (avgRating === 0) {
+        html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
+        html += '<div class="text-xs text-white/40 mb-1">Ohodnoť jako první:</div>';
+        html += await window.ratingManager.renderInteractiveStars(restaurantId, 0);
+      } else {
+        html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
+        html += await window.ratingManager.renderInteractiveStars(restaurantId, 0);
+      }
+      
+      html += '</div>';
+      
+      container.innerHTML = html;
+    } catch (error) {
+      console.error('Error updating rating display:', error);
+    }
+  });
 });
