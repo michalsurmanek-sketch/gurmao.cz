@@ -12,23 +12,18 @@ let currentlyDisplayed = 0;
 
 // Load and display restaurants
 async function loadRestaurants() {
-  console.log('loadRestaurants called');
   const container = document.getElementById('restaurantsList');
-  console.log('Container found:', container);
   
   try {
-    console.log('Fetching from Supabase...');
     const { data: restaurants, error } = await supabase
       .from('restaurants')
       .select('*')
       .order('created_at', { ascending: false });
     
-    console.log('Supabase response:', { data: restaurants, error });
     
     if (error) throw error;
     
     allRestaurants = restaurants || [];
-    console.log('Loaded restaurants:', allRestaurants);
     
     displayRestaurants(allRestaurants);
     initializeFilters();
@@ -176,7 +171,6 @@ function createRestaurantCard(restaurant) {
                    restaurant.photo_url ||
                    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800';
   
-  console.log(`Restaurant ${restaurant.name}: image_url = ${restaurant.image_url}`);
   
   // Mock menu data - replace with real data from restaurant object
   const menuItems = [
@@ -290,7 +284,6 @@ function createRestaurantCard(restaurant) {
 async function initializeRatings(restaurants) {
   // Wait for ratingManager to be available and ready
   if (typeof window.ratingManager === 'undefined') {
-    console.log('Rating manager not yet loaded, waiting...');
     await new Promise(resolve => setTimeout(resolve, 500));
   }
   

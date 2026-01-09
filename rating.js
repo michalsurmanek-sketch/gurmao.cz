@@ -29,7 +29,6 @@ class RatingManager {
       this.getAllRatingsStatsFn = module.getAllRatingsStats;
       this.getAllUserRatingsFn = module.getAllUserRatings;
       this.ready = true;
-      console.log('Rating system initialized successfully');
     } catch (error) {
       console.error('Failed to load Supabase:', error);
       this.ready = false;
@@ -61,7 +60,6 @@ class RatingManager {
       this.userRatingsCache = userRatingsMap;
       this.cacheLoaded = true;
       
-      console.log(`Loaded ${statsMap.size} rating stats and ${userRatingsMap.size} user ratings`);
     } catch (error) {
       console.error('Error loading all ratings:', error);
     }

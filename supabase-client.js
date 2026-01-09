@@ -371,7 +371,6 @@ export async function migrateLocalStorageToSupabase(userId) {
     const saved = JSON.parse(localStorage.getItem(savedKey) || '[]');
     
     if (!saved || saved.length === 0) {
-      console.log('No saved items to migrate');
       return;
     }
     
@@ -393,7 +392,6 @@ export async function migrateLocalStorageToSupabase(userId) {
     
     await Promise.all(promises);
     
-    console.log(`✅ Migrated ${promises.length} saved restaurants`);
     
     // Clear localStorage
     localStorage.removeItem(savedKey);
@@ -704,7 +702,6 @@ export async function getAllRatingsStats() {
       return statsMap;
     }
   } catch (error) {
-    console.log('Rating stats view not available, using fallback');
   }
   
   // Fallback: get all ratings and calculate

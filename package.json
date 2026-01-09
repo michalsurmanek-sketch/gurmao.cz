@@ -1,0 +1,27 @@
+{
+  "name": "gurmao.cz",
+  "version": "1.0.0",
+  "description": "**Nejez. Prožij.**",
+  "main": "admin-guard.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michalsurmanek-sketch/gurmao.cz.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/michalsurmanek-sketch/gurmao.cz/issues"
+  },
+  "homepage": "https://github.com/michalsurmanek-sketch/gurmao.cz#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.23",
+    "esbuild": "^0.27.2",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18"
+  }
+}

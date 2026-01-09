@@ -46,15 +46,12 @@ async function loadRestaurants() {
     
     if (error) throw error;
     
-    console.log('Loaded restaurants:', restaurants);
     
     // Filter only restaurants with GPS coordinates
     const restaurantsWithGPS = restaurants.filter(r => r.latitude && r.longitude);
     
-    console.log('Restaurants with GPS:', restaurantsWithGPS);
     
     if (!restaurantsWithGPS || restaurantsWithGPS.length === 0) {
-      console.log('No restaurants with coordinates found');
       return;
     }
     
@@ -184,7 +181,6 @@ map.on('load', () => {
         }
       });
     })
-    .catch(err => console.log('Border loading error:', err));
 
   // Load restaurants
   loadRestaurants();
