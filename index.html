@@ -94,7 +94,7 @@
       max-width: 1120px;
       margin: 0 auto;
       display:grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 18px;
       align-items:start;
       padding-top: 10px;
@@ -170,6 +170,7 @@
     .vibe-pill.chaos{ --ring: rgba(210,160,70,.30); --glow: rgba(210,160,70,.16); --fillA: rgba(210,160,70,.14); --fillB: rgba(0,0,0,.22); }
     .vibe-pill.pure { --ring: rgba(140,190,150,.30); --glow: rgba(140,190,150,.16); --fillA: rgba(140,190,150,.14); --fillB: rgba(0,0,0,.22); }
     .vibe-pill.dark { --ring: rgba(255,255,255,.18); --glow: rgba(255,255,255,.10); --fillA: rgba(255,255,255,.06); --fillB: rgba(0,0,0,.28); }
+    .vibe-pill.calm { --ring: rgba(100,150,200,.30); --glow: rgba(100,150,200,.16); --fillA: rgba(100,150,200,.14); --fillB: rgba(0,0,0,.22); }
 
     /* active state like screenshot */
     .vibe-pill.is-active{
@@ -179,10 +180,10 @@
 
     /* responsive */
     @media (max-width: 980px){
-      .vibe-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .vibe-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
     @media (max-width: 520px){
-      .vibe-grid{ grid-template-columns: 1fr; }
+      .vibe-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
   </style>
 </head>
@@ -346,6 +347,14 @@
         <div class="vibe-name">DARK</div>
       </a>
       <div class="vibe-desc">Temno, noc,<br>alkohol</div>
+    </div>
+
+    <div class="vibe-item">
+      <a href="restaurace.html?vibe=calm" class="vibe-pill calm">
+        <div class="vibe-ico">🌊</div>
+        <div class="vibe-name">CALM</div>
+      </a>
+      <div class="vibe-desc">Klidná atmosféra,<br>harmonie, pohoda</div>
     </div>
   </div>
 </section>
