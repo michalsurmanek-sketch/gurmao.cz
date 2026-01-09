@@ -158,9 +158,6 @@ function updateLoadMoreButton() {
     container.insertAdjacentElement('afterend', btn);
   }
 }
-    container.insertAdjacentElement('afterend', btn);
-  }
-}
 
 // Load more items (either from local cache or server)
 window.loadMoreData = async function() {
@@ -239,16 +236,12 @@ function initializeInfiniteScroll() {
     });
   }
 }
-  });
-}
 
 // Create restaurant card HTML
 function createRestaurantCard(restaurant) {
   const vibeTooltips = {
     '🍷 LUXE': 'Elegantní zážitek, důraz na detail, klidná atmosféra',
     '🔥 DRAMA': 'Výrazné chutě, silná osobnost, nezapomenutelné kombinace',
-    '🌮 CHAOS': 'Uvolněný styl, pestrost, radost z jídla bez pravidel',
-    '🌿 PURE': 'Čisté suroviny, jednoduchost, chuť v hlavní roli',
     '🖤 DARK': 'Intimní atmosféra, večerní vibe, tlumené světlo',
     '🌊 CALM': 'Klidná atmosféra, harmonie, pohoda'
   };
