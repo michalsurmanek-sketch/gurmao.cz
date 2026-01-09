@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  
+  <!-- Preconnect pro rychlejší načítání -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+  
   <title>GURMAO – Restaurace</title>
   <meta name="description" content="Ne všechny restaurace. Jen ty, které mají důvod existovat. Vybrané gastro zažitky." />
   <meta property="og:title" content="GURMAO Restaurace" />
@@ -34,6 +40,8 @@
   <style>
     body { font-family: 'Inter', sans-serif; }
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
+    /* Předbalená koštra - rychlejší First Paint */
+    #restaurantsList { min-height: 400px; }
   </style>
 </head>
 <body class="bg-gurmaoblack text-white overflow-x-hidden">

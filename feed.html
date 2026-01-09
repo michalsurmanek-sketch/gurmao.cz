@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   
+  <!-- Preconnect pro rychlejší načítání -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+  
   <!-- Primary Meta Tags -->
   <title>Feed restaurací – GURMAO | Prohlížej podle nálady</title>
   <meta name="title" content="Feed restaurací – GURMAO | Prohlížej podle nálady">
@@ -397,7 +402,7 @@
   
   // Pagination setup
   let currentPage = 0;
-  const ITEMS_PER_PAGE = 20; // Desktop: 20, Mobile feed: 10
+  const ITEMS_PER_PAGE = 12; // Sníženo z 20 na 12 pro rychlejší načítání
   let totalCount = 0;
   let isLoading = false;
   let hasMoreItems = true;

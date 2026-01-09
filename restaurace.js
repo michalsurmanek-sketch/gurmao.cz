@@ -12,7 +12,7 @@ let currentlyDisplayed = 0;
 
 // Pagination for server-side
 let currentPage = 0;
-const PAGE_SIZE = 50; // Načíst po 50 restauracích
+const PAGE_SIZE = 30; // Načíst po 30 restauracích (sníženo z 50)
 let totalCount = 0;
 let isLoading = false;
 let hasMoreData = true;
@@ -276,7 +276,7 @@ function createRestaurantCard(restaurant) {
         <div class="card-front rounded-3xl bg-white/5 overflow-hidden" style="backface-visibility: hidden;">
           <div class="relative">
             <a href="restaurace-${restaurant.slug}.html" class="block">
-              <div class="aspect-[3/4] bg-cover bg-center" style="background-image: url('${imageUrl}')"></div>
+              <img src="${imageUrl}" alt="${restaurant.name}" loading="lazy" decoding="async" class="aspect-[3/4] w-full h-full object-cover" />
             </a>
             <!-- Buttons on image -->
             <div class="absolute bottom-3 right-3 flex gap-2">
