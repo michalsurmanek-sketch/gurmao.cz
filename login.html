@@ -83,21 +83,21 @@
   </div>
 </header>
 
-<section class="min-h-screen flex items-center justify-center px-6 py-20">
-  <div class="w-full max-w-md">
+<section class="min-h-screen flex items-center justify-center px-6 py-12 md:py-8">
+  <div class="w-full max-w-md md:max-w-2xl">
     
     <!-- TABS -->
-    <div class="flex gap-2 mb-8">
+    <div class="flex gap-2 mb-6 md:mb-8 max-w-md mx-auto">
       <button id="tabLogin" class="flex-1 px-6 py-3 rounded-full bg-gurmaogold text-black font-semibold transition">Přihlásit se</button>
       <button id="tabSignup" class="flex-1 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 transition">Registrovat</button>
     </div>
 
     <!-- LOGIN FORM -->
-    <div id="loginForm" class="rounded-3xl bg-white/5 border border-white/10 p-8">
-      <h1 class="text-3xl mb-2">Vítej zpět</h1>
-      <p class="text-white/60 mb-8">Přihlaš se a pokračuj ve svých sbírkách.</p>
+    <div id="loginForm" class="rounded-3xl bg-white/5 border border-white/10 p-6 md:p-8">
+      <h1 class="text-2xl md:text-3xl mb-2">Vítej zpět</h1>
+      <p class="text-white/60 mb-6 md:mb-8 text-sm md:text-base">Přihlaš se a pokračuj ve svých sbírkách.</p>
 
-      <form id="formLogin" class="space-y-6">
+      <form id="formLogin" class="space-y-4 md:space-y-5">
         <div>
           <label class="block text-sm text-white/70 mb-2">Email</label>
           <input type="email" id="loginEmail" required class="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 focus:border-gurmaogold outline-none" placeholder="tvuj@email.cz" />
@@ -108,7 +108,7 @@
           <input type="password" id="loginPassword" required class="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 focus:border-gurmaogold outline-none" placeholder="••••••••" />
         </div>
 
-        <div class="flex items-center justify-between text-sm">
+        <div class="flex items-center justify-between text-sm flex-wrap gap-2">
           <label class="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" class="w-4 h-4 rounded border-white/20 bg-black/40">
             <span class="text-white/60">Zapamatovat</span>
@@ -116,20 +116,20 @@
           <a href="#" class="text-gurmaogold hover:underline">Zapomenuté heslo?</a>
         </div>
 
-        <button type="submit" class="w-full px-8 py-4 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-[1.02] transition">
+        <button type="submit" class="w-full px-6 md:px-8 py-3 md:py-4 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-[1.02] transition">
           Přihlásit se
         </button>
 
-        <div class="relative my-6">
+        <div class="relative my-4 md:my-5">
           <div class="absolute inset-0 flex items-center">
             <div class="w-full border-t border-white/10"></div>
           </div>
-          <div class="relative flex justify-center text-sm">
+          <div class="relative flex justify-center text-xs md:text-sm">
             <span class="px-4 bg-gurmaoblack text-white/60">nebo</span>
           </div>
         </div>
 
-        <button type="button" class="w-full px-6 py-3 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center gap-3">
+        <button type="button" class="w-full px-4 md:px-6 py-2.5 md:py-3 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center gap-3 text-sm md:text-base">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           Pokračovat s Google
         </button>
@@ -137,11 +137,11 @@
     </div>
 
     <!-- SIGNUP FORM -->
-    <div id="signupForm" class="hidden rounded-3xl bg-white/5 border border-white/10 p-8">
-      <h1 class="text-3xl mb-2">Vytvoř účet</h1>
-      <p class="text-white/60 mb-8">Registruj se a synchronizuj sbírky mezi zařízeními.</p>
+    <div id="signupForm" class="hidden rounded-3xl bg-white/5 border border-white/10 p-6 md:p-8">
+      <h1 class="text-2xl md:text-3xl mb-2">Vytvoř účet</h1>
+      <p class="text-white/60 mb-6 md:mb-8 text-sm md:text-base">Registruj se a synchronizuj sbírky mezi zařízeními.</p>
 
-      <form id="formSignup" class="space-y-6">
+      <form id="formSignup" class="space-y-4 md:space-y-5">
         <div>
           <label class="block text-sm text-white/70 mb-2">Jméno</label>
           <input type="text" id="signupName" required class="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 focus:border-gurmaogold outline-none" placeholder="Jan Novák" />
@@ -157,32 +157,32 @@
           <input type="password" id="signupPassword" required minlength="8" class="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 focus:border-gurmaogold outline-none" placeholder="Minimálně 8 znaků" />
         </div>
 
-        <label class="flex items-start gap-3 cursor-pointer">
+        <label class="flex items-start gap-3 cursor-pointer text-xs md:text-sm">
           <input type="checkbox" required class="w-4 h-4 mt-1 rounded border-white/20 bg-black/40">
-          <span class="text-sm text-white/60">Souhlasím s <a href="#" class="text-gurmaogold hover:underline">podmínkami použití</a> a <a href="#" class="text-gurmaogold hover:underline">zpracováním osobních údajů</a>.</span>
+          <span class="text-white/60">Souhlasím s <a href="#" class="text-gurmaogold hover:underline">podmínkami použití</a> a <a href="#" class="text-gurmaogold hover:underline">zpracováním osobních údajů</a>.</span>
         </label>
 
-        <button type="submit" class="w-full px-8 py-4 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-[1.02] transition">
+        <button type="submit" class="w-full px-6 md:px-8 py-3 md:py-4 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-[1.02] transition">
           Vytvořit účet
         </button>
 
-        <div class="relative my-6">
+        <div class="relative my-4 md:my-5">
           <div class="absolute inset-0 flex items-center">
             <div class="w-full border-t border-white/10"></div>
           </div>
-          <div class="relative flex justify-center text-sm">
+          <div class="relative flex justify-center text-xs md:text-sm">
             <span class="px-4 bg-gurmaoblack text-white/60">nebo</span>
           </div>
         </div>
 
-        <button type="button" class="w-full px-6 py-3 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center gap-3">
+        <button type="button" class="w-full px-4 md:px-6 py-2.5 md:py-3 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center gap-3 text-sm md:text-base">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           Pokračovat s Google
         </button>
       </form>
     </div>
 
-    <p class="text-center text-sm text-white/40 mt-8">
+    <p class="text-center text-xs md:text-sm text-white/40 mt-6 md:mt-8 max-w-md mx-auto">
       💡 Tip: V MVP režimu používáme localStorage. Pro plnou funkčnost se autentizace aktivuje po připojení backendu.
     </p>
 
