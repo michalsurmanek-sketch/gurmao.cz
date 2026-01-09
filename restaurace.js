@@ -403,12 +403,20 @@ async function initializeRatings(restaurants) {
             <span class="text-xs text-white/60">${average.toFixed(1)} (${count})</span>
           </div>
         `;
-      } else {
-        html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
       }
       
-      html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
-      html += await window.ratingManager.renderInteractiveStars(restaurant.slug, userRating || 0);
+      if (userRating > 0) {
+        html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
+        html += await window.ratingManager.renderInteractiveStars(restaurant.slug, userRating);
+      } else if (average === 0) {
+        html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
+        html += '<div class="text-xs text-white/40 mb-1">Ohodnoť jako první:</div>';
+        html += await window.ratingManager.renderInteractiveStars(restaurant.slug, 0);
+      } else {
+        html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
+        html += await window.ratingManager.renderInteractiveStars(restaurant.slug, 0);
+      }
+      
       html += '</div>';
       
       container.innerHTML = html;
