@@ -182,19 +182,66 @@
   </p>
 </section>
 
-<!-- VIBE STRIP -->
-<section class="py-16 border-t border-white/10">
-  <div class="max-w-6xl mx-auto px-6">
-    <h2 class="text-3xl md:text-4xl mb-8">Vyber si <span class="text-gurmaogold">vibe</span></h2>
-
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-      <div class="vibe-tooltip rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer" data-tooltip="Výrazné chutě, silná osobnost, nezapomenutelné kombinace">🔥 DRAMA</div>
-      <div class="vibe-tooltip rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer" data-tooltip="Intimní atmosféra, večerní vibe, tlumené světlo">🖤 DARK</div>
-      <div class="vibe-tooltip rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer" data-tooltip="Čisté suroviny, jednoduchost, chuť v hlavní roli">🌿 PURE</div>
-      <div class="vibe-tooltip rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer" data-tooltip="Elegantní zážitek, důraz na detail, klidná atmosféra">🍷 LUXE</div>
-      <div class="vibe-tooltip rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer" data-tooltip="Uvolněný styl, pestrost, radost z jídla bez pravidel">🌮 CHAOS</div>
-      <div class="vibe-tooltip rounded-2xl p-6 bg-white/5 hover:bg-gurmaogold hover:text-black transition cursor-pointer" data-tooltip="Klidná atmosféra, harmonie, pohoda">🌊 CALM</div>
+<!-- VIBE SECTION -->
+<section class="py-20 border-t border-white/10 bg-gradient-to-b from-gurmaoblack to-gurmaoblack/95">
+  <div class="max-w-7xl mx-auto px-6">
+    
+    <!-- Nadpis sekce -->
+    <div class="text-center mb-4">
+      <p class="text-white/60 text-sm md:text-base mb-2">Ruční výběr 150+ vybraných restaurací. Bez reklam. Bez, palačných pozic.</p>
     </div>
+
+    <h2 class="text-4xl md:text-5xl text-center mb-16 font-serif">Vyber si podle <span class="text-gurmaogold">nálady</span></h2>
+
+    <!-- Vibe Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 mb-8">
+      
+      <!-- LUXE -->
+      <a href="restaurace.html?vibe=luxe" class="group relative rounded-3xl p-6 md:p-8 bg-gradient-to-br from-amber-900/40 to-amber-950/60 border border-amber-700/30 hover:border-gurmaogold hover:shadow-glow transition-all duration-300">
+        <div class="text-5xl md:text-6xl mb-4">🍷</div>
+        <h3 class="text-xl md:text-2xl font-bold mb-3 text-gurmaogold">LUXE</h3>
+        <p class="text-sm md:text-base text-white/70 leading-relaxed">Elegance, klid, servis.</p>
+      </a>
+
+      <!-- DRAMA -->
+      <a href="restaurace.html?vibe=drama" class="group relative rounded-3xl p-6 md:p-8 bg-gradient-to-br from-red-900/40 to-red-950/60 border border-red-700/30 hover:border-gurmaored hover:shadow-glow transition-all duration-300">
+        <div class="text-5xl md:text-6xl mb-4">🔥</div>
+        <h3 class="text-xl md:text-2xl font-bold mb-3 text-red-400">DRAMA</h3>
+        <p class="text-sm md:text-base text-white/70 leading-relaxed">Emoce, show, výrazné chuťě</p>
+      </a>
+
+      <!-- CHAOS -->
+      <a href="restaurace.html?vibe=chaos" class="group relative rounded-3xl p-6 md:p-8 bg-gradient-to-br from-yellow-900/40 to-yellow-950/60 border border-yellow-700/30 hover:border-yellow-500 hover:shadow-glow transition-all duration-300">
+        <div class="text-5xl md:text-6xl mb-4">🌮</div>
+        <h3 class="text-xl md:text-2xl font-bold mb-3 text-yellow-500">CHAOS</h3>
+        <p class="text-sm md:text-base text-white/70 leading-relaxed">Street food, nápady, odvaha</p>
+      </a>
+
+      <!-- PURE -->
+      <a href="restaurace.html?vibe=pure" class="group relative rounded-3xl p-6 md:p-8 bg-gradient-to-br from-green-900/40 to-green-950/60 border border-green-700/30 hover:border-green-500 hover:shadow-glow transition-all duration-300">
+        <div class="text-5xl md:text-6xl mb-4">🌿</div>
+        <h3 class="text-xl md:text-2xl font-bold mb-3 text-green-400">PURE</h3>
+        <p class="text-sm md:text-base text-white/70 leading-relaxed">Čistota, přeoda, lehkost</p>
+      </a>
+
+      <!-- DARK -->
+      <a href="restaurace.html?vibe=dark" class="group relative rounded-3xl p-6 md:p-8 bg-gradient-to-br from-slate-900/40 to-slate-950/60 border border-slate-700/30 hover:border-slate-500 hover:shadow-glow transition-all duration-300">
+        <div class="text-5xl md:text-6xl mb-4">🌙</div>
+        <h3 class="text-xl md:text-2xl font-bold mb-3 text-slate-300">DARK</h3>
+        <p class="text-sm md:text-base text-white/70 leading-relaxed">Temno, noc, alkohol</p>
+      </a>
+
+    </div>
+
+    <!-- Pagination Dots -->
+    <div class="flex justify-center gap-2 mt-8">
+      <span class="w-2 h-2 rounded-full bg-gurmaogold"></span>
+      <span class="w-2 h-2 rounded-full bg-white/30"></span>
+      <span class="w-2 h-2 rounded-full bg-white/30"></span>
+      <span class="w-2 h-2 rounded-full bg-white/30"></span>
+      <span class="w-2 h-2 rounded-full bg-white/30"></span>
+    </div>
+
   </div>
 </section>
 
