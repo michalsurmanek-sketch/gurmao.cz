@@ -42,6 +42,83 @@
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
     /* Předbalená koštra - rychlejší First Paint */
     #restaurantsList { min-height: 400px; }
+
+    /* ====== VIBE PILLS STYLES ====== */
+    .vibe-pill{
+      --ring: rgba(255,255,255,.10);
+      --glow: rgba(255,255,255,.08);
+      --fillA: rgba(255,255,255,.05);
+      --fillB: rgba(0,0,0,.18);
+
+      height: 42px;
+      border-radius: 999px;
+      border: 1px solid var(--ring);
+      background:
+        radial-gradient(120px 60px at 20% 20%, rgba(255,255,255,.06), transparent 60%),
+        linear-gradient(180deg, var(--fillA), var(--fillB));
+      backdrop-filter: blur(10px);
+
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+      padding: 0 20px;
+
+      box-shadow: 0 0 36px var(--glow);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      user-select:none;
+      cursor: pointer;
+    }
+
+    .vibe-pill:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 0 46px var(--glow);
+      border-color: color-mix(in srgb, var(--ring) 70%, rgba(255,255,255,.18));
+    }
+
+    .vibe-ico{
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display:grid;
+      place-items:center;
+
+      border: 1px solid color-mix(in srgb, var(--ring) 70%, rgba(255,255,255,.14));
+      background: rgba(0,0,0,.18);
+      box-shadow: 0 0 22px var(--glow);
+
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .vibe-name{
+      font-weight: 900;
+      letter-spacing: .10em;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.82);
+    }
+
+    /* per-vibe tuning */
+    .vibe-pill.luxe { --ring: rgba(201,162,77,.32); --glow: rgba(201,162,77,.16); --fillA: rgba(201,162,77,.18); --fillB: rgba(0,0,0,.22); }
+    .vibe-pill.drama{ --ring: rgba(200,90,90,.30); --glow: rgba(200,90,90,.16); --fillA: rgba(200,90,90,.14); --fillB: rgba(0,0,0,.22); }
+    .vibe-pill.chaos{ --ring: rgba(210,160,70,.30); --glow: rgba(210,160,70,.16); --fillA: rgba(210,160,70,.14); --fillB: rgba(0,0,0,.22); }
+    .vibe-pill.pure { --ring: rgba(140,190,150,.30); --glow: rgba(140,190,150,.16); --fillA: rgba(140,190,150,.14); --fillB: rgba(0,0,0,.22); }
+    .vibe-pill.dark { --ring: rgba(255,255,255,.18); --glow: rgba(255,255,255,.10); --fillA: rgba(255,255,255,.06); --fillB: rgba(0,0,0,.28); }
+    .vibe-pill.calm { --ring: rgba(100,150,200,.30); --glow: rgba(100,150,200,.16); --fillA: rgba(100,150,200,.14); --fillB: rgba(0,0,0,.22); }
+
+    /* active state */
+    .vibe-pill.is-active{
+      box-shadow: 0 0 56px var(--glow);
+      border-color: color-mix(in srgb, var(--ring) 70%, rgba(255,255,255,.18));
+    }
+
+    .vibe-pill.all {
+      --ring: rgba(212,175,55,.32);
+      --glow: rgba(212,175,55,.20);
+      --fillA: rgba(212,175,55,.22);
+      --fillB: rgba(0,0,0,.22);
+    }
   </style>
 </head>
 <body class="bg-gurmaoblack text-white overflow-x-hidden">
@@ -171,14 +248,34 @@
     </div>
     
     <!-- Vibe Filters -->
-    <div id="filters" class="flex flex-wrap gap-4 mb-4">
-      <button class="px-5 py-2 rounded-full bg-gurmaogold text-black transition">Vše</button>
-      <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Elegantní zážitek, důraz na detail, klidná atmosféra">🍷 LUXE</button>
-      <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Výrazné chutě, silná osobnost, nezapomenutelné kombinace">🔥 DRAMA</button>
-      <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Uvolněný styl, pestrost, radost z jídla bez pravidel">🌮 CHAOS</button>
-      <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Čisté suroviny, jednoduchost, chuť v hlavní roli">🌿 PURE</button>
-      <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Intimní atmosféra, večerní vibe, tlumené světlo">🖤 DARK</button>
-      <button class="vibe-tooltip px-5 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-tooltip="Klidná atmosféra, harmonie, pohoda">🌊 CALM</button>
+    <div id="filters" class="flex flex-wrap gap-3 mb-4">
+      <button class="vibe-pill all is-active">
+        <div class="vibe-name">Vše</div>
+      </button>
+      <button class="vibe-pill luxe">
+        <div class="vibe-ico">🍷</div>
+        <div class="vibe-name">LUXE</div>
+      </button>
+      <button class="vibe-pill drama">
+        <div class="vibe-ico">🔥</div>
+        <div class="vibe-name">DRAMA</div>
+      </button>
+      <button class="vibe-pill chaos">
+        <div class="vibe-ico">🌮</div>
+        <div class="vibe-name">CHAOS</div>
+      </button>
+      <button class="vibe-pill pure">
+        <div class="vibe-ico">🌿</div>
+        <div class="vibe-name">PURE</div>
+      </button>
+      <button class="vibe-pill dark">
+        <div class="vibe-ico">🌙</div>
+        <div class="vibe-name">DARK</div>
+      </button>
+      <button class="vibe-pill calm">
+        <div class="vibe-ico">🌊</div>
+        <div class="vibe-name">CALM</div>
+      </button>
     </div>
     
     <!-- Display Options -->
