@@ -209,9 +209,11 @@
 
 <!-- AI FORM -->
 <section class="py-16">
-  <div class="max-w-5xl mx-auto px-6">
-    <form id="aiRecommendationForm" class="bg-white/5 rounded-3xl border border-white/10 p-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-8 items-start">
+      <!-- Form -->
+      <form id="aiRecommendationForm" class="bg-white/5 rounded-3xl border border-white/10 p-8 lg:sticky lg:top-24">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <!-- Mood -->
         <div>
           <label class="block text-sm font-semibold mb-2">
@@ -345,7 +347,8 @@
         AI engine analyzuje tvé preference a doporučí nejlepší restaurace podle match score.
       </p>
     </form>
-
+lg:min-h-screen"></div>
+    
     <!-- Results Container -->
     <div id="aiResults" class="mt-12"></div>
   </div>
