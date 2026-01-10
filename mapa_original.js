@@ -37,10 +37,6 @@ geolocate.on('geolocate', (e) => {
   });
 });
 
-// Global state for filtering
-let allMarkers = [];
-let activeFilters = new Set();
-
 // Load restaurants from Supabase
 async function loadRestaurants() {
   try {
@@ -149,13 +145,10 @@ async function loadRestaurants() {
       });
 
       // Create marker
-      const marker = new mapboxgl.Marker(el)
+      new mapboxgl.Marker(el)
         .setLngLat([restaurant.longitude, restaurant.latitude])
         .setPopup(popup)
         .addTo(map);
-      
-      // Store marker with its vibe for filtering
-      allMarkers.push({ marker, vibe: restaurant.vibe });
     });
 
     // Keep map centered on Czech Republic instead of fitting to markers
@@ -164,62 +157,6 @@ async function loadRestaurants() {
   } catch (error) {
     console.error('Error loading restaurants:', error);
   }
-}
-
-// Initialize filter event listeners
-function initFilters() {
-  document.querySelectorAll('.vibe-filter').forEach(el => {
-    el.addEventListener('click', () => {
-      const vibe = el.getAttribute('data-vibe');
-      toggleVibeFilter(vibe);
-    });
-  });
-}
-
-// Toggle vibe filter
-function toggleVibeFilter(vibe) {
-  if (activeFilters.has(vibe)) {
-    activeFilters.delete(vibe);
-  } else {
-    activeFilters.add(vibe);
-  }
-  
-  // Update UI
-  document.querySelectorAll(`[data-vibe="${vibe}"]`).forEach(el => {
-    const label = el.querySelector('.vibe-filter-label');
-    if (activeFilters.has(vibe)) {
-      el.style.opacity = '1';
-      if (label) {
-        label.style.textDecoration = 'underline';
-        label.style.color = '#d4af37';
-      }
-    } else {
-      el.style.opacity = '0.5';
-      if (label) {
-        label.style.textDecoration = 'none';
-        label.style.color = '';
-      }
-    }
-  });
-  
-  // Filter markers
-  filterMarkers();
-}
-
-// Filter markers based on active filters
-function filterMarkers() {
-  allMarkers.forEach(({ marker, vibe }) => {
-    if (activeFilters.size === 0) {
-      // No filters active, show all
-      marker.getElement().style.display = '';
-    } else {
-      // Check if marker's vibe matches any active filter
-      const shouldShow = Array.from(activeFilters).some(filter => 
-        vibe && vibe.includes(filter)
-      );
-      marker.getElement().style.display = shouldShow ? '' : 'none';
-    }
-  });
 }
 
 // Load restaurants when map is ready
@@ -243,11 +180,8 @@ map.on('load', () => {
           'line-opacity': 0.8
         }
       });
-    });
+    })
 
   // Load restaurants
   loadRestaurants();
-  
-  // Initialize filters
-  initFilters();
 });
