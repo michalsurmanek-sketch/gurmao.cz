@@ -1,8 +1,8 @@
 // Import Supabase client
 import { supabase } from './supabase-client.js';
 
-// Mapbox access token (public token for testing - get your own at mapbox.com)
-mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+// Mapbox access token
+mapboxgl.accessToken = 'pk.eyJ1IjoiZ3VybWFvIiwiYSI6ImNtazh0dTRnejFlZmIzZHF4ZGxvd3NzeDMifQ.MZ4aV06JvxNLzuFIa7VE4w';
 
 // Initialize map
 const map = new mapboxgl.Map({
