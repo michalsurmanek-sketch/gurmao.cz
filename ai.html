@@ -191,28 +191,27 @@
   </div>
 </div>
 
-<!-- HERO -->
-<section class="py-24 border-b border-white/10 relative overflow-hidden">
+<!-- AI SECTION -->
+<section class="py-16 relative overflow-hidden">
   <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.12),transparent_70%)]"></div>
-  <div class="relative max-w-4xl mx-auto px-6 text-center">
-    <h1 class="text-4xl md:text-6xl mb-6">
-      <span class="text-gurmaogold">AI</span> Doporučení
-    </h1>
-    <p class="text-xl text-white/70 mb-2">
-      Kam dnes podle nálady?
-    </p>
-    <p class="text-white/50 mb-10">
-      Zadej své preference a AI ti doporučí restauraci na míru.
-    </p>
-  </div>
-</section>
-
-<!-- AI FORM -->
-<section class="py-16">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="grid lg:grid-cols-2 gap-8 items-start">
-      <!-- Form -->
-      <form id="aiRecommendationForm" class="bg-white/5 rounded-3xl border border-white/10 p-8 lg:sticky lg:top-24">
+  <div class="relative max-w-7xl mx-auto px-6">
+    <!-- Header + Form Grid -->
+    <div class="grid lg:grid-cols-2 gap-12 mb-16 items-start">
+      <!-- Left: Hero Text -->
+      <div class="lg:pt-12">
+        <h1 class="text-4xl md:text-6xl mb-6">
+          <span class="text-gurmaogold">AI</span> Doporučení
+        </h1>
+        <p class="text-xl text-white/70 mb-4">
+          Kam dnes podle nálady?
+        </p>
+        <p class="text-white/50 text-lg">
+          Zadej své preference a AI ti doporučí restauraci na míru. Žádné scrollování. Jedno doporučení. Gastro asistent.
+        </p>
+      </div>
+      
+      <!-- Right: Form -->
+      <form id="aiRecommendationForm" class="bg-white/5 rounded-3xl border border-white/10 p-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <!-- Mood -->
         <div>
@@ -347,9 +346,9 @@
         AI engine analyzuje tvé preference a doporučí nejlepší restaurace podle match score.
       </p>
     </form>
-lg:min-h-screen"></div>
-    
-    <!-- Results Container -->
+    </div>
+
+    <!-- Results Container (Full Width Below) -->
     <div id="aiResults" class="mt-12"></div>
   </div>
 </section>
