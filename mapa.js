@@ -7,7 +7,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZ3VybWFvIiwiYSI6ImNtazh0dTRnejFlZmIzZHF4ZGxvd
 // Initialize map
 const map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/mapbox/satellite-streets-v12',
+  style: 'mapbox://styles/mapbox/dark-v11',
   center: [15.5, 49.8], // Center of Czech Republic
   zoom: 7.2,
   pitch: 0,
