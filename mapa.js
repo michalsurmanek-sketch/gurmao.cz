@@ -4,8 +4,19 @@ import { supabase } from './supabase-client.js';
 // Mapbox access token
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ3VybWFvIiwiYSI6ImNtazh0dTRnejFlZmIzZHF4ZGxvd3NzeDMifQ.MZ4aV06JvxNLzuFIa7VE4w';
 
-// Initialize map
-const map = new mapboxgl.Map({
+// Global variables
+let map;
+let allMarkers = [];
+let activeFilters = new Set();
+
+// Initialize map (called only when user clicks button)
+function initMap() {
+  // Hide placeholder, show map container
+  document.getElementById('mapPlaceholder').style.display = 'none';
+  document.getElementById('map').classList.remove('hidden');
+
+  // Create map
+  map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/satellite-streets-v12',
   center: [15.5, 49.8], // Center of Czech Republic
@@ -17,29 +28,28 @@ const map = new mapboxgl.Map({
 // Add navigation controls
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-// Add geolocate control
-const geolocate = new mapboxgl.GeolocateControl({
-  positionOptions: {
-    enableHighAccuracy: true
-  },
-  trackUserLocation: true,
-  showUserHeading: true
-});
-
-map.addControl(geolocate, 'top-right');
-
-// Custom zoom level when geolocate is triggered
-geolocate.on('geolocate', (e) => {
-  map.flyTo({
-    center: [e.coords.longitude, e.coords.latitude],
-    zoom: 10, // Much wider zoom to see restaurants in larger area (approx 10-15 km radius)
-    essential: true
+  // Add geolocate control
+  const geolocate = new mapboxgl.GeolocateControl({
+    positionOptions: {
+      enableHighAccuracy: true
+    },
+    trackUserLocation: true,
+    showUserHeading: true
   });
-});
 
-// Global state for filtering
-let allMarkers = [];
-let activeFilters = new Set();
+  map.addControl(geolocate, 'top-right');
+
+  // Custom zoom level when geolocate is triggered
+  geolocate.on('geolocate', (e) => {
+    map.flyTo({
+      center: [e.coords.longitude, e.coords.latitude],
+      zoom: 10, // Much wider zoom to see restaurants in larger area (approx 10-15 km radius)
+      essential: true
+    });
+  });
+
+  // Load restaurants after map is ready
+  map.on('load', async () => {
 
 // Load restaurants from Supabase
 async function loadRestaurants() {
