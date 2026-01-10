@@ -208,18 +208,23 @@ function toggleVibeFilter(vibe) {
 
 // Filter markers based on active filters
 function filterMarkers() {
+  let visibleCount = 0;
   allMarkers.forEach(({ marker, vibe }) => {
     if (activeFilters.size === 0) {
       // No filters active, show all
       marker.getElement().style.display = '';
+      visibleCount++;
     } else {
       // Check if marker's vibe matches any active filter
       const shouldShow = Array.from(activeFilters).some(filter => 
         vibe && vibe.includes(filter)
       );
       marker.getElement().style.display = shouldShow ? '' : 'none';
+      if (shouldShow) visibleCount++;
     }
   });
+  console.log(`Filtered: ${visibleCount}/${allMarkers.length} markers visible`, 
+              `Active filters: [${Array.from(activeFilters).join(', ')}]`);
 }
 
 // Load restaurants when map is ready

@@ -5,13 +5,13 @@
   // Check if user is logged in
   const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
   
+  const userMenuDesktop = document.getElementById('userMenuDesktop');
+  const userMenuMobile = document.getElementById('userMenuMobile');
+  const loginLinkDesktop = document.getElementById('loginLinkDesktop');
+  const loginLinkMobile = document.getElementById('loginLinkMobile');
+  
   if (user && user.loggedIn) {
     // Show user menu
-    const userMenuDesktop = document.getElementById('userMenuDesktop');
-    const userMenuMobile = document.getElementById('userMenuMobile');
-    const loginLinkDesktop = document.getElementById('loginLinkDesktop');
-    const loginLinkMobile = document.getElementById('loginLinkMobile');
-    
     if (userMenuDesktop) userMenuDesktop.classList.remove('hidden');
     if (userMenuMobile) userMenuMobile.classList.remove('hidden');
     if (loginLinkDesktop) loginLinkDesktop.classList.add('hidden');
@@ -85,5 +85,11 @@
         window.location.href = 'index.html';
       });
     });
+  } else {
+    // User is NOT logged in - show login links
+    if (loginLinkDesktop) loginLinkDesktop.classList.remove('hidden');
+    if (loginLinkMobile) loginLinkMobile.classList.remove('hidden');
+    if (userMenuDesktop) userMenuDesktop.classList.add('hidden');
+    if (userMenuMobile) userMenuMobile.classList.add('hidden');
   }
 })();
