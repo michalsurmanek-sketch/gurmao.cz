@@ -11,7 +11,14 @@ const map = new mapboxgl.Map({
   center: [15.5, 49.8], // Center of Czech Republic
   zoom: 7.2,
   pitch: 0,
-  bearing: 0
+  bearing: 0,
+  touchZoomRotate: true,
+  touchPitch: false,
+  dragPan: true,
+  dragRotate: false,
+  scrollZoom: true,
+  doubleClickZoom: true,
+  boxZoom: true
 });
 
 // Add navigation controls
