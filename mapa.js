@@ -96,15 +96,6 @@ function filterMarkers() {
     }
   });
 }
-    } else {
-      // Check if marker's vibe matches any active filter
-      const shouldShow = Array.from(activeFilters).some(filter => 
-        vibe && vibe.includes(filter)
-      );
-      marker.getElement().style.display = shouldShow ? '' : 'none';
-    }
-  });
-}
 
 // Load restaurants from Supabase
 async function loadRestaurants() {
