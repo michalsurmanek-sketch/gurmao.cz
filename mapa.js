@@ -243,7 +243,7 @@ map.on('load', () => {
           'line-opacity': 0.8
         }
       });
-    })
+    });
 
   // Load restaurants
   loadRestaurants();
