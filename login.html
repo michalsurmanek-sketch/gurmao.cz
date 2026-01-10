@@ -33,6 +33,84 @@
   <style>
     body { font-family: 'Inter', sans-serif; }
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
+    
+    /* Auth Header Styling */
+    .auth-header {
+      margin: 6px 0 24px;
+      position: relative;
+    }
+
+    /* Zlatý beam nahoře (jemný) */
+    .auth-header::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: -10px;
+      width: 140px;
+      height: 34px;
+      background: radial-gradient(closest-side, rgba(212, 175, 55, 0.35), rgba(212, 175, 55, 0));
+      filter: blur(6px);
+      pointer-events: none;
+    }
+
+    .auth-title {
+      margin: 0 0 6px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      font-size: clamp(26px, 2.2vw, 34px);
+      color: rgba(255, 255, 255, 0.90);
+      text-shadow:
+        0 1px 0 rgba(0, 0, 0, 0.45),
+        0 0 18px rgba(212, 175, 55, 0.14);
+      position: relative;
+      display: inline-block;
+      animation: titleIn 0.55s ease-out both;
+    }
+
+    /* Zlaté podtržení jako "signature" */
+    .auth-title::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -10px;
+      width: 58%;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(212, 175, 55, 0.95), rgba(240, 210, 122, 0.35), rgba(212, 175, 55, 0));
+      border-radius: 999px;
+      box-shadow: 0 0 18px rgba(212, 175, 55, 0.20);
+      animation: lineIn 0.7s 0.1s ease-out both;
+    }
+
+    .auth-subtitle {
+      margin: 14px 0 0;
+      font-size: 14px;
+      line-height: 1.45;
+      color: rgba(255, 255, 255, 0.62);
+      max-width: 46ch;
+      animation: fadeUp 0.6s 0.08s ease-out both;
+    }
+
+    /* Animace */
+    @keyframes titleIn {
+      from { opacity: 0; transform: translateY(8px); filter: blur(3px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+    @keyframes lineIn {
+      from { width: 0; opacity: 0; }
+      to { width: 58%; opacity: 1; }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Respekt pro uživatele se sníženým pohybem */
+    @media (prefers-reduced-motion: reduce) {
+      .auth-title, .auth-title::after, .auth-subtitle {
+        animation: none;
+      }
+    }
   </style>
 </head>
 <body class="bg-gurmaoblack text-white overflow-x-hidden">
@@ -94,8 +172,10 @@
 
     <!-- LOGIN FORM -->
     <div id="loginForm" class="rounded-3xl bg-white/5 border border-white/10 p-6 md:p-8">
-      <h1 class="text-2xl md:text-3xl mb-2">Vítej zpět</h1>
-      <p class="text-white/60 mb-6 md:mb-8 text-sm md:text-base">Přihlaš se a pokračuj ve svých sbírkách.</p>
+      <div class="auth-header">
+        <h1 class="auth-title">Vítej zpět.</h1>
+        <p class="auth-subtitle">Tvoje oblíbené chutě, místa a zážitky jsou připravené.</p>
+      </div>
 
       <form id="formLogin" class="space-y-4 md:space-y-5">
         <div>
@@ -138,8 +218,10 @@
 
     <!-- SIGNUP FORM -->
     <div id="signupForm" class="hidden rounded-3xl bg-white/5 border border-white/10 p-6 md:p-8">
-      <h1 class="text-2xl md:text-3xl mb-2">Vytvoř účet</h1>
-      <p class="text-white/60 mb-6 md:mb-8 text-sm md:text-base">Registruj se a synchronizuj sbírky mezi zařízeními.</p>
+      <div class="auth-header">
+        <h1 class="auth-title">Začni objevovat.</h1>
+        <p class="auth-subtitle">Vytvoř si účet a synchronizuj své gastro zážitky napříč zařízeními.</p>
+      </div>
 
       <form id="formSignup" class="space-y-4 md:space-y-5">
         <div>
