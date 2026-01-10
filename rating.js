@@ -174,30 +174,30 @@ class RatingManager {
   // Render star rating (static display)
   renderStars(rating, size = 'md') {
     const sizeClass = {
-      sm: 'text-sm',
-      md: 'text-base',
-      lg: 'text-xl'
-    }[size] || 'text-base';
+      sm: 'text-xs',
+      md: 'text-sm',
+      lg: 'text-base'
+    }[size] || 'text-sm';
 
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
-    let html = `<div class="inline-flex items-center gap-0.5 ${sizeClass}">`;
+    let html = `<div class="inline-flex items-center gap-0.5 ${sizeClass} opacity-60">`;
     
     // Full stars
     for (let i = 0; i < fullStars; i++) {
-      html += '<span class="text-gurmaogold">⭐</span>';
+      html += '<span class="text-gurmaogold">●</span>';
     }
     
     // Half star
     if (hasHalfStar) {
-      html += '<span class="text-gurmaogold">✨</span>';
+      html += '<span class="text-gurmaogold">◐</span>';
     }
     
     // Empty stars
     for (let i = 0; i < emptyStars; i++) {
-      html += '<span class="text-white/20">⭐</span>';
+      html += '<span class="text-white/20">○</span>';
     }
     
     html += `</div>`;
@@ -217,9 +217,9 @@ class RatingManager {
         <div class="rating-locked inline-flex items-center gap-1" data-restaurant="${restaurantId}">
           ${[1, 2, 3, 4, 5].map(star => `
             <span 
-              class="text-2xl ${star <= finalRating ? 'text-gurmaogold' : 'text-white/20'}"
+              class="text-sm ${star <= finalRating ? 'text-gurmaogold opacity-70' : 'text-white/15'}"
               title="Již jste ohodnotili ${finalRating} ${finalRating === 1 ? 'hvězdičkou' : finalRating < 5 ? 'hvězdičkami' : 'hvězdičkami'}"
-            >⭐</span>
+            >●</span>
           `).join('')}
           <span class="ml-2 text-xs text-white/40">Již ohodnoceno</span>
         </div>
@@ -232,7 +232,7 @@ class RatingManager {
       const html = `
         <div class="rating-login inline-flex items-center gap-2">
           ${[1, 2, 3, 4, 5].map(star => `
-            <span class="text-2xl text-white/10">⭐</span>
+            <span class="text-sm text-white/10">○</span>
           `).join('')}
           <a href="login.html" class="ml-2 text-xs text-gurmaogold hover:underline">Přihlásit se k hodnocení</a>
         </div>
@@ -246,10 +246,10 @@ class RatingManager {
         ${[1, 2, 3, 4, 5].map(star => `
           <button 
             type="button"
-            class="rating-star text-2xl transition-all hover:scale-110 ${star <= finalRating ? 'text-gurmaogold' : 'text-white/20'}"
+            class="rating-star text-base transition-all hover:scale-110 hover:opacity-100 ${star <= finalRating ? 'text-gurmaogold opacity-70' : 'text-white/20 opacity-50'}"
             data-star="${star}"
             title="${star} ${star === 1 ? 'hvězdička' : star < 5 ? 'hvězdičky' : 'hvězdiček'}"
-          >⭐</button>
+          >●</button>
         `).join('')}
       </div>
     `;
@@ -297,7 +297,7 @@ class RatingManager {
         
         // Show toast
         if (window.toast) {
-          window.toast.show(`⭐ Uloženo ${stars} ${stars === 1 ? 'hvězdičkou' : stars < 5 ? 'hvězdičkami' : 'hvězdičkami'}!`, 'success');
+          window.toast.show(`Hodnocení uloženo: ${stars}/5`, 'success');
         }
 
         // Trigger update event (na pozadí načti statistiky)
