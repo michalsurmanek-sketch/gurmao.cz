@@ -100,7 +100,7 @@ export async function isAuthenticated() {
  */
 export async function resetPassword(email) {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + '/reset-password.html'
+    redirectTo: 'https://gurmao.cz/reset-password.html'
   });
   
   if (error) throw error;
