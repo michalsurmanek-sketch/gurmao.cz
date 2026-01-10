@@ -34,17 +34,26 @@
     body { font-family: 'Inter', sans-serif; }
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
     
-    /* Mobile Feed Mode */
+    /* Mobile Full-Screen Feed */
     @media (max-width: 768px) {
-      .mobile-feed-mode .chef-card {
+      header, #heroSection, footer {
+        display: none;
+      }
+      
+      #listSection {
+        padding: 0 !important;
+      }
+      
+      .chef-card {
         min-height: 100vh;
         min-height: 100dvh;
         scroll-snap-align: start;
         display: flex;
         flex-direction: column;
+        border-radius: 0 !important;
       }
       
-      .mobile-feed-mode #chefsGrid {
+      #chefsGrid {
         scroll-snap-type: y mandatory;
         overflow-y: scroll;
         height: 100vh;
@@ -55,12 +64,12 @@
         gap: 0;
       }
       
-      .mobile-feed-mode .chef-card-image {
+      .chef-card-image {
         flex: 1;
         min-height: 70vh;
       }
       
-      .mobile-feed-mode .chef-card-content {
+      .chef-card-content {
         position: absolute;
         bottom: 0;
         left: 0;
@@ -68,15 +77,6 @@
         background: linear-gradient(to top, rgba(11,11,13,0.95), transparent);
         padding: 2rem 1.5rem 2rem;
       }
-    }
-    
-    /* Feed Toggle Button */
-    .feed-toggle {
-      position: fixed;
-      bottom: 2rem;
-      right: 1.5rem;
-      z-index: 40;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     }
   </style>
 </head>
@@ -181,11 +181,6 @@
     </p>
   </div>
 </section>
-
-<!-- Feed Toggle Button (Mobile Only) -->
-<button id="feedToggle" class="feed-toggle md:hidden w-14 h-14 rounded-full bg-gurmaogold text-black font-bold hover:scale-110 transition">
-  📱
-</button>
 
 <!-- LIST -->
 <section id="listSection" class="py-20">
@@ -324,50 +319,6 @@ async function initRatings(chefIds) {
     }
   }
 }
-
-// Feed mode toggle
-let feedMode = false;
-
-function toggleFeedMode() {
-  feedMode = !feedMode;
-  const body = document.body;
-  const header = document.querySelector('header');
-  const hero = document.getElementById('heroSection');
-  const listSection = document.getElementById('listSection');
-  const footer = document.querySelector('footer');
-  const toggleBtn = document.getElementById('feedToggle');
-  
-  if (feedMode) {
-    // Enable feed mode
-    body.classList.add('mobile-feed-mode');
-    header?.classList.add('hidden');
-    hero?.classList.add('hidden');
-    listSection?.classList.remove('py-20');
-    footer?.classList.add('hidden');
-    toggleBtn.textContent = '📋';
-    toggleBtn.title = 'Grid zobrazení';
-    
-    // Scroll to first chef
-    setTimeout(() => {
-      document.querySelector('.chef-card')?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  } else {
-    // Disable feed mode
-    body.classList.remove('mobile-feed-mode');
-    header?.classList.remove('hidden');
-    hero?.classList.remove('hidden');
-    listSection?.classList.add('py-20');
-    footer?.classList.remove('hidden');
-    toggleBtn.textContent = '📱';
-    toggleBtn.title = 'Feed zobrazení';
-    
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-}
-
-// Initialize feed toggle
-document.getElementById('feedToggle')?.addEventListener('click', toggleFeedMode);
 
 // Load chefs on page load
 document.addEventListener('DOMContentLoaded', loadChefs);
