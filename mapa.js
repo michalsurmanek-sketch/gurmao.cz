@@ -49,7 +49,35 @@ map.addControl(new mapboxgl.NavigationControl(), 'top-right');
   });
 
   // Load restaurants after map is ready
-  map.on('load', async () => {
+  map.on('load', () => {
+    // Add Czech Republic border outline with precise data
+    fetch('czech-border.geojson')
+      .then(response => response.json())
+      .then(data => {
+        map.addSource('czech-border', {
+          type: 'geojson',
+          data: data
+        });
+
+        map.addLayer({
+          id: 'czech-border-line',
+          type: 'line',
+          source: 'czech-border',
+          paint: {
+            'line-color': '#d4af37',
+            'line-width': 2,
+            'line-opacity': 0.8
+          }
+        });
+      });
+
+    // Load restaurants
+    loadRestaurants();
+    
+    // Initialize filters
+    initFilters();
+  });
+}
 
 // Load restaurants from Supabase
 async function loadRestaurants() {
@@ -237,32 +265,10 @@ function filterMarkers() {
               `Active filters: [${Array.from(activeFilters).join(', ')}]`);
 }
 
-// Load restaurants when map is ready
-map.on('load', () => {
-  // Add Czech Republic border outline with precise data
-  fetch('czech-border.geojson')
-    .then(response => response.json())
-    .then(data => {
-      map.addSource('czech-border', {
-        type: 'geojson',
-        data: data
-      });
-
-      map.addLayer({
-        id: 'czech-border-line',
-        type: 'line',
-        source: 'czech-border',
-        paint: {
-          'line-color': '#d4af37',
-          'line-width': 2,
-          'line-opacity': 0.8
-        }
-      });
-    });
-
-  // Load restaurants
-  loadRestaurants();
-  
-  // Initialize filters
-  initFilters();
+// Event listener for load map button
+document.addEventListener('DOMContentLoaded', () => {
+  const loadMapBtn = document.getElementById('loadMapBtn');
+  if (loadMapBtn) {
+    loadMapBtn.addEventListener('click', initMap);
+  }
 });
