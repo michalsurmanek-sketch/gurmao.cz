@@ -152,7 +152,7 @@
     </div>
   </div>
 
-  <div class="mt-10 rounded-3xl p-6 bg-white/5 border border-white/10">
+  <div id="tipBox" class="mt-10 rounded-3xl p-6 bg-white/5 border border-white/10">
     <div class="text-sm text-gurmaogold">Tip</div>
     <div class="text-white/70 mt-1">Klikni na 🤍 v Feed / Detailu a restaurace se ti uloží sem.</div>
   </div>
@@ -222,6 +222,7 @@
   async function loadCollections() {
     const grid = document.getElementById('savedGrid');
     const empty = document.getElementById('empty');
+    const tipBox = document.getElementById('tipBox');
     const recommendedGrid = document.getElementById('recommendedGrid');
 
     try {
@@ -230,6 +231,7 @@
       
       if(!savedRestaurants.length){
         empty.classList.remove('hidden');
+        tipBox.classList.remove('hidden'); // Show tip when empty
         
         // Load recommended restaurants for empty state
         try {
@@ -259,6 +261,7 @@
           console.error('Error loading recommended restaurants:', error);
         }
       } else {
+        tipBox.classList.add('hidden'); // Hide tip when there are saved items
         grid.innerHTML = savedRestaurants.map(item => {
           const r = item.restaurants;
           const tooltip = getVibeTooltip(r.vibe);
