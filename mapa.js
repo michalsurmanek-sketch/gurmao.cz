@@ -2,7 +2,7 @@
 import { supabase } from './supabase-client.js';
 
 // Mapbox access token
-mapboxgl.accessToken = 'pk.eyJ1IjoiZ3VybWFvIiwiYSI6ImNtazh0dTRnejFlZmIzZHF4ZGxvd3NzeDMifQ.MZ4aV06JvxNLzuFIa7VE4w';
+mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
 
 // Initialize map
 const map = new mapboxgl.Map({
