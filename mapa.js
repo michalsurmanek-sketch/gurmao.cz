@@ -41,8 +41,18 @@ geolocate.on('geolocate', (e) => {
 let allMarkers = [];
 let activeFilters = new Set();
 
+// Initialize filter event listeners
+function initFilters() {
+  document.querySelectorAll('.vibe-filter').forEach(el => {
+    el.addEventListener('click', () => {
+      const vibe = el.getAttribute('data-vibe');
+      toggleVibeFilter(vibe);
+    });
+  });
+}
+
 // Toggle vibe filter
-window.toggleVibeFilter = function(vibe) {
+function toggleVibeFilter(vibe) {
   if (activeFilters.has(vibe)) {
     activeFilters.delete(vibe);
   } else {
@@ -54,18 +64,22 @@ window.toggleVibeFilter = function(vibe) {
     const label = el.querySelector('.vibe-filter-label');
     if (activeFilters.has(vibe)) {
       el.style.opacity = '1';
-      if (label) label.style.textDecoration = 'underline';
-      if (label) label.style.color = '#d4af37';
+      if (label) {
+        label.style.textDecoration = 'underline';
+        label.style.color = '#d4af37';
+      }
     } else {
       el.style.opacity = '0.5';
-      if (label) label.style.textDecoration = 'none';
-      if (label) label.style.color = '';
+      if (label) {
+        label.style.textDecoration = 'none';
+        label.style.color = '';
+      }
     }
   });
   
   // Filter markers
   filterMarkers();
-};
+}
 
 // Filter markers based on active filters
 function filterMarkers() {
@@ -73,6 +87,15 @@ function filterMarkers() {
     if (activeFilters.size === 0) {
       // No filters active, show all
       marker.getElement().style.display = '';
+    } else {
+      // Check if marker's vibe matches any active filter
+      const shouldShow = Array.from(activeFilters).some(filter => 
+        vibe && vibe.includes(filter)
+      );
+      marker.getElement().style.display = shouldShow ? '' : 'none';
+    }
+  });
+}
     } else {
       // Check if marker's vibe matches any active filter
       const shouldShow = Array.from(activeFilters).some(filter => 
@@ -233,4 +256,7 @@ map.on('load', () => {
 
   // Load restaurants
   loadRestaurants();
+  
+  // Initialize filters
+  initFilters();
 });
