@@ -169,122 +169,133 @@
   </div>
 </header>
 
-<main class="max-w-4xl mx-auto px-4 py-12">
+<main class="max-w-7xl mx-auto px-4 py-12">
   
   <!-- Page Title -->
   <div class="mb-12">
-    <h1 class="text-5xl font-bold mb-4">Můj profil</h1>
+    <h1 class="text-4xl md:text-5xl font-bold mb-4">Můj profil</h1>
     <p class="text-white/60">Spravuj své údaje a nastavení</p>
   </div>
 
-  <!-- User Info Card -->
-  <div class="bg-white/5 backdrop-blur border border-white/10 rounded-3xl p-8 mb-8">
-    <div class="flex items-center gap-6">
-      <div class="w-20 h-20 rounded-full bg-gurmaogold/20 flex items-center justify-center text-4xl">
-        👤
+  <!-- Two Column Layout on Desktop -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    
+    <!-- Left Column -->
+    <div class="space-y-8">
+      <!-- User Info Card -->
+      <div class="bg-white/5 backdrop-blur border border-white/10 rounded-3xl p-8">
+        <div class="flex items-center gap-6">
+          <div class="w-20 h-20 rounded-full bg-gurmaogold/20 flex items-center justify-center text-4xl">
+            👤
+          </div>
+          <div>
+            <p class="text-white/60 text-sm mb-1">Přihlášen jako</p>
+            <p id="userEmail" class="text-base sm:text-xl font-semibold break-all">-</p>
+          </div>
+        </div>
       </div>
-      <div>
-        <p class="text-white/60 text-sm mb-1">Přihlášen jako</p>
-        <p id="userEmail" class="text-base sm:text-xl font-semibold break-all">-</p>
+
+      <!-- Profile Form -->
+      <div class="bg-white/5 backdrop-blur border border-white/10 rounded-3xl p-8">
+        <h2 class="text-2xl font-bold mb-6">Osobní údaje</h2>
+        
+        <form id="profileForm" class="space-y-6">
+          <!-- Display Name -->
+          <div>
+            <label for="displayName" class="block text-sm font-medium mb-2">Zobrazované jméno</label>
+            <input
+              type="text"
+              id="displayName"
+              name="displayName"
+              class="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 focus:border-gurmaogold focus:outline-none transition"
+              placeholder="Jak se ti budeme říkat?"
+            />
+          </div>
+
+          <!-- Bio -->
+          <div>
+            <label for="bio" class="block text-sm font-medium mb-2">O mně</label>
+            <textarea
+              id="bio"
+              name="bio"
+              rows="4"
+              class="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 focus:border-gurmaogold focus:outline-none transition resize-none"
+              placeholder="Pár slov o sobě..."
+            ></textarea>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            id="saveProfileBtn"
+            class="w-full px-8 py-3 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-105 transition"
+          >
+            Uložit změny
+          </button>
+        </form>
       </div>
     </div>
-  </div>
 
-  <!-- Profile Form -->
-  <div class="bg-white/5 backdrop-blur border border-white/10 rounded-3xl p-8 mb-8">
-    <h2 class="text-2xl font-bold mb-6">Osobní údaje</h2>
-    
-    <form id="profileForm" class="space-y-6">
-      <!-- Display Name -->
-      <div>
-        <label for="displayName" class="block text-sm font-medium mb-2">Zobrazované jméno</label>
-        <input
-          type="text"
-          id="displayName"
-          name="displayName"
-          class="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 focus:border-gurmaogold focus:outline-none transition"
-          placeholder="Jak se ti budeme říkat?"
-        />
+    <!-- Right Column -->
+    <div class="space-y-8">
+      <!-- Password Change -->
+      <div class="bg-white/5 backdrop-blur border border-white/10 rounded-3xl p-8">
+        <h2 class="text-2xl font-bold mb-6">Změna hesla</h2>
+        
+        <form id="passwordForm" class="space-y-6">
+          <!-- New Password -->
+          <div>
+            <label for="newPassword" class="block text-sm font-medium mb-2">Nové heslo</label>
+            <input
+              type="password"
+              id="newPassword"
+              name="newPassword"
+              minlength="8"
+              required
+              class="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 focus:border-gurmaogold focus:outline-none transition"
+              placeholder="Alespoň 8 znaků"
+            />
+          </div>
+
+          <!-- Confirm Password -->
+          <div>
+            <label for="confirmPassword" class="block text-sm font-medium mb-2">Potvrď heslo</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              minlength="8"
+              required
+              class="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 focus:border-gurmaogold focus:outline-none transition"
+              placeholder="Zadej heslo znovu"
+            />
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            id="changePasswordBtn"
+            class="w-full px-8 py-3 rounded-full bg-white/10 border border-white/20 text-white font-semibold hover:bg-white/20 transition"
+          >
+            Změnit heslo
+          </button>
+        </form>
       </div>
 
-      <!-- Bio -->
-      <div>
-        <label for="bio" class="block text-sm font-medium mb-2">O mně</label>
-        <textarea
-          id="bio"
-          name="bio"
-          rows="4"
-          class="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 focus:border-gurmaogold focus:outline-none transition resize-none"
-          placeholder="Pár slov o sobě..."
-        ></textarea>
+      <!-- Danger Zone -->
+      <div class="bg-gurmaored/10 backdrop-blur border border-gurmaored/30 rounded-3xl p-8">
+        <h2 class="text-2xl font-bold mb-4 text-gurmaored">Nebezpečná zóna</h2>
+        <p class="text-white/60 mb-6">Jednou smazáno, navždy pryč. Nedá se vrátit zpět.</p>
+        
+        <button
+          id="deleteAccountBtn"
+          class="w-full px-8 py-3 rounded-full bg-gurmaored/20 border border-gurmaored text-gurmaored font-semibold hover:bg-gurmaored hover:text-white transition"
+        >
+          Smazat účet
+        </button>
       </div>
+    </div>
 
-      <!-- Submit Button -->
-      <button
-        type="submit"
-        id="saveProfileBtn"
-        class="px-8 py-3 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-105 transition"
-      >
-        Uložit změny
-      </button>
-    </form>
-  </div>
-
-  <!-- Password Change -->
-  <div class="bg-white/5 backdrop-blur border border-white/10 rounded-3xl p-8 mb-8">
-    <h2 class="text-2xl font-bold mb-6">Změna hesla</h2>
-    
-    <form id="passwordForm" class="space-y-6">
-      <!-- New Password -->
-      <div>
-        <label for="newPassword" class="block text-sm font-medium mb-2">Nové heslo</label>
-        <input
-          type="password"
-          id="newPassword"
-          name="newPassword"
-          minlength="8"
-          required
-          class="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 focus:border-gurmaogold focus:outline-none transition"
-          placeholder="Alespoň 8 znaků"
-        />
-      </div>
-
-      <!-- Confirm Password -->
-      <div>
-        <label for="confirmPassword" class="block text-sm font-medium mb-2">Potvrď heslo</label>
-        <input
-          type="password"
-          id="confirmPassword"
-          name="confirmPassword"
-          minlength="8"
-          required
-          class="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 focus:border-gurmaogold focus:outline-none transition"
-          placeholder="Zadej heslo znovu"
-        />
-      </div>
-
-      <!-- Submit Button -->
-      <button
-        type="submit"
-        id="changePasswordBtn"
-        class="px-8 py-3 rounded-full bg-white/10 border border-white/20 text-white font-semibold hover:bg-white/20 transition"
-      >
-        Změnit heslo
-      </button>
-    </form>
-  </div>
-
-  <!-- Danger Zone -->
-  <div class="bg-gurmaored/10 backdrop-blur border border-gurmaored/30 rounded-3xl p-8">
-    <h2 class="text-2xl font-bold mb-4 text-gurmaored">Nebezpečná zóna</h2>
-    <p class="text-white/60 mb-6">Jednou smazáno, navždy pryč. Nedá se vrátit zpět.</p>
-    
-    <button
-      id="deleteAccountBtn"
-      class="px-8 py-3 rounded-full bg-gurmaored/20 border border-gurmaored text-gurmaored font-semibold hover:bg-gurmaored hover:text-white transition"
-    >
-      Smazat účet
-    </button>
   </div>
 
 </main>
