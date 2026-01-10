@@ -113,7 +113,7 @@
             <input type="checkbox" class="w-4 h-4 rounded border-white/20 bg-black/40">
             <span class="text-white/60">Zapamatovat</span>
           </label>
-          <a href="#" class="text-gurmaogold hover:underline">Zapomenuté heslo?</a>
+          <a href="#" id="forgotPasswordLink" class="text-gurmaogold hover:underline">Zapomenuté heslo?</a>
         </div>
 
         <button type="submit" class="w-full px-6 md:px-8 py-3 md:py-4 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-[1.02] transition">
@@ -233,7 +233,28 @@
 
 <script type="module">
   // Import Supabase helpers
-  import { signIn, signUp, signInWithGoogle } from './supabase-client.js';
+  import { signIn, signUp, signInWithGoogle, resetPassword } from './supabase-client.js';
+
+  // FORGOT PASSWORD
+  document.getElementById('forgotPasswordLink').addEventListener('click', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    if (!email) {
+      window.toast.show('❌ Zadej email', 'error');
+      return;
+    }
+    
+    const loadingToast = toastLoading('Odesílám email...');
+    
+    try {
+      await resetPassword(email);
+      toast.update(loadingToast, '✅ Zkontroluj email!', 'success');
+    } catch (error) {
+      console.error('Password reset error:', error);
+      toast.update(loadingToast, '❌ Chyba při odesílání', 'error');
+    }
+  });
 
   // SUPABASE: Real login
   document.getElementById('formLogin').addEventListener('submit', async (e) => {
