@@ -34,6 +34,47 @@
     body { font-family: 'Inter', sans-serif; }
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
     
+    /* Desktop Hover Effect for Chef Cards */
+    @media (min-width: 769px) {
+      .chef-card {
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transform-style: preserve-3d;
+      }
+      
+      .chef-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 1.5rem;
+        background: radial-gradient(
+          circle at var(--mx, 50%) var(--my, 50%),
+          rgba(212, 175, 55, 0.15),
+          transparent 50%
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        z-index: 1;
+      }
+      
+      .chef-card:hover::before {
+        opacity: 1;
+      }
+      
+      .chef-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 
+          0 20px 60px rgba(0, 0, 0, 0.5),
+          0 0 40px rgba(212, 175, 55, 0.2);
+      }
+      
+      .chef-card-content {
+        position: relative;
+        z-index: 2;
+      }
+    }
+    
     /* Mobile Full-Screen Feed */
     @media (max-width: 768px) {
       header, #heroSection, footer {
@@ -265,6 +306,24 @@ async function loadChefs() {
     
     // Initialize ratings
     initRatings(chefs.map(c => c.slug));
+    
+    // Add hover effect for desktop cards
+    if (window.innerWidth > 768) {
+      document.querySelectorAll('.chef-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const r = card.getBoundingClientRect();
+          const mx = ((e.clientX - r.left) / r.width) * 100;
+          const my = ((e.clientY - r.top) / r.height) * 100;
+          card.style.setProperty('--mx', mx.toFixed(2) + '%');
+          card.style.setProperty('--my', my.toFixed(2) + '%');
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.style.removeProperty('--mx');
+          card.style.removeProperty('--my');
+        });
+      });
+    }
     
   } catch (error) {
     console.error('Error loading chefs:', error);
