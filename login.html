@@ -239,10 +239,11 @@
   document.getElementById('forgotPasswordLink').addEventListener('click', async (e) => {
     e.preventDefault();
     
-    const email = document.getElementById('loginEmail').value;
+    let email = document.getElementById('loginEmail').value;
+    
     if (!email) {
-      window.toast.show('❌ Zadej email', 'error');
-      return;
+      email = prompt('Zadej svůj email:');
+      if (!email) return;
     }
     
     const loadingToast = toastLoading('Odesílám email...');
