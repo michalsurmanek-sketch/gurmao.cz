@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <title id="pageTitle">Kuchař – GURMAO</title>
+  <meta name="description" content="Detail kuchaře na GURMAO" id="pageDescription" />
+  <meta property="og:title" content="Kuchař – GURMAO" id="ogTitle" />
+  <meta property="og:description" content="Detail kuchaře" id="ogDescription" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gurmaoblack: '#0b0b0d',
+            gurmaogold: '#d4af37',
+            gurmaored: '#8b1d18',
+          },
+          boxShadow: { glow: '0 0 40px rgba(212,175,55,0.35)' }
+        }
+      }
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="tooltip.css">
+  <link rel="stylesheet" href="toast.css">
+  <link rel="stylesheet" href="global.css">
+  
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    h1,h2,h3 { font-family: 'Playfair Display', serif; }
+  </style>
+</head>
+<body class="bg-gurmaoblack text-white overflow-x-hidden">
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="index.html" class="text-2xl font-bold tracking-tight">GUR<span class="text-gurmaogold">M</span>AO</a>
+    <nav class="hidden md:flex gap-6 text-sm">
+      <a href="feed.html" class="hover:text-gurmaogold">Feed</a>
+      <a href="restaurace.html" class="hover:text-gurmaogold">Restaurace</a>
+      <a href="kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
+      <a href="mapa.html" class="hover:text-gurmaogold">Mapa</a>
+      <a href="ai.html" class="hover:text-gurmaogold">AI</a>
+      <a href="collections.html" class="hover:text-gurmaogold">Můj výběr</a>
+    </nav>
+    <div class="flex items-center gap-3">
+      <div id="userMenuDesktop" class="hidden relative">
+        <button id="userMenuBtn" class="px-4 py-2 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold transition flex items-center gap-2">
+          <span id="userNameDesktop" class="text-sm"></span>
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
+        </button>
+        <div id="userMenuDropdown" class="hidden absolute right-0 top-full mt-2 w-56 rounded-2xl bg-gurmaoblack border border-white/10 shadow-xl overflow-hidden z-50">
+          <a href="collections.html" class="block px-4 py-3 hover:bg-white/5 transition">
+            <div class="font-semibold text-sm">Můj výběr</div>
+            <div class="text-xs text-white/60">Uložené restaurace</div>
+          </a>
+          <a href="admin.html" data-admin-only class="hidden block px-4 py-3 hover:bg-white/5 transition">
+            <div class="font-semibold text-sm">🔒 Admin Panel</div>
+            <div class="text-xs text-white/60">Správa obsahu</div>
+          </a>
+          <a href="profile.html" class="block px-4 py-3 hover:bg-white/5 transition">
+            <div class="font-semibold text-sm">Můj účet</div>
+            <div class="text-xs text-white/60">Nastavení profilu</div>
+          </a>
+          <button data-logout-btn class="w-full px-4 py-3 text-left border-t border-white/10 text-gurmaored hover:bg-gurmaored/10 transition">
+            <div class="font-semibold text-sm">Odhlásit se</div>
+          </button>
+        </div>
+      </div>
+      <a id="loginLinkDesktop" href="login.html" class="hidden px-4 py-2 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition text-sm">Přihlásit se</a>
+      <button id="menuBtn" class="md:hidden w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="menuBackdrop" class="hidden md:hidden fixed inset-0 bg-black/70 z-[100]"></div>
+  <div id="mobileMenu" class="hidden md:hidden fixed inset-x-0 top-[65px] bottom-0 z-[110] overflow-y-auto">
+    <div class="mx-4 my-4 rounded-3xl border border-white/10 bg-gurmaoblack/95 backdrop-blur p-4">
+      <div class="flex items-center justify-between px-2 pb-3">
+        <div class="text-sm text-white/60">Navigace</div>
+        <button id="menuClose" class="w-10 h-10 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Zavřít menu">✕</button>
+      </div>
+      <nav class="grid gap-2">
+        <a href="index.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Domů</a>
+        <a href="feed.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Feed</a>
+        <a href="restaurace.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Restaurace</a>
+        <a href="kuchar.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Kuchaři</a>
+        <a href="mapa.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Mapa</a>
+        <a href="ai.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">AI</a>
+        <a href="collections.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Můj výběr</a>
+        <div id="userMenuMobile" class="hidden mt-2 pt-2 border-t border-white/10">
+          <div class="px-2 mb-2 text-sm text-white/60">
+            <span id="userNameMobile"></span>
+          </div>
+          <a href="collections.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
+            <div class="font-semibold text-sm">Můj výběr</div>
+            <div class="text-xs text-white/60">Uložené restaurace</div>
+          </a>
+          <a href="admin.html" data-admin-only class="hidden px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
+            <div class="font-semibold text-sm">🔒 Admin Panel</div>
+            <div class="text-xs text-white/60">Správa obsahu</div>
+          </a>
+          <a href="profile.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
+            <div class="font-semibold text-sm">Můj účet</div>
+            <div class="text-xs text-white/60">Nastavení profilu</div>
+          </a>
+          <button data-logout-btn class="w-full px-4 py-3 rounded-2xl border border-gurmaored text-gurmaored hover:bg-gurmaored hover:text-white transition">
+            <div class="font-semibold text-sm">Odhlásit se</div>
+          </button>
+        </div>
+        <a id="loginLinkMobile" href="login.html" class="px-4 py-3 rounded-2xl border border-white/20 hover:border-gurmaogold hover:text-gurmaogold">Přihlásit se</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<!-- Loading State -->
+<div id="loadingState" class="flex items-center justify-center min-h-screen">
+  <div class="text-center">
+    <div class="text-4xl mb-4">⏳</div>
+    <div class="text-white/60">Načítání...</div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<main id="mainContent" class="hidden">
+  <!-- HERO -->
+  <section class="min-h-screen relative flex items-end">
+    <div id="heroImage" class="absolute inset-0 bg-cover bg-center"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
+
+    <div class="relative max-w-6xl mx-auto px-6 pb-20 w-full">
+      <div id="chefRole" class="text-gurmaogold text-sm mb-3">🧑‍🍳 Head Chef</div>
+      <h1 id="chefName" class="text-5xl md:text-7xl font-bold">Kuchař</h1>
+      <p id="chefBio" class="text-white/70 mt-4 max-w-xl">
+        Kuchař posedlý detailem, ohněm a tichem v kuchyni.
+      </p>
+
+      <div class="mt-8 flex gap-3">
+        <button id="followBtn" class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🤍 Sledovat</button>
+        <a id="restaurantLink" href="#" class="hidden px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🍷 Restaurace</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <section class="py-24">
+    <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16">
+
+      <!-- LEFT -->
+      <div>
+        <h2 class="text-3xl mb-6">O kuchaři</h2>
+        <p id="chefDescription" class="text-white/70 leading-relaxed mb-10">
+          Popis kuchaře...
+        </p>
+
+        <div id="chefSpecialties" class="grid grid-cols-3 gap-4 mb-12">
+          <!-- Specialties will be loaded here -->
+        </div>
+
+        <div id="chefSignatureCard" class="rounded-2xl p-6 bg-white/5 mb-8">
+          <div class="text-sm text-gurmaogold mb-1">Signature styl</div>
+          <div id="chefSignature" class="text-lg">—</div>
+        </div>
+
+        <div id="chefCuisinesCard" class="rounded-2xl p-6 bg-white/5 mb-8">
+          <div class="text-sm text-gurmaogold mb-2">Oblíbená kuchyně</div>
+          <div id="chefCuisines" class="text-white/80">—</div>
+        </div>
+
+        <div class="rounded-2xl p-6 bg-white/5">
+          <div class="text-sm text-gurmaogold mb-2">Aktuální působiště</div>
+          <div id="chefRestaurant" class="text-white/80">—</div>
+        </div>
+      </div>
+
+      <!-- RIGHT - Restaurants -->
+      <div>
+        <h2 class="text-3xl mb-6">Restaurace</h2>
+        <div id="relatedRestaurants" class="space-y-6">
+          <!-- Related restaurants will be loaded here -->
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="py-10 border-t border-white/10 text-center text-sm text-white/40">
+  © 2025 GURMAO.cz · Nejez. Prožij.
+</footer>
+
+<script type="module" src="supabase-client.js"></script>
+<script src="app.js"></script>
+<script src="auth-ui.js"></script>
+<script src="social-share.js"></script>
+<script src="cookie-consent.js"></script>
+<script type="module" src="kuchar-detail.js"></script>
+
+<script>
+  // User menu toggle
+  document.addEventListener('DOMContentLoaded', () => {
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userMenuDropdown = document.getElementById('userMenuDropdown');
+    
+    if (userMenuBtn && userMenuDropdown) {
+      userMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        userMenuDropdown.classList.toggle('hidden');
+      });
+      
+      // Close when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!userMenuBtn.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+          userMenuDropdown.classList.add('hidden');
+        }
+      });
+    }
+  });
+</script>
+
+<!-- Vibe Tooltips -->
+<script src="vibe-tooltips.js"></script>
+
+</body>
+</html>
