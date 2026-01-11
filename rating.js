@@ -171,6 +171,69 @@ class RatingManager {
     }
   }
 
+  // Submit a review with rating
+  async submitRating(restaurantSlug, rating, comment, title = null) {
+    await this.ensureReady();
+    
+    try {
+      const { data: { user }, error: authError } = await this.supabase.auth.getUser();
+      
+      if (authError || !user) {
+        throw new Error('Musíte být přihlášeni pro přidání recenze');
+      }
+      
+      // Get user name from profile
+      const { data: profile } = await this.supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('id', user.id)
+        .single();
+      
+      // Insert review
+      const { data, error } = await this.supabase
+        .from('ratings')
+        .insert({
+          restaurant_id: restaurantSlug,
+          user_id: user.id,
+          user_name: profile?.display_name || user.email?.split('@')[0] || 'Anonym',
+          rating: rating,
+          comment: comment,
+          title: title
+        });
+      
+      if (error) throw error;
+      
+      // Clear cache
+      this.statsCache.delete(restaurantSlug);
+      this.userRatingsCache.delete(restaurantSlug);
+      
+      return true;
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      throw error;
+    }
+  }
+
+  // Get all reviews for a restaurant
+  async getRestaurantRatings(restaurantSlug) {
+    await this.ensureReady();
+    
+    try {
+      const { data, error } = await this.supabase
+        .from('ratings')
+        .select('*')
+        .eq('restaurant_id', restaurantSlug)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      return data || [];
+    } catch (error) {
+      console.error('Error loading reviews:', error);
+      return [];
+    }
+  }
+
   // Render star rating (static display)
   renderStars(rating, size = 'md') {
     const sizeClass = {
