@@ -295,7 +295,22 @@
 
 <!-- MOBILE SNAP FEED -->
 <main class="md:hidden">
-  <div id="feed" class="snap-y h-[calc(100vh-65px)] overflow-y-auto"></div>
+  <!-- Mobile Search -->
+  <div class="px-4 py-3 bg-gurmaoblack/95 backdrop-blur border-b border-white/10">
+    <div class="relative">
+      <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/40 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <input 
+        type="text" 
+        id="mobileSearchInput" 
+        placeholder="Hledat restauraci..."
+        class="w-full pl-12 pr-4 py-3 rounded-full bg-white/5 border border-white/10 focus:border-gurmaogold focus:outline-none text-white placeholder:text-white/40"
+      />
+    </div>
+  </div>
+  
+  <div id="feed" class="snap-y h-[calc(100vh-125px)] overflow-y-auto"></div>
 </main>
 
 <!-- DESKTOP GRID -->
@@ -973,9 +988,18 @@
 
   // Filter function
   function applyFilters() {
-    const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const desktopSearchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const mobileSearchTerm = document.getElementById('mobileSearchInput')?.value.toLowerCase() || '';
+    const searchTerm = desktopSearchTerm || mobileSearchTerm;
     const cityFilter = currentCityValue || '';
     const vibeFilter = currentVibeValue || '';
+    
+    // Sync search inputs
+    if (desktopSearchTerm && document.getElementById('mobileSearchInput')) {
+      document.getElementById('mobileSearchInput').value = document.getElementById('searchInput').value;
+    } else if (mobileSearchTerm && document.getElementById('searchInput')) {
+      document.getElementById('searchInput').value = document.getElementById('mobileSearchInput').value;
+    }
     
     filteredItems = items.filter(item => {
       const matchesSearch = !searchTerm || 
@@ -1039,10 +1063,13 @@
 
   // Event listeners for filters
   document.getElementById('searchInput')?.addEventListener('input', applyFilters);
+  document.getElementById('mobileSearchInput')?.addEventListener('input', applyFilters);
   
   document.getElementById('resetFilters')?.addEventListener('click', () => {
     const searchInput = document.getElementById('searchInput');
+    const mobileSearchInput = document.getElementById('mobileSearchInput');
     if (searchInput) searchInput.value = '';
+    if (mobileSearchInput) mobileSearchInput.value = '';
     currentCityValue = '';
     currentVibeValue = '';
     const cityBtn = document.getElementById('cityFilterBtn');
@@ -1054,6 +1081,7 @@
   
   document.getElementById('clearFilters')?.addEventListener('click', () => {
     if (document.getElementById('searchInput')) document.getElementById('searchInput').value = '';
+    if (document.getElementById('mobileSearchInput')) document.getElementById('mobileSearchInput').value = '';
     if (document.getElementById('cityFilter')) document.getElementById('cityFilter').value = '';
     if (document.getElementById('vibeFilter')) document.getElementById('vibeFilter').value = '';
     applyFilters();
