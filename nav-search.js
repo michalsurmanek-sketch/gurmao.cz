@@ -106,7 +106,7 @@ function initMobileSearch() {
     if (!isMobileExpanded) {
       // Expand
       mobileSearchBox.classList.remove('w-11');
-      mobileSearchBox.classList.add('w-64');
+      mobileSearchBox.classList.add('w-32');
       mobileNavSearchInput.classList.remove('opacity-0', 'w-0');
       mobileNavSearchInput.classList.add('opacity-100', 'w-full', 'px-4');
       setTimeout(() => mobileNavSearchInput.focus(), 300);
@@ -119,7 +119,7 @@ function initMobileSearch() {
     if (isMobileExpanded && !mobileSearchBox.contains(e.target) && !mobileNavSearchResults.contains(e.target)) {
       // Collapse
       mobileSearchBox.classList.add('w-11');
-      mobileSearchBox.classList.remove('w-64');
+      mobileSearchBox.classList.remove('w-32');
       mobileNavSearchInput.classList.add('opacity-0', 'w-0');
       mobileNavSearchInput.classList.remove('opacity-100', 'w-full', 'px-4');
       mobileNavSearchInput.value = '';
