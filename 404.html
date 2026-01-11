@@ -92,5 +92,38 @@
 </footer>
 
 <script src="app.js"></script>
+<script type="module">
+  // Auto-redirect for restaurant detail pages
+  import { supabase } from './supabase-client.js';
+  
+  const currentPath = window.location.pathname;
+  const fileName = currentPath.split('/').pop();
+  
+  // Check if this looks like a restaurant detail page
+  if (fileName.startsWith('restaurace-') && fileName.endsWith('.html') && fileName !== 'restaurace-detail.html' && fileName !== 'restaurace.html') {
+    // Extract slug from filename
+    const slug = fileName.replace('restaurace-', '').replace('.html', '');
+    
+    // Try to find restaurant in database
+    async function tryRedirect() {
+      try {
+        const { data, error } = await supabase
+          .from('restaurants')
+          .select('slug')
+          .eq('slug', slug)
+          .single();
+        
+        if (data) {
+          // Restaurant exists, redirect to dynamic detail page
+          window.location.replace(`restaurace-detail.html?id=${slug}`);
+        }
+      } catch (err) {
+        console.log('Restaurant not found:', slug);
+      }
+    }
+    
+    tryRedirect();
+  }
+</script>
 </body>
 </html>
