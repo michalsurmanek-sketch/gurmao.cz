@@ -66,8 +66,10 @@ function initDesktopSearch() {
         
         if (restaurants && restaurants.length > 0) {
           navSearchResults.classList.remove('hidden');
-          navSearchResults.innerHTML = restaurants.map(r => `
-            <a href="restaurace-detail.html?id=${r.slug}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
+          navSearchResults.innerHTML = restaurants.map(r => {
+            const identifier = r.slug || r.id;
+            return `
+            <a href="restaurace-detail.html?id=${identifier}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
               <div class="flex gap-3">
                 <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
                 <div class="flex-1 min-w-0">
@@ -77,7 +79,8 @@ function initDesktopSearch() {
                 </div>
               </div>
             </a>
-          `).join('');
+          `;
+          }).join('');
         } else {
           navSearchResults.classList.remove('hidden');
           navSearchResults.innerHTML = '<div class="p-4 text-center text-white/40 text-sm">Nic nenalezeno</div>';
@@ -154,8 +157,10 @@ function initMobileSearch() {
         
         if (restaurants && restaurants.length > 0) {
           mobileNavSearchResults.classList.remove('hidden');
-          mobileNavSearchResults.innerHTML = restaurants.map(r => `
-            <a href="restaurace-detail.html?id=${r.slug}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
+          mobileNavSearchResults.innerHTML = restaurants.map(r => {
+            const identifier = r.slug || r.id;
+            return `
+            <a href="restaurace-detail.html?id=${identifier}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
               <div class="flex gap-3">
                 <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
                 <div class="flex-1 min-w-0">
@@ -165,7 +170,8 @@ function initMobileSearch() {
                 </div>
               </div>
             </a>
-          `).join('');
+          `;
+          }).join('');
         } else {
           mobileNavSearchResults.classList.remove('hidden');
           mobileNavSearchResults.innerHTML = '<div class="p-4 text-center text-white/40 text-sm">Nic nenalezeno</div>';

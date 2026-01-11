@@ -40,6 +40,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Load restaurant detail from Supabase
 async function loadRestaurantDetail() {
   try {
+    // Try to find by slug first, then by id if it's a UUID
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(restaurantSlug);
+    
     const { data: restaurant, error } = await supabase
       .from('restaurants')
       .select(`
@@ -54,7 +57,7 @@ async function loadRestaurantDetail() {
           image_url
         )
       `)
-      .eq('slug', restaurantSlug)
+      .eq(isUUID ? 'id' : 'slug', restaurantSlug)
       .single();
     
     if (error) throw error;
