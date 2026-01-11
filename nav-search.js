@@ -58,7 +58,7 @@ function initDesktopSearch() {
       try {
         const { data: restaurants, error } = await supabase
           .from('restaurants')
-          .select('id, name, city, vibe, tag, image_url')
+          .select('id, slug, name, city, vibe, tag, image_url')
           .or(`name.ilike.%${query}%,city.ilike.%${query}%,tag.ilike.%${query}%,vibe.ilike.%${query}%`)
           .limit(6);
         
@@ -67,7 +67,7 @@ function initDesktopSearch() {
         if (restaurants && restaurants.length > 0) {
           navSearchResults.classList.remove('hidden');
           navSearchResults.innerHTML = restaurants.map(r => `
-            <a href="restaurace-detail.html?id=${r.id}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
+            <a href="restaurace-${r.slug}.html" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
               <div class="flex gap-3">
                 <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
                 <div class="flex-1 min-w-0">
@@ -146,7 +146,7 @@ function initMobileSearch() {
       try {
         const { data: restaurants, error } = await supabase
           .from('restaurants')
-          .select('id, name, city, vibe, tag, image_url')
+          .select('id, slug, name, city, vibe, tag, image_url')
           .or(`name.ilike.%${query}%,city.ilike.%${query}%,tag.ilike.%${query}%,vibe.ilike.%${query}%`)
           .limit(6);
         
@@ -155,7 +155,7 @@ function initMobileSearch() {
         if (restaurants && restaurants.length > 0) {
           mobileNavSearchResults.classList.remove('hidden');
           mobileNavSearchResults.innerHTML = restaurants.map(r => `
-            <a href="restaurace-detail.html?id=${r.id}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
+            <a href="restaurace-${r.slug}.html" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
               <div class="flex gap-3">
                 <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
                 <div class="flex-1 min-w-0">
