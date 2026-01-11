@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ======================
 // MOBILE MENU
 // ======================
-(function initMobileMenu() {
+document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('menuBtn');
   const close = document.getElementById('menuClose');
   const backdrop = document.getElementById('menuBackdrop');
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
   menu.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', shut);
   });
-})();
+});
 
 // ======================
 // SAVE TO COLLECTIONS (Supabase)
