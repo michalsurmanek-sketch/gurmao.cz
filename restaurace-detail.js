@@ -42,7 +42,18 @@ async function loadRestaurantDetail() {
   try {
     const { data: restaurant, error } = await supabase
       .from('restaurants')
-      .select('*')
+      .select(`
+        *,
+        chefs (
+          id,
+          name,
+          slug,
+          vibe,
+          signature_style,
+          favorite_cuisines,
+          image_url
+        )
+      `)
       .eq('slug', restaurantSlug)
       .single();
     
@@ -115,6 +126,42 @@ function populateRestaurantDetail(restaurant) {
       </div>
     </div>
   `).join('');
+  
+  // Chef Info
+  if (restaurant.chefs && restaurant.chefs.length > 0) {
+    const chef = restaurant.chefs[0];
+    const chefInfo = [];
+    
+    chefInfo.push({ 
+      icon: '👨‍🍳', 
+      label: 'Jméno', 
+      value: chef.name,
+      link: `kuchar-detail.html?id=${chef.slug}`
+    });
+    
+    if (chef.signature_style) {
+      chefInfo.push({ icon: '✨', label: 'Styl', value: chef.signature_style });
+    }
+    
+    if (chef.favorite_cuisines) {
+      chefInfo.push({ icon: '🍽️', label: 'Oblíbená kuchyně', value: chef.favorite_cuisines });
+    }
+    
+    document.getElementById('chefInfo').innerHTML = chefInfo.map(info => `
+      <div class="flex items-start gap-3">
+        <span class="text-xl">${info.icon}</span>
+        <div class="flex-1 min-w-0">
+          <div class="text-white/60 text-xs mb-1">${info.label}</div>
+          ${info.link ? 
+            `<a href="${info.link}" class="text-white hover:text-gurmaogold transition break-words">${info.value}</a>` :
+            `<div class="text-white break-words">${info.value}</div>`
+          }
+        </div>
+      </div>
+    `).join('');
+    
+    document.getElementById('chefInfoCard').classList.remove('hidden');
+  }
   
   // Contact Info
   const contactInfo = [];
