@@ -40,8 +40,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Load restaurant detail from Supabase
 async function loadRestaurantDetail() {
   try {
+    console.log('Loading restaurant with ID/slug:', restaurantSlug);
+    
     // Try to find by slug first, then by id if it's a UUID
     const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(restaurantSlug);
+    console.log('Is UUID?', isUUID);
     
     const { data: restaurant, error } = await supabase
       .from('restaurants')
@@ -60,7 +63,13 @@ async function loadRestaurantDetail() {
       .eq(isUUID ? 'id' : 'slug', restaurantSlug)
       .single();
     
-    if (error) throw error;
+    console.log('Restaurant data:', restaurant);
+    console.log('Error:', error);
+    
+    if (error) {
+      console.error('Database error:', error);
+      throw error;
+    }
     
     if (!restaurant) {
       showError('Restaurace nenalezena');
