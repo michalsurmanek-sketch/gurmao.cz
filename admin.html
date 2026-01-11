@@ -617,15 +617,43 @@
 
           <!-- Image URL -->
           <div>
-            <label class="block text-sm font-semibold mb-2">URL obrázku</label>
-            <input 
-              type="url" 
-              name="image_url" 
-              id="inputImageUrl"
-              placeholder="https://..."
-              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
-            />
-            <p class="text-xs text-white/40 mt-1">Nepovinné - můžeš přidat později</p>
+            <label class="block text-sm font-semibold mb-2">Obrázek</label>
+            <div class="space-y-3">
+              <!-- File Upload -->
+              <div class="relative">
+                <input 
+                  type="file" 
+                  id="restaurantImageFile"
+                  accept="image/*"
+                  class="hidden"
+                />
+                <button 
+                  type="button"
+                  onclick="document.getElementById('restaurantImageFile').click()"
+                  class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold focus:border-gurmaogold outline-none text-left flex items-center gap-3 transition"
+                >
+                  <span class="text-xl">📤</span>
+                  <span id="restaurantFileLabel" class="text-white/60">Nahrát z počítače/mobilu</span>
+                </button>
+                <div id="restaurantUploadProgress" class="hidden mt-2">
+                  <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div id="restaurantProgressBar" class="h-full bg-gurmaogold transition-all duration-300" style="width: 0%"></div>
+                  </div>
+                  <p class="text-xs text-white/60 mt-1">Nahrávám...</p>
+                </div>
+              </div>
+              <!-- OR -->
+              <div class="text-center text-xs text-white/40">NEBO</div>
+              <!-- URL Input -->
+              <input 
+                type="url" 
+                name="image_url" 
+                id="inputImageUrl"
+                placeholder="Vlož URL obrázku (https://...)" 
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+            <p class="text-xs text-white/40 mt-2">Nepovinné - můžeš přidat později</p>
           </div>
 
           <!-- Slug -->
@@ -785,15 +813,43 @@
 
           <!-- Image URL -->
           <div>
-            <label class="block text-sm font-semibold mb-2">URL obrázku</label>
-            <input 
-              type="url" 
-              name="image_url" 
-              id="inputChefImageUrl"
-              placeholder="https://..."
-              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
-            />
-            <p class="text-xs text-white/40 mt-1">Nepovinné - můžeš přidat později</p>
+            <label class="block text-sm font-semibold mb-2">Obrázek</label>
+            <div class="space-y-3">
+              <!-- File Upload -->
+              <div class="relative">
+                <input 
+                  type="file" 
+                  id="chefImageFile"
+                  accept="image/*"
+                  class="hidden"
+                />
+                <button 
+                  type="button"
+                  onclick="document.getElementById('chefImageFile').click()"
+                  class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold focus:border-gurmaogold outline-none text-left flex items-center gap-3 transition"
+                >
+                  <span class="text-xl">📤</span>
+                  <span id="chefFileLabel" class="text-white/60">Nahrát z počítače/mobilu</span>
+                </button>
+                <div id="chefUploadProgress" class="hidden mt-2">
+                  <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div id="chefProgressBar" class="h-full bg-gurmaogold transition-all duration-300" style="width: 0%"></div>
+                  </div>
+                  <p class="text-xs text-white/60 mt-1">Nahrávám...</p>
+                </div>
+              </div>
+              <!-- OR -->
+              <div class="text-center text-xs text-white/40">NEBO</div>
+              <!-- URL Input -->
+              <input 
+                type="url" 
+                name="image_url" 
+                id="inputChefImageUrl"
+                placeholder="Vlož URL obrázku (https://...)"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+            <p class="text-xs text-white/40 mt-2">Nepovinné - můžeš přidat později</p>
           </div>
 
           <!-- Slug -->
@@ -929,14 +985,42 @@
 
           <!-- Image URL -->
           <div>
-            <label class="block text-sm font-semibold mb-2">URL obrázku</label>
-            <input 
-              type="url" 
-              name="image_url" 
-              id="inputPostImageUrl"
-              placeholder="https://..."
-              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
-            />
+            <label class="block text-sm font-semibold mb-2">Obrázek</label>
+            <div class="space-y-3">
+              <!-- File Upload -->
+              <div class="relative">
+                <input 
+                  type="file" 
+                  id="postImageFile"
+                  accept="image/*"
+                  class="hidden"
+                />
+                <button 
+                  type="button"
+                  onclick="document.getElementById('postImageFile').click()"
+                  class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold focus:border-gurmaogold outline-none text-left flex items-center gap-3 transition"
+                >
+                  <span class="text-xl">📤</span>
+                  <span id="postFileLabel" class="text-white/60">Nahrát z počítače/mobilu</span>
+                </button>
+                <div id="postUploadProgress" class="hidden mt-2">
+                  <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div id="postProgressBar" class="h-full bg-gurmaogold transition-all duration-300" style="width: 0%"></div>
+                  </div>
+                  <p class="text-xs text-white/60 mt-1">Nahrávám...</p>
+                </div>
+              </div>
+              <!-- OR -->
+              <div class="text-center text-xs text-white/40">NEBO</div>
+              <!-- URL Input -->
+              <input 
+                type="url" 
+                name="image_url" 
+                id="inputPostImageUrl"
+                placeholder="Vlož URL obrázku (https://...)"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
           </div>
 
           <!-- Submit -->
@@ -1137,14 +1221,42 @@
 
           <!-- Image URL -->
           <div>
-            <label class="block text-sm font-semibold mb-2">URL obrázku</label>
-            <input 
-              type="url" 
-              name="image_url" 
-              id="inputGearImageUrl"
-              placeholder="https://..."
-              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
-            />
+            <label class="block text-sm font-semibold mb-2">Obrázek</label>
+            <div class="space-y-3">
+              <!-- File Upload -->
+              <div class="relative">
+                <input 
+                  type="file" 
+                  id="gearImageFile"
+                  accept="image/*"
+                  class="hidden"
+                />
+                <button 
+                  type="button"
+                  onclick="document.getElementById('gearImageFile').click()"
+                  class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold focus:border-gurmaogold outline-none text-left flex items-center gap-3 transition"
+                >
+                  <span class="text-xl">📤</span>
+                  <span id="gearFileLabel" class="text-white/60">Nahrát z počítače/mobilu</span>
+                </button>
+                <div id="gearUploadProgress" class="hidden mt-2">
+                  <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div id="gearProgressBar" class="h-full bg-gurmaogold transition-all duration-300" style="width: 0%"></div>
+                  </div>
+                  <p class="text-xs text-white/60 mt-1">Nahrávám...</p>
+                </div>
+              </div>
+              <!-- OR -->
+              <div class="text-center text-xs text-white/40">NEBO</div>
+              <!-- URL Input -->
+              <input 
+                type="url" 
+                name="image_url" 
+                id="inputGearImageUrl"
+                placeholder="Vlož URL obrázku (https://...)"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
           </div>
 
           <!-- Affiliate URL -->
@@ -1180,7 +1292,178 @@
 </main>
 
 <script>
+// ========================================
+// IMAGE UPLOAD UTILITIES
+// ========================================
+
+// Upload image to Supabase Storage
+async function uploadImage(file, bucket = 'images') {
+  if (!file) return null;
+  
+  try {
+    // Create unique filename
+    const timestamp = Date.now();
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${timestamp}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+    const filePath = `${bucket}/${fileName}`;
+    
+    // Upload to Supabase Storage
+    const { data, error } = await window.supabase.storage
+      .from(bucket)
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+    
+    if (error) throw error;
+    
+    // Get public URL
+    const { data: urlData } = window.supabase.storage
+      .from(bucket)
+      .getPublicUrl(filePath);
+    
+    return urlData.publicUrl;
+  } catch (error) {
+    console.error('Upload error:', error);
+    throw error;
+  }
+}
+
+// Restaurant image upload handler
+document.getElementById('restaurantImageFile')?.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const label = document.getElementById('restaurantFileLabel');
+  const progress = document.getElementById('restaurantUploadProgress');
+  const progressBar = document.getElementById('restaurantProgressBar');
+  const urlInput = document.getElementById('inputImageUrl');
+  
+  try {
+    label.textContent = 'Nahrávám...';
+    progress.classList.remove('hidden');
+    progressBar.style.width = '30%';
+    
+    const url = await uploadImage(file, 'restaurant-images');
+    
+    progressBar.style.width = '100%';
+    urlInput.value = url;
+    label.textContent = '✓ ' + file.name;
+    
+    setTimeout(() => {
+      progress.classList.add('hidden');
+      progressBar.style.width = '0%';
+    }, 1500);
+    
+  } catch (error) {
+    alert('Chyba při nahrávání: ' + error.message);
+    label.textContent = 'Nahrát z počítače/mobilu';
+    progress.classList.add('hidden');
+  }
+});
+
+// Chef image upload handler
+document.getElementById('chefImageFile')?.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const label = document.getElementById('chefFileLabel');
+  const progress = document.getElementById('chefUploadProgress');
+  const progressBar = document.getElementById('chefProgressBar');
+  const urlInput = document.getElementById('inputChefImageUrl');
+  
+  try {
+    label.textContent = 'Nahrávám...';
+    progress.classList.remove('hidden');
+    progressBar.style.width = '30%';
+    
+    const url = await uploadImage(file, 'chef-images');
+    
+    progressBar.style.width = '100%';
+    urlInput.value = url;
+    label.textContent = '✓ ' + file.name;
+    
+    setTimeout(() => {
+      progress.classList.add('hidden');
+      progressBar.style.width = '0%';
+    }, 1500);
+    
+  } catch (error) {
+    alert('Chyba při nahrávání: ' + error.message);
+    label.textContent = 'Nahrát z počítače/mobilu';
+    progress.classList.add('hidden');
+  }
+});
+
+// Post image upload handler
+document.getElementById('postImageFile')?.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const label = document.getElementById('postFileLabel');
+  const progress = document.getElementById('postUploadProgress');
+  const progressBar = document.getElementById('postProgressBar');
+  const urlInput = document.getElementById('inputPostImageUrl');
+  
+  try {
+    label.textContent = 'Nahrávám...';
+    progress.classList.remove('hidden');
+    progressBar.style.width = '30%';
+    
+    const url = await uploadImage(file, 'post-images');
+    
+    progressBar.style.width = '100%';
+    urlInput.value = url;
+    label.textContent = '✓ ' + file.name;
+    
+    setTimeout(() => {
+      progress.classList.add('hidden');
+      progressBar.style.width = '0%';
+    }, 1500);
+    
+  } catch (error) {
+    alert('Chyba při nahrávání: ' + error.message);
+    label.textContent = 'Nahrát z počítače/mobilu';
+    progress.classList.add('hidden');
+  }
+});
+
+// Gear image upload handler
+document.getElementById('gearImageFile')?.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const label = document.getElementById('gearFileLabel');
+  const progress = document.getElementById('gearUploadProgress');
+  const progressBar = document.getElementById('gearProgressBar');
+  const urlInput = document.getElementById('inputGearImageUrl');
+  
+  try {
+    label.textContent = 'Nahrávám...';
+    progress.classList.remove('hidden');
+    progressBar.style.width = '30%';
+    
+    const url = await uploadImage(file, 'gear-images');
+    
+    progressBar.style.width = '100%';
+    urlInput.value = url;
+    label.textContent = '✓ ' + file.name;
+    
+    setTimeout(() => {
+      progress.classList.add('hidden');
+      progressBar.style.width = '0%';
+    }, 1500);
+    
+  } catch (error) {
+    alert('Chyba při nahrávání: ' + error.message);
+    label.textContent = 'Nahrát z počítače/mobilu';
+    progress.classList.add('hidden');
+  }
+});
+
+// ========================================
 // Tab switching
+// ========================================
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.classList.remove('active', 'border-gurmaogold');
