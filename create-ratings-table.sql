@@ -1,14 +1,19 @@
--- Tabulka pro hodnocení restaurací
+-- Tabulka pro hodnocení restaurací s recenzemi
 -- Spusť tento SQL v Supabase → SQL Editor → New query → Run
+
+-- Drop old table if exists (POZOR: smaže stará data!)
+-- DROP TABLE IF EXISTS ratings CASCADE;
 
 CREATE TABLE IF NOT EXISTS ratings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_name TEXT,
   restaurant_id TEXT NOT NULL,
-  stars INTEGER NOT NULL CHECK (stars >= 1 AND stars <= 5),
+  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+  comment TEXT NOT NULL,
+  title TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(user_id, restaurant_id)
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Indexy pro rychlejší vyhledávání

@@ -417,5 +417,27 @@
 <script src="cookie-consent.js"></script>
 <script type="module" src="restaurace-detail.js"></script>
 
+<script>
+  // User menu toggle
+  document.addEventListener('DOMContentLoaded', () => {
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userMenuDropdown = document.getElementById('userMenuDropdown');
+    
+    if (userMenuBtn && userMenuDropdown) {
+      userMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        userMenuDropdown.classList.toggle('hidden');
+      });
+      
+      // Close when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!userMenuBtn.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+          userMenuDropdown.classList.add('hidden');
+        }
+      });
+    }
+  });
+</script>
+
 </body>
 </html>
