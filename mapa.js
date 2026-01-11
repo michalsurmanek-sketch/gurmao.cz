@@ -30,7 +30,8 @@ const geolocate = new mapboxgl.GeolocateControl({
     enableHighAccuracy: true
   },
   trackUserLocation: true,
-  showUserHeading: true
+  showUserHeading: true,
+  showAccuracyCircle: false
 });
 
 map.addControl(geolocate, 'top-right');
