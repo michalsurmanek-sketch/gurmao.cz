@@ -147,47 +147,47 @@
         Kuchař posedlý detailem, ohněm a tichem v kuchyni.
       </p>
 
-      <div class="mt-8 flex gap-3">
-        <button id="followBtn" class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🤍 Sledovat</button>
-        <a id="restaurantLink" href="#" class="hidden px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">🍷 Restaurace</a>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <button id="followBtn" class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition text-sm md:text-base">🤍 Sledovat</button>
+        <a id="restaurantLink" href="#" class="hidden px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition text-sm md:text-base">🍷 Restaurace</a>
       </div>
     </div>
   </section>
 
   <!-- CONTENT -->
-  <section class="py-24">
-    <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16">
+  <section class="py-12 md:py-24">
+    <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-8 md:gap-16">
 
       <!-- LEFT -->
       <div>
-        <h2 class="text-3xl mb-6">O kuchaři</h2>
-        <p id="chefDescription" class="text-white/70 leading-relaxed mb-10">
+        <h2 class="text-2xl md:text-3xl mb-6">O kuchaři</h2>
+        <p id="chefDescription" class="text-white/70 leading-relaxed mb-10 text-sm md:text-base">
           Popis kuchaře...
         </p>
 
-        <div id="chefSpecialties" class="grid grid-cols-3 gap-4 mb-12">
+        <div id="chefSpecialties" class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-12">
           <!-- Specialties will be loaded here -->
         </div>
 
-        <div id="chefSignatureCard" class="rounded-2xl p-6 bg-white/5 mb-8">
-          <div class="text-sm text-gurmaogold mb-1">Signature styl</div>
-          <div id="chefSignature" class="text-lg">—</div>
+        <div id="chefSignatureCard" class="rounded-2xl p-4 md:p-6 bg-white/5 mb-6 md:mb-8">
+          <div class="text-xs md:text-sm text-gurmaogold mb-1">Signature styl</div>
+          <div id="chefSignature" class="text-base md:text-lg">—</div>
         </div>
 
-        <div id="chefCuisinesCard" class="rounded-2xl p-6 bg-white/5 mb-8">
-          <div class="text-sm text-gurmaogold mb-2">Oblíbená kuchyně</div>
-          <div id="chefCuisines" class="text-white/80">—</div>
+        <div id="chefCuisinesCard" class="rounded-2xl p-4 md:p-6 bg-white/5 mb-6 md:mb-8">
+          <div class="text-xs md:text-sm text-gurmaogold mb-2">Oblíbená kuchyně</div>
+          <div id="chefCuisines" class="text-white/80 text-sm md:text-base">—</div>
         </div>
 
-        <div class="rounded-2xl p-6 bg-white/5">
-          <div class="text-sm text-gurmaogold mb-2">Aktuální působiště</div>
-          <div id="chefRestaurant" class="text-white/80">—</div>
+        <div class="rounded-2xl p-4 md:p-6 bg-white/5">
+          <div class="text-xs md:text-sm text-gurmaogold mb-2">Aktuální působiště</div>
+          <div id="chefRestaurant" class="text-white/80 text-sm md:text-base">—</div>
         </div>
       </div>
 
       <!-- RIGHT - Restaurants -->
       <div>
-        <h2 class="text-3xl mb-6">Restaurace</h2>
+        <h2 class="text-2xl md:text-3xl mb-6">Restaurace</h2>
         <div id="relatedRestaurants" class="space-y-6">
           <!-- Related restaurants will be loaded here -->
         </div>
