@@ -349,6 +349,9 @@
     <button onclick="switchTab('reviews')" id="tab-reviews" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
       💬 Recenze
     </button>
+    <button onclick="switchTab('add-review')" id="tab-add-review" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      ➕ Recenzi
+    </button>
   </div>
 
   <!-- Tab Content: Restaurants List -->
@@ -469,6 +472,100 @@
       <div class="text-center py-12 text-white/40">
         <div class="text-4xl mb-4">💬</div>
         Žádné recenze
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Add Review -->
+  <div id="content-add-review" class="tab-content hidden">
+    <div class="max-w-3xl mx-auto">
+      <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
+        <h2 class="text-2xl mb-6">
+          <span id="formTitleReview">Přidat recenzi</span>
+        </h2>
+
+        <form id="addReviewForm" class="space-y-6">
+          <input type="hidden" name="id" id="editReviewId" />
+          
+          <!-- Restaurant Selection -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Restaurace *</label>
+            <select 
+              name="restaurant_id" 
+              id="inputReviewRestaurant"
+              required
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            >
+              <option value="">-- Vyber restauraci --</option>
+            </select>
+          </div>
+
+          <!-- Rating -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Hodnocení *</label>
+            <div class="flex gap-2">
+              <button type="button" class="star-btn text-3xl" data-rating="1">⭐</button>
+              <button type="button" class="star-btn text-3xl" data-rating="2">⭐</button>
+              <button type="button" class="star-btn text-3xl" data-rating="3">⭐</button>
+              <button type="button" class="star-btn text-3xl" data-rating="4">⭐</button>
+              <button type="button" class="star-btn text-3xl" data-rating="5">⭐</button>
+            </div>
+            <input type="hidden" name="rating" id="inputReviewRating" required />
+          </div>
+
+          <!-- Title -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Titulek</label>
+            <input 
+              type="text" 
+              name="title" 
+              id="inputReviewTitle"
+              placeholder="např. Skvělá večeře!"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Text -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Text recenze *</label>
+            <textarea 
+              name="text" 
+              id="inputReviewText"
+              required
+              rows="6"
+              placeholder="Vaše zkušenost s restaurací..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Status -->
+          <div>
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input 
+                type="checkbox" 
+                name="auto_approve" 
+                id="inputReviewAutoApprove"
+                class="w-5 h-5 rounded bg-white/5 border border-white/10 checked:bg-gurmaogold"
+              />
+              <span class="text-sm">Automaticky schválit (jako admin)</span>
+            </label>
+          </div>
+
+          <!-- Submit -->
+          <div class="flex gap-4 pt-4">
+            <button 
+              type="submit" 
+              class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
+              <span id="submitReviewText">➕ Recenzi</span>
+            </button>
+            <button 
+              type="button"
+              onclick="resetReviewForm()"
+              class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
+              ↺ Reset
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -1476,6 +1573,11 @@ function switchTab(tab) {
   document.getElementById(`tab-${tab}`).classList.add('active', 'border-gurmaogold');
   document.getElementById(`tab-${tab}`).classList.remove('border-transparent');
   document.getElementById(`content-${tab}`).classList.remove('hidden');
+  
+  // Load restaurants when switching to add-review tab
+  if (tab === 'add-review') {
+    loadRestaurantsForReview();
+  }
 }
 
 // Initialize coordinate picker map
@@ -2192,6 +2294,110 @@ async function deleteReview(id) {
     window.toast.show('Chyba při mazání: ' + err.message, 'error');
   }
 }
+
+// Load restaurants for review form
+async function loadRestaurantsForReview() {
+  try {
+    const { data, error } = await window.supabase
+      .from('restaurants')
+      .select('id, name')
+      .order('name');
+
+    if (error) throw error;
+
+    const select = document.getElementById('inputReviewRestaurant');
+    if (select) {
+      select.innerHTML = '<option value="">-- Vyber restauraci --</option>' +
+        data.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+    }
+  } catch (err) {
+    console.error('Error loading restaurants:', err);
+  }
+}
+
+// Star rating handler
+let selectedRating = 0;
+document.addEventListener('DOMContentLoaded', () => {
+  const starBtns = document.querySelectorAll('.star-btn');
+  starBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      selectedRating = parseInt(this.getAttribute('data-rating'));
+      document.getElementById('inputReviewRating').value = selectedRating;
+      
+      // Update star display
+      starBtns.forEach((s, idx) => {
+        if (idx < selectedRating) {
+          s.style.opacity = '1';
+          s.style.filter = 'none';
+        } else {
+          s.style.opacity = '0.3';
+          s.style.filter = 'grayscale(1)';
+        }
+      });
+    });
+  });
+});
+
+// Reset review form
+function resetReviewForm() {
+  document.getElementById('addReviewForm').reset();
+  document.getElementById('editReviewId').value = '';
+  document.getElementById('formTitleReview').textContent = 'Přidat recenzi';
+  document.getElementById('submitReviewText').textContent = '➕ Recenzi';
+  selectedRating = 0;
+  
+  // Reset stars
+  const starBtns = document.querySelectorAll('.star-btn');
+  starBtns.forEach(s => {
+    s.style.opacity = '0.3';
+    s.style.filter = 'grayscale(1)';
+  });
+}
+
+// Add/Update review
+document.getElementById('addReviewForm')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const restaurantId = formData.get('restaurant_id');
+  const rating = parseInt(formData.get('rating'));
+  const title = formData.get('title');
+  const text = formData.get('text');
+  const autoApprove = formData.get('auto_approve') === 'on';
+  
+  if (!restaurantId || !rating || !text) {
+    window.toast.show('Vyplň povinná pole', 'error');
+    return;
+  }
+
+  try {
+    const { data: { user } } = await window.supabase.auth.getUser();
+    if (!user) throw new Error('Nejsi přihlášen');
+
+    const reviewData = {
+      restaurant_id: restaurantId,
+      user_id: user.id,
+      rating: rating,
+      title: title || null,
+      text: text,
+      status: autoApprove ? 'approved' : 'pending'
+    };
+
+    const { error } = await window.supabase
+      .from('reviews')
+      .insert([reviewData]);
+
+    if (error) throw error;
+
+    window.toast.show('✓ Recenze uložena', 'success');
+    resetReviewForm();
+    switchTab('reviews');
+    loadReviews();
+  } catch (err) {
+    console.error('Error saving review:', err);
+    window.toast.show('Chyba při ukládání: ' + err.message, 'error');
+  }
+});
 
 // ========================================
 // GEAR MANAGEMENT
