@@ -777,6 +777,106 @@
   loadFeaturedChef();
 </script>
 
+<!-- Search Modal Script -->
+<script type="module">
+  import { supabase } from './supabase-client.js';
+  
+  const searchModal = document.getElementById('searchModal');
+  const searchModalInput = document.getElementById('searchModalInput');
+  const searchResults = document.getElementById('searchResults');
+  const searchEmpty = document.getElementById('searchEmpty');
+  const closeSearchBtn = document.getElementById('closeSearchModal');
+  
+  // Open modal when clicking search icon
+  document.querySelectorAll('a[title="Vyhledat restauraci"]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openSearchModal();
+    });
+  });
+  
+  function openSearchModal() {
+    searchModal.classList.remove('hidden');
+    searchModalInput.value = '';
+    searchResults.innerHTML = '';
+    searchEmpty.classList.remove('hidden');
+    setTimeout(() => searchModalInput.focus(), 100);
+  }
+  
+  function closeSearchModal() {
+    searchModal.classList.add('hidden');
+  }
+  
+  // Close modal handlers
+  closeSearchBtn.addEventListener('click', closeSearchModal);
+  searchModal.addEventListener('click', (e) => {
+    if (e.target === searchModal) closeSearchModal();
+  });
+  
+  // ESC key to close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+      closeSearchModal();
+    }
+  });
+  
+  // Search functionality
+  let searchTimeout;
+  searchModalInput.addEventListener('input', async (e) => {
+    const query = e.target.value.trim().toLowerCase();
+    
+    clearTimeout(searchTimeout);
+    
+    if (!query) {
+      searchResults.innerHTML = '';
+      searchEmpty.classList.remove('hidden');
+      return;
+    }
+    
+    searchTimeout = setTimeout(async () => {
+      try {
+        const { data: restaurants, error } = await supabase
+          .from('restaurants')
+          .select('id, name, city, vibe, tag, image_url')
+          .or(`name.ilike.%${query}%,city.ilike.%${query}%,tag.ilike.%${query}%,vibe.ilike.%${query}%`)
+          .limit(8);
+        
+        if (error) throw error;
+        
+        if (restaurants && restaurants.length > 0) {
+          searchEmpty.classList.add('hidden');
+          searchResults.innerHTML = restaurants.map(r => `
+            <a href="restaurant-detail.html?id=${r.id}" class="block p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-gurmaogold transition group">
+              <div class="flex gap-4">
+                <div class="w-16 h-16 rounded-xl bg-cover bg-center flex-shrink-0" style="background-image: url('${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-semibold text-white group-hover:text-gurmaogold transition truncate">${r.name}</h3>
+                  <p class="text-sm text-white/60">${r.city}</p>
+                  <div class="flex gap-2 mt-1">
+                    ${r.vibe ? `<span class="text-xs px-2 py-0.5 rounded-full bg-gurmaogold/20 text-gurmaogold">${r.vibe}</span>` : ''}
+                    ${r.tag ? `<span class="text-xs text-white/40">${r.tag}</span>` : ''}
+                  </div>
+                </div>
+              </div>
+            </a>
+          `).join('');
+        } else {
+          searchEmpty.classList.remove('hidden');
+          searchResults.innerHTML = '';
+          searchEmpty.innerHTML = `
+            <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-sm">Nic jsme nenašli pro "${query}"</p>
+          `;
+        }
+      } catch (error) {
+        console.error('Search error:', error);
+      }
+    }, 300);
+  });
+</script>
+
 <!-- Vibe Tooltips -->
 <script src="vibe-tooltips.js"></script>
 
