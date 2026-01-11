@@ -41,6 +41,7 @@
   <!-- Tooltip Styles -->
   <link rel="stylesheet" href="tooltip.css">
   <link rel="stylesheet" href="toast.css">
+  <link rel="stylesheet" href="nav-search.css">
   <style>
     body{font-family:Inter,sans-serif}
     h1,h2,h3{font-family:'Playfair Display',serif}
@@ -55,7 +56,41 @@
   <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
     <a href="index.html" class="modal-title text-2xl">GUR<span class="text-gurmaogold">M</span>AO</a>
     
-    <nav class="hidden md:flex gap-6 text-sm items-center">
+    <div class="flex items-center gap-3">
+      <div class="relative md:hidden">
+        <div id="mobileSearchBox" class="flex items-center gap-2 transition-all duration-300 w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold overflow-hidden">
+          <button id="mobileSearchToggle" class="flex-shrink-0 w-11 h-11 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </button>
+          <input 
+            type="text" 
+            id="mobileNavSearchInput" 
+            placeholder="Vyhledej..."
+            class="opacity-0 w-0 bg-transparent border-none outline-none text-white placeholder:text-white/40 text-sm transition-opacity duration-300"
+          />
+        </div>
+        <div id="mobileNavSearchResults" class="hidden absolute top-full mt-2 right-0 w-80 max-w-[calc(100vw-2rem)] max-h-96 overflow-y-auto rounded-2xl bg-gurmaoblack border border-white/20 shadow-2xl z-50"></div>
+      </div>
+
+      <nav class="hidden md:flex gap-6 text-sm items-center">
+      <div class="relative">
+        <div id="searchBox" class="flex items-center gap-2 transition-all duration-300 w-9 h-9 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold overflow-hidden">
+          <button id="searchToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </button>
+          <input 
+            type="text" 
+            id="navSearchInput" 
+            placeholder="Vyhledej tu svou..."
+            class="opacity-0 w-0 bg-transparent border-none outline-none text-white placeholder:text-white/40 text-sm transition-opacity duration-300"
+          />
+        </div>
+        <div id="navSearchResults" class="hidden absolute top-full mt-2 w-96 max-h-96 overflow-y-auto rounded-2xl bg-gurmaoblack border border-white/20 shadow-2xl z-50"></div>
+      </div>
       <a href="feed.html" class="hover:text-gurmaogold">Feed</a>
       <a href="restaurace.html" class="hover:text-gurmaogold">Restaurace</a>
       <a href="kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
@@ -94,7 +129,8 @@
       <a id="loginLinkDesktop" href="login.html" class="px-4 py-2 rounded-full border border-gurmaogold text-gurmaogold hover:bg-gurmaogold hover:text-black transition">Přihlásit se</a>
     </nav>
     
-    <button id="menuBtn" class="md:hidden w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition">☰</button>
+      <button id="menuBtn" class="md:hidden w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition">☰</button>
+    </div>
   </div>
 </header>
 
@@ -348,6 +384,7 @@
 <script src="app.js"></script>
 <script src="auth-ui.js"></script>
 <script src="cookie-consent.js"></script>
+<script type="module" src="nav-search.js"></script>
 
 </body>
 </html>
