@@ -680,6 +680,8 @@
       
       if (error) throw error;
       
+      console.log('Loaded chef data:', chef); // Debug log
+      
       if (chef) {
         // Update chef profile section
         if (chef.image_url) {
@@ -709,10 +711,12 @@
         }
         
         // Update favorite cuisines
+        console.log('Chef favorite_cuisines:', chef.favorite_cuisines); // Debug
         if (chef.favorite_cuisines) {
           document.getElementById('chefCuisines').textContent = chef.favorite_cuisines;
           document.getElementById('chefCuisinesCard').style.display = 'block';
         } else {
+          console.log('No favorite cuisines found - hiding card'); // Debug
           document.getElementById('chefCuisinesCard').style.display = 'none';
         }
       }
