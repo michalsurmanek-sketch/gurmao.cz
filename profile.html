@@ -172,13 +172,13 @@
   <div class="mb-8 pb-6 border-b border-white/5">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-3xl font-bold mb-2 flex items-center gap-3">
+        <h1 class="text-3xl font-bold mb-2 flex items-center gap-3 select-none">
           Profil
           <span class="px-3 py-1 text-xs font-medium bg-gurmaogold/10 text-gurmaogold border border-gurmaogold/30 rounded-full">Ověřený</span>
         </h1>
-        <p class="text-white/50 text-sm" id="userEmail">Načítám...</p>
+        <p class="text-white/50 text-sm select-none" id="userEmail">Načítám...</p>
       </div>
-      <div class="hidden sm:flex items-center gap-2 text-xs text-white/40">
+      <div class="hidden sm:flex items-center gap-2 text-xs text-white/40 select-none">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
         </svg>
@@ -193,13 +193,13 @@
     <!-- Personal Info -->
     <div>
       <div class="bg-white/5 border border-white/10 rounded-xl p-6">
-        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 select-none">
           <span class="text-gurmaogold">👤</span> Osobní údaje
         </h2>
         
         <form id="profileForm" class="space-y-4">
           <div>
-            <label for="displayName" class="block text-xs text-white/60 mb-1.5">Jméno</label>
+            <label for="displayName" class="block text-xs text-white/60 mb-1.5 select-none">Jméno</label>
             <input
               type="text"
               id="displayName"
@@ -209,7 +209,7 @@
           </div>
 
           <div>
-            <label for="bio" class="block text-xs text-white/60 mb-1.5">Bio</label>
+            <label for="bio" class="block text-xs text-white/60 mb-1.5 select-none">Bio</label>
             <textarea
               id="bio"
               rows="8"
@@ -221,7 +221,7 @@
           <button
             type="submit"
             id="saveProfileBtn"
-            class="w-full px-4 py-2 rounded-lg bg-gurmaogold text-black font-medium text-sm hover:bg-gurmaogold/90 transition"
+            class="w-full px-4 py-2 rounded-lg bg-gurmaogold text-black font-medium text-sm hover:bg-gurmaogold/90 transition select-none"
           >
             Uložit
           </button>
@@ -233,13 +233,13 @@
     <div class="space-y-6">
       <!-- Security -->
       <div class="bg-white/5 border border-white/10 rounded-xl p-6">
-        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 select-none">
           <span class="text-blue-400">🔒</span> Heslo
         </h2>
         
         <form id="passwordForm" class="space-y-4">
           <div>
-            <label for="newPassword" class="block text-xs text-white/60 mb-1.5">Nové heslo</label>
+            <label for="newPassword" class="block text-xs text-white/60 mb-1.5 select-none">Nové heslo</label>
             <input
               type="password"
               id="newPassword"
@@ -251,7 +251,7 @@
           </div>
 
           <div>
-            <label for="confirmPassword" class="block text-xs text-white/60 mb-1.5">Potvrď heslo</label>
+            <label for="confirmPassword" class="block text-xs text-white/60 mb-1.5 select-none">Potvrď heslo</label>
             <input
               type="password"
               id="confirmPassword"
@@ -265,7 +265,7 @@
           <button
             type="submit"
             id="changePasswordBtn"
-            class="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white font-medium text-sm hover:bg-white/15 transition"
+            class="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white font-medium text-sm hover:bg-white/15 transition select-none"
           >
             Změnit
           </button>
@@ -274,14 +274,14 @@
 
       <!-- Danger Zone -->
       <div class="bg-gurmaored/5 border border-gurmaored/30 rounded-xl p-6">
-        <h2 class="text-lg font-semibold mb-2 flex items-center gap-2 text-gurmaored">
+        <h2 class="text-lg font-semibold mb-2 flex items-center gap-2 text-gurmaored select-none">
           ⚠️ Nebezpečná zóna
         </h2>
-        <p class="text-xs text-white/50 mb-4">Smazání účtu je nevratné.</p>
+        <p class="text-xs text-white/50 mb-4 select-none">Smazání účtu je nevratné.</p>
         
         <button
           id="deleteAccountBtn"
-          class="w-full px-4 py-2 rounded-lg bg-gurmaored/10 border border-gurmaored text-gurmaored font-medium text-sm hover:bg-gurmaored hover:text-white transition"
+          class="w-full px-4 py-2 rounded-lg bg-gurmaored/10 border border-gurmaored text-gurmaored font-medium text-sm hover:bg-gurmaored hover:text-white transition select-none"
         >
           Smazat účet
         </button>
