@@ -19,11 +19,18 @@ const vibeConfig = {
   'CALM': { emoji: '🌊', label: 'CALM', color: '#4488ff' }
 };
 
+// Ensure loading state is visible immediately (before DOM loads)
+if (!restaurantSlug) {
+  // If no slug, prepare to show error
+  window.addEventListener('DOMContentLoaded', () => {
+    showError('Nebyl zadán žádný identifikátor restaurace');
+  });
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', async () => {
   if (!restaurantSlug) {
-    showError('Nebyl zadán žádný identifikátor restaurace');
-    return;
+    return; // Already handled above
   }
   
   await loadRestaurantDetail();
