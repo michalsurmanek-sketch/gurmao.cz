@@ -500,9 +500,9 @@
           <div id="chefRestaurant" class="text-lg">Noir Table · Praha</div>
         </div>
 
-        <div id="chefCuisinesCard" class="rounded-2xl p-6 bg-white/5 mb-6" style="display: none;">
+        <div id="chefCuisinesCard" class="rounded-2xl p-6 bg-white/5 mb-6">
           <div class="text-sm text-gurmaogold mb-2">Oblíbená kuchyně</div>
-          <div id="chefCuisines" class="text-white/80"></div>
+          <div id="chefCuisines" class="text-white/80">—</div>
         </div>
 
         <div class="rounded-2xl p-6 bg-white/5">
@@ -714,10 +714,9 @@
         console.log('Chef favorite_cuisines:', chef.favorite_cuisines); // Debug
         if (chef.favorite_cuisines && chef.favorite_cuisines.trim() !== '') {
           document.getElementById('chefCuisines').textContent = chef.favorite_cuisines;
-          document.getElementById('chefCuisinesCard').style.display = 'block';
         } else {
-          console.log('No favorite cuisines found - hiding card'); // Debug
-          document.getElementById('chefCuisinesCard').style.display = 'none';
+          console.log('No favorite cuisines - keeping placeholder'); // Debug
+          document.getElementById('chefCuisines').textContent = '—';
         }
       }
     } catch (err) {
