@@ -67,6 +67,25 @@
     body { font-family: 'Inter', sans-serif; }
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
 
+    /* Custom Scrollbar for Search Results */
+    #navSearchResults::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    #navSearchResults::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+    }
+    
+    #navSearchResults::-webkit-scrollbar-thumb {
+      background: rgba(212, 175, 55, 0.3);
+      border-radius: 10px;
+    }
+    
+    #navSearchResults::-webkit-scrollbar-thumb:hover {
+      background: rgba(212, 175, 55, 0.5);
+    }
+
     /* ====== VYBER SI PODLE NÁLADY (CSS) ====== */
     .vibe-section{
       padding: 26px 20px 68px;
