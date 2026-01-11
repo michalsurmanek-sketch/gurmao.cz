@@ -478,13 +478,13 @@
 
     <div class="grid md:grid-cols-2 gap-12 items-center">
       <div class="rounded-3xl overflow-hidden shadow-glow">
-        <div class="aspect-[4/5] bg-[url('https://images.unsplash.com/photo-1600891965050-dc6c28c5a12b')] bg-cover bg-center"></div>
+        <div id="chefImage" class="aspect-[4/5] bg-[url('https://images.unsplash.com/photo-1600891965050-dc6c28c5a12b')] bg-cover bg-center"></div>
       </div>
 
       <div>
-        <div class="text-gurmaogold text-sm mb-2">🧑‍🍳 Head Chef · 🍷 LUXE</div>
-        <h3 class="text-4xl font-semibold mb-4">Adam Noir</h3>
-        <p class="text-white/70 mb-6">
+        <div id="chefLabel" class="text-gurmaogold text-sm mb-2">🧑‍🍳 Head Chef · 🍷 LUXE</div>
+        <h3 id="chefName" class="text-4xl font-semibold mb-4">Adam Noir</h3>
+        <p id="chefBio" class="text-white/70 mb-6">
           Kuchař posedlý detailem, ohněm a tichem v kuchyni. Věří, že jídlo má mluvit samo.
           Každý talíř je podpis, každý večer rituál.
         </p>
@@ -495,14 +495,14 @@
           <div class="rounded-2xl p-4 bg-white/5 text-center"><div class="text-xl">🖤</div><div class="text-sm text-white/60">Styl</div></div>
         </div>
 
-        <div class="rounded-2xl p-6 bg-white/5 mb-6">
+        <div id="chefRestaurantCard" class="rounded-2xl p-6 bg-white/5 mb-6">
           <div class="text-sm text-gurmaogold mb-1">Aktuální restaurace</div>
-          <div class="text-lg">Noir Table · Praha</div>
+          <div id="chefRestaurant" class="text-lg">Noir Table · Praha</div>
         </div>
 
-        <div class="rounded-2xl p-6 bg-white/5 mb-6">
+        <div id="chefCuisinesCard" class="rounded-2xl p-6 bg-white/5 mb-6">
           <div class="text-sm text-gurmaogold mb-2">Oblíbená kuchyně</div>
-          <div class="text-white/80">Japonská · Francouzská · Nordic</div>
+          <div id="chefCuisines" class="text-white/80">Japonská · Francouzská · Nordic</div>
         </div>
 
         <div class="rounded-2xl p-6 bg-white/5">
@@ -649,7 +649,7 @@
 <script src="auth-ui.js"></script>
 <script src="onboarding.js"></script>
 <script src="cookie-consent.js"></script>
-<script>
+<script type="module">
   // Homepage: Change CTA for logged-in users
   const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
   if (user) {
@@ -659,6 +659,71 @@
       heroLoginBtn.textContent = 'Můj výběr';
     }
   }
+
+  // Load featured chef profile
+  import { supabase } from './supabase-client.js';
+  
+  async function loadFeaturedChef() {
+    try {
+      // Load first chef (you can change this to load a specific chef by slug)
+      const { data: chef, error } = await supabase
+        .from('chefs')
+        .select(`
+          *,
+          restaurants (
+            name,
+            city
+          )
+        `)
+        .limit(1)
+        .single();
+      
+      if (error) throw error;
+      
+      if (chef) {
+        // Update chef profile section
+        if (chef.image_url) {
+          const chefImage = document.getElementById('chefImage');
+          chefImage.style.backgroundImage = `url('${chef.image_url}')`;
+        }
+        
+        if (chef.name) {
+          document.getElementById('chefName').textContent = chef.name;
+        }
+        
+        if (chef.bio) {
+          document.getElementById('chefBio').textContent = chef.bio;
+        }
+        
+        // Update label with vibe
+        if (chef.vibe) {
+          document.getElementById('chefLabel').textContent = `🧑‍🍳 Head Chef · ${chef.vibe}`;
+        }
+        
+        // Update restaurant
+        if (chef.restaurants) {
+          const restaurantText = chef.restaurants.city 
+            ? `${chef.restaurants.name} · ${chef.restaurants.city}`
+            : chef.restaurants.name;
+          document.getElementById('chefRestaurant').textContent = restaurantText;
+        }
+        
+        // Update favorite cuisines
+        if (chef.favorite_cuisines) {
+          document.getElementById('chefCuisines').textContent = chef.favorite_cuisines;
+          document.getElementById('chefCuisinesCard').style.display = 'block';
+        } else {
+          document.getElementById('chefCuisinesCard').style.display = 'none';
+        }
+      }
+    } catch (err) {
+      console.error('Error loading featured chef:', err);
+      // Keep default content if loading fails
+    }
+  }
+  
+  // Load on page load
+  loadFeaturedChef();
 </script>
 
 <!-- Vibe Tooltips -->

@@ -739,6 +739,50 @@
             ></textarea>
           </div>
 
+          <!-- Oblíbená kuchyně -->
+          <div>
+            <label class="block text-sm font-semibold mb-3">Oblíbená kuchyně</label>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3" id="favoriteCuisinesContainer">
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Japonská" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🍱 Japonská</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Francouzská" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🥐 Francouzská</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Italská" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🍝 Italská</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Nordic" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🐟 Nordic</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Asijská" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🥢 Asijská</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Středomořská" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🫒 Středomořská</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Vegetariánská" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🥗 Vegetariánská</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Moderní česká" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🍖 Moderní česká</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Fusion" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🌍 Fusion</span>
+              </label>
+            </div>
+            <p class="text-xs text-white/40 mt-2">Vyber až 3 typy kuchyně, které kuchař preferuje</p>
+          </div>
+
           <!-- Image URL -->
           <div>
             <label class="block text-sm font-semibold mb-2">URL obrázku</label>
@@ -1480,12 +1524,17 @@ document.getElementById('addChefForm').addEventListener('submit', async (e) => {
   
   const formData = new FormData(e.target);
   const editId = formData.get('id');
+  
+  // Get selected cuisines
+  const selectedCuisines = Array.from(formData.getAll('favorite_cuisines'));
+  
   const data = {
     name: formData.get('name'),
     restaurant_id: formData.get('restaurant_id'),
     vibe: formData.get('vibe') || null,
     signature_style: formData.get('signature_style') || null,
     bio: formData.get('bio'),
+    favorite_cuisines: selectedCuisines.length > 0 ? selectedCuisines.join(' · ') : null,
     image_url: formData.get('image_url') || null,
     slug: formData.get('slug')
   };
@@ -1560,6 +1609,12 @@ async function editChef(id) {
     document.getElementById('inputChefImageUrl').value = data.image_url || '';
     document.getElementById('inputChefSlug').value = data.slug;
     
+    // Load favorite cuisines
+    const favoriteCuisines = data.favorite_cuisines ? data.favorite_cuisines.split(' · ') : [];
+    document.querySelectorAll('input[name="favorite_cuisines"]').forEach(checkbox => {
+      checkbox.checked = favoriteCuisines.includes(checkbox.value);
+    });
+    
     // Update custom dropdown button text
     if (data.restaurant_id) {
       const { data: restaurant, error: restError } = await window.supabase
@@ -1598,6 +1653,11 @@ function resetChefForm() {
   const btn = document.getElementById('chefRestaurantBtn');
   const textSpan = btn?.querySelector('.dropdown-text');
   if (textSpan) textSpan.textContent = '-- Vyber restauraci --';
+  
+  // Reset favorite cuisines checkboxes
+  document.querySelectorAll('input[name="favorite_cuisines"]').forEach(checkbox => {
+    checkbox.checked = false;
+  });
 }
 
 // Search chefs
