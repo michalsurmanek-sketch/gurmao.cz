@@ -68,21 +68,25 @@
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
 
     /* Custom Scrollbar for Search Results */
-    #navSearchResults::-webkit-scrollbar {
+    #navSearchResults::-webkit-scrollbar,
+    #mobileNavSearchResults::-webkit-scrollbar {
       width: 6px;
     }
     
-    #navSearchResults::-webkit-scrollbar-track {
+    #navSearchResults::-webkit-scrollbar-track,
+    #mobileNavSearchResults::-webkit-scrollbar-track {
       background: rgba(255, 255, 255, 0.05);
       border-radius: 10px;
     }
     
-    #navSearchResults::-webkit-scrollbar-thumb {
+    #navSearchResults::-webkit-scrollbar-thumb,
+    #mobileNavSearchResults::-webkit-scrollbar-thumb {
       background: rgba(212, 175, 55, 0.3);
       border-radius: 10px;
     }
     
-    #navSearchResults::-webkit-scrollbar-thumb:hover {
+    #navSearchResults::-webkit-scrollbar-thumb:hover,
+    #mobileNavSearchResults::-webkit-scrollbar-thumb:hover {
       background: rgba(212, 175, 55, 0.5);
     }
 
@@ -272,7 +276,25 @@
     </nav>
     
     <!-- Mobile hamburger -->
-    <button id="menuBtn" class="md:hidden w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
+    <div class="md:hidden flex gap-2">
+      <div class="relative">
+        <div id="mobileSearchBox" class="flex items-center gap-2 transition-all duration-300 w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold overflow-hidden">
+          <button id="mobileSearchToggle" class="flex-shrink-0 w-11 h-11 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </button>
+          <input 
+            type="text" 
+            id="mobileNavSearchInput" 
+            placeholder="Vyhledej..."
+            class="opacity-0 w-0 bg-transparent border-none outline-none text-white placeholder:text-white/40 text-sm transition-opacity duration-300"
+          />
+        </div>
+        <div id="mobileNavSearchResults" class="hidden absolute top-full mt-2 right-0 w-80 max-w-[calc(100vw-2rem)] max-h-96 overflow-y-auto rounded-2xl bg-gurmaoblack border border-white/20 shadow-2xl z-50"></div>
+      </div>
+      <button id="menuBtn" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
+    </div>
   </div>
 </header>
 
@@ -852,6 +874,89 @@
         }
       } catch (error) {
         console.error('Search error:', error);
+      }
+    }, 300);
+  });
+  
+  // Mobile search functionality
+  const mobileSearchBox = document.getElementById('mobileSearchBox');
+  const mobileSearchToggle = document.getElementById('mobileSearchToggle');
+  const mobileNavSearchInput = document.getElementById('mobileNavSearchInput');
+  const mobileNavSearchResults = document.getElementById('mobileNavSearchResults');
+  let isMobileExpanded = false;
+  
+  // Toggle mobile search box
+  mobileSearchToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!isMobileExpanded) {
+      // Expand
+      mobileSearchBox.classList.remove('w-11');
+      mobileSearchBox.classList.add('w-64');
+      mobileNavSearchInput.classList.remove('opacity-0', 'w-0');
+      mobileNavSearchInput.classList.add('opacity-100', 'w-full', 'px-4');
+      setTimeout(() => mobileNavSearchInput.focus(), 300);
+      isMobileExpanded = true;
+    }
+  });
+  
+  // Close when clicking outside
+  document.addEventListener('click', (e) => {
+    if (isMobileExpanded && !mobileSearchBox.contains(e.target) && !mobileNavSearchResults.contains(e.target)) {
+      // Collapse
+      mobileSearchBox.classList.add('w-11');
+      mobileSearchBox.classList.remove('w-64');
+      mobileNavSearchInput.classList.add('opacity-0', 'w-0');
+      mobileNavSearchInput.classList.remove('opacity-100', 'w-full', 'px-4');
+      mobileNavSearchInput.value = '';
+      mobileNavSearchResults.classList.add('hidden');
+      mobileNavSearchResults.innerHTML = '';
+      isMobileExpanded = false;
+    }
+  });
+  
+  // Mobile search functionality
+  let mobileSearchTimeout;
+  mobileNavSearchInput.addEventListener('input', async (e) => {
+    const query = e.target.value.trim().toLowerCase();
+    
+    clearTimeout(mobileSearchTimeout);
+    
+    if (!query) {
+      mobileNavSearchResults.classList.add('hidden');
+      mobileNavSearchResults.innerHTML = '';
+      return;
+    }
+    
+    mobileSearchTimeout = setTimeout(async () => {
+      try {
+        const { data: restaurants, error } = await supabase
+          .from('restaurants')
+          .select('id, name, city, vibe, tag, image_url')
+          .or(`name.ilike.%${query}%,city.ilike.%${query}%,tag.ilike.%${query}%,vibe.ilike.%${query}%`)
+          .limit(6);
+        
+        if (error) throw error;
+        
+        if (restaurants && restaurants.length > 0) {
+          mobileNavSearchResults.classList.remove('hidden');
+          mobileNavSearchResults.innerHTML = restaurants.map(r => `
+            <a href="restaurant-detail.html?id=${r.id}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
+              <div class="flex gap-3">
+                <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-semibold text-sm text-white hover:text-gurmaogold transition truncate">${r.name}</h3>
+                  <p class="text-xs text-white/60">${r.city}</p>
+                  ${r.vibe ? `<span class="text-xs text-gurmaogold">${r.vibe}</span>` : ''}
+                </div>
+              </div>
+            </a>
+          `).join('');
+        } else {
+          mobileNavSearchResults.classList.remove('hidden');
+          mobileNavSearchResults.innerHTML = '<div class="p-4 text-center text-white/40 text-sm">Nic nenalezeno</div>';
+        }
+      } catch (error) {
+        console.error('Mobile search error:', error);
       }
     }, 300);
   });
