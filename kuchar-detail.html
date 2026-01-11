@@ -149,6 +149,7 @@
 
       <div class="mt-8 flex flex-wrap gap-3">
         <button id="followBtn" class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition text-sm md:text-base">✨ Sledovat všude</button>
+        <button id="cookbookBtn" class="px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition text-sm md:text-base">📖 Moje kniha</button>
         <a id="restaurantLink" href="#" class="hidden px-6 py-3 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition text-sm md:text-base">🍷 Restaurace</a>
       </div>
     </div>
@@ -218,7 +219,66 @@
         -->
       </div>
 
-      <button id="closeModal" class="w-full px-6 py-3 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
+      <button id="closeFollowModal" class="w-full px-6 py-3 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
+        Zavřít
+      </button>
+    </div>
+  </div>
+
+  <!-- Cookbook Modal -->
+  <div id="cookbookModal" class="hidden fixed inset-0 bg-black/70 z-[200] flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-gurmaoblack border border-white/10 rounded-3xl p-6 md:p-8 relative">
+      <h3 class="text-2xl font-bold mb-6 text-gurmaogold">Moje kniha</h3>
+      
+      <div class="space-y-3 mb-6">
+        <a href="#" class="flex items-center justify-between px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 transition group">
+          <div class="flex items-center gap-3">
+            <div class="text-2xl">🍽️</div>
+            <div>
+              <div class="font-semibold">Oblíbené recepty</div>
+              <div class="text-xs text-white/60">Tvoje sbírka</div>
+            </div>
+          </div>
+          <div class="text-gurmaogold group-hover:scale-110 transition">→</div>
+        </a>
+
+        <a href="collections.html" class="flex items-center justify-between px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 transition group">
+          <div class="flex items-center gap-3">
+            <div class="text-2xl">⭐</div>
+            <div>
+              <div class="font-semibold">Můj výběr</div>
+              <div class="text-xs text-white/60">Restaurace & kuchaři</div>
+            </div>
+          </div>
+          <div class="text-gurmaogold group-hover:scale-110 transition">→</div>
+        </a>
+
+        <a href="#" class="flex items-center justify-between px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 transition group">
+          <div class="flex items-center gap-3">
+            <div class="text-2xl">📝</div>
+            <div>
+              <div class="font-semibold">Poznámky</div>
+              <div class="text-xs text-white/60">Co jsem zkusil</div>
+            </div>
+          </div>
+          <div class="text-gurmaogold group-hover:scale-110 transition">→</div>
+        </a>
+
+        <!-- Pro přidání další položky zkopíruj tento blok:
+        <a href="#" class="flex items-center justify-between px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 transition group">
+          <div class="flex items-center gap-3">
+            <div class="text-2xl">🔖</div>
+            <div>
+              <div class="font-semibold">NÁZEV SEKCE</div>
+              <div class="text-xs text-white/60">Popis</div>
+            </div>
+          </div>
+          <div class="text-gurmaogold group-hover:scale-110 transition">→</div>
+        </a>
+        -->
+      </div>
+
+      <button id="closeCookbookModal" class="w-full px-6 py-3 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
         Zavřít
       </button>
     </div>
@@ -302,15 +362,15 @@
     // Follow modal
     const followBtn = document.getElementById('followBtn');
     const followModal = document.getElementById('followModal');
-    const closeModal = document.getElementById('closeModal');
+    const closeFollowModal = document.getElementById('closeFollowModal');
 
-    if (followBtn && followModal && closeModal) {
+    if (followBtn && followModal && closeFollowModal) {
       followBtn.addEventListener('click', () => {
         followModal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
       });
 
-      closeModal.addEventListener('click', () => {
+      closeFollowModal.addEventListener('click', () => {
         followModal.classList.add('hidden');
         document.body.style.overflow = '';
       });
@@ -322,15 +382,46 @@
           document.body.style.overflow = '';
         }
       });
+    }
 
-      // Close on Escape key
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !followModal.classList.contains('hidden')) {
-          followModal.classList.add('hidden');
+    // Cookbook modal
+    const cookbookBtn = document.getElementById('cookbookBtn');
+    const cookbookModal = document.getElementById('cookbookModal');
+    const closeCookbookModal = document.getElementById('closeCookbookModal');
+
+    if (cookbookBtn && cookbookModal && closeCookbookModal) {
+      cookbookBtn.addEventListener('click', () => {
+        cookbookModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      });
+
+      closeCookbookModal.addEventListener('click', () => {
+        cookbookModal.classList.add('hidden');
+        document.body.style.overflow = '';
+      });
+
+      // Close on backdrop click
+      cookbookModal.addEventListener('click', (e) => {
+        if (e.target === cookbookModal) {
+          cookbookModal.classList.add('hidden');
           document.body.style.overflow = '';
         }
       });
     }
+
+    // Close modals on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (!followModal.classList.contains('hidden')) {
+          followModal.classList.add('hidden');
+          document.body.style.overflow = '';
+        }
+        if (!cookbookModal.classList.contains('hidden')) {
+          cookbookModal.classList.add('hidden');
+          document.body.style.overflow = '';
+        }
+      }
+    });
   });
 </script>
 
