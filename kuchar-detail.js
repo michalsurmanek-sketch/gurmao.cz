@@ -111,6 +111,9 @@ function populateChefDetail(chef) {
     restaurantLink.classList.remove('hidden');
   }
 
+  // Update social media links in Follow modal
+  updateSocialMediaLinks(chef);
+
   // Specialties (if available)
   if (chef.specialties) {
     const specialtiesArray = chef.specialties.split('·').map(s => s.trim());
@@ -149,6 +152,30 @@ async function loadRelatedRestaurants(restaurantId) {
   } catch (err) {
     console.error('Error loading related restaurants:', err);
   }
+}
+
+// Update social media links in Follow modal
+function updateSocialMediaLinks(chef) {
+  const socialLinks = [
+    { id: 'instagramLink', url: chef.instagram_url, icon: 'instagram', name: 'Instagram' },
+    { id: 'tiktokLink', url: chef.tiktok_url, icon: 'video', name: 'TikTok' },
+    { id: 'facebookLink', url: chef.facebook_url, icon: 'facebook', name: 'Facebook' },
+    { id: 'youtubeLink', url: chef.youtube_url, icon: 'youtube', name: 'YouTube' }
+  ];
+
+  socialLinks.forEach(social => {
+    const linkElement = document.getElementById(social.id);
+    if (linkElement) {
+      if (social.url && social.url.trim() !== '') {
+        linkElement.href = social.url;
+        linkElement.classList.remove('hidden', 'opacity-50', 'pointer-events-none');
+      } else {
+        // Hide or disable if no URL
+        linkElement.classList.add('opacity-50', 'pointer-events-none');
+        linkElement.href = '#';
+      }
+    }
+  });
 }
 
 // Show error
