@@ -297,10 +297,13 @@
 <footer class="mt-24 py-6 border-t border-white/10">
   <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
     <div class="flex flex-wrap justify-center md:justify-start gap-4 md:gap-6 text-xs md:text-sm text-white/60">
-      <a href="legal.html" class="hover:text-gurmaogold transition">Právní informace</a>
-      <a href="legal.html#gdpr" class="hover:text-gurmaogold transition">GDPR</a>
-      <a href="legal.html#cookies" class="hover:text-gurmaogold transition">Cookies</a>
-      <a href="kontakt.html" class="hover:text-gurmaogold transition">Kontakt</a>
+      <button id="legalToggle" class="hover:text-gurmaogold transition cursor-pointer">Právní informace ▼</button>
+      <div id="legalLinks" class="hidden flex-wrap gap-4 md:gap-6">
+        <a href="legal.html" class="hover:text-gurmaogold transition">Právní informace</a>
+        <a href="legal.html#gdpr" class="hover:text-gurmaogold transition">GDPR</a>
+        <a href="legal.html#cookies" class="hover:text-gurmaogold transition">Cookies</a>
+        <a href="kontakt.html" class="hover:text-gurmaogold transition">Kontakt</a>
+      </div>
       <span class="text-white/40">© 2025 GURMAO.cz · Nejez. Prožij.</span>
     </div>
     <div class="flex items-center gap-3">
@@ -318,6 +321,7 @@
   </div>
 </footer>
 
+<script src="footer-legal-toggle.js"></script>
 <script src="app.js"></script>
 <script src="auth-ui.js"></script>
 
