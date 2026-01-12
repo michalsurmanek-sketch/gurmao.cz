@@ -185,28 +185,7 @@
       <a id="loginLinkDesktop" href="login.html" class="px-4 py-2 rounded-full border border-gurmaogold text-gurmaogold hover:bg-gurmaogold hover:text-black transition">Přihlásit se</a>
     </nav>
     
-    <div class="md:hidden flex flex-col gap-2">
-      <!-- Hamburger Menu Button -->
-      <button id="menuBtn" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
-      
-      <!-- Mobile Search Icon -->
-      <div class="relative">
-        <div id="mobileSearchBox" class="flex items-center gap-2 transition-all duration-300 w-9 h-9 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold overflow-hidden">
-          <button id="mobileSearchToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-          </button>
-          <input 
-            type="text" 
-            id="mobileNavSearchInput" 
-            placeholder="Vyhledej..."
-            class="opacity-0 w-0 bg-transparent border-none outline-none text-white placeholder:text-white/40 text-sm transition-opacity duration-300"
-          />
-        </div>
-        <div id="mobileNavSearchResults" class="hidden absolute top-full mt-2 right-0 w-[90vw] max-w-sm max-h-96 overflow-y-auto rounded-2xl bg-gurmaoblack border border-white/20 shadow-2xl z-50"></div>
-      </div>
-    </div>
+    <button id="menuBtn" class="md:hidden w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
   </div>
 </header>
 
@@ -218,6 +197,22 @@
       <div class="text-sm text-white/60">Navigace</div>
       <button id="menuClose" class="w-10 h-10 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Zavřít menu">✕</button>
     </div>
+    <!-- Mobile Search -->
+    <div class="relative mb-3">
+      <div id="mobileSearchBox" class="flex items-center gap-2 transition-all duration-300 w-full rounded-2xl bg-white/5 border border-white/15 hover:border-gurmaogold overflow-hidden px-4 py-3">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input 
+          type="text" 
+          id="mobileNavSearchInput" 
+          placeholder="Vyhledej restauraci..."
+          class="w-full bg-transparent border-none outline-none text-white placeholder:text-white/40 text-sm"
+        />
+      </div>
+      <div id="mobileNavSearchResults" class="hidden mt-2 w-full max-h-96 overflow-y-auto rounded-2xl bg-gurmaoblack border border-white/20 shadow-2xl"></div>
+    </div>
+    
     <nav class="grid gap-2">
       <a href="index.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Domů</a>
       <a href="feed.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Feed</a>

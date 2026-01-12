@@ -94,43 +94,10 @@ function initDesktopSearch() {
 
 // Mobile search functionality
 function initMobileSearch() {
-  const mobileSearchBox = document.getElementById('mobileSearchBox');
-  const mobileSearchToggle = document.getElementById('mobileSearchToggle');
   const mobileNavSearchInput = document.getElementById('mobileNavSearchInput');
   const mobileNavSearchResults = document.getElementById('mobileNavSearchResults');
   
-  if (!mobileSearchBox || !mobileSearchToggle || !mobileNavSearchInput || !mobileNavSearchResults) return;
-  
-  let isMobileExpanded = false;
-  
-  // Toggle mobile search box
-  mobileSearchToggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (!isMobileExpanded) {
-      // Expand
-      mobileSearchBox.classList.remove('w-9');
-      mobileSearchBox.classList.add('w-32');
-      mobileNavSearchInput.classList.remove('opacity-0', 'w-0');
-      mobileNavSearchInput.classList.add('opacity-100', 'w-full', 'px-4');
-      setTimeout(() => mobileNavSearchInput.focus(), 300);
-      isMobileExpanded = true;
-    }
-  });
-  
-  // Close when clicking outside
-  document.addEventListener('click', (e) => {
-    if (isMobileExpanded && !mobileSearchBox.contains(e.target) && !mobileNavSearchResults.contains(e.target)) {
-      // Collapse
-      mobileSearchBox.classList.add('w-9');
-      mobileSearchBox.classList.remove('w-32');
-      mobileNavSearchInput.classList.add('opacity-0', 'w-0');
-      mobileNavSearchInput.classList.remove('opacity-100', 'w-full', 'px-4');
-      mobileNavSearchInput.value = '';
-      mobileNavSearchResults.classList.add('hidden');
-      mobileNavSearchResults.innerHTML = '';
-      isMobileExpanded = false;
-    }
-  });
+  if (!mobileNavSearchInput || !mobileNavSearchResults) return;
   
   // Mobile search functionality
   let mobileSearchTimeout;
