@@ -67,6 +67,11 @@
     body { font-family: 'Inter', sans-serif; }
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
 
+    /* Logo fade transition */
+    header a.modal-title {
+      transition: opacity 0.3s ease;
+    }
+
     /* Custom Scrollbar for Search Results */
     #navSearchResults::-webkit-scrollbar,
     #mobileNavSearchResults::-webkit-scrollbar {
@@ -820,6 +825,7 @@
   const searchToggle = document.getElementById('searchToggle');
   const navSearchInput = document.getElementById('navSearchInput');
   const navSearchResults = document.getElementById('navSearchResults');
+  const logo = document.querySelector('header a.modal-title');
   let isExpanded = false;
   
   // Toggle search box
@@ -831,6 +837,11 @@
       searchBox.classList.add('w-80');
       navSearchInput.classList.remove('opacity-0', 'w-0');
       navSearchInput.classList.add('opacity-100', 'w-full', 'px-4');
+      // Hide logo
+      if (logo) {
+        logo.style.opacity = '0';
+        logo.style.pointerEvents = 'none';
+      }
       setTimeout(() => navSearchInput.focus(), 300);
       isExpanded = true;
     }
@@ -847,6 +858,11 @@
       navSearchInput.value = '';
       navSearchResults.classList.add('hidden');
       navSearchResults.innerHTML = '';
+      // Show logo again
+      if (logo) {
+        logo.style.opacity = '1';
+        logo.style.pointerEvents = 'auto';
+      }
       isExpanded = false;
     }
   });
