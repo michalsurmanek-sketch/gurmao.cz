@@ -185,7 +185,10 @@
       <a id="loginLinkDesktop" href="login.html" class="px-4 py-2 rounded-full border border-gurmaogold text-gurmaogold hover:bg-gurmaogold hover:text-black transition">Přihlásit se</a>
     </nav>
     
-    <div class="md:hidden flex items-center gap-3">
+    <div class="md:hidden flex flex-col gap-2">
+      <!-- Hamburger Menu Button -->
+      <button id="menuBtn" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
+      
       <!-- Mobile Search Icon -->
       <div class="relative">
         <div id="mobileSearchBox" class="flex items-center gap-2 transition-all duration-300 w-9 h-9 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold overflow-hidden">
@@ -203,9 +206,6 @@
         </div>
         <div id="mobileNavSearchResults" class="hidden absolute top-full mt-2 right-0 w-[90vw] max-w-sm max-h-96 overflow-y-auto rounded-2xl bg-gurmaoblack border border-white/20 shadow-2xl z-50"></div>
       </div>
-      
-      <!-- Hamburger Menu Button -->
-      <button id="menuBtn" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
     </div>
   </div>
 </header>
