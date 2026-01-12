@@ -108,7 +108,7 @@ function initMobileSearch() {
     e.stopPropagation();
     if (!isMobileExpanded) {
       // Expand
-      mobileSearchBox.classList.remove('w-11');
+      mobileSearchBox.classList.remove('w-9');
       mobileSearchBox.classList.add('w-32');
       mobileNavSearchInput.classList.remove('opacity-0', 'w-0');
       mobileNavSearchInput.classList.add('opacity-100', 'w-full', 'px-4');
@@ -121,7 +121,7 @@ function initMobileSearch() {
   document.addEventListener('click', (e) => {
     if (isMobileExpanded && !mobileSearchBox.contains(e.target) && !mobileNavSearchResults.contains(e.target)) {
       // Collapse
-      mobileSearchBox.classList.add('w-11');
+      mobileSearchBox.classList.add('w-9');
       mobileSearchBox.classList.remove('w-32');
       mobileNavSearchInput.classList.add('opacity-0', 'w-0');
       mobileNavSearchInput.classList.remove('opacity-100', 'w-full', 'px-4');
