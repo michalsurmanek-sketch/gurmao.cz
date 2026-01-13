@@ -60,9 +60,6 @@
   <!-- Tooltip Styles -->
   <link rel="stylesheet" href="tooltip.css">
   
-  <!-- Search Styles -->
-  <link rel="stylesheet" href="nav-search.css">
-  
   <!-- Global Styles -->
   <link rel="stylesheet" href="global.css">
 
@@ -73,29 +70,6 @@
     /* Logo fade transition */
     header a.modal-title {
       transition: opacity 0.3s ease;
-    }
-
-    /* Custom Scrollbar for Search Results */
-    #navSearchResults::-webkit-scrollbar,
-    #mobileNavSearchResults::-webkit-scrollbar {
-      width: 6px;
-    }
-    
-    #navSearchResults::-webkit-scrollbar-track,
-    #mobileNavSearchResults::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-    }
-    
-    #navSearchResults::-webkit-scrollbar-thumb,
-    #mobileNavSearchResults::-webkit-scrollbar-thumb {
-      background: rgba(212, 175, 55, 0.3);
-      border-radius: 10px;
-    }
-    
-    #navSearchResults::-webkit-scrollbar-thumb:hover,
-    #mobileNavSearchResults::-webkit-scrollbar-thumb:hover {
-      background: rgba(212, 175, 55, 0.5);
     }
 
     /* ====== VYBER SI PODLE NÁLADY (CSS) ====== */
@@ -229,28 +203,6 @@
     <a href="index.html" class="modal-title text-2xl">GUR<span class="text-gurmaogold">M</span>AO</a>
     
     <nav class="hidden md:flex gap-6 text-sm items-center">
-      <div class="relative">
-        <div id="searchBox" class="flex items-center gap-1 transition-all duration-300 w-auto h-9 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold overflow-hidden">
-          <button id="searchToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-          </button>
-          <input 
-            type="text" 
-            id="navSearchInput" 
-            placeholder="Vyhledej tu svou..."
-            class="opacity-0 w-0 bg-transparent border-none outline-none text-white placeholder:text-white/40 text-sm transition-opacity duration-300"
-          />
-          <button id="locationToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center text-white/60 hover:text-gurmaogold transition opacity-0 pointer-events-none">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-          </button>
-        </div>
-        <div id="navSearchResults" class="hidden absolute top-full mt-2 w-96 max-h-96 overflow-y-auto rounded-2xl bg-gurmaoblack border border-white/20 shadow-2xl z-50"></div>
-      </div>
       <a href="feed.html" class="hover:text-gurmaogold">Feed</a>
       <a href="restaurace.html" class="hover:text-gurmaogold">Restaurace</a>
       <a href="kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
@@ -291,28 +243,6 @@
     
     <!-- Mobile hamburger -->
     <div class="md:hidden flex gap-2">
-      <div class="relative flex-1">
-        <div id="mobileSearchBox" class="flex items-center gap-2 transition-all duration-300 w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold overflow-hidden">
-          <button id="mobileSearchToggle" class="flex-shrink-0 w-11 h-11 flex items-center justify-center">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-          </button>
-          <button id="mobileLocationToggle" class="flex-shrink-0 w-8 h-8 flex items-center justify-center text-white/60 hover:text-gurmaogold transition opacity-0 pointer-events-none">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-          </button>
-          <input 
-            type="text" 
-            id="mobileNavSearchInput" 
-            placeholder="Vyhledej..."
-            class="opacity-0 w-0 bg-transparent border-none outline-none text-white placeholder:text-white/40 text-sm transition-opacity duration-300"
-          />
-        </div>
-        <div id="mobileNavSearchResults" class="hidden absolute top-full mt-2 right-0 w-80 max-w-[calc(100vw-2rem)] max-h-96 overflow-y-auto rounded-2xl bg-gurmaoblack border border-white/20 shadow-2xl z-50"></div>
-      </div>
       <button id="menuBtn" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
     </div>
   </div>
@@ -832,10 +762,6 @@
   // Load on page load
   loadFeaturedChef();
 </script>
-
-<!-- Search functionality -->
-<script type="module" src="nav-search.js"></script>
-<script type="module" src="location-search.js"></script>
 
 <!-- Vibe Tooltips -->
 <script src="vibe-tooltips.js"></script>
