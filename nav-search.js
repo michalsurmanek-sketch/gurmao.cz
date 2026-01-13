@@ -237,6 +237,12 @@ function initMobileSearch() {
       mobileNavSearchInput.classList.remove('opacity-0', 'w-0');
       mobileNavSearchInput.classList.add('opacity-100', 'w-full', 'px-4');
       
+      // Zobrazit lokační tlačítko
+      if (mobileLocationToggle) {
+        mobileLocationToggle.classList.remove('opacity-0', 'pointer-events-none');
+        mobileLocationToggle.classList.add('opacity-100', 'pointer-events-auto');
+      }
+      
       // Skrýt logo a hamburger pouze na mobilu (ne na desktopu)
       const isMobile = window.innerWidth < 768;
       if (isMobile) {
@@ -260,6 +266,12 @@ function initMobileSearch() {
       mobileNavSearchInput.value = '';
       mobileNavSearchResults.classList.add('hidden');
       mobileNavSearchResults.innerHTML = '';
+      
+      // Skrýt lokační tlačítko
+      if (mobileLocationToggle) {
+        mobileLocationToggle.classList.add('opacity-0', 'pointer-events-none');
+        mobileLocationToggle.classList.remove('opacity-100', 'pointer-events-auto');
+      }
       
       // Zobrazit logo a hamburger zpět
       if (mobileLogo) mobileLogo.style.display = '';
