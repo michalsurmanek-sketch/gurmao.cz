@@ -18,13 +18,27 @@ async function loadLocationModule() {
 loadLocationModule();
 
 function initHeaderSearch() {
+  console.log('🔍 Header search initializing...');
   const headerSearchBox = document.getElementById('headerSearchBox');
   const headerSearchToggle = document.getElementById('headerSearchToggle');
   const headerSearchInput = document.getElementById('headerSearchInput');
   const headerSearchResults = document.getElementById('headerSearchResults');
   const headerLocationToggle = document.getElementById('headerLocationToggle');
   
-  if (!headerSearchBox || !headerSearchToggle || !headerSearchInput || !headerSearchResults) return;
+  console.log('Elements found:', {
+    headerSearchBox: !!headerSearchBox,
+    headerSearchToggle: !!headerSearchToggle,
+    headerSearchInput: !!headerSearchInput,
+    headerSearchResults: !!headerSearchResults,
+    headerLocationToggle: !!headerLocationToggle
+  });
+  
+  if (!headerSearchBox || !headerSearchToggle || !headerSearchInput || !headerSearchResults) {
+    console.error('❌ Header search elements not found!');
+    return;
+  }
+  
+  console.log('✅ Header search initialized successfully');
   
   let isExpanded = false;
   let isLocationActive = false;
