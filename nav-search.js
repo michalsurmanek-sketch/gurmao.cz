@@ -1,8 +1,20 @@
 // Navigation Search Component
-import { supabase } from './supabase-client.js';
-import { LocationSearch } from './location-search.js';
+let supabase;
+let LocationSearch;
+let locationSearch;
 
-const locationSearch = new LocationSearch();
+// Load modules asynchronously
+(async function() {
+  try {
+    const supabaseModule = await import('./supabase-client.js');
+    supabase = supabaseModule.supabase;
+    const locationModule = await import('./location-search.js');
+    LocationSearch = locationModule.LocationSearch;
+    locationSearch = new LocationSearch();
+  } catch (error) {
+    console.error('Failed to load modules:', error);
+  }
+})();
 
 // Desktop search functionality
 function initDesktopSearch() {
@@ -16,15 +28,12 @@ function initDesktopSearch() {
   let isExpanded = false;
   let isLocationActive = false;
   
-  // Dynamicky přidat lokační tlačítko
-  let locationToggle = document.getElementById('locationToggle');
-  if (!locationToggle) {
-    locationToggle = document.createElement('button');
-    locationToggle.id = 'locationToggle';
-    locationToggle.className = 'flex-shrink-0 w-9 h-9 items-center justify-center text-white/60 hover:text-gurmaogold transition hidden';
-    locationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
-    searchBox.appendChild(locationToggle);
-  }
+  // Přidat lokační tlačítko dynamicky (stejně jako ve footeru)
+  const locationToggle = document.createElement('button');
+  locationToggle.id = 'locationToggle';
+  locationToggle.className = 'flex-shrink-0 w-9 h-9 flex items-center justify-center text-white/60 hover:text-gurmaogold transition opacity-0 pointer-events-none';
+  locationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
+  searchBox.insertBefore(locationToggle, navSearchInput);
   
   // Toggle location search
   locationToggle.addEventListener('click', async (e) => {
@@ -38,7 +47,6 @@ function initDesktopSearch() {
         locationToggle.classList.add('text-gurmaogold');
         isLocationActive = true;
         
-        // Trigger search with location
         if (navSearchInput.value.trim()) {
           navSearchInput.dispatchEvent(new Event('input'));
         }
@@ -53,38 +61,29 @@ function initDesktopSearch() {
       locationToggle.classList.remove('text-gurmaogold');
       isLocationActive = false;
       
-      // Trigger search without location
       if (navSearchInput.value.trim()) {
         navSearchInput.dispatchEvent(new Event('input'));
       }
     }
   });
   
-  // Toggle search box
   searchToggle.addEventListener('click', (e) => {
     e.stopPropagation();
     if (!isExpanded) {
-      // Expand
       searchBox.classList.remove('w-9');
       searchBox.classList.add('w-80');
       navSearchInput.classList.remove('opacity-0', 'w-0');
       navSearchInput.classList.add('opacity-100', 'w-full', 'px-4');
-      
-      // Show location button
-      if (locationToggle) {
-        locationToggle.classList.remove('hidden');
-        locationToggle.classList.add('flex');
-      }
+      locationToggle.classList.remove('opacity-0', 'pointer-events-none');
+      locationToggle.classList.add('opacity-100', 'pointer-events-auto');
       
       setTimeout(() => navSearchInput.focus(), 300);
       isExpanded = true;
     }
   });
   
-  // Close when clicking outside
   document.addEventListener('click', (e) => {
     if (isExpanded && !searchBox.contains(e.target) && !navSearchResults.contains(e.target)) {
-      // Collapse
       searchBox.classList.add('w-9');
       searchBox.classList.remove('w-80');
       navSearchInput.classList.add('opacity-0', 'w-0');
@@ -92,22 +91,15 @@ function initDesktopSearch() {
       navSearchInput.value = '';
       navSearchResults.classList.add('hidden');
       navSearchResults.innerHTML = '';
-      
-      // Hide location button
-      if (locationToggle) {
-        locationToggle.classList.add('hidden');
-        locationToggle.classList.remove('flex');
-      }
-      
+      locationToggle.classList.add('opacity-0', 'pointer-events-none');
+      locationToggle.classList.remove('opacity-100', 'pointer-events-auto');
       isExpanded = false;
     }
   });
   
-  // Search functionality
   let searchTimeout;
   navSearchInput.addEventListener('input', async (e) => {
     const query = e.target.value.trim().toLowerCase();
-    
     clearTimeout(searchTimeout);
     
     if (!query) {
@@ -118,20 +110,16 @@ function initDesktopSearch() {
     
     searchTimeout = setTimeout(async () => {
       try {
-        let supabaseQuery = supabase
+        const { data: restaurants, error } = await supabase
           .from('restaurants')
           .select('id, slug, name, city, vibe, tag, image_url, latitude, longitude')
-          .or(`name.ilike.%${query}%,city.ilike.%${query}%,tag.ilike.%${query}%,vibe.ilike.%${query}%`)
+          .or(\`name.ilike.%\${query}%,city.ilike.%\${query}%,tag.ilike.%\${query}%,vibe.ilike.%\${query}%\`)
           .limit(20);
         
-        const { data: restaurants, error } = await supabaseQuery;
-        
         if (error) throw error;
-        
         let results = restaurants || [];
         
-        // Přidej vzdálenost pokud je lokace aktivní (bez filtrování)
-        if (isLocationActive && locationSearch.isLocationEnabled && locationSearch.userLocation) {
+        if (isLocationActive && locationSearch && locationSearch.isLocationEnabled && locationSearch.userLocation) {
           results = results.map(restaurant => {
             if (restaurant.latitude && restaurant.longitude) {
               const distance = locationSearch.calculateDistance(
@@ -144,7 +132,6 @@ function initDesktopSearch() {
             }
             return restaurant;
           });
-          // Seřaď podle vzdálenosti
           results.sort((a, b) => (a.distance || 999) - (b.distance || 999));
         }
         
@@ -153,48 +140,24 @@ function initDesktopSearch() {
           navSearchResults.innerHTML = results.map(r => {
             const identifier = r.slug || r.id;
             const distanceHTML = (isLocationActive && r.distance !== undefined) 
-              ? `<span class="text-xs text-gurmaogold ml-auto">${locationSearch.formatDistance(r.distance)}</span>`
+              ? \`<span class="text-xs text-gurmaogold ml-auto">\${locationSearch.formatDistance(r.distance)}</span>\`
               : '';
-            return `
-            <a href="restaurace-detail.html?id=${identifier}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
+            return \`
+            <a href="restaurace-detail.html?id=\${identifier}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
               <div class="flex gap-3 items-center">
-                <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
+                <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('\${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
                 <div class="flex-1 min-w-0">
-                  <h3 class="font-semibold text-sm text-white hover:text-gurmaogold transition truncate">${r.name}</h3>
-                  <p class="text-xs text-white/60">${r.city}</p>
-                  ${r.vibe ? `<span class="text-xs text-gurmaogold">${r.vibe}</span>` : ''}
+                  <div class="text-sm font-medium truncate">\${r.name}</div>
+                  <div class="text-xs text-white/60 truncate">\${r.city} • \${r.tag || r.vibe}</div>
                 </div>
-                ${distanceHTML}
+                \${distanceHTML}
               </div>
             </a>
-          `;
+            \`;
           }).join('');
         } else {
           navSearchResults.classList.remove('hidden');
-          navSearchResults.innerHTML = `<div class="p-4 text-center text-white/40 text-sm">Nic nenalezeno</div>`;
-        }
-        if (error) throw error;
-        
-        if (restaurants && restaurants.length > 0) {
-          navSearchResults.classList.remove('hidden');
-          navSearchResults.innerHTML = restaurants.map(r => {
-            const identifier = r.slug || r.id;
-            return `
-            <a href="restaurace-detail.html?id=${identifier}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
-              <div class="flex gap-3">
-                <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
-                <div class="flex-1 min-w-0">
-                  <h3 class="font-semibold text-sm text-white hover:text-gurmaogold transition truncate">${r.name}</h3>
-                  <p class="text-xs text-white/60">${r.city}</p>
-                  ${r.vibe ? `<span class="text-xs text-gurmaogold">${r.vibe}</span>` : ''}
-                </div>
-              </div>
-            </a>
-          `;
-          }).join('');
-        } else {
-          navSearchResults.classList.remove('hidden');
-          navSearchResults.innerHTML = '<div class="p-4 text-center text-white/40 text-sm">Nic nenalezeno</div>';
+          navSearchResults.innerHTML = '<div class="p-4 text-sm text-white/60 text-center">Žádné výsledky</div>';
         }
       } catch (error) {
         console.error('Search error:', error);
@@ -203,7 +166,6 @@ function initDesktopSearch() {
   });
 }
 
-// Mobile search functionality
 function initMobileSearch() {
   const mobileSearchBox = document.getElementById('mobileSearchBox');
   const mobileSearchToggle = document.getElementById('mobileSearchToggle');
@@ -217,11 +179,12 @@ function initMobileSearch() {
   let isMobileExpanded = false;
   let isMobileLocationActive = false;
   
-  // Dynamicky přidat lokační tlačítko
-  let mobileLocationToggle = document.getElementById('mobileLocationToggle');
-  if (!mobileLocationToggle) {
-    mobileLocationToggle = document.createElement('button');
-  // Toggle mobile location search
+  const mobileLocationToggle = document.createElement('button');
+  mobileLocationToggle.id = 'mobileLocationToggle';
+  mobileLocationToggle.className = 'flex-shrink-0 w-8 h-8 flex items-center justify-center text-white/60 hover:text-gurmaogold transition opacity-0 pointer-events-none';
+  mobileLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
+  mobileSearchBox.appendChild(mobileLocationToggle);
+  
   mobileLocationToggle.addEventListener('click', async (e) => {
     e.stopPropagation();
     
@@ -233,49 +196,40 @@ function initMobileSearch() {
         mobileLocationToggle.classList.add('text-gurmaogold');
         isMobileLocationActive = true;
         
-        // Trigger search with location
         if (mobileNavSearchInput.value.trim()) {
           mobileNavSearchInput.dispatchEvent(new Event('input'));
         }
       } catch (error) {
         console.error('Chyba při získávání pozice:', error);
-        mobileLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
+        mobileLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 616 0z"/></svg>';
         alert('Nepodařilo se získat vaši pozici. Povolte prosím přístup k poloze.');
       }
     } else {
       locationSearch.disable();
-      mobileLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
+      mobileLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 616 0z"/></svg>';
       mobileLocationToggle.classList.remove('text-gurmaogold');
       isMobileLocationActive = false;
       
-      // Trigger search without location
       if (mobileNavSearchInput.value.trim()) {
         mobileNavSearchInput.dispatchEvent(new Event('input'));
       }
     }
   });
   
-  // Toggle mobile search box
   mobileSearchToggle.addEventListener('click', (e) => {
     e.stopPropagation();
     if (!isMobileExpanded) {
-      // Expand
       mobileSearchBox.classList.remove('w-11', 'rounded-full');
       mobileSearchBox.classList.add('w-full', 'rounded-2xl');
       mobileNavSearchInput.classList.remove('opacity-0', 'w-0');
       mobileNavSearchInput.classList.add('opacity-100', 'w-full', 'px-4');
+      mobileLocationToggle.classList.remove('opacity-0', 'pointer-events-none');
+      mobileLocationToggle.classList.add('opacity-100', 'pointer-events-auto');
       
-      // Zobrazit lokační tlačítko
-      if (mobileLocationToggle) {
-        mobileLocationToggle.classList.remove('opacity-0', 'pointer-events-none');
-        mobileLocationToggle.classList.add('opacity-100', 'pointer-events-auto');
-      }
-      
-      // Skrýt logo a hamburger pouze na mobilu (ne na desktopu)
       const isMobile = window.innerWidth < 768;
       if (isMobile) {
-        if (mobileLogo) mobileLogo.style.display = 'none';
-        if (menuBtn) menuBtn.style.display = 'none';
+        if (mobileLogo) mobileLogo.classList.add('hidden');
+        if (menuBtn) menuBtn.classList.add('hidden');
       }
       
       setTimeout(() => mobileNavSearchInput.focus(), 300);
@@ -283,10 +237,8 @@ function initMobileSearch() {
     }
   });
   
-  // Close when clicking outside
   document.addEventListener('click', (e) => {
     if (isMobileExpanded && !mobileSearchBox.contains(e.target) && !mobileNavSearchResults.contains(e.target)) {
-      // Collapse
       mobileSearchBox.classList.add('w-11', 'rounded-full');
       mobileSearchBox.classList.remove('w-full', 'rounded-2xl');
       mobileNavSearchInput.classList.add('opacity-0', 'w-0');
@@ -294,26 +246,19 @@ function initMobileSearch() {
       mobileNavSearchInput.value = '';
       mobileNavSearchResults.classList.add('hidden');
       mobileNavSearchResults.innerHTML = '';
+      mobileLocationToggle.classList.add('opacity-0', 'pointer-events-none');
+      mobileLocationToggle.classList.remove('opacity-100', 'pointer-events-auto');
       
-      // Skrýt lokační tlačítko
-      if (mobileLocationToggle) {
-        mobileLocationToggle.classList.add('opacity-0', 'pointer-events-none');
-        mobileLocationToggle.classList.remove('opacity-100', 'pointer-events-auto');
-      }
-      
-      // Zobrazit logo a hamburger zpět
-      if (mobileLogo) mobileLogo.style.display = '';
-      if (menuBtn) menuBtn.style.display = '';
+      if (mobileLogo) mobileLogo.classList.remove('hidden');
+      if (menuBtn) menuBtn.classList.remove('hidden');
       
       isMobileExpanded = false;
     }
   });
   
-  // Mobile search functionality
   let mobileSearchTimeout;
   mobileNavSearchInput.addEventListener('input', async (e) => {
     const query = e.target.value.trim().toLowerCase();
-    
     clearTimeout(mobileSearchTimeout);
     
     if (!query) {
@@ -324,20 +269,16 @@ function initMobileSearch() {
     
     mobileSearchTimeout = setTimeout(async () => {
       try {
-        let supabaseQuery = supabase
+        const { data: restaurants, error } = await supabase
           .from('restaurants')
           .select('id, slug, name, city, vibe, tag, image_url, latitude, longitude')
-          .or(`name.ilike.%${query}%,city.ilike.%${query}%,tag.ilike.%${query}%,vibe.ilike.%${query}%`)
+          .or(\`name.ilike.%\${query}%,city.ilike.%\${query}%,tag.ilike.%\${query}%,vibe.ilike.%\${query}%\`)
           .limit(20);
         
-        const { data: restaurants, error } = await supabaseQuery;
-        
         if (error) throw error;
-        
         let results = restaurants || [];
         
-        // Přidej vzdálenost pokud je lokace aktivní (bez filtrování)
-        if (isMobileLocationActive && locationSearch.isLocationEnabled && locationSearch.userLocation) {
+        if (isMobileLocationActive && locationSearch && locationSearch.isLocationEnabled && locationSearch.userLocation) {
           results = results.map(restaurant => {
             if (restaurant.latitude && restaurant.longitude) {
               const distance = locationSearch.calculateDistance(
@@ -350,7 +291,6 @@ function initMobileSearch() {
             }
             return restaurant;
           });
-          // Seřaď podle vzdálenosti
           results.sort((a, b) => (a.distance || 999) - (b.distance || 999));
         }
         
@@ -359,25 +299,24 @@ function initMobileSearch() {
           mobileNavSearchResults.innerHTML = results.map(r => {
             const identifier = r.slug || r.id;
             const distanceHTML = (isMobileLocationActive && r.distance !== undefined) 
-              ? `<span class="text-xs text-gurmaogold ml-auto">${locationSearch.formatDistance(r.distance)}</span>`
+              ? \`<span class="text-xs text-gurmaogold ml-auto">\${locationSearch.formatDistance(r.distance)}</span>\`
               : '';
-            return `
-            <a href="restaurace-detail.html?id=${identifier}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
+            return \`
+            <a href="restaurace-detail.html?id=\${identifier}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
               <div class="flex gap-3 items-center">
-                <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
+                <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('\${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
                 <div class="flex-1 min-w-0">
-                  <h3 class="font-semibold text-sm text-white hover:text-gurmaogold transition truncate">${r.name}</h3>
-                  <p class="text-xs text-white/60">${r.city}</p>
-                  ${r.vibe ? `<span class="text-xs text-gurmaogold">${r.vibe}</span>` : ''}
+                  <div class="text-sm font-medium truncate">\${r.name}</div>
+                  <div class="text-xs text-white/60 truncate">\${r.city} • \${r.tag || r.vibe}</div>
                 </div>
-                ${distanceHTML}
+                \${distanceHTML}
               </div>
             </a>
-          `;
+            \`;
           }).join('');
         } else {
           mobileNavSearchResults.classList.remove('hidden');
-          mobileNavSearchResults.innerHTML = `<div class="p-4 text-center text-white/40 text-sm">Nic nenalezeno</div>`;
+          mobileNavSearchResults.innerHTML = '<div class="p-4 text-sm text-white/60 text-center">Žádné výsledky</div>';
         }
       } catch (error) {
         console.error('Mobile search error:', error);
@@ -386,7 +325,6 @@ function initMobileSearch() {
   });
 }
 
-// Initialize both when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initDesktopSearch();
