@@ -99,6 +99,7 @@ function initMobileSearch() {
   const mobileNavSearchInput = document.getElementById('mobileNavSearchInput');
   const mobileNavSearchResults = document.getElementById('mobileNavSearchResults');
   const mobileLogo = document.querySelector('header a.modal-title');
+  const hamburgerBtn = document.getElementById('menuBtn');
   
   if (!mobileSearchBox || !mobileSearchToggle || !mobileNavSearchInput || !mobileNavSearchResults) return;
   
@@ -114,9 +115,12 @@ function initMobileSearch() {
       mobileNavSearchInput.classList.remove('opacity-0', 'w-0');
       mobileNavSearchInput.classList.add('opacity-100', 'w-full', 'px-4');
       
-      // Skrýt logo pouze na mobilu (ne na desktopu)
+      // Skrýt logo a hamburger pouze na mobilu (ne na desktopu)
       const isMobile = window.innerWidth < 768;
-      if (mobileLogo && isMobile) mobileLogo.style.display = 'none';
+      if (isMobile) {
+        if (mobileLogo) mobileLogo.style.display = 'none';
+        if (hamburgerBtn) hamburgerBtn.style.display = 'none';
+      }
       
       setTimeout(() => mobileNavSearchInput.focus(), 300);
       isMobileExpanded = true;
@@ -135,8 +139,9 @@ function initMobileSearch() {
       mobileNavSearchResults.classList.add('hidden');
       mobileNavSearchResults.innerHTML = '';
       
-      // Zobrazit logo zpět
+      // Zobrazit logo a hamburger zpět
       if (mobileLogo) mobileLogo.style.display = '';
+      if (hamburgerBtn) hamburgerBtn.style.display = '';
       
       isMobileExpanded = false;
     }
