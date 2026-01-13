@@ -145,23 +145,39 @@ function initHeaderSearch() {
     
     searchTimeout = setTimeout(async () => {
       try {
-        let { data: restaurants, error } = await supabase
+        // Vyhledávání restaurací
+        let { data: restaurants, error: restaurantsError } = await supabase
           .from('restaurants')
           .select('id, slug, name, city, vibe, tag, image_url, latitude, longitude')
           .or(`name.ilike.%${query}%,city.ilike.%${query}%,tag.ilike.%${query}%,vibe.ilike.%${query}%`)
-          .limit(20);
+          .limit(10);
         
-        if (error) throw error;
+        if (restaurantsError) throw restaurantsError;
+        
+        // Vyhledávání kuchařů
+        let { data: chefs, error: chefsError } = await supabase
+          .from('chefs')
+          .select('id, slug, name, restaurant_name, image_url')
+          .or(`name.ilike.%${query}%,restaurant_name.ilike.%${query}%`)
+          .limit(10);
+        
+        if (chefsError) throw chefsError;
         
         let results = restaurants || [];
+        let chefResults = chefs || [];
         
         if (isLocationActive && locationSearch && locationSearch.userLocation) {
           results = locationSearch.filterByDistance(results);
         }
         
-        if (results.length > 0) {
+        if (results.length > 0 || chefResults.length > 0) {
           headerSearchResults.classList.remove('hidden');
-          headerSearchResults.innerHTML = results.map(r => {
+          
+          let html = '';
+          
+          // Restaurace
+          if (results.length > 0) {
+            html += results.map(r => {
             const identifier = r.slug || r.id;
             let distanceHTML = '';
             if (isLocationActive && r.distance !== undefined) {
@@ -195,6 +211,28 @@ function initHeaderSearch() {
             </a>
             `;
           }).join('');
+          }
+          
+          // Kuchaři
+          if (chefResults.length > 0) {
+            html += chefResults.map(c => {
+              const identifier = c.slug || c.id;
+              return `
+              <a href="kuchar-detail.html?id=${identifier}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
+                <div class="flex gap-3 items-center">
+                  <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${c.image_url || 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c'}')"></div>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-sm font-medium truncate">${c.name}</div>
+                    <div class="text-xs text-white/60 truncate">${c.restaurant_name || 'Kuchař'}</div>
+                    <div class="text-xs text-gurmaogold truncate">👨‍🍳 Kuchař</div>
+                  </div>
+                </div>
+              </a>
+              `;
+            }).join('');
+          }
+          
+          headerSearchResults.innerHTML = html;
         } else {
           const noResultsMsg = isLocationActive && locationSearch && locationSearch.userLocation 
             ? 'Žádné restaurace v okruhu 20 km' 
