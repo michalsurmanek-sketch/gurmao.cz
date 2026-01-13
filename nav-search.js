@@ -94,10 +94,52 @@ function initDesktopSearch() {
 
 // Mobile search functionality
 function initMobileSearch() {
+  const mobileSearchBox = document.getElementById('mobileSearchBox');
+  const mobileSearchToggle = document.getElementById('mobileSearchToggle');
   const mobileNavSearchInput = document.getElementById('mobileNavSearchInput');
   const mobileNavSearchResults = document.getElementById('mobileNavSearchResults');
+  const mobileLogo = document.querySelector('header a.modal-title');
   
-  if (!mobileNavSearchInput || !mobileNavSearchResults) return;
+  if (!mobileSearchBox || !mobileSearchToggle || !mobileNavSearchInput || !mobileNavSearchResults) return;
+  
+  let isMobileExpanded = false;
+  
+  // Toggle mobile search box
+  mobileSearchToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!isMobileExpanded) {
+      // Expand
+      mobileSearchBox.classList.remove('w-11');
+      mobileSearchBox.classList.add('w-64');
+      mobileNavSearchInput.classList.remove('opacity-0', 'w-0');
+      mobileNavSearchInput.classList.add('opacity-100', 'w-full', 'px-4');
+      
+      // Skrýt logo na mobilu
+      if (mobileLogo) mobileLogo.style.display = 'none';
+      
+      setTimeout(() => mobileNavSearchInput.focus(), 300);
+      isMobileExpanded = true;
+    }
+  });
+  
+  // Close when clicking outside
+  document.addEventListener('click', (e) => {
+    if (isMobileExpanded && !mobileSearchBox.contains(e.target) && !mobileNavSearchResults.contains(e.target)) {
+      // Collapse
+      mobileSearchBox.classList.add('w-11');
+      mobileSearchBox.classList.remove('w-64');
+      mobileNavSearchInput.classList.add('opacity-0', 'w-0');
+      mobileNavSearchInput.classList.remove('opacity-100', 'w-full', 'px-4');
+      mobileNavSearchInput.value = '';
+      mobileNavSearchResults.classList.add('hidden');
+      mobileNavSearchResults.innerHTML = '';
+      
+      // Zobrazit logo zpět
+      if (mobileLogo) mobileLogo.style.display = '';
+      
+      isMobileExpanded = false;
+    }
+  });
   
   // Mobile search functionality
   let mobileSearchTimeout;
