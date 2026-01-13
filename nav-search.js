@@ -165,9 +165,6 @@ function initDesktopSearch() {
               </div>
             </div>
             \`;
-              </div>
-            </a>
-            \`;
           }).join('');
         } else {
           navSearchResults.classList.remove('hidden');
