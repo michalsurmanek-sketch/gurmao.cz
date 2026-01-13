@@ -372,9 +372,9 @@
       
       toast.update(loadingToast, '✅ Přihlášení úspěšné!', 'success');
       
-      // Redirect to collections or return URL
+      // Redirect to index or return URL
       setTimeout(() => {
-        const returnUrl = new URLSearchParams(window.location.search).get('return') || 'collections.html';
+        const returnUrl = new URLSearchParams(window.location.search).get('return') || 'index.html';
         window.location.href = returnUrl;
       }, 500);
     } catch (error) {
