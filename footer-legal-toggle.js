@@ -58,19 +58,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     footerSearchToggle.addEventListener('click', (e) => {
       e.stopPropagation();
       if (!isFooterExpanded) {
+        const isMobile = window.innerWidth < 768;
+        
         // Expand - rozbalení zleva doprava
         footerSearchBox.classList.remove('w-9');
         footerSearchBox.classList.add('w-72', 'md:w-80');
         footerSearchInput.classList.remove('opacity-0', 'w-0');
         footerSearchInput.classList.add('opacity-100', 'flex-1', 'pr-2');
         
-        // Skrytí sociálních sítí pouze na mobilu (ne na desktopu)
-        const isMobile = window.innerWidth < 768;
+        // Na mobilu použít absolute positioning pro překrytí ikon
         if (isMobile) {
-          socialIcons.forEach(icon => {
-            icon.style.display = 'none';
-          });
-          if (socialLabel) socialLabel.style.display = 'none';
+          footerSearchBox.parentElement.style.position = 'absolute';
+          footerSearchBox.parentElement.style.right = '0';
+          footerSearchBox.parentElement.style.zIndex = '30';
         }
         
         setTimeout(() => footerSearchInput.focus(), 300);
@@ -89,11 +89,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         footerSearchResults.classList.add('hidden');
         footerSearchResults.innerHTML = '';
         
-        // Zobrazení sociálních sítí zpět
-        socialIcons.forEach(icon => {
-          icon.style.display = '';
-        });
-        if (socialLabel) socialLabel.style.display = '';
+        // Vrátit pozici zpět
+        footerSearchBox.parentElement.style.position = '';
+        footerSearchBox.parentElement.style.right = '';
+        footerSearchBox.parentElement.style.zIndex = '';
         
         isFooterExpanded = false;
       }
