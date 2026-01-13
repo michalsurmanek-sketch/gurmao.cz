@@ -305,10 +305,8 @@ function initMobileSearch() {
         let supabaseQuery = supabase
           .from('restaurants')
           .select('id, slug, name, city, vibe, tag, image_url, latitude, longitude')
-          .or(`name.ilike.%${query}%,city.ilike.%${query}%,tag.ilike.%${query}%,vibe.ilike.%${query}%`);
-        
-        const limit = isMobileLocationActive ? 1000 : 6;
-        supabaseQuery = supabaseQuery.limit(limit);
+          .or(`name.ilike.%${query}%,city.ilike.%${query}%,tag.ilike.%${query}%,vibe.ilike.%${query}%`)
+          .limit(20);
         
         const { data: restaurants, error } = await supabaseQuery;
         
@@ -316,10 +314,22 @@ function initMobileSearch() {
         
         let results = restaurants || [];
         
-        // Filtruj podle lokace pokud je aktivní
-        if (isMobileLocationActive && locationSearch.isLocationEnabled) {
-          results = locationSearch.filterByDistance(results);
-          results = results.slice(0, 6);
+        // Přidej vzdálenost pokud je lokace aktivní (bez filtrování)
+        if (isMobileLocationActive && locationSearch.isLocationEnabled && locationSearch.userLocation) {
+          results = results.map(restaurant => {
+            if (restaurant.latitude && restaurant.longitude) {
+              const distance = locationSearch.calculateDistance(
+                locationSearch.userLocation.lat,
+                locationSearch.userLocation.lng,
+                restaurant.latitude,
+                restaurant.longitude
+              );
+              return { ...restaurant, distance };
+            }
+            return restaurant;
+          });
+          // Seřaď podle vzdálenosti
+          results.sort((a, b) => (a.distance || 999) - (b.distance || 999));
         }
         
         if (results.length > 0) {
@@ -345,10 +355,7 @@ function initMobileSearch() {
           }).join('');
         } else {
           mobileNavSearchResults.classList.remove('hidden');
-          const message = isMobileLocationActive 
-            ? 'Žádné restaurace v okolí'
-            : 'Nic nenalezeno';
-          mobileNavSearchResults.innerHTML = `<div class="p-4 text-center text-white/40 text-sm">${message}</div>`;
+          mobileNavSearchResults.innerHTML = `<div class="p-4 text-center text-white/40 text-sm">Nic nenalezeno</div>`;
         }
       } catch (error) {
         console.error('Mobile search error:', error);
