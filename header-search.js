@@ -158,6 +158,11 @@ function initHeaderSearch() {
                   <div class="text-xs text-white/60 truncate">${r.city}</div>
                   <div class="text-xs text-white/50 truncate">${r.vibe}</div>
                 </div>
+                <div class="flex-shrink-0">
+                  <div class="px-3 py-1.5 rounded-full bg-gurmaogold/10 border border-gurmaogold/30 text-gurmaogold text-xs font-medium hover:bg-gurmaogold/20 transition">
+                    🍽️ Menu
+                  </div>
+                </div>
               </div>
             </a>
             `;
