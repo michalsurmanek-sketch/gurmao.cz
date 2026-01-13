@@ -791,8 +791,7 @@
           const restaurantText = chef.restaurants.city 
             ? `${chef.restaurants.name} · ${chef.restaurants.city}`
             : chef.restaurants.name;
-          document.getElementById('chefRestaurant').text
-<script type="module" src="nav-search.js"></script>Content = restaurantText;
+          document.getElementById('chefRestaurant').textContent = restaurantText;
         }
         
         // Update favorite cuisines
@@ -815,6 +814,7 @@
 </script>
 
 <!-- Search functionality -->
+<script type="module" src="nav-search.js"></script>
 <script type="module" src="location-search.js"></script>
 
 <!-- Vibe Tooltips -->
