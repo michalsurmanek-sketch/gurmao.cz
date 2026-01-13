@@ -42,7 +42,13 @@ export class LocationSearch {
   }
 
   // Získat pozici uživatele
-  async getUserLocation() {
+  async getUserLocation(forceRefresh = false) {
+    // Pokud chceme force refresh, invaliduj starou pozici
+    if (forceRefresh) {
+      this.userLocation = null;
+      this.isLocationEnabled = false;
+    }
+    
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
         reject(new Error('Geolokace není podporována'));
