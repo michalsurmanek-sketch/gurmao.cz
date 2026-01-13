@@ -547,20 +547,11 @@
   // Saved system - using GurmaoCollections from app.js (loaded globally)
 
   // Mobile feed render
-  async function renderFeed(nearbyFilter = null) {
+  async function renderFeed() {
     const feed = document.getElementById('feed');
     if (!feed || items.length === 0) return;
     
-    // Filter items if location filter is active
     let displayItems = items;
-    if (nearbyFilter) {
-      displayItems = items.filter(x => nearbyFilter.has(x.id));
-    }
-    
-    if (displayItems.length === 0) {
-      feed.innerHTML = '<div class="flex items-center justify-center h-[calc(100vh-65px)] text-white/60">Žádné restaurace v okolí</div>';
-      return;
-    }
     
     // Get saved restaurants
     const saved = await GurmaoCollections.getSaved();
@@ -855,11 +846,10 @@
   // filteredItems already declared globally at line 402
 
   // Desktop grid render
-  async function renderGrid(nearbyFilter = null) {
+  async function renderGrid() {
     if (!grid || items.length === 0) return;
     
-    // Filter items if location filter is active
-    filteredItems = nearbyFilter ? items.filter(x => nearbyFilter.has(x.id)) : [...items];
+    filteredItems = [...items];
     
     const saved = await GurmaoCollections.getSaved();
     
@@ -1159,9 +1149,15 @@
       // Deactivate location filter
       locationFilterActive = false;
       btn.classList.remove('active');
+      
+      // Remove distance from all items
+      items.forEach(item => {
+        delete item.distance;
+      });
+      
       renderFeed();
       renderGrid();
-      showToast('✓', 'Zobrazeny všechny restaurace');
+      showToast('✓', 'Vzdálenosti skryty');
       return;
     }
     
@@ -1191,8 +1187,7 @@
           
           if (error) throw error;
           
-          // Calculate distances and filter nearby
-          const nearbyRestaurants = new Set();
+          // Calculate distances for all restaurants
           const distanceMap = new Map();
           restaurants.forEach(r => {
             const distance = calculateDistance(
@@ -1202,9 +1197,6 @@
               r.longitude
             );
             distanceMap.set(r.slug, distance);
-            if (distance <= NEARBY_RADIUS_KM) {
-              nearbyRestaurants.add(r.slug);
-            }
           });
           
           // Add distance to all items
@@ -1214,22 +1206,19 @@
             }
           });
           
-          if (nearbyRestaurants.size === 0) {
-            showToast('📍', 'Žádné restaurace v okolí ' + NEARBY_RADIUS_KM + ' km');
-            btn.disabled = false;
-            return;
-          }
+          // Sort by distance
+          items.sort((a, b) => (a.distance || 999) - (b.distance || 999));
           
-          // Filter items and activate
+          // Activate location display
           locationFilterActive = true;
           btn.classList.add('active');
           btn.disabled = false;
           
-          // Apply filter
-          renderFeed(nearbyRestaurants);
-          renderGrid(nearbyRestaurants);
+          // Re-render with distances
+          renderFeed();
+          renderGrid();
           
-          showToast('✓', 'Nalezeno ' + nearbyRestaurants.size + ' restaurací v okolí');
+          showToast('✓', 'Zobrazeny vzdálenosti restaurací');
           
         } catch (error) {
           console.error('Error filtering by location:', error);

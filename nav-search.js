@@ -100,11 +100,8 @@ function initDesktopSearch() {
         let supabaseQuery = supabase
           .from('restaurants')
           .select('id, slug, name, city, vibe, tag, image_url, latitude, longitude')
-          .or(`name.ilike.%${query}%,city.ilike.%${query}%,tag.ilike.%${query}%,vibe.ilike.%${query}%`);
-        
-        // Pokud je aktivní lokace, vezmi všechny výsledky pro filtrování
-        const limit = isLocationActive ? 1000 : 6;
-        supabaseQuery = supabaseQuery.limit(limit);
+          .or(`name.ilike.%${query}%,city.ilike.%${query}%,tag.ilike.%${query}%,vibe.ilike.%${query}%`)
+          .limit(20);
         
         const { data: restaurants, error } = await supabaseQuery;
         
@@ -112,10 +109,22 @@ function initDesktopSearch() {
         
         let results = restaurants || [];
         
-        // Filtruj podle lokace pokud je aktivní
-        if (isLocationActive && locationSearch.isLocationEnabled) {
-          results = locationSearch.filterByDistance(results);
-          results = results.slice(0, 6); // Omezte na 6 výsledků
+        // Přidej vzdálenost pokud je lokace aktivní (bez filtrování)
+        if (isLocationActive && locationSearch.isLocationEnabled && locationSearch.userLocation) {
+          results = results.map(restaurant => {
+            if (restaurant.latitude && restaurant.longitude) {
+              const distance = locationSearch.calculateDistance(
+                locationSearch.userLocation.lat,
+                locationSearch.userLocation.lng,
+                restaurant.latitude,
+                restaurant.longitude
+              );
+              return { ...restaurant, distance };
+            }
+            return restaurant;
+          });
+          // Seřaď podle vzdálenosti
+          results.sort((a, b) => (a.distance || 999) - (b.distance || 999));
         }
         
         if (results.length > 0) {
@@ -141,10 +150,7 @@ function initDesktopSearch() {
           }).join('');
         } else {
           navSearchResults.classList.remove('hidden');
-          const message = isLocationActive 
-            ? 'Žádné restaurace v okolí'
-            : 'Nic nenalezeno';
-          navSearchResults.innerHTML = `<div class="p-4 text-center text-white/40 text-sm">${message}</div>`;
+          navSearchResults.innerHTML = `<div class="p-4 text-center text-white/40 text-sm">Nic nenalezeno</div>`;
         }
         if (error) throw error;
         
