@@ -491,7 +491,9 @@
         city: r.city,
         tag: r.tag || r.cuisine,
         href: `restaurace-${r.slug}.html`,
-        img: r.image_url || r.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800'
+        img: r.image_url || r.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800',
+        latitude: r.latitude,
+        longitude: r.longitude
       }));
       
       // Append or replace items
@@ -577,7 +579,7 @@
           <div class="absolute left-6 right-20 bottom-10">
             <div class="text-gurmaogold text-sm">${x.vibe}</div>
             <div class="text-3xl font-semibold mt-1">${x.name}</div>
-            <div class="text-white/70 mt-1">${x.city} · ${x.tag}</div>
+            <div class="text-white/70 mt-1">${x.city} · ${x.tag}${x.distance !== undefined ? ` · <span class="text-gurmaogold">${formatDistance(x.distance)}</span>` : ''}</div>
           </div>
         </a>
         <button data-save="${x.id}" class="save-btn absolute top-6 right-6 w-12 h-12 rounded-full bg-black/30 backdrop-blur border border-white/20 hover:border-gurmaogold text-2xl transition z-10" aria-label="Uložit">${saveIcon}</button>
@@ -899,7 +901,7 @@
             <div class="flex-1">
               <div class="text-sm text-gurmaogold mb-1">${x.vibe}</div>
               <div class="text-xl font-semibold">${x.name}</div>
-              <div class="text-white/60 text-sm mt-1">${x.city} · ${x.tag}</div>
+              <div class="text-white/60 text-sm mt-1">${x.city} · ${x.tag}${x.distance !== undefined ? ` · <span class="text-gurmaogold">${formatDistance(x.distance)}</span>` : ''}</div>
             </div>
             <div class="flex gap-2 flex-shrink-0">
               <button data-save="${x.id}" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" title="Uložit">
@@ -958,7 +960,7 @@
             <div class="flex-1">
               <div class="text-sm text-gurmaogold mb-1">${x.vibe}</div>
               <div class="text-xl font-semibold">${x.name}</div>
-              <div class="text-white/60 text-sm mt-1">${x.city} · ${x.tag}</div>
+              <div class="text-white/60 text-sm mt-1">${x.city} · ${x.tag}${x.distance !== undefined ? ` · <span class="text-gurmaogold">${formatDistance(x.distance)}</span>` : ''}</div>
             </div>
             <div class="flex gap-2 flex-shrink-0">
               <button data-save="${x.id}" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" title="Uložit">
@@ -1141,6 +1143,14 @@
     return R * c;
   }
   
+  // Format distance for display
+  function formatDistance(distance) {
+    if (distance < 1) {
+      return `${Math.round(distance * 1000)} m`;
+    }
+    return `${distance.toFixed(1)} km`;
+  }
+  
   // Location button handler
   document.getElementById('locationBtn')?.addEventListener('click', async () => {
     const btn = document.getElementById('locationBtn');
@@ -1183,6 +1193,7 @@
           
           // Calculate distances and filter nearby
           const nearbyRestaurants = new Set();
+          const distanceMap = new Map();
           restaurants.forEach(r => {
             const distance = calculateDistance(
               userLocation.lat, 
@@ -1190,8 +1201,16 @@
               r.latitude, 
               r.longitude
             );
+            distanceMap.set(r.slug, distance);
             if (distance <= NEARBY_RADIUS_KM) {
               nearbyRestaurants.add(r.slug);
+            }
+          });
+          
+          // Add distance to all items
+          items.forEach(item => {
+            if (distanceMap.has(item.id)) {
+              item.distance = distanceMap.get(item.id);
             }
           });
           

@@ -300,7 +300,10 @@ function createRestaurantCard(restaurant) {
               <div class="flex-1">
                 <div class="vibe-tooltip text-sm text-gurmaogold mb-1" data-tooltip="${vibeTooltips[restaurant.vibe] || ''}">${restaurant.vibe}</div>
                 <h3 class="text-xl font-semibold">${restaurant.name}</h3>
-                <p class="text-white/60 text-sm mt-1">${restaurant.city} · ${restaurant.tag}</p>
+                <p class="text-white/60 text-sm mt-1">
+                  ${restaurant.city} · ${restaurant.tag}
+                  ${restaurant.distance !== undefined && restaurant.distance < 999 ? ` · <span class="text-gurmaogold">${formatDistance(restaurant.distance)}</span>` : ''}
+                </p>
               </div>
               <button class="flip-btn hidden md:flex w-11 h-11 rounded-full bg-gurmaogold text-black hover:bg-gurmaogold/80 transition items-center justify-center flex-shrink-0" title="Zobrazit menu" aria-label="Zobrazit menu">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -564,6 +567,14 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     Math.sin(dLon/2) * Math.sin(dLon/2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   return R * c;
+}
+
+// Format distance for display
+function formatDistance(distance) {
+  if (distance < 1) {
+    return `${Math.round(distance * 1000)} m`;
+  }
+  return `${distance.toFixed(1)} km`;
 }
 
 // Get user location and sort by distance
