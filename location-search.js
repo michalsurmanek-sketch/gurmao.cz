@@ -4,6 +4,41 @@ export class LocationSearch {
     this.userLocation = null;
     this.maxDistance = 20; // km
     this.isLocationEnabled = false;
+    
+    // Předdefinované města s GPS souřadnicemi
+    this.cities = {
+      'praha': { lat: 50.0755, lng: 14.4378, name: 'Praha' },
+      'brno': { lat: 49.1951, lng: 16.6068, name: 'Brno' },
+      'ostrava': { lat: 49.8209, lng: 18.2625, name: 'Ostrava' },
+      'plzen': { lat: 49.7384, lng: 13.3736, name: 'Plzeň' },
+      'liberec': { lat: 50.7663, lng: 15.0543, name: 'Liberec' },
+      'olomouc': { lat: 49.5938, lng: 17.2509, name: 'Olomouc' },
+      'ceske-budejovice': { lat: 48.9745, lng: 14.4743, name: 'České Budějovice' },
+      'hradec-kralove': { lat: 50.2092, lng: 15.8327, name: 'Hradec Králové' },
+      'pardubice': { lat: 50.0343, lng: 15.7812, name: 'Pardubice' },
+      'zlin': { lat: 49.2266, lng: 17.6668, name: 'Zlín' },
+      'kladno': { lat: 50.1476, lng: 14.1028, name: 'Kladno' },
+      'karlovy-vary': { lat: 50.2329, lng: 12.8711, name: 'Karlovy Vary' },
+      'uherske-hradiste': { lat: 49.0697, lng: 17.4594, name: 'Uherské Hradiště' },
+      'jihlava': { lat: 49.3961, lng: 15.5910, name: 'Jihlava' }
+    };
+  }
+  
+  // Nastavit pozici podle města
+  setLocationByCity(cityKey) {
+    const city = this.cities[cityKey.toLowerCase().replace(/\s+/g, '-')];
+    if (city) {
+      this.userLocation = {
+        lat: city.lat,
+        lng: city.lng,
+        isManual: true,
+        cityName: city.name
+      };
+      this.isLocationEnabled = true;
+      console.log('📍 RUČNÍ POZICE:', city.name, `(${city.lat}, ${city.lng})`);
+      return city;
+    }
+    return null;
   }
 
   // Získat pozici uživatele
