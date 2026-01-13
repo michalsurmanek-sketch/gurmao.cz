@@ -62,6 +62,13 @@ function initDesktopSearch() {
       searchBox.classList.add('w-80');
       navSearchInput.classList.remove('opacity-0', 'w-0');
       navSearchInput.classList.add('opacity-100', 'w-full', 'px-4');
+      
+      // Show location button
+      if (locationToggle) {
+        locationToggle.classList.remove('hidden');
+        locationToggle.classList.add('flex');
+      }
+      
       setTimeout(() => navSearchInput.focus(), 300);
       isExpanded = true;
     }
@@ -78,6 +85,13 @@ function initDesktopSearch() {
       navSearchInput.value = '';
       navSearchResults.classList.add('hidden');
       navSearchResults.innerHTML = '';
+      
+      // Hide location button
+      if (locationToggle) {
+        locationToggle.classList.add('hidden');
+        locationToggle.classList.remove('flex');
+      }
+      
       isExpanded = false;
     }
   });
