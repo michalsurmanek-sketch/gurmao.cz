@@ -151,8 +151,8 @@ function initHeaderSearch() {
         // Vyhledávání kuchařů
         let { data: chefs, error: chefsError } = await supabase
           .from('chefs')
-          .select('id, slug, name, restaurant_name, image_url')
-          .or(`name.ilike.%${query}%,restaurant_name.ilike.%${query}%`)
+          .select('id, slug, name, image_url')
+          .ilike('name', `%${query}%`)
           .limit(10);
         
         console.log('👨‍🍳 Chefs dotaz:', { query, chefs, chefsError });
@@ -225,7 +225,6 @@ function initHeaderSearch() {
                   <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${c.image_url || 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c'}')"></div>
                   <div class="flex-1 min-w-0">
                     <div class="text-sm font-medium truncate">${c.name}</div>
-                    <div class="text-xs text-white/60 truncate">${c.restaurant_name || 'Kuchař'}</div>
                     <div class="text-xs text-gurmaogold truncate">👨‍🍳 Kuchař</div>
                   </div>
                 </div>
