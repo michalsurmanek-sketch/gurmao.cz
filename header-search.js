@@ -157,7 +157,10 @@ function initHeaderSearch() {
         
         console.log('👨‍🍳 Chefs dotaz:', { query, chefs, chefsError });
         
-        if (chefsError) throw chefsError;
+        if (chefsError) {
+          console.error('Chyba při vyhledávání kuchařů:', chefsError);
+          chefs = [];
+        }
         
         let results = restaurants || [];
         let chefResults = chefs || [];
