@@ -69,9 +69,9 @@ export class LocationSearch {
           );
           return { ...restaurant, distance };
         }
-        return null;
+        // Restaurace bez souřadnic - přidej velkou vzdálenost aby byly na konci
+        return { ...restaurant, distance: 9999 };
       })
-      .filter(r => r !== null)
       .sort((a, b) => a.distance - b.distance);
   }
 
