@@ -18,17 +18,33 @@ export class LocationSearch {
         (position) => {
           this.userLocation = {
             lat: position.coords.latitude,
-            lng: position.coords.longitude
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy
           };
           this.isLocationEnabled = true;
+          
+          console.log('📍 GPS POZICE ZÍSKÁNA:', {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            přesnost: `±${Math.round(position.coords.accuracy)}m`,
+            googleMaps: `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`,
+            timestamp: new Date(position.timestamp).toLocaleTimeString('cs-CZ')
+          });
+          
+          if (position.coords.accuracy > 1000) {
+            console.warn('⚠️ POZOR: Nízká přesnost GPS (±' + Math.round(position.coords.accuracy) + 'm)');
+            console.warn('💡 TIP: Jsi venku? Zkus povolit GPS v telefonu nebo počkat na lepší signál.');
+          }
+          
           resolve(this.userLocation);
         },
         (error) => {
+          console.error('❌ GPS ERROR:', error.message);
           reject(error);
         },
         {
           enableHighAccuracy: true,
-          timeout: 5000,
+          timeout: 10000,
           maximumAge: 0
         }
       );
