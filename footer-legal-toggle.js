@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const socialIcons = document.querySelectorAll('.footer-social');
     const socialLabel = footerSearchBox.parentElement.parentElement.querySelector('span.text-gurmaogold');
     const searchWrapper = footerSearchBox.parentElement;
+    const footerRightSection = searchWrapper.parentElement; // div s flex items-center gap-3
 
     footerSearchToggle.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -67,11 +68,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         footerSearchInput.classList.remove('opacity-0', 'w-0');
         footerSearchInput.classList.add('opacity-100', 'flex-1', 'pr-2');
         
-        // Na mobilu použít absolute positioning na wrapper pro překrytí ikon
+        // Na mobilu použít absolute positioning na wrapper pro překrytí celé pravé části
         if (isMobile) {
           searchWrapper.style.position = 'absolute';
           searchWrapper.style.right = '0';
+          searchWrapper.style.top = '0';
           searchWrapper.style.width = '288px'; // w-72
+          searchWrapper.style.zIndex = '50';
+          footerRightSection.style.position = 'relative';
         }
         
         setTimeout(() => footerSearchInput.focus(), 300);
@@ -93,7 +97,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Vrátit pozici zpět
         searchWrapper.style.position = '';
         searchWrapper.style.right = '';
+        searchWrapper.style.top = '';
         searchWrapper.style.width = '';
+        searchWrapper.style.zIndex = '';
+        footerRightSection.style.position = '';
         
         isFooterExpanded = false;
       }
