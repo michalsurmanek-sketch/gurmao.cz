@@ -63,8 +63,21 @@ export class LocationSearch {
             longitude: position.coords.longitude,
             přesnost: `±${Math.round(position.coords.accuracy)}m`,
             googleMaps: `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`,
-            timestamp: new Date(position.timestamp).toLocaleTimeString('cs-CZ')
+            timestamp: new Date(position.timestamp).toLocaleTimeString('cs-CZ'),
+            'OTEVŘI V MAPĚ →': `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`
           });
+          
+          // Najdi nejbližší město pro kontrolu
+          let nearestCity = null;
+          let minDistance = Infinity;
+          Object.entries(this.cities).forEach(([key, city]) => {
+            const dist = this.calculateDistance(position.coords.latitude, position.coords.longitude, city.lat, city.lng);
+            if (dist < minDistance) {
+              minDistance = dist;
+              nearestCity = city.name;
+            }
+          });
+          console.log(`🏙️ NEJBLIŽŠÍ MĚSTO: ${nearestCity} (${Math.round(minDistance)} km)`);
           
           if (position.coords.accuracy > 1000) {
             console.warn('⚠️ POZOR: Nízká přesnost GPS (±' + Math.round(position.coords.accuracy) + 'm)');
@@ -79,8 +92,8 @@ export class LocationSearch {
         },
         {
           enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0
+          timeout: 15000,
+          maximumAge: 0  // DŮLEŽITÉ: Vynutit novou pozici, ne z cache
         }
       );
     });
