@@ -238,6 +238,2811 @@
     
     <div class="flex items-center gap-4">
       <!-- Notification Bell -->
+      <div class="relative z-20">
+        <button id="notificationBtn" class="notification-bell p-2 rounded-full border border-white/20 hover:border-gurmaogold hover:bg-gurmaogold/10 transition relative">
+          <span class="text-xl">🔔</span>
+          <span id="notificationBadge" class="notification-badge hidden">0</span>
+        </button>
+        
+        <!-- Notification Panel -->
+        <div id="notificationPanel" class="notification-panel">
+          <div class="p-4 border-b border-gurmaogold/20 sticky top-0 bg-gradient-to-r from-gurmaogold/10 to-transparent backdrop-blur-sm">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-gurmaogold">📬 Nové zprávy</h3>
+              <button id="closeNotifications" class="text-gray-400 hover:text-white transition text-xl">×</button>
+            </div>
+          </div>
+          <div id="notificationList">
+            <!-- Notifications will be inserted here -->
+          </div>
+          <div id="noNotifications" class="hidden p-6 text-center text-gray-500">
+            <div class="text-4xl mb-2">✅</div>
+            <div>Žádné nové zprávy</div>
+          </div>
+          <div class="p-3 border-t border-gurmaogold/20 text-center">
+            <a href="admin-contact.html" class="text-sm text-gurmaogold hover:text-yellow-300 transition font-medium">
+              Zobrazit všechny zprávy →
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <span class="text-gurmaored text-sm font-semibold">🔒 ADMIN</span>
+      
+      <button id="logoutBtn" class="px-4 py-2 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored text-sm transition">
+        Odhlásit
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10">
+  <!-- Header -->
+  <div class="mb-8 md:mb-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-3xl md:text-4xl mb-2">Admin Panel</h1>
+      <p class="text-white/60 text-sm md:text-base">Správa restaurací, kuchařů a obsahu</p>
+    </div>
+    <div class="flex gap-2 md:gap-4 text-sm w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+      <div class="text-center px-3 md:px-4 py-2 bg-white/5 rounded-xl border border-white/10 flex-shrink-0">
+        <div class="text-xl md:text-2xl font-bold text-gurmaogold" id="stat-restaurants">0</div>
+        <div class="text-white/60 text-xs">Restaurace</div>
+      </div>
+      <div class="text-center px-3 md:px-4 py-2 bg-white/5 rounded-xl border border-white/10 flex-shrink-0">
+        <div class="text-xl md:text-2xl font-bold text-gurmaogold" id="stat-chefs">0</div>
+        <div class="text-white/60 text-xs">Kuchaři</div>
+      </div>
+      <div class="text-center px-3 md:px-4 py-2 bg-white/5 rounded-xl border border-white/10 flex-shrink-0">
+        <div class="text-xl md:text-2xl font-bold text-gurmaogold" id="stat-posts">0</div>
+        <div class="text-white/60 text-xs">Příspěvky</div>
+      </div>
+      <div class="text-center px-3 md:px-4 py-2 bg-white/5 rounded-xl border border-white/10 flex-shrink-0">
+        <div class="text-xl md:text-2xl font-bold text-gurmaogold" id="stat-collections">0</div>
+        <div class="text-white/60 text-xs">Můj výběr</div>
+      </div>
+      <div class="text-center px-3 md:px-4 py-2 bg-white/5 rounded-xl border border-white/10 flex-shrink-0">
+        <div class="text-xl md:text-2xl font-bold text-gurmaogold" id="stat-gear">0</div>
+        <div class="text-white/60 text-xs">Gear</div>
+      </div>
+      <div class="text-center px-3 md:px-4 py-2 bg-white/5 rounded-xl border border-white/10 flex-shrink-0">
+        <div class="text-xl md:text-2xl font-bold text-gurmaogold" id="stat-reviews">0</div>
+        <div class="text-white/60 text-xs">Recenze</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex gap-0.5 mb-8 border-b border-white/10 overflow-x-auto">
+    <button onclick="switchTab('restaurants')" id="tab-restaurants" class="tab-btn active px-4 py-3 border-b-2 border-gurmaogold font-semibold whitespace-nowrap text-sm">
+      🍽️ Restaurace
+    </button>
+    <button onclick="switchTab('add')" id="tab-add" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      ➕ Restauraci
+    </button>
+    <button onclick="switchTab('chefs')" id="tab-chefs" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      👨‍🍳 Kuchaři
+    </button>
+    <button onclick="switchTab('add-chef')" id="tab-add-chef" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      ➕ Kuchaře
+    </button>
+    <button onclick="switchTab('posts')" id="tab-posts" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      📝 Příspěvky
+    </button>
+    <button onclick="switchTab('add-post')" id="tab-add-post" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      ➕ Příspěvek
+    </button>
+    <button onclick="window.location.href='admin-contact.html'" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      📬 Zprávy
+    </button>
+    <button onclick="switchTab('collections')" id="tab-collections" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      📚 Můj výběr
+    </button>
+    <button onclick="switchTab('add-collection')" id="tab-add-collection" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      ➕ Kolekci
+    </button>
+    <button onclick="switchTab('gear')" id="tab-gear" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      ⚙️ Gear
+    </button>
+    <button onclick="switchTab('add-gear')" id="tab-add-gear" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      ➕ Gear
+    </button>
+    <button onclick="switchTab('reviews')" id="tab-reviews" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      💬 Recenze
+    </button>
+    <button onclick="switchTab('add-review')" id="tab-add-review" class="tab-btn px-4 py-3 border-b-2 border-transparent hover:border-white/20 transition whitespace-nowrap text-sm">
+      ➕ Recenzi
+    </button>
+  </div>
+
+  <!-- Tab Content: Restaurants List -->
+  <div id="content-restaurants" class="tab-content">
+    <div class="mb-6 flex items-center justify-between">
+      <input 
+        type="text" 
+        id="searchRestaurants" 
+        placeholder="🔍 Hledat restauraci..."
+        class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none w-full max-w-md"
+      />
+      <div class="text-white/60 text-sm">
+        Celkem: <span id="totalCount" class="text-gurmaogold font-bold">0</span>
+      </div>
+    </div>
+
+    <div id="restaurantsList" class="space-y-4">
+      <div class="text-center py-12 text-white/40">
+        <div class="text-4xl mb-4">⏳</div>
+        Načítání restaurací...
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Chefs List -->
+  <div id="content-chefs" class="tab-content hidden">
+    <div class="mb-6 flex items-center justify-between">
+      <input 
+        type="text" 
+        id="searchChefs" 
+        placeholder="🔍 Hledat kuchaře..."
+        class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none w-full max-w-md"
+      />
+      <div class="text-white/60 text-sm">
+        Celkem: <span id="totalChefsCount" class="text-gurmaogold font-bold">0</span>
+      </div>
+    </div>
+
+    <div id="chefsList" class="space-y-4">
+      <div class="text-center py-12 text-white/40">
+        <div class="text-4xl mb-4">⏳</div>
+        Načítání kuchařů...
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Posts List -->
+  <div id="content-posts" class="tab-content hidden">
+    <div class="mb-6 flex items-center justify-between">
+      <input 
+        type="text" 
+        id="searchPosts" 
+        placeholder="🔍 Hledat příspěvek..."
+        class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none w-full max-w-md"
+      />
+      <div class="text-white/60 text-sm">
+        Celkem: <span id="totalPostsCount" class="text-gurmaogold font-bold">0</span>
+      </div>
+    </div>
+
+    <div id="postsList" class="space-y-4">
+      <div class="text-center py-12 text-white/40">
+        <div class="text-4xl mb-4">📝</div>
+        Žádné příspěvky
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Collections List -->
+  <div id="content-collections" class="tab-content hidden">
+    <div class="mb-6 flex items-center justify-between">
+      <input 
+        type="text" 
+        id="searchCollections" 
+        placeholder="🔍 Hledat ve výběru..."
+        class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none w-full max-w-md"
+      />
+      <div class="text-white/60 text-sm">
+        Celkem: <span id="totalCollectionsCount" class="text-gurmaogold font-bold">0</span>
+      </div>
+    </div>
+
+    <div id="collectionsList" class="space-y-4">
+      <div class="text-center py-12 text-white/40">
+        <div class="text-4xl mb-4">📚</div>
+        Žádný výběr
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Reviews List -->
+  <div id="content-reviews" class="tab-content hidden">
+    <div class="mb-6 flex items-center gap-4">
+      <input 
+        type="text" 
+        id="searchReviews" 
+        placeholder="🔍 Hledat recenzi..."
+        class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none flex-1 max-w-md"
+      />
+      <div class="custom-select" style="min-width: 150px;">
+        <button type="button" id="filterReviewStatusBtn" class="custom-select-trigger w-full pl-4 pr-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+          Všechny
+        </button>
+        <div id="filterReviewStatusOptions" class="custom-options hidden">
+          <div class="custom-option" data-value="all">Všechny</div>
+          <div class="custom-option" data-value="pending">Čekající</div>
+          <div class="custom-option" data-value="approved">Schválené</div>
+          <div class="custom-option" data-value="rejected">Zamítnuté</div>
+        </div>
+      </div>
+      <input type="hidden" id="filterReviewStatus" value="all" />
+      <div class="text-white/60 text-sm whitespace-nowrap">
+        Celkem: <span id="totalReviewsCount" class="text-gurmaogold font-bold">0</span>
+      </div>
+    </div>
+
+    <div id="reviewsList" class="space-y-4">
+      <div class="text-center py-12 text-white/40">
+        <div class="text-4xl mb-4">💬</div>
+        Žádné recenze
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Add Review -->
+  <div id="content-add-review" class="tab-content hidden">
+    <div class="max-w-3xl mx-auto">
+      <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
+        <h2 class="text-2xl mb-6">
+          <span id="formTitleReview">Přidat recenzi</span>
+        </h2>
+
+        <form id="addReviewForm" class="space-y-6">
+          <input type="hidden" name="id" id="editReviewId" />
+          
+          <!-- Restaurant Selection -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Restaurace *</label>
+            <select 
+              name="restaurant_id" 
+              id="inputReviewRestaurant"
+              required
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            >
+              <option value="">-- Vyber restauraci --</option>
+            </select>
+          </div>
+
+          <!-- Rating -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Hodnocení *</label>
+            <div class="flex gap-2">
+              <button type="button" class="star-btn text-3xl" data-rating="1">⭐</button>
+              <button type="button" class="star-btn text-3xl" data-rating="2">⭐</button>
+              <button type="button" class="star-btn text-3xl" data-rating="3">⭐</button>
+              <button type="button" class="star-btn text-3xl" data-rating="4">⭐</button>
+              <button type="button" class="star-btn text-3xl" data-rating="5">⭐</button>
+            </div>
+            <input type="hidden" name="rating" id="inputReviewRating" required />
+          </div>
+
+          <!-- Title -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Titulek</label>
+            <input 
+              type="text" 
+              name="title" 
+              id="inputReviewTitle"
+              placeholder="např. Skvělá večeře!"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Text -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Text recenze *</label>
+            <textarea 
+              name="text" 
+              id="inputReviewText"
+              required
+              rows="6"
+              placeholder="Vaše zkušenost s restaurací..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Status -->
+          <div>
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input 
+                type="checkbox" 
+                name="auto_approve" 
+                id="inputReviewAutoApprove"
+                class="w-5 h-5 rounded bg-white/5 border border-white/10 checked:bg-gurmaogold"
+              />
+              <span class="text-sm">Automaticky schválit (jako admin)</span>
+            </label>
+          </div>
+
+          <!-- Submit -->
+          <div class="flex gap-4 pt-4">
+            <button 
+              type="submit" 
+              class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
+              <span id="submitReviewText">➕ Recenzi</span>
+            </button>
+            <button 
+              type="button"
+              onclick="resetReviewForm()"
+              class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
+              ↺ Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Gear List -->
+  <div id="content-gear" class="tab-content hidden">
+    <div class="mb-6 flex items-center justify-between">
+      <input 
+        type="text" 
+        id="searchGear" 
+        placeholder="🔍 Hledat produkt..."
+        class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none w-full max-w-md"
+      />
+      <div class="text-white/60 text-sm">
+        Celkem: <span id="totalGearCount" class="text-gurmaogold font-bold">0</span>
+      </div>
+    </div>
+
+    <div id="gearList" class="space-y-4">
+      <div class="text-center py-12 text-white/40">
+        <div class="text-4xl mb-4">⚙️</div>
+        Žádné produkty
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Add New -->
+  <div id="content-add" class="tab-content hidden">
+    <div class="max-w-3xl mx-auto">
+      <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
+        <h2 class="text-2xl mb-6">
+          <span id="formTitle">Restauraci</span>
+        </h2>
+
+        <form id="addRestaurantForm" class="space-y-6">
+          <input type="hidden" name="id" id="editId" />
+          
+          <!-- Name -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Název restaurace *</label>
+            <input 
+              type="text" 
+              name="name" 
+              id="inputName"
+              required
+              placeholder="např. Noir Table"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Vibe -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Vibe *</label>
+            <div class="custom-select">
+              <button type="button" id="vibeBtn" class="custom-select-trigger w-full pl-4 pr-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+                -- Vyber vibe --
+              </button>
+              <div id="vibeOptions" class="custom-options hidden">
+                <div class="custom-option" data-value="">-- Vyber vibe --</div>
+                <div class="custom-option" data-value="LUXE">🍷 LUXE</div>
+                <div class="custom-option" data-value="DRAMA">🔥 DRAMA</div>
+                <div class="custom-option" data-value="CHAOS">🌮 CHAOS</div>
+                <div class="custom-option" data-value="DARK">🖤 DARK</div>
+                <div class="custom-option" data-value="PURE">🌿 PURE</div>
+                <div class="custom-option" data-value="CALM">🌊 CALM</div>
+              </div>
+            </div>
+            <input type="hidden" name="vibe" id="inputVibe" required />
+          </div>
+
+          <!-- City & Tag -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">Město *</label>
+              <div class="custom-select">
+                <button type="button" id="cityBtn" class="custom-select-trigger w-full pl-4 pr-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+                  -- Vyber město --
+                </button>
+                <div id="cityOptions" class="custom-options hidden">
+                  <div class="custom-option" data-value="">-- Vyber město --</div>
+                  <div class="custom-option" data-value="Praha">Praha</div>
+                  <div class="custom-option" data-value="Brno">Brno</div>
+                  <div class="custom-option" data-value="Ostrava">Ostrava</div>
+                  <div class="custom-option" data-value="Plzeň">Plzeň</div>
+                  <div class="custom-option" data-value="Liberec">Liberec</div>
+                  <div class="custom-option" data-value="Olomouc">Olomouc</div>
+                  <div class="custom-option" data-value="Hradec Králové">Hradec Králové</div>
+                  <div class="custom-option" data-value="České Budějovice">České Budějovice</div>
+                </div>
+              </div>
+              <input type="hidden" name="city" id="inputCity" required />
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-2">Tag *</label>
+              <input 
+                type="text" 
+                name="tag" 
+                id="inputTag"
+                required
+                placeholder="např. fine dining"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Jednořádkový popis *</label>
+            <input 
+              type="text" 
+              name="description" 
+              id="inputDescription"
+              required
+              placeholder="např. Místo, kde se čas zpomalí. Oheň, ticho, precizní servis."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Coordinates Picker -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Souřadnice (klikni na mapě) *</label>
+            <div id="coordMap" class="mb-2"></div>
+            <div class="grid grid-cols-2 gap-4">
+              <input 
+                type="number" 
+                name="latitude" 
+                id="inputLat"
+                step="0.000001"
+                required
+                placeholder="Latitude (např. 50.0875)"
+                class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+              <input 
+                type="number" 
+                name="longitude" 
+                id="inputLng"
+                step="0.000001"
+                required
+                placeholder="Longitude (např. 14.4213)"
+                class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+            <p class="text-xs text-white/40 mt-2">Klikni na mapu nebo zadej ručně</p>
+          </div>
+
+          <!-- Image URL -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Obrázek</label>
+            <div class="space-y-3">
+              <!-- File Upload -->
+              <div class="relative z-20">
+                <input 
+                  type="file" 
+                  id="restaurantImageFile"
+                  accept="image/*"
+                  class="hidden"
+                />
+                <button 
+                  type="button"
+                  onclick="document.getElementById('restaurantImageFile').click()"
+                  class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold focus:border-gurmaogold outline-none text-left flex items-center gap-3 transition"
+                >
+                  <span class="text-xl">📤</span>
+                  <span id="restaurantFileLabel" class="text-white/60">Nahrát z počítače/mobilu</span>
+                </button>
+                <div id="restaurantUploadProgress" class="hidden mt-2">
+                  <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div id="restaurantProgressBar" class="h-full bg-gurmaogold transition-all duration-300" style="width: 0%"></div>
+                  </div>
+                  <p class="text-xs text-white/60 mt-1">Nahrávám...</p>
+                </div>
+              </div>
+              <!-- OR -->
+              <div class="text-center text-xs text-white/40">NEBO</div>
+              <!-- URL Input -->
+              <input 
+                type="url" 
+                name="image_url" 
+                id="inputImageUrl"
+                placeholder="Vlož URL obrázku (https://...)" 
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+            <p class="text-xs text-white/40 mt-2">Nepovinné - můžeš přidat později</p>
+          </div>
+
+          <!-- Slug -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL slug *</label>
+            <input 
+              type="text" 
+              name="slug" 
+              id="inputSlug"
+              required
+              placeholder="noir-table"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+            <p class="text-xs text-white/40 mt-1">Pro detail stránku: restaurace-[slug].html</p>
+          </div>
+
+          <!-- Submit -->
+          <div class="flex gap-4 pt-4">
+            <button 
+              type="submit" 
+              id="submitBtn"
+              class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
+              <span id="submitText">➕ Restauraci</span>
+            </button>
+            <button 
+              type="button"
+              onclick="resetForm()"
+              class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
+              ↺ Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Add Chef -->
+  <div id="content-add-chef" class="tab-content hidden">
+    <div class="max-w-3xl mx-auto">
+      <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
+        <h2 class="text-2xl mb-6">
+          <span id="formTitleChef">Kuchaře</span>
+        </h2>
+
+        <form id="addChefForm" class="space-y-6">
+          <input type="hidden" name="id" id="editChefId" />
+          
+          <!-- Name -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Jméno kuchaře *</label>
+            <input 
+              type="text" 
+              name="name" 
+              id="inputChefName"
+              required
+              placeholder="např. Adam Noir"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Restaurant -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Restaurace *</label>
+            <div class="relative z-20">
+              <button type="button" id="chefRestaurantBtn" class="custom-dropdown-btn w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold focus:border-gurmaogold outline-none text-left flex items-center justify-between transition">
+                <span class="dropdown-text">-- Vyber restauraci --</span>
+                <span class="dropdown-arrow text-xs transition-transform duration-200">▼</span>
+              </button>
+              <div id="chefRestaurantOptions" class="custom-dropdown-options hidden absolute top-full left-0 right-0 mt-2 max-h-60 overflow-y-auto bg-gurmaoblack border border-white/20 rounded-xl shadow-2xl z-50">
+                <!-- Options populated dynamically -->
+              </div>
+              <input type="hidden" name="restaurant_id" id="inputChefRestaurantId" required />
+            </div>
+          </div>
+
+          <!-- Vibe & Signature Style -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">Vibe</label>
+              <input 
+                type="text" 
+                name="vibe" 
+                id="inputChefVibe"
+                placeholder="např. Minimalistická elegance"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-2">Signature Style</label>
+              <input 
+                type="text" 
+                name="signature_style" 
+                id="inputChefSignatureStyle"
+                placeholder="např. Farm-to-table"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+          </div>
+
+          <!-- Bio -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Bio / Popis *</label>
+            <textarea 
+              name="bio" 
+              id="inputChefBio"
+              required
+              rows="4"
+              placeholder="Krátký popis kuchaře, jeho filozofie, zkušenosti..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Oblíbená kuchyně -->
+          <div>
+            <label class="block text-sm font-semibold mb-3">Oblíbená kuchyně</label>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3" id="favoriteCuisinesContainer">
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Japonská" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🍱 Japonská</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Francouzská" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🥐 Francouzská</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Italská" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🍝 Italská</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Nordic" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🐟 Nordic</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Asijská" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🥢 Asijská</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Středomořská" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🫒 Středomořská</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Vegetariánská" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🥗 Vegetariánská</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Moderní česká" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🍖 Moderní česká</span>
+              </label>
+              <label class="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold cursor-pointer transition">
+                <input type="checkbox" name="favorite_cuisines" value="Fusion" class="w-4 h-4 accent-gurmaogold">
+                <span class="text-sm">🌍 Fusion</span>
+              </label>
+            </div>
+            <p class="text-xs text-white/40 mt-2">Vyber až 3 typy kuchyně, které kuchař preferuje</p>
+          </div>
+
+          <!-- Image URL -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Obrázek</label>
+            <div class="space-y-3">
+              <!-- File Upload -->
+              <div class="relative z-20">
+                <input 
+                  type="file" 
+                  id="chefImageFile"
+                  accept="image/*"
+                  class="hidden"
+                />
+                <button 
+                  type="button"
+                  onclick="document.getElementById('chefImageFile').click()"
+                  class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold focus:border-gurmaogold outline-none text-left flex items-center gap-3 transition"
+                >
+                  <span class="text-xl">📤</span>
+                  <span id="chefFileLabel" class="text-white/60">Nahrát z počítače/mobilu</span>
+                </button>
+                <div id="chefUploadProgress" class="hidden mt-2">
+                  <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div id="chefProgressBar" class="h-full bg-gurmaogold transition-all duration-300" style="width: 0%"></div>
+                  </div>
+                  <p class="text-xs text-white/60 mt-1">Nahrávám...</p>
+                </div>
+              </div>
+              <!-- OR -->
+              <div class="text-center text-xs text-white/40">NEBO</div>
+              <!-- URL Input -->
+              <input 
+                type="url" 
+                name="image_url" 
+                id="inputChefImageUrl"
+                placeholder="Vlož URL obrázku (https://...)"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+            <p class="text-xs text-white/40 mt-2">Nepovinné - můžeš přidat později</p>
+          </div>
+
+          <!-- Slug -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL slug *</label>
+            <input 
+              type="text" 
+              name="slug" 
+              id="inputChefSlug"
+              required
+              placeholder="adam-noir"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+            <p class="text-xs text-white/40 mt-1">Pro detail stránku: kuchar-[slug].html</p>
+          </div>
+
+          <!-- Social Media Links -->
+          <div>
+            <label class="block text-sm font-semibold mb-3">Sociální sítě</label>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs text-white/60 mb-1">Instagram</label>
+                <input 
+                  type="url" 
+                  name="instagram_url" 
+                  id="inputChefInstagram"
+                  placeholder="https://instagram.com/..."
+                  class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+                />
+              </div>
+              <div>
+                <label class="block text-xs text-white/60 mb-1">TikTok</label>
+                <input 
+                  type="url" 
+                  name="tiktok_url" 
+                  id="inputChefTiktok"
+                  placeholder="https://tiktok.com/@..."
+                  class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+                />
+              </div>
+              <div>
+                <label class="block text-xs text-white/60 mb-1">Facebook</label>
+                <input 
+                  type="url" 
+                  name="facebook_url" 
+                  id="inputChefFacebook"
+                  placeholder="https://facebook.com/..."
+                  class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+                />
+              </div>
+              <div>
+                <label class="block text-xs text-white/60 mb-1">YouTube</label>
+                <input 
+                  type="url" 
+                  name="youtube_url" 
+                  id="inputChefYoutube"
+                  placeholder="https://youtube.com/@..."
+                  class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+                />
+              </div>
+            </div>
+            <p class="text-xs text-white/40 mt-2">Nepovinné - zobrazí se v modalu "Sleduj nás"</p>
+          </div>
+
+          <!-- Submit -->
+          <div class="flex gap-4 pt-4">
+            <button 
+              type="submit" 
+              id="submitChefBtn"
+              class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
+              <span id="submitChefText">➕ Kuchaře</span>
+            </button>
+            <button 
+              type="button"
+              onclick="resetChefForm()"
+              class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
+              ↺ Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Add Post -->
+  <div id="content-add-post" class="tab-content hidden">
+    <div class="max-w-3xl mx-auto">
+      <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
+        <h2 class="text-2xl mb-6">
+          <span id="formTitlePost">Příspěvek</span>
+        </h2>
+
+        <form id="addPostForm" class="space-y-6">
+          <input type="hidden" name="id" id="editPostId" />
+          
+          <!-- Title -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Nadpis *</label>
+            <input 
+              type="text" 
+              name="title" 
+              id="inputPostTitle"
+              required
+              placeholder="např. 5 nejlepších steaků v Praze"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Slug -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL slug *</label>
+            <input 
+              type="text" 
+              name="slug" 
+              id="inputPostSlug"
+              required
+              placeholder="5-nejlepsich-steaku-v-praze"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Category & Status -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">Kategorie</label>
+              <div class="custom-select">
+                <button type="button" id="postCategoryBtn" class="custom-select-trigger w-full pl-4 pr-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+                  -- Vyber --
+                </button>
+                <div id="postCategoryOptions" class="custom-options hidden">
+                  <div class="custom-option" data-value="">-- Vyber --</div>
+                  <div class="custom-option" data-value="recepty">Recepty</div>
+                  <div class="custom-option" data-value="tipy">Tipy</div>
+                  <div class="custom-option" data-value="trendy">Trendy</div>
+                  <div class="custom-option" data-value="rozhovory">Rozhovory</div>
+                  <div class="custom-option" data-value="review">Review</div>
+                </div>
+              </div>
+              <input type="hidden" name="category" id="inputPostCategory" />
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-2">Status *</label>
+              <div class="custom-select">
+                <button type="button" id="postStatusBtn" class="custom-select-trigger w-full pl-4 pr-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+                  📝 Koncept
+                </button>
+                <div id="postStatusOptions" class="custom-options hidden">
+                  <div class="custom-option" data-value="draft">📝 Koncept</div>
+                  <div class="custom-option" data-value="published">✓ Publikováno</div>
+                </div>
+              </div>
+              <input type="hidden" name="status" id="inputPostStatus" value="draft" required />
+            </div>
+          </div>
+
+          <!-- Excerpt -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Perex</label>
+            <textarea 
+              name="excerpt" 
+              id="inputPostExcerpt"
+              rows="2"
+              placeholder="Krátký popis příspěvku..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Content -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Obsah *</label>
+            <textarea 
+              name="content" 
+              id="inputPostContent"
+              required
+              rows="10"
+              placeholder="Hlavní text příspěvku..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Image URL -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Obrázek</label>
+            <div class="space-y-3">
+              <!-- File Upload -->
+              <div class="relative z-20">
+                <input 
+                  type="file" 
+                  id="postImageFile"
+                  accept="image/*"
+                  class="hidden"
+                />
+                <button 
+                  type="button"
+                  onclick="document.getElementById('postImageFile').click()"
+                  class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold focus:border-gurmaogold outline-none text-left flex items-center gap-3 transition"
+                >
+                  <span class="text-xl">📤</span>
+                  <span id="postFileLabel" class="text-white/60">Nahrát z počítače/mobilu</span>
+                </button>
+                <div id="postUploadProgress" class="hidden mt-2">
+                  <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div id="postProgressBar" class="h-full bg-gurmaogold transition-all duration-300" style="width: 0%"></div>
+                  </div>
+                  <p class="text-xs text-white/60 mt-1">Nahrávám...</p>
+                </div>
+              </div>
+              <!-- OR -->
+              <div class="text-center text-xs text-white/40">NEBO</div>
+              <!-- URL Input -->
+              <input 
+                type="url" 
+                name="image_url" 
+                id="inputPostImageUrl"
+                placeholder="Vlož URL obrázku (https://...)"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="flex gap-4 pt-4">
+            <button 
+              type="submit" 
+              class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
+              <span id="submitPostText">➕ Příspěvek</span>
+            </button>
+            <button 
+              type="button"
+              onclick="resetPostForm()"
+              class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
+              ↺ Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Add Collection -->
+  <div id="content-add-collection" class="tab-content hidden">
+    <div class="max-w-3xl mx-auto">
+      <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
+        <h2 class="text-2xl mb-6">
+          <span id="formTitleCollection">Kolekci</span>
+        </h2>
+
+        <form id="addCollectionForm" class="space-y-6">
+          <input type="hidden" name="id" id="editCollectionId" />
+          
+          <!-- Name -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Název výběru *</label>
+            <input 
+              type="text" 
+              name="name" 
+              id="inputCollectionName"
+              required
+              placeholder="např. Nejlepší steaky"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Slug -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL slug *</label>
+            <input 
+              type="text" 
+              name="slug" 
+              id="inputCollectionSlug"
+              required
+              placeholder="nejlepsi-steaky"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Popis</label>
+            <textarea 
+              name="description" 
+              id="inputCollectionDescription"
+              rows="3"
+              placeholder="Popis výběru..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Image URL -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL obrázku</label>
+            <input 
+              type="url" 
+              name="image_url" 
+              id="inputCollectionImageUrl"
+              placeholder="https://..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Visibility -->
+          <div>
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input 
+                type="checkbox" 
+                name="is_public" 
+                id="inputCollectionPublic"
+                checked
+                class="w-5 h-5 rounded bg-white/5 border border-white/10 checked:bg-gurmaogold"
+              />
+              <span class="text-sm">Veřejný výběr</span>
+            </label>
+          </div>
+
+          <!-- Submit -->
+          <div class="flex gap-4 pt-4">
+            <button 
+              type="submit" 
+              class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
+              <span id="submitCollectionText">➕ Kolekci</span>
+            </button>
+            <button 
+              type="button"
+              onclick="resetCollectionForm()"
+              class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
+              ↺ Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content: Add Gear -->
+  <div id="content-add-gear" class="tab-content hidden">
+    <div class="max-w-3xl mx-auto">
+      <div class="bg-white/5 rounded-3xl border border-white/10 p-8">
+        <h2 class="text-2xl mb-6">
+          <span id="formTitleGear">Gear</span>
+        </h2>
+
+        <form id="addGearForm" class="space-y-6">
+          <input type="hidden" name="id" id="editGearId" />
+          
+          <!-- Name -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Název produktu *</label>
+            <input 
+              type="text" 
+              name="name" 
+              id="inputGearName"
+              required
+              placeholder="např. Le Creuset Dutch Oven"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Slug -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">URL slug *</label>
+            <input 
+              type="text" 
+              name="slug" 
+              id="inputGearSlug"
+              required
+              placeholder="le-creuset-dutch-oven"
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Category & Price -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2">Kategorie</label>
+              <div class="custom-select">
+                <button type="button" id="gearCategoryBtn" class="custom-select-trigger w-full pl-4 pr-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+                  -- Vyber --
+                </button>
+                <div id="gearCategoryOptions" class="custom-options hidden">
+                  <div class="custom-option" data-value="">-- Vyber --</div>
+                  <div class="custom-option" data-value="kuchyne">Kuchyně</div>
+                  <div class="custom-option" data-value="noze">Nože</div>
+                  <div class="custom-option" data-value="nadobi">Nádobí</div>
+                  <div class="custom-option" data-value="grilovani">Grilování</div>
+                  <div class="custom-option" data-value="servir">Servírování</div>
+                  <div class="custom-option" data-value="ostatni">Ostatní</div>
+                </div>
+              </div>
+              <input type="hidden" name="category" id="inputGearCategory" />
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-2">Cena (Kč)</label>
+              <input 
+                type="number" 
+                name="price" 
+                id="inputGearPrice"
+                step="0.01"
+                placeholder="2500"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Popis</label>
+            <textarea 
+              name="description" 
+              id="inputGearDescription"
+              rows="4"
+              placeholder="Popis produktu..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Image URL -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Obrázek</label>
+            <div class="space-y-3">
+              <!-- File Upload -->
+              <div class="relative z-20">
+                <input 
+                  type="file" 
+                  id="gearImageFile"
+                  accept="image/*"
+                  class="hidden"
+                />
+                <button 
+                  type="button"
+                  onclick="document.getElementById('gearImageFile').click()"
+                  class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold focus:border-gurmaogold outline-none text-left flex items-center gap-3 transition"
+                >
+                  <span class="text-xl">📤</span>
+                  <span id="gearFileLabel" class="text-white/60">Nahrát z počítače/mobilu</span>
+                </button>
+                <div id="gearUploadProgress" class="hidden mt-2">
+                  <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div id="gearProgressBar" class="h-full bg-gurmaogold transition-all duration-300" style="width: 0%"></div>
+                  </div>
+                  <p class="text-xs text-white/60 mt-1">Nahrávám...</p>
+                </div>
+              </div>
+              <!-- OR -->
+              <div class="text-center text-xs text-white/40">NEBO</div>
+              <!-- URL Input -->
+              <input 
+                type="url" 
+                name="image_url" 
+                id="inputGearImageUrl"
+                placeholder="Vlož URL obrázku (https://...)"
+                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+              />
+            </div>
+          </div>
+
+          <!-- Affiliate URL -->
+          <div>
+            <label class="block text-sm font-semibold mb-2">Affiliate link</label>
+            <input 
+              type="url" 
+              name="affiliate_url" 
+              id="inputGearAffiliateUrl"
+              placeholder="https://..."
+              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none"
+            />
+          </div>
+
+          <!-- Submit -->
+          <div class="flex gap-4 pt-4">
+            <button 
+              type="submit" 
+              class="flex-1 px-8 py-4 rounded-full bg-gurmaogold text-black font-bold shadow-glow hover:scale-105 transition">
+              <span id="submitGearText">➕ Gear</span>
+            </button>
+            <button 
+              type="button"
+              onclick="resetGearForm()"
+              class="px-8 py-4 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition">
+              ↺ Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ========================================
+// IMAGE UPLOAD UTILITIES
+// ========================================
+
+// Upload image to Supabase Storage
+async function uploadImage(file, bucket = 'images') {
+  if (!file) return null;
+  
+  try {
+    // Create unique filename
+    const timestamp = Date.now();
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${timestamp}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+    const filePath = `${bucket}/${fileName}`;
+    
+    // Upload to Supabase Storage
+    const { data, error } = await window.supabase.storage
+      .from(bucket)
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+    
+    if (error) throw error;
+    
+    // Get public URL
+    const { data: urlData } = window.supabase.storage
+      .from(bucket)
+      .getPublicUrl(filePath);
+    
+    return urlData.publicUrl;
+  } catch (error) {
+    console.error('Upload error:', error);
+    throw error;
+  }
+}
+
+// Restaurant image upload handler
+document.getElementById('restaurantImageFile')?.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const label = document.getElementById('restaurantFileLabel');
+  const progress = document.getElementById('restaurantUploadProgress');
+  const progressBar = document.getElementById('restaurantProgressBar');
+  const urlInput = document.getElementById('inputImageUrl');
+  
+  try {
+    label.textContent = 'Nahrávám...';
+    progress.classList.remove('hidden');
+    progressBar.style.width = '30%';
+    
+    const url = await uploadImage(file, 'restaurant-images');
+    
+    progressBar.style.width = '100%';
+    urlInput.value = url;
+    label.textContent = '✓ ' + file.name;
+    
+    setTimeout(() => {
+      progress.classList.add('hidden');
+      progressBar.style.width = '0%';
+    }, 1500);
+    
+  } catch (error) {
+    alert('Chyba při nahrávání: ' + error.message);
+    label.textContent = 'Nahrát z počítače/mobilu';
+    progress.classList.add('hidden');
+  }
+});
+
+// Chef image upload handler
+document.getElementById('chefImageFile')?.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const label = document.getElementById('chefFileLabel');
+  const progress = document.getElementById('chefUploadProgress');
+  const progressBar = document.getElementById('chefProgressBar');
+  const urlInput = document.getElementById('inputChefImageUrl');
+  
+  try {
+    label.textContent = 'Nahrávám...';
+    progress.classList.remove('hidden');
+    progressBar.style.width = '30%';
+    
+    const url = await uploadImage(file, 'chef-images');
+    
+    progressBar.style.width = '100%';
+    urlInput.value = url;
+    label.textContent = '✓ ' + file.name;
+    
+    setTimeout(() => {
+      progress.classList.add('hidden');
+      progressBar.style.width = '0%';
+    }, 1500);
+    
+  } catch (error) {
+    alert('Chyba při nahrávání: ' + error.message);
+    label.textContent = 'Nahrát z počítače/mobilu';
+    progress.classList.add('hidden');
+  }
+});
+
+// Post image upload handler
+document.getElementById('postImageFile')?.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const label = document.getElementById('postFileLabel');
+  const progress = document.getElementById('postUploadProgress');
+  const progressBar = document.getElementById('postProgressBar');
+  const urlInput = document.getElementById('inputPostImageUrl');
+  
+  try {
+    label.textContent = 'Nahrávám...';
+    progress.classList.remove('hidden');
+    progressBar.style.width = '30%';
+    
+    const url = await uploadImage(file, 'post-images');
+    
+    progressBar.style.width = '100%';
+    urlInput.value = url;
+    label.textContent = '✓ ' + file.name;
+    
+    setTimeout(() => {
+      progress.classList.add('hidden');
+      progressBar.style.width = '0%';
+    }, 1500);
+    
+  } catch (error) {
+    alert('Chyba při nahrávání: ' + error.message);
+    label.textContent = 'Nahrát z počítače/mobilu';
+    progress.classList.add('hidden');
+  }
+});
+
+// Gear image upload handler
+document.getElementById('gearImageFile')?.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const label = document.getElementById('gearFileLabel');
+  const progress = document.getElementById('gearUploadProgress');
+  const progressBar = document.getElementById('gearProgressBar');
+  const urlInput = document.getElementById('inputGearImageUrl');
+  
+  try {
+    label.textContent = 'Nahrávám...';
+    progress.classList.remove('hidden');
+    progressBar.style.width = '30%';
+    
+    const url = await uploadImage(file, 'gear-images');
+    
+    progressBar.style.width = '100%';
+    urlInput.value = url;
+    label.textContent = '✓ ' + file.name;
+    
+    setTimeout(() => {
+      progress.classList.add('hidden');
+      progressBar.style.width = '0%';
+    }, 1500);
+    
+  } catch (error) {
+    alert('Chyba při nahrávání: ' + error.message);
+    label.textContent = 'Nahrát z počítače/mobilu';
+    progress.classList.add('hidden');
+  }
+});
+
+// ========================================
+// Tab switching
+// ========================================
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('active', 'border-gurmaogold');
+    btn.classList.add('border-transparent');
+  });
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.add('hidden');
+  });
+
+  document.getElementById(`tab-${tab}`).classList.add('active', 'border-gurmaogold');
+  document.getElementById(`tab-${tab}`).classList.remove('border-transparent');
+  document.getElementById(`content-${tab}`).classList.remove('hidden');
+  
+  // Load restaurants when switching to add-review tab
+  if (tab === 'add-review') {
+    loadRestaurantsForReview();
+  }
+}
+
+// Initialize coordinate picker map
+mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+
+let marker;
+const coordMap = new mapboxgl.Map({
+  container: 'coordMap',
+  style: 'mapbox://styles/mapbox/satellite-streets-v12',
+  center: [15.5, 49.8],
+  zoom: 6
+});
+
+coordMap.on('click', (e) => {
+  const { lng, lat } = e.lngLat;
+  
+  // Update inputs
+  document.querySelector('input[name="latitude"]').value = lat.toFixed(6);
+  document.querySelector('input[name="longitude"]').value = lng.toFixed(6);
+
+  // Remove old marker
+  if (marker) marker.remove();
+
+  // Add new marker
+  marker = new mapboxgl.Marker({ color: '#d4af37' })
+    .setLngLat([lng, lat])
+    .addTo(coordMap);
+});
+
+// Load restaurants
+async function loadRestaurants() {
+  // Wait for supabase to be available
+  while (!window.supabase) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  
+  try {
+    const { data, error } = await window.supabase
+      .from('restaurants')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    document.getElementById('totalCount').textContent = data.length;
+    document.getElementById('stat-restaurants').textContent = data.length;
+
+    const html = data.map(r => `
+      <div class="bg-white/5 rounded-2xl border border-white/10 p-6 hover:bg-white/10 transition">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h3 class="text-xl font-bold">${r.name}</h3>
+              <span class="text-sm text-gurmaogold">${r.vibe}</span>
+            </div>
+            <div class="text-white/60 text-sm mb-2">${r.city} · ${r.tag}</div>
+            <p class="text-white/80 text-sm mb-3">${r.description}</p>
+            <div class="text-xs text-white/40">
+              📍 ${r.latitude}, ${r.longitude} · 🔗 restaurace-${r.slug}.html
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="editRestaurant('${r.id}')" class="px-4 py-2 rounded-full bg-white/10 hover:bg-gurmaogold hover:text-black transition text-sm">
+              ✏️ Upravit
+            </button>
+            <button onclick="deleteRestaurant('${r.id}', '${r.name}')" class="px-4 py-2 rounded-full bg-white/10 hover:bg-gurmaored hover:text-white transition text-sm">
+              🗑️ Smazat
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('restaurantsList').innerHTML = html || '<div class="text-center py-12 text-white/40">Žádné restaurace</div>';
+  } catch (err) {
+    console.error('Error loading restaurants:', err);
+    window.toast.show('Chyba při načítání restaurací', 'error');
+  }
+}
+
+// Add/Update restaurant
+document.getElementById('addRestaurantForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const editId = formData.get('id');
+  const data = {
+    name: formData.get('name'),
+    vibe: formData.get('vibe'),
+    city: formData.get('city'),
+    tag: formData.get('tag'),
+    description: formData.get('description'),
+    latitude: parseFloat(formData.get('latitude')),
+    longitude: parseFloat(formData.get('longitude')),
+    image_url: formData.get('image_url') || null,
+    slug: formData.get('slug')
+  };
+
+  try {
+    if (editId) {
+      // Update existing
+      const { error } = await supabase
+        .from('restaurants')
+        .update(data)
+        .eq('id', editId);
+
+      if (error) throw error;
+      window.toast.show('✅ Restaurace aktualizována!', 'success');
+    } else {
+      // Insert new
+      const { error } = await supabase
+        .from('restaurants')
+        .insert([data]);
+
+      if (error) throw error;
+      window.toast.show('✅ Restaurace přidána!', 'success');
+    }
+
+    resetForm();
+    switchTab('restaurants');
+    loadRestaurants();
+  } catch (err) {
+    console.error('Error saving restaurant:', err);
+    window.toast.show('Chyba: ' + err.message, 'error');
+  }
+});
+
+// Delete restaurant
+async function deleteRestaurant(id, name) {
+  if (!confirm(`Opravdu smazat "${name}"?`)) return;
+
+  try {
+    const { error } = await supabase
+      .from('restaurants')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    window.toast.show('🗑️ Restaurace smazána', 'success');
+    loadRestaurants();
+  } catch (err) {
+    console.error('Error deleting restaurant:', err);
+    window.toast.show('Chyba při mazání: ' + err.message, 'error');
+  }
+}
+
+// Edit restaurant
+async function editRestaurant(id) {
+  try {
+    const { data, error } = await supabase
+      .from('restaurants')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+
+    // Fill form
+    document.getElementById('editId').value = data.id;
+    document.getElementById('inputName').value = data.name;
+    document.getElementById('inputVibe').value = data.vibe;
+    document.getElementById('inputCity').value = data.city;
+    document.getElementById('inputTag').value = data.tag;
+    document.getElementById('inputDescription').value = data.description;
+    document.getElementById('inputLat').value = data.latitude;
+    document.getElementById('inputLng').value = data.longitude;
+    document.getElementById('inputImageUrl').value = data.image_url || '';
+    document.getElementById('inputSlug').value = data.slug;
+
+    // Update custom dropdown buttons
+    const vibeOption = document.querySelector(`#vibeOptions [data-value="${data.vibe}"]`);
+    if (vibeOption) {
+      document.getElementById('vibeBtn').textContent = vibeOption.textContent;
+    }
+    
+    const cityOption = document.querySelector(`#cityOptions [data-value="${data.city}"]`);
+    if (cityOption) {
+      document.getElementById('cityBtn').textContent = cityOption.textContent;
+    }
+
+    // Update map marker
+    if (marker) marker.remove();
+    marker = new mapboxgl.Marker({ color: '#d4af37' })
+      .setLngLat([data.longitude, data.latitude])
+      .addTo(coordMap);
+    coordMap.flyTo({ center: [data.longitude, data.latitude], zoom: 12 });
+
+    // Update UI
+    document.getElementById('formTitle').textContent = 'Upravit restauraci';
+    document.getElementById('submitText').textContent = '💾 Uložit změny';
+
+    // Switch to form tab
+    switchTab('add');
+  } catch (err) {
+    console.error('Error loading restaurant:', err);
+    window.toast.show('Chyba při načítání: ' + err.message, 'error');
+  }
+}
+
+// Reset form
+function resetForm() {
+  document.getElementById('addRestaurantForm').reset();
+  document.getElementById('editId').value = '';
+  document.getElementById('formTitle').textContent = 'Restauraci';
+  document.getElementById('submitText').textContent = '➕ Restauraci';
+  if (marker) marker.remove();
+  
+  // Reset custom dropdowns
+  document.getElementById('vibeBtn').textContent = '-- Vyber vibe --';
+  document.getElementById('cityBtn').textContent = '-- Vyber město --';
+}
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await window.window.supabase.auth.signOut();
+  window.location.href = 'login.html';
+});
+
+// Search
+document.getElementById('searchRestaurants').addEventListener('input', (e) => {
+  const query = e.target.value.toLowerCase();
+  document.querySelectorAll('#restaurantsList > div').forEach(card => {
+    const text = card.textContent.toLowerCase();
+    card.style.display = text.includes(query) ? 'block' : 'none';
+  });
+});
+
+// Load on page load
+loadRestaurants();
+
+// Load all stats on init
+(async function loadAllStats() {
+  while (!window.supabase) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  loadChefs();
+  loadPosts();
+  loadCollections();
+  loadReviews();
+  loadGear();
+})();
+
+// ========================================
+// CHEFS MANAGEMENT
+// ========================================
+
+// Load restaurants into dropdown
+async function loadRestaurantsDropdown() {
+  while (!window.supabase) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  
+  try {
+    const { data, error } = await window.supabase
+      .from('restaurants')
+      .select('id, name')
+      .order('name');
+
+    if (error) throw error;
+
+    // Populate custom dropdown
+    const optionsContainer = document.getElementById('chefRestaurantOptions');
+    const options = data.map(r => 
+      `<div class="dropdown-option px-4 py-3 hover:bg-white/10 cursor-pointer transition" data-value="${r.id}">${r.name}</div>`
+    ).join('');
+    optionsContainer.innerHTML = options;
+    
+    // Initialize custom dropdown
+    initCustomDropdown('chefRestaurantBtn', 'chefRestaurantOptions', 'inputChefRestaurantId');
+  } catch (err) {
+    console.error('Error loading restaurants:', err);
+  }
+}
+
+// Load chefs
+async function loadChefs() {
+  while (!window.supabase) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  
+  try {
+    const { data, error } = await window.supabase
+      .from('chefs')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    document.getElementById('totalChefsCount').textContent = data.length;
+    document.getElementById('stat-chefs').textContent = data.length;
+
+    const html = data.map(c => `
+      <div class="bg-white/5 rounded-2xl border border-white/10 p-6 hover:bg-white/10 transition">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h3 class="text-xl font-bold">${c.name}</h3>
+              ${c.signature_style ? `<span class="text-sm text-gurmaogold">${c.signature_style}</span>` : ''}
+            </div>
+            ${c.vibe ? `<div class="text-white/60 text-sm mb-2">${c.vibe}</div>` : ''}
+            <p class="text-white/80 text-sm mb-3">${c.bio || ''}</p>
+            <div class="text-xs text-white/40">
+              🔗 kuchar-${c.slug}.html
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="editChef('${c.id}')" class="px-4 py-2 rounded-full bg-white/10 hover:bg-gurmaogold hover:text-black transition text-sm">
+              ✏️ Upravit
+            </button>
+            <button onclick="deleteChef('${c.id}', '${c.name}')" class="px-4 py-2 rounded-full bg-white/10 hover:bg-gurmaored hover:text-white transition text-sm">
+              🗑️ Smazat
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('chefsList').innerHTML = html || '<div class="text-center py-12 text-white/40">Žádní kuchaři</div>';
+  } catch (err) {
+    console.error('Error loading chefs:', err);
+    window.toast.show('Chyba při načítání kuchařů', 'error');
+  }
+}
+
+// Add/Update chef
+document.getElementById('addChefForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const editId = formData.get('id');
+  
+  // Get selected cuisines
+  const selectedCuisines = Array.from(formData.getAll('favorite_cuisines'));
+  
+  const data = {
+    name: formData.get('name'),
+    restaurant_id: formData.get('restaurant_id'),
+    vibe: formData.get('vibe') || null,
+    signature_style: formData.get('signature_style') || null,
+    bio: formData.get('bio'),
+    favorite_cuisines: selectedCuisines.length > 0 ? selectedCuisines.join(' · ') : null,
+    image_url: formData.get('image_url') || null,
+    slug: formData.get('slug'),
+    instagram_url: formData.get('instagram_url') || null,
+    tiktok_url: formData.get('tiktok_url') || null,
+    facebook_url: formData.get('facebook_url') || null,
+    youtube_url: formData.get('youtube_url') || null
+  };
+
+  try {
+    if (editId) {
+      // Update existing
+      const { error } = await window.supabase
+        .from('chefs')
+        .update(data)
+        .eq('id', editId);
+
+      if (error) throw error;
+      window.toast.show('✅ Kuchař aktualizován!', 'success');
+    } else {
+      // Insert new
+      const { error } = await window.supabase
+        .from('chefs')
+        .insert([data]);
+
+      if (error) throw error;
+      window.toast.show('✅ Kuchař přidán!', 'success');
+    }
+
+    resetChefForm();
+    switchTab('chefs');
+    loadChefs();
+  } catch (err) {
+    console.error('Error saving chef:', err);
+    window.toast.show('Chyba: ' + err.message, 'error');
+  }
+});
+
+// Delete chef
+async function deleteChef(id, name) {
+  if (!confirm(`Opravdu smazat "${name}"?`)) return;
+
+  try {
+    const { error } = await window.supabase
+      .from('chefs')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    window.toast.show('🗑️ Kuchař smazán', 'success');
+    loadChefs();
+  } catch (err) {
+    console.error('Error deleting chef:', err);
+    window.toast.show('Chyba při mazání: ' + err.message, 'error');
+  }
+}
+
+// Edit chef
+async function editChef(id) {
+  try {
+    const { data, error } = await window.supabase
+      .from('chefs')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+
+    // Fill form
+    document.getElementById('editChefId').value = data.id;
+    document.getElementById('inputChefName').value = data.name;
+    document.getElementById('inputChefRestaurantId').value = data.restaurant_id || '';
+    document.getElementById('inputChefVibe').value = data.vibe || '';
+    document.getElementById('inputChefSignatureStyle').value = data.signature_style || '';
+    document.getElementById('inputChefBio').value = data.bio;
+    document.getElementById('inputChefImageUrl').value = data.image_url || '';
+    document.getElementById('inputChefSlug').value = data.slug;
+    document.getElementById('inputChefInstagram').value = data.instagram_url || '';
+    document.getElementById('inputChefTiktok').value = data.tiktok_url || '';
+    document.getElementById('inputChefFacebook').value = data.facebook_url || '';
+    document.getElementById('inputChefYoutube').value = data.youtube_url || '';
+    
+    // Load favorite cuisines
+    const favoriteCuisines = data.favorite_cuisines ? data.favorite_cuisines.split(' · ') : [];
+    document.querySelectorAll('input[name="favorite_cuisines"]').forEach(checkbox => {
+      checkbox.checked = favoriteCuisines.includes(checkbox.value);
+    });
+    
+    // Update custom dropdown button text
+    if (data.restaurant_id) {
+      const { data: restaurant, error: restError } = await window.supabase
+        .from('restaurants')
+        .select('name')
+        .eq('id', data.restaurant_id)
+        .single();
+      
+      if (!restError && restaurant) {
+        const btn = document.getElementById('chefRestaurantBtn');
+        const textSpan = btn?.querySelector('.dropdown-text');
+        if (textSpan) textSpan.textContent = restaurant.name;
+      }
+    }
+
+    // Update UI
+    document.getElementById('formTitleChef').textContent = 'Upravit kuchaře';
+    document.getElementById('submitChefText').textContent = '💾 Uložit změny';
+
+    // Switch to form tab
+    switchTab('add-chef');
+  } catch (err) {
+    console.error('Error loading chef:', err);
+    window.toast.show('Chyba při načítání: ' + err.message, 'error');
+  }
+}
+
+// Reset chef form
+function resetChefForm() {
+  document.getElementById('addChefForm').reset();
+  document.getElementById('editChefId').value = '';
+  document.getElementById('formTitleChef').textContent = 'Kuchaře';
+  document.getElementById('submitChefText').textContent = '➕ Kuchaře';
+  
+  // Reset custom dropdown
+  const btn = document.getElementById('chefRestaurantBtn');
+  const textSpan = btn?.querySelector('.dropdown-text');
+  if (textSpan) textSpan.textContent = '-- Vyber restauraci --';
+  
+  // Reset favorite cuisines checkboxes
+  document.querySelectorAll('input[name="favorite_cuisines"]').forEach(checkbox => {
+    checkbox.checked = false;
+  });
+}
+
+// Search chefs
+document.getElementById('searchChefs').addEventListener('input', (e) => {
+  const query = e.target.value.toLowerCase();
+  document.querySelectorAll('#chefsList > div').forEach(card => {
+    const text = card.textContent.toLowerCase();
+    card.style.display = text.includes(query) ? 'block' : 'none';
+  });
+});
+
+// Load chefs and restaurants dropdown on page load
+loadChefs();
+loadRestaurantsDropdown();
+
+// ========================================
+// POSTS MANAGEMENT
+// ========================================
+
+// Load posts
+async function loadPosts() {
+  while (!window.supabase) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  
+  try {
+    const { data, error } = await window.supabase
+      .from('posts')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    document.getElementById('totalPostsCount').textContent = data?.length || 0;
+    document.getElementById('stat-posts').textContent = data?.length || 0;
+
+    if (!data || data.length === 0) {
+      document.getElementById('postsList').innerHTML = `
+        <div class="text-center py-12 text-white/40">
+          <div class="text-4xl mb-4">📝</div>
+          Žádné příspěvky
+        </div>`;
+      return;
+    }
+
+    const html = data.map(p => `
+      <div class="bg-white/5 rounded-2xl border border-white/10 p-6 hover:bg-white/10 transition">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h3 class="text-xl font-bold">${p.title}</h3>
+              <span class="px-2 py-1 rounded-full text-xs ${p.status === 'published' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}">
+                ${p.status === 'published' ? '✓ Publikováno' : '📝 Koncept'}
+              </span>
+            </div>
+            ${p.excerpt ? `<p class="text-white/80 text-sm mb-2">${p.excerpt}</p>` : ''}
+            ${p.category ? `<div class="text-gurmaogold text-xs mb-2">${p.category}</div>` : ''}
+            <div class="text-xs text-white/40">
+              🔗 ${p.slug} ${p.published_at ? `• ${new Date(p.published_at).toLocaleDateString('cs-CZ')}` : ''}
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="editPost('${p.id}')" class="px-4 py-2 rounded-full bg-white/10 hover:bg-gurmaogold hover:text-black transition text-sm">
+              ✏️ Upravit
+            </button>
+            <button onclick="deletePost('${p.id}', '${p.title}')" class="px-4 py-2 rounded-full bg-white/10 hover:bg-gurmaored hover:text-white transition text-sm">
+              🗑️ Smazat
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('postsList').innerHTML = html;
+  } catch (err) {
+    console.error('Error loading posts:', err);
+  }
+}
+
+// ========================================
+// COLLECTIONS MANAGEMENT
+// ========================================
+
+// Load collections
+async function loadCollections() {
+  while (!window.supabase) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  
+  try {
+    const { data, error } = await window.supabase
+      .from('collections')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    document.getElementById('totalCollectionsCount').textContent = data?.length || 0;
+    document.getElementById('stat-collections').textContent = data?.length || 0;
+
+    if (!data || data.length === 0) {
+      document.getElementById('collectionsList').innerHTML = `
+        <div class="text-center py-12 text-white/40">
+          <div class="text-4xl mb-4">📚</div>
+          Žádný výběr
+        </div>`;
+      return;
+    }
+
+    const html = data.map(c => `
+      <div class="bg-white/5 rounded-2xl border border-white/10 p-6 hover:bg-white/10 transition">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <h3 class="text-xl font-bold mb-2">${c.name}</h3>
+            ${c.description ? `<p class="text-white/80 text-sm mb-2">${c.description}</p>` : ''}
+            <div class="text-xs text-white/40">
+              ${c.restaurant_count || 0} restaurací
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="editCollection('${c.id}')" class="px-4 py-2 rounded-full bg-white/10 hover:bg-gurmaogold hover:text-black transition text-sm">
+              ✏️ Upravit
+            </button>
+            <button onclick="deleteCollection('${c.id}', '${c.name}')" class="px-4 py-2 rounded-full bg-white/10 hover:bg-gurmaored hover:text-white transition text-sm">
+              🗑️ Smazat
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('collectionsList').innerHTML = html;
+  } catch (err) {
+    console.error('Error loading collections:', err);
+  }
+}
+
+// ========================================
+// REVIEWS MANAGEMENT
+// ========================================
+
+// Load reviews
+async function loadReviews(status = 'all') {
+  while (!window.supabase) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  
+  try {
+    let query = window.supabase
+      .from('reviews')
+      .select(`
+        *,
+        profiles!reviews_user_id_fkey (display_name),
+        restaurants!reviews_restaurant_id_fkey (name)
+      `)
+      .order('created_at', { ascending: false });
+
+    if (status !== 'all') {
+      query = query.eq('status', status);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+
+    document.getElementById('totalReviewsCount').textContent = data?.length || 0;
+    document.getElementById('stat-reviews').textContent = data?.length || 0;
+
+    if (!data || data.length === 0) {
+      document.getElementById('reviewsList').innerHTML = `
+        <div class="text-center py-12 text-white/40">
+          <div class="text-4xl mb-4">💬</div>
+          Žádné recenze
+        </div>`;
+      return;
+    }
+
+    const html = data.map(r => `
+      <div class="bg-white/5 rounded-2xl border border-white/10 p-6 hover:bg-white/10 transition">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <h3 class="text-lg font-bold">${r.restaurants?.name || 'Neznámá restaurace'}</h3>
+              <span class="text-gurmaogold">${'⭐'.repeat(r.rating)}</span>
+            </div>
+            <div class="text-sm text-white/60 mb-2">
+              ${r.profiles?.display_name || 'Anonym'} • ${new Date(r.created_at).toLocaleDateString('cs-CZ')}
+            </div>
+            ${r.title ? `<div class="font-semibold mb-1">${r.title}</div>` : ''}
+            ${r.text ? `<p class="text-white/80 text-sm">${r.text}</p>` : ''}
+          </div>
+          <div class="flex gap-2">
+            ${r.status === 'pending' ? `
+              <button onclick="approveReview('${r.id}')" class="px-4 py-2 rounded-full bg-green-500/20 text-green-400 hover:bg-green-500/30 transition text-sm">
+                ✓ Schválit
+              </button>
+            ` : ''}
+            <button onclick="deleteReview('${r.id}')" class="px-4 py-2 rounded-full bg-white/10 hover:bg-gurmaored hover:text-white transition text-sm">
+              🗑️ Smazat
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('reviewsList').innerHTML = html;
+  } catch (err) {
+    console.error('Error loading reviews:', err);
+  }
+}
+
+// Filter reviews by status
+document.getElementById('filterReviewStatus')?.addEventListener('change', (e) => {
+  loadReviews(e.target.value);
+});
+
+// Approve review
+async function approveReview(id) {
+  try {
+    const { error } = await window.supabase
+      .from('reviews')
+      .update({ status: 'approved' })
+      .eq('id', id);
+
+    if (error) throw error;
+    window.toast.show('✓ Recenze schválena', 'success');
+    loadReviews(document.getElementById('filterReviewStatus').value);
+  } catch (err) {
+    console.error('Error approving review:', err);
+    window.toast.show('Chyba při schvalování: ' + err.message, 'error');
+  }
+}
+
+// Delete review
+async function deleteReview(id) {
+  if (!confirm('Opravdu smazat tuto recenzi?')) return;
+  
+  try {
+    const { error } = await window.supabase
+      .from('reviews')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+    window.toast.show('🗑️ Recenze smazána', 'success');
+    loadReviews(document.getElementById('filterReviewStatus').value);
+  } catch (err) {
+    console.error('Error deleting review:', err);
+    window.toast.show('Chyba při mazání: ' + err.message, 'error');
+  }
+}
+
+// Load restaurants for review form
+async function loadRestaurantsForReview() {
+  try {
+    const { data, error } = await window.supabase
+      .from('restaurants')
+      .select('id, name')
+      .order('name');
+
+    if (error) throw error;
+
+    const select = document.getElementById('inputReviewRestaurant');
+    if (select) {
+      select.innerHTML = '<option value="">-- Vyber restauraci --</option>' +
+        data.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+    }
+  } catch (err) {
+    console.error('Error loading restaurants:', err);
+  }
+}
+
+// Star rating handler
+let selectedRating = 0;
+document.addEventListener('DOMContentLoaded', () => {
+  const starBtns = document.querySelectorAll('.star-btn');
+  starBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      selectedRating = parseInt(this.getAttribute('data-rating'));
+      document.getElementById('inputReviewRating').value = selectedRating;
+      
+      // Update star display
+      starBtns.forEach((s, idx) => {
+        if (idx < selectedRating) {
+          s.style.opacity = '1';
+          s.style.filter = 'none';
+        } else {
+          s.style.opacity = '0.3';
+          s.style.filter = 'grayscale(1)';
+        }
+      });
+    });
+  });
+});
+
+// Reset review form
+function resetReviewForm() {
+  document.getElementById('addReviewForm').reset();
+  document.getElementById('editReviewId').value = '';
+  document.getElementById('formTitleReview').textContent = 'Přidat recenzi';
+  document.getElementById('submitReviewText').textContent = '➕ Recenzi';
+  selectedRating = 0;
+  
+  // Reset stars
+  const starBtns = document.querySelectorAll('.star-btn');
+  starBtns.forEach(s => {
+    s.style.opacity = '0.3';
+    s.style.filter = 'grayscale(1)';
+  });
+}
+
+// Add/Update review
+document.getElementById('addReviewForm')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const restaurantId = formData.get('restaurant_id');
+  const rating = parseInt(formData.get('rating'));
+  const title = formData.get('title');
+  const text = formData.get('text');
+  const autoApprove = formData.get('auto_approve') === 'on';
+  
+  if (!restaurantId || !rating || !text) {
+    window.toast.show('Vyplň povinná pole', 'error');
+    return;
+  }
+
+  try {
+    const { data: { user } } = await window.supabase.auth.getUser();
+    if (!user) throw new Error('Nejsi přihlášen');
+
+    const reviewData = {
+      restaurant_id: restaurantId,
+      user_id: user.id,
+      rating: rating,
+      title: title || null,
+      text: text,
+      status: autoApprove ? 'approved' : 'pending'
+    };
+
+    const { error } = await window.supabase
+      .from('reviews')
+      .insert([reviewData]);
+
+    if (error) throw error;
+
+    window.toast.show('✓ Recenze uložena', 'success');
+    resetReviewForm();
+    switchTab('reviews');
+    loadReviews();
+  } catch (err) {
+    console.error('Error saving review:', err);
+    window.toast.show('Chyba při ukládání: ' + err.message, 'error');
+  }
+});
+
+// ========================================
+// GEAR MANAGEMENT
+// ========================================
+
+// Load gear
+async function loadGear() {
+  while (!window.supabase) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  
+  try {
+    const { data, error } = await window.supabase
+      .from('gear')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    document.getElementById('totalGearCount').textContent = data?.length || 0;
+    document.getElementById('stat-gear').textContent = data?.length || 0;
+
+    if (!data || data.length === 0) {
+      document.getElementById('gearList').innerHTML = `
+        <div class="text-center py-12 text-white/40">
+          <div class="text-4xl mb-4">⚙️</div>
+          Žádné produkty
+        </div>`;
+      return;
+    }
+
+    const html = data.map(g => `
+      <div class="bg-white/5 rounded-2xl border border-white/10 p-6 hover:bg-white/10 transition">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1">
+            <h3 class="text-xl font-bold mb-2">${g.name}</h3>
+            ${g.description ? `<p class="text-white/80 text-sm mb-2">${g.description}</p>` : ''}
+            ${g.category ? `<div class="text-gurmaogold text-xs mb-2">${g.category}</div>` : ''}
+            ${g.affiliate_url ? `<a href="${g.affiliate_url}" target="_blank" class="text-xs text-white/60 hover:text-gurmaogold">🔗 ${g.affiliate_url}</a>` : ''}
+          </div>
+          <div class="flex gap-2">
+            <button onclick="editGear('${g.id}')" class="px-4 py-2 rounded-full bg-white/10 hover:bg-gurmaogold hover:text-black transition text-sm">
+              ✏️ Upravit
+            </button>
+            <button onclick="deleteGear('${g.id}', '${g.name}')" class="px-4 py-2 rounded-full bg-white/10 hover:bg-gurmaored hover:text-white transition text-sm">
+              🗑️ Smazat
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    document.getElementById('gearList').innerHTML = html;
+  } catch (err) {
+    console.error('Error loading gear:', err);
+  }
+}
+
+// ========================================
+// POSTS FORM HANDLERS
+// ========================================
+
+// Add/Update post
+document.getElementById('addPostForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const editId = formData.get('id');
+  const data = {
+    title: formData.get('title'),
+    slug: formData.get('slug'),
+    excerpt: formData.get('excerpt') || null,
+    content: formData.get('content'),
+    image_url: formData.get('image_url') || null,
+    category: formData.get('category') || null,
+    status: formData.get('status'),
+    published_at: formData.get('status') === 'published' ? new Date().toISOString() : null
+  };
+
+  try {
+    if (editId) {
+      const { error } = await window.supabase
+        .from('posts')
+        .update(data)
+        .eq('id', editId);
+
+      if (error) throw error;
+      window.toast.show('✅ Příspěvek aktualizován!', 'success');
+    } else {
+      const { error } = await window.supabase
+        .from('posts')
+        .insert([data]);
+
+      if (error) throw error;
+      window.toast.show('✅ Příspěvek přidán!', 'success');
+    }
+
+    resetPostForm();
+    switchTab('posts');
+    loadPosts();
+  } catch (err) {
+    console.error('Error saving post:', err);
+    window.toast.show('Chyba: ' + err.message, 'error');
+  }
+});
+
+// Edit post
+async function editPost(id) {
+  try {
+    const { data, error } = await window.supabase
+      .from('posts')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+
+    document.getElementById('editPostId').value = data.id;
+    document.getElementById('inputPostTitle').value = data.title;
+    document.getElementById('inputPostSlug').value = data.slug;
+    document.getElementById('inputPostCategory').value = data.category || '';
+    document.getElementById('inputPostStatus').value = data.status;
+    document.getElementById('inputPostExcerpt').value = data.excerpt || '';
+    document.getElementById('inputPostContent').value = data.content || '';
+    document.getElementById('inputPostImageUrl').value = data.image_url || '';
+
+    // Update custom dropdown buttons
+    if (data.category) {
+      const categoryOption = document.querySelector(`#postCategoryOptions [data-value="${data.category}"]`);
+      if (categoryOption) {
+        document.getElementById('postCategoryBtn').textContent = categoryOption.textContent;
+      }
+    }
+    
+    if (data.status) {
+      const statusOption = document.querySelector(`#postStatusOptions [data-value="${data.status}"]`);
+      if (statusOption) {
+        document.getElementById('postStatusBtn').textContent = statusOption.textContent;
+      }
+    }
+
+    document.getElementById('formTitlePost').textContent = 'Upravit příspěvek';
+    document.getElementById('submitPostText').textContent = '💾 Uložit změny';
+
+    switchTab('add-post');
+  } catch (err) {
+    console.error('Error loading post:', err);
+    window.toast.show('Chyba při načítání: ' + err.message, 'error');
+  }
+}
+
+// Delete post
+function deletePost(id, name) { 
+  if (confirm(`Smazat příspěvek "${name}"?`)) {
+    window.supabase.from('posts').delete().eq('id', id).then(() => {
+      window.toast.show('✓ Smazáno', 'success');
+      loadPosts();
+    });
+  }
+}
+
+// Reset post form
+function resetPostForm() {
+  document.getElementById('addPostForm').reset();
+  document.getElementById('editPostId').value = '';
+  document.getElementById('formTitlePost').textContent = 'Příspěvek';
+  document.getElementById('submitPostText').textContent = '➕ Příspěvek';
+  
+  // Reset custom dropdowns
+  document.getElementById('postCategoryBtn').textContent = '-- Vyber --';
+  document.getElementById('postStatusBtn').textContent = '📝 Koncept';
+}
+
+// ========================================
+// COLLECTIONS FORM HANDLERS
+// ========================================
+
+// Add/Update collection
+document.getElementById('addCollectionForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const editId = formData.get('id');
+  const data = {
+    name: formData.get('name'),
+    slug: formData.get('slug'),
+    description: formData.get('description') || null,
+    image_url: formData.get('image_url') || null,
+    is_public: formData.get('is_public') === 'on'
+  };
+
+  try {
+    if (editId) {
+      const { error } = await window.supabase
+        .from('collections')
+        .update(data)
+        .eq('id', editId);
+
+      if (error) throw error;
+      window.toast.show('✅ Výběr aktualizován!', 'success');
+    } else {
+      const { error } = await window.supabase
+        .from('collections')
+        .insert([data]);
+
+      if (error) throw error;
+      window.toast.show('✅ Výběr přidán!', 'success');
+    }
+
+    resetCollectionForm();
+    switchTab('collections');
+    loadCollections();
+  } catch (err) {
+    console.error('Error saving collection:', err);
+    window.toast.show('Chyba: ' + err.message, 'error');
+  }
+});
+
+// Edit collection
+async function editCollection(id) {
+  try {
+    const { data, error } = await window.supabase
+      .from('collections')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+
+    document.getElementById('editCollectionId').value = data.id;
+    document.getElementById('inputCollectionName').value = data.name;
+    document.getElementById('inputCollectionSlug').value = data.slug;
+    document.getElementById('inputCollectionDescription').value = data.description || '';
+    document.getElementById('inputCollectionImageUrl').value = data.image_url || '';
+    document.getElementById('inputCollectionPublic').checked = data.is_public;
+
+    document.getElementById('formTitleCollection').textContent = 'Upravit kolekci';
+    document.getElementById('submitCollectionText').textContent = '💾 Uložit změny';
+
+    switchTab('add-collection');
+  } catch (err) {
+    console.error('Error loading collection:', err);
+    window.toast.show('Chyba při načítání: ' + err.message, 'error');
+  }
+}
+
+// Delete collection
+function deleteCollection(id, name) {
+  if (confirm(`Smazat kolekci "${name}"?`)) {
+    window.supabase.from('collections').delete().eq('id', id).then(() => {
+      window.toast.show('✓ Smazáno', 'success');
+      loadCollections();
+    });
+  }
+}
+
+// Reset collection form
+function resetCollectionForm() {
+  document.getElementById('addCollectionForm').reset();
+  document.getElementById('editCollectionId').value = '';
+  document.getElementById('formTitleCollection').textContent = 'Kolekci';
+  document.getElementById('submitCollectionText').textContent = '➕ Kolekci';
+  document.getElementById('inputCollectionPublic').checked = true;
+}
+
+// ========================================
+// GEAR FORM HANDLERS
+// ========================================
+
+// Add/Update gear
+document.getElementById('addGearForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const editId = formData.get('id');
+  const data = {
+    name: formData.get('name'),
+    slug: formData.get('slug'),
+    description: formData.get('description') || null,
+    category: formData.get('category') || null,
+    image_url: formData.get('image_url') || null,
+    affiliate_url: formData.get('affiliate_url') || null,
+    price: formData.get('price') ? parseFloat(formData.get('price')) : null
+  };
+
+  try {
+    if (editId) {
+      const { error } = await window.supabase
+        .from('gear')
+        .update(data)
+        .eq('id', editId);
+
+      if (error) throw error;
+      window.toast.show('✅ Gear aktualizován!', 'success');
+    } else {
+      const { error } = await window.supabase
+        .from('gear')
+        .insert([data]);
+
+      if (error) throw error;
+      window.toast.show('✅ Gear přidán!', 'success');
+    }
+
+    resetGearForm();
+    switchTab('gear');
+    loadGear();
+  } catch (err) {
+    console.error('Error saving gear:', err);
+    window.toast.show('Chyba: ' + err.message, 'error');
+  }
+});
+
+// Edit gear
+async function editGear(id) {
+  try {
+    const { data, error } = await window.supabase
+      .from('gear')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) throw error;
+
+    document.getElementById('editGearId').value = data.id;
+    document.getElementById('inputGearName').value = data.name;
+    document.getElementById('inputGearSlug').value = data.slug;
+    document.getElementById('inputGearCategory').value = data.category || '';
+    document.getElementById('inputGearPrice').value = data.price || '';
+    document.getElementById('inputGearDescription').value = data.description || '';
+    document.getElementById('inputGearImageUrl').value = data.image_url || '';
+    document.getElementById('inputGearAffiliateUrl').value = data.affiliate_url || '';
+
+    // Update custom dropdown button
+    if (data.category) {
+      const categoryOption = document.querySelector(`#gearCategoryOptions [data-value="${data.category}"]`);
+      if (categoryOption) {
+        document.getElementById('gearCategoryBtn').textContent = categoryOption.textContent;
+      }
+    }
+
+    document.getElementById('formTitleGear').textContent = 'Upravit gear';
+    document.getElementById('submitGearText').textContent = '💾 Uložit změny';
+
+    switchTab('add-gear');
+  } catch (err) {
+    console.error('Error loading gear:', err);
+    window.toast.show('Chyba při načítání: ' + err.message, 'error');
+  }
+}
+
+// Delete gear
+function deleteGear(id, name) {
+  if (confirm(`Smazat produkt "${name}"?`)) {
+    window.supabase.from('gear').delete().eq('id', id).then(() => {
+      window.toast.show('✓ Smazáno', 'success');
+      loadGear();
+    });
+  }
+}
+
+// Reset gear form
+function resetGearForm() {
+  document.getElementById('addGearForm').reset();
+  document.getElementById('editGearId').value = '';
+  document.getElementById('formTitleGear').textContent = 'Gear';
+  document.getElementById('submitGearText').textContent = '➕ Gear';
+  
+  // Reset custom dropdown
+  document.getElementById('gearCategoryBtn').textContent = '-- Vyber --';
+}
+
+
+// Load on tab switch
+const originalSwitchTab = switchTab;
+switchTab = function(tab) {
+  originalSwitchTab(tab);
+  
+  // Load data when switching to these tabs
+  if (tab === 'posts') loadPosts();
+  if (tab === 'collections') loadCollections();
+  if (tab === 'reviews') loadReviews();
+  if (tab === 'gear') loadGear();
+};
+
+// ========================================
+// CUSTOM DROPDOWN FUNCTIONALITY
+// ========================================
+
+function initCustomDropdown(btnId, optionsId, hiddenInputId) {
+  const btn = document.getElementById(btnId);
+  const options = document.getElementById(optionsId);
+  const hiddenInput = document.getElementById(hiddenInputId);
+  
+  if (!btn || !options) return;
+  
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    // Close other dropdowns
+    document.querySelectorAll('.custom-options').forEach(o => {
+      if (o !== options) o.classList.add('hidden');
+    });
+    options.classList.toggle('hidden');
+    
+    // Scroll dropdown into view when opened
+    if (!options.classList.contains('hidden')) {
+      setTimeout(() => {
+        options.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
+  });
+  
+  options.querySelectorAll('.custom-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const value = opt.dataset.value;
+      btn.textContent = opt.textContent;
+      options.classList.add('hidden');
+      if (hiddenInput) {
+        hiddenInput.value = value;
+      }
+    });
+  });
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', () => {
+  document.querySelectorAll('.custom-options').forEach(o => o.classList.add('hidden'));
+});
+
+// Initialize all dropdowns on page load
+document.addEventListener('DOMContentLoaded', () => {
+  // Restaurant form
+  initCustomDropdown('vibeBtn', 'vibeOptions', 'inputVibe');
+  initCustomDropdown('cityBtn', 'cityOptions', 'inputCity');
+  
+  // Post form
+  initCustomDropdown('postCategoryBtn', 'postCategoryOptions', 'inputPostCategory');
+  initCustomDropdown('postStatusBtn', 'postStatusOptions', 'inputPostStatus');
+  
+  // Gear form
+  initCustomDropdown('gearCategoryBtn', 'gearCategoryOptions', 'inputGearCategory');
+  
+  // Reviews filter
+  initCustomDropdown('filterReviewStatusBtn', 'filterReviewStatusOptions', 'filterReviewStatus');
+});
+
+// ========================================
+// NOTIFICATION SYSTEM
+// ========================================
+(async function initNotifications() {
+  let notificationMessages = [];
+  
+  // Load contact messages for notifications
+  async function loadNotifications() {
+    try {
+      const { getContactMessages } = await import('./supabase-client.js');
+      notificationMessages = await getContactMessages();
+      updateNotificationBadge();
+      renderNotifications();
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    }
+  }
+  
+  // Update notification badge
+  function updateNotificationBadge() {
+    const newCount = notificationMessages.filter(m => m.status === 'new').length;
+    const badge = document.getElementById('notificationBadge');
+    
+    if (newCount > 0) {
+      badge.textContent = newCount > 99 ? '99+' : newCount;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  }
+  
+  // Render notification list
+  function renderNotifications() {
+    const newMessages = notificationMessages.filter(m => m.status === 'new').slice(0, 10);
+    const list = document.getElementById('notificationList');
+    const noNotif = document.getElementById('noNotifications');
+    
+    if (newMessages.length === 0) {
+      list.innerHTML = '';
+      noNotif.classList.remove('hidden');
+      return;
+    }
+    
+    noNotif.classList.add('hidden');
+    list.innerHTML = newMessages.map(msg => {
+      const date = new Date(msg.created_at);
+      const now = new Date();
+      const diff = now - date;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      let timeText = '';
+      if (days === 0) timeText = 'Dnes';
+      else if (days === 1) timeText = 'Včera';
+      else if (days < 7) timeText = `Před ${days} dny`;
+      else timeText = date.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'short' });
+      
+      const subject = msg.subject.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const name = msg.name.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const email = msg.email.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      
+      return `
+        <div class="notification-item" data-id="${msg.id}">
+          <div class="flex items-start gap-3">
+            <div class="text-2xl">📩</div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-white text-sm mb-1 truncate">${subject}</div>
+              <div class="text-xs text-gray-400 mb-1">${name} • ${email}</div>
+              <div class="text-xs text-gray-500">${timeText}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    // Add click handlers
+    list.querySelectorAll('.notification-item').forEach(item => {
+      item.addEventListener('click', () => {
+        window.location.href = 'admin-contact.html';
+      });
+    });
+  }
+  
+  // Toggle notification panel
+  document.getElementById('notificationBtn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const panel = document.getElementById('notificationPanel');
+    panel.classList.toggle('active');
+    if (panel.classList.contains('active')) {
+      loadNotifications(); // Refresh when opening
+    }
+  });
+  
+  // Close notification panel
+  document.getElementById('closeNotifications')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('notificationPanel').classList.remove('active');
+  });
+  
+  // Close panel when clicking outside
+  document.addEventListener('click', (e) => {
+    const panel = document.getElementById('notificationPanel');
+    const btn = document.getElementById('notificationBtn');
+    if (panel && btn && !panel.contains(e.target) && !btn.contains(e.target)) {
+      panel.classList.remove('active');
+    }
+  });
+  
+  // Initial load
+  loadNotifications();
+  
+  // Refresh notifications every 30 seconds
+  setInterval(loadNotifications, 30000);
+})();
+
+</script>
+
+<!-- FOOTER -->
+<footer class="py-6 border-t border-white/10">
+  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex flex-wrap justify-center md:justify-start gap-4 md:gap-6 text-xs md:text-sm text-white/60">
+      <button id="legalToggle" class="hover:text-gurmaogold transition cursor-pointer">Informace ▼</button>
+      <div id="legalLinks" class="hidden flex-wrap gap-4 md:gap-6">
+        <a href="legal.html#gdpr" class="hover:text-gurmaogold transition">Právní</a>
+        <a href="legal.html#cookies" class="hover:text-gurmaogold transition">Cookies</a>
+        <a href="kontakt.html" class="hover:text-gurmaogold transition">Kontakt</a>
+      </div>
+      <span class="text-white/40">© 2025 GUR<span class="text-gurmaogold">M</span>AO.cz · Nejez. <span class="text-gurmaogold">Prožij.</span></span>
+    </div>
+    <div class="flex items-center gap-3 relative">
+      <div class="relative z-20">
+        <div id="footerSearchBox" class="flex flex-row-reverse items-center gap-2 transition-all duration-300 w-9 h-9 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold overflow-hidden">
+          <button id="footerSearchToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center z-10">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </button>
+          <input 
+            type="text" 
+            id="footerSearchInput" 
+            placeholder="Vyhledej tu svou..."
+            class="opacity-0 w-0 bg-transparent border-none outline-none text-white placeholder:text-white/40 text-sm transition-all duration-300 pl-3"
+          />
+        </div>
+        <div id="footerSearchResults" class="hidden absolute bottom-full mb-2 left-0 md:right-0 md:left-auto w-80 md:w-96 max-h-96 overflow-y-auto rounded-2xl bg-gurmaoblack border border-white/20 shadow-2xl z-50"></div>
+      </div>
       <span class="text-sm text-gurmaogold hidden md:inline">Sledujte nás</span>
       <a href="https://instagram.com/gurmao.cz" target="_blank" rel="noopener noreferrer" class="footer-social w-9 h-9 rounded-full bg-white/5 border border-white/20 hover:border-gurmaogold hover:bg-gurmaogold/10 transition-all duration-300 flex items-center justify-center group">
         <svg class="w-4 h-4 text-white/60 group-hover:text-gurmaogold transition" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
