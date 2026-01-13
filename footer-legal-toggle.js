@@ -52,15 +52,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (footerSearchToggle && footerSearchBox && footerSearchInput && footerSearchResults && supabase) {
     let isFooterExpanded = false;
+    const socialIcons = document.querySelectorAll('.footer-social');
+    const socialLabel = footerSearchBox.parentElement.parentElement.querySelector('span.text-gurmaogold');
 
     footerSearchToggle.addEventListener('click', (e) => {
       e.stopPropagation();
       if (!isFooterExpanded) {
-        // Expand
+        // Expand - rozbalení zleva doprava
         footerSearchBox.classList.remove('w-9');
-        footerSearchBox.classList.add('w-80');
+        footerSearchBox.classList.add('w-72', 'md:w-80');
         footerSearchInput.classList.remove('opacity-0', 'w-0');
-        footerSearchInput.classList.add('opacity-100', 'w-full', 'px-4');
+        footerSearchInput.classList.add('opacity-100', 'flex-1', 'pr-2');
+        
+        // Skrytí sociálních sítí na mobilu
+        socialIcons.forEach(icon => {
+          icon.style.display = 'none';
+        });
+        if (socialLabel) socialLabel.style.display = 'none';
+        
         setTimeout(() => footerSearchInput.focus(), 300);
         isFooterExpanded = true;
       }
@@ -70,12 +79,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.addEventListener('click', (e) => {
       if (isFooterExpanded && !footerSearchBox.contains(e.target) && !footerSearchResults.contains(e.target)) {
         footerSearchBox.classList.add('w-9');
-        footerSearchBox.classList.remove('w-80');
+        footerSearchBox.classList.remove('w-72', 'md:w-80');
         footerSearchInput.classList.add('opacity-0', 'w-0');
-        footerSearchInput.classList.remove('opacity-100', 'w-full', 'px-4');
+        footerSearchInput.classList.remove('opacity-100', 'flex-1', 'pr-2');
         footerSearchInput.value = '';
         footerSearchResults.classList.add('hidden');
         footerSearchResults.innerHTML = '';
+        
+        // Zobrazení sociálních sítí zpět
+        socialIcons.forEach(icon => {
+          icon.style.display = '';
+        });
+        if (socialLabel) socialLabel.style.display = '';
+        
         isFooterExpanded = false;
       }
     });
