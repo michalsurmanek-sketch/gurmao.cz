@@ -66,11 +66,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         footerSearchInput.classList.remove('opacity-0', 'w-0');
         footerSearchInput.classList.add('opacity-100', 'flex-1', 'pr-2');
         
-        // Na mobilu použít absolute positioning pro překrytí ikon
+        // Na mobilu použít absolute positioning přímo na searchBox pro překrytí ikon
         if (isMobile) {
-          footerSearchBox.parentElement.style.position = 'absolute';
-          footerSearchBox.parentElement.style.right = '0';
-          footerSearchBox.parentElement.style.zIndex = '30';
+          footerSearchBox.style.position = 'absolute';
+          footerSearchBox.style.right = '0';
+          footerSearchBox.style.top = '0';
         }
         
         setTimeout(() => footerSearchInput.focus(), 300);
@@ -90,9 +90,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         footerSearchResults.innerHTML = '';
         
         // Vrátit pozici zpět
-        footerSearchBox.parentElement.style.position = '';
-        footerSearchBox.parentElement.style.right = '';
-        footerSearchBox.parentElement.style.zIndex = '';
+        footerSearchBox.style.position = '';
+        footerSearchBox.style.right = '';
+        footerSearchBox.style.top = '';
         
         isFooterExpanded = false;
       }
