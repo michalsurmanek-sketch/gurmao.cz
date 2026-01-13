@@ -86,16 +86,9 @@ export class LocationSearch {
           console.log(`🏙️ NEJBLIŽŠÍ MĚSTO: ${nearestCity} (${Math.round(minDistance)} km)`);
           
           if (position.coords.accuracy > 5000) {
-            console.error('❌ GPS JE MOC NEPŘESNÁ (±' + Math.round(position.coords.accuracy/1000) + ' km)');
-            console.error('💡 DŮVOD: Prohlížeč používá IP adresu místo GPS.');
-            console.error('🔧 ŘEŠENÍ: Otevři stránku na MOBILU nebo použij ruční výběr města.');
-            reject(new Error(`GPS_TOO_INACCURATE: ±${Math.round(position.coords.accuracy/1000)}km`));
-            return;
-          }
-          
-          if (position.coords.accuracy > 1000) {
-            console.warn('⚠️ POZOR: Nízká přesnost GPS (±' + Math.round(position.coords.accuracy) + 'm)');
-            console.warn('💡 TIP: Jsi venku? Zkus povolit GPS v telefonu nebo počkat na lepší signál.');
+            console.warn('⚠️ GPS je nepřesná (±' + Math.round(position.coords.accuracy/1000) + ' km) - používá IP adresu místo GPS');
+          } else if (position.coords.accuracy > 1000) {
+            console.warn('⚠️ Nízká přesnost GPS (±' + Math.round(position.coords.accuracy) + 'm)');
           }
           
           resolve(this.userLocation);
