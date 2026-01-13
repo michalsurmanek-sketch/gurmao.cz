@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const footerSearchInput = document.getElementById('footerSearchInput');
   const footerSearchResults = document.getElementById('footerSearchResults');
 
-  if (footerSearchToggle && footerSearchBox && footerSearchInput && footerSearchResults && supabase) {
+  if (footerSearchToggle && footerSearchBox && footerSearchInput && footerSearchResults) {
     let isFooterExpanded = false;
     const socialIcons = document.querySelectorAll('.footer-social');
     const socialLabel = footerSearchBox.parentElement.parentElement.querySelector('span.text-gurmaogold');
@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       e.stopPropagation();
       if (!isFooterExpanded) {
         const isMobile = window.innerWidth < 768;
+        console.log('Footer search clicked, isMobile:', isMobile, 'socialIcons count:', socialIcons.length);
         
         // Na mobilu prostě skrýt sociální ikony
         if (isMobile) {
