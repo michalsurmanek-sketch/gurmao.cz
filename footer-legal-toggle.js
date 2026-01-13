@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let isFooterExpanded = false;
     const socialIcons = document.querySelectorAll('.footer-social');
     const socialLabel = footerSearchBox.parentElement.parentElement.querySelector('span.text-gurmaogold');
+    const searchWrapper = footerSearchBox.parentElement;
 
     footerSearchToggle.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -66,11 +67,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         footerSearchInput.classList.remove('opacity-0', 'w-0');
         footerSearchInput.classList.add('opacity-100', 'flex-1', 'pr-2');
         
-        // Na mobilu použít absolute positioning přímo na searchBox pro překrytí ikon
+        // Na mobilu použít absolute positioning na wrapper pro překrytí ikon
         if (isMobile) {
-          footerSearchBox.style.position = 'absolute';
-          footerSearchBox.style.right = '0';
-          footerSearchBox.style.top = '0';
+          searchWrapper.style.position = 'absolute';
+          searchWrapper.style.right = '0';
+          searchWrapper.style.width = '288px'; // w-72
         }
         
         setTimeout(() => footerSearchInput.focus(), 300);
@@ -90,9 +91,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         footerSearchResults.innerHTML = '';
         
         // Vrátit pozici zpět
-        footerSearchBox.style.position = '';
-        footerSearchBox.style.right = '';
-        footerSearchBox.style.top = '';
+        searchWrapper.style.position = '';
+        searchWrapper.style.right = '';
+        searchWrapper.style.width = '';
         
         isFooterExpanded = false;
       }
