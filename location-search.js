@@ -58,6 +58,8 @@ export class LocationSearch {
       return restaurants;
     }
 
+    console.log('📍 Tvoje pozice:', this.userLocation);
+    
     return restaurants
       .map(restaurant => {
         if (restaurant.latitude && restaurant.longitude) {
@@ -67,6 +69,16 @@ export class LocationSearch {
             restaurant.latitude,
             restaurant.longitude
           );
+          
+          // Debug pro první 3 restaurace
+          if (restaurants.indexOf(restaurant) < 3) {
+            console.log(`📏 ${restaurant.name}:`, {
+              restaurace: `${restaurant.latitude}, ${restaurant.longitude}`,
+              tvoje: `${this.userLocation.lat}, ${this.userLocation.lng}`,
+              vzdalenost: `${distance.toFixed(2)} km`
+            });
+          }
+          
           return { ...restaurant, distance };
         }
         // Restaurace bez souřadnic - přidej velkou vzdálenost aby byly na konci
