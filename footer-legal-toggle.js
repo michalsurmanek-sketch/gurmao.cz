@@ -62,21 +62,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!isFooterExpanded) {
         const isMobile = window.innerWidth < 768;
         
+        // Na mobilu prostě skrýt sociální ikony
+        if (isMobile) {
+          socialIcons.forEach(icon => {
+            icon.style.display = 'none';
+          });
+          if (socialLabel) socialLabel.style.display = 'none';
+        }
+        
         // Expand - rozbalení zleva doprava
         footerSearchBox.classList.remove('w-9');
         footerSearchBox.classList.add('w-72', 'md:w-80');
         footerSearchInput.classList.remove('opacity-0', 'w-0');
         footerSearchInput.classList.add('opacity-100', 'flex-1', 'pr-2');
-        
-        // Na mobilu použít absolute positioning na wrapper pro překrytí celé pravé části
-        if (isMobile) {
-          searchWrapper.style.position = 'absolute';
-          searchWrapper.style.right = '0';
-          searchWrapper.style.top = '0';
-          searchWrapper.style.width = '288px'; // w-72
-          searchWrapper.style.zIndex = '50';
-          footerRightSection.style.position = 'relative';
-        }
         
         setTimeout(() => footerSearchInput.focus(), 300);
         isFooterExpanded = true;
@@ -94,13 +92,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         footerSearchResults.classList.add('hidden');
         footerSearchResults.innerHTML = '';
         
-        // Vrátit pozici zpět
-        searchWrapper.style.position = '';
-        searchWrapper.style.right = '';
-        searchWrapper.style.top = '';
-        searchWrapper.style.width = '';
-        searchWrapper.style.zIndex = '';
-        footerRightSection.style.position = '';
+        // Zobrazit sociální ikony zpět
+        socialIcons.forEach(icon => {
+          icon.style.display = '';
+        });
+        if (socialLabel) socialLabel.style.display = '';
         
         isFooterExpanded = false;
       }
