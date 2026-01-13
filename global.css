@@ -52,3 +52,34 @@ textarea,
   color: rgba(255, 255, 255, 0.62);
   max-width: 46ch;
 }
+
+/* Custom scrollbar for search results - decentní zlatý styl */
+#headerSearchResults::-webkit-scrollbar,
+#navSearchResults::-webkit-scrollbar,
+#mobileNavSearchResults::-webkit-scrollbar,
+#footerSearchResults::-webkit-scrollbar {
+  width: 6px;
+}
+
+#headerSearchResults::-webkit-scrollbar-track,
+#navSearchResults::-webkit-scrollbar-track,
+#mobileNavSearchResults::-webkit-scrollbar-track,
+#footerSearchResults::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+#headerSearchResults::-webkit-scrollbar-thumb,
+#navSearchResults::-webkit-scrollbar-thumb,
+#mobileNavSearchResults::-webkit-scrollbar-thumb,
+#footerSearchResults::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.3);
+  border-radius: 10px;
+}
+
+#headerSearchResults::-webkit-scrollbar-thumb:hover,
+#navSearchResults::-webkit-scrollbar-thumb:hover,
+#mobileNavSearchResults::-webkit-scrollbar-thumb:hover,
+#footerSearchResults::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.5);
+}
