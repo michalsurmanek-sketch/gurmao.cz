@@ -351,6 +351,13 @@ function initMobileSearch() {
   });
 }
 
-// Initialize both
-initDesktopSearch();
-initMobileSearch();
+// Initialize both when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initDesktopSearch();
+    initMobileSearch();
+  });
+} else {
+  initDesktopSearch();
+  initMobileSearch();
+}
