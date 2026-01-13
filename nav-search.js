@@ -8,7 +8,6 @@ const locationSearch = new LocationSearch();
 function initDesktopSearch() {
   const searchBox = document.getElementById('searchBox');
   const searchToggle = document.getElementById('searchToggle');
-  const locationToggle = document.getElementById('locationToggle');
   const navSearchInput = document.getElementById('navSearchInput');
   const navSearchResults = document.getElementById('navSearchResults');
   
@@ -17,43 +16,49 @@ function initDesktopSearch() {
   let isExpanded = false;
   let isLocationActive = false;
   
+  // Dynamicky přidat lokační tlačítko
+  let locationToggle = document.getElementById('locationToggle');
+  if (!locationToggle) {
+    locationToggle = document.createElement('button');
+    locationToggle.id = 'locationToggle';
+    locationToggle.className = 'flex-shrink-0 w-9 h-9 items-center justify-center text-white/60 hover:text-gurmaogold transition hidden';
+    locationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
+    searchBox.appendChild(locationToggle);
+  }
+  
   // Toggle location search
-  if (locationToggle) {
-    locationToggle.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      
-      if (!isLocationActive) {
-        try {
-          locationToggle.innerHTML = '<div class="w-4 h-4 border-2 border-gurmaogold border-t-transparent rounded-full animate-spin"></div>';
-          await locationSearch.getUserLocation();
-          console.log('Header location obtained:', locationSearch.userLocation);
-          locationToggle.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>';
-          locationToggle.classList.add('text-gurmaogold', 'border-gurmaogold');
-          isLocationActive = true;
-          console.log('Header location active:', isLocationActive);
-          
-          // Trigger search with location
-          if (navSearchInput.value.trim()) {
-            navSearchInput.dispatchEvent(new Event('input'));
-          }
-        } catch (error) {
-          console.error('Chyba při získávání pozice:', error);
-          locationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
-          alert('Nepodařilo se získat vaši pozici. Povolte prosím přístup k poloze.');
-        }
-      } else {
-        locationSearch.disable();
-        locationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
-        locationToggle.classList.remove('text-gurmaogold', 'border-gurmaogold');
-        isLocationActive = false;
+  locationToggle.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    
+    if (!isLocationActive) {
+      try {
+        locationToggle.innerHTML = '<div class="w-4 h-4 border-2 border-gurmaogold border-t-transparent rounded-full animate-spin"></div>';
+        await locationSearch.getUserLocation();
+        locationToggle.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>';
+        locationToggle.classList.add('text-gurmaogold');
+        isLocationActive = true;
         
-        // Trigger search without location
+        // Trigger search with location
         if (navSearchInput.value.trim()) {
           navSearchInput.dispatchEvent(new Event('input'));
         }
+      } catch (error) {
+        console.error('Chyba při získávání pozice:', error);
+        locationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
+        alert('Nepodařilo se získat vaši pozici. Povolte prosím přístup k poloze.');
       }
-    });
-  }
+    } else {
+      locationSearch.disable();
+      locationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
+      locationToggle.classList.remove('text-gurmaogold');
+      isLocationActive = false;
+      
+      // Trigger search without location
+      if (navSearchInput.value.trim()) {
+        navSearchInput.dispatchEvent(new Event('input'));
+      }
+    }
+  });
   
   // Toggle search box
   searchToggle.addEventListener('click', (e) => {
@@ -127,7 +132,6 @@ function initDesktopSearch() {
         
         // Přidej vzdálenost pokud je lokace aktivní (bez filtrování)
         if (isLocationActive && locationSearch.isLocationEnabled && locationSearch.userLocation) {
-          console.log('Header search: Adding distances, location:', locationSearch.userLocation);
           results = results.map(restaurant => {
             if (restaurant.latitude && restaurant.longitude) {
               const distance = locationSearch.calculateDistance(
@@ -142,9 +146,6 @@ function initDesktopSearch() {
           });
           // Seřaď podle vzdálenosti
           results.sort((a, b) => (a.distance || 999) - (b.distance || 999));
-          console.log('Header search: Results with distances:', results.slice(0, 3));
-        } else {
-          console.log('Header search: Location NOT active', { isLocationActive, isEnabled: locationSearch.isLocationEnabled, hasLocation: !!locationSearch.userLocation });
         }
         
         if (results.length > 0) {
@@ -206,7 +207,6 @@ function initDesktopSearch() {
 function initMobileSearch() {
   const mobileSearchBox = document.getElementById('mobileSearchBox');
   const mobileSearchToggle = document.getElementById('mobileSearchToggle');
-  const mobileLocationToggle = document.getElementById('mobileLocationToggle');
   const mobileNavSearchInput = document.getElementById('mobileNavSearchInput');
   const mobileNavSearchResults = document.getElementById('mobileNavSearchResults');
   const mobileLogo = document.querySelector('header a.modal-title');
@@ -217,41 +217,43 @@ function initMobileSearch() {
   let isMobileExpanded = false;
   let isMobileLocationActive = false;
   
+  // Dynamicky přidat lokační tlačítko
+  let mobileLocationToggle = document.getElementById('mobileLocationToggle');
+  if (!mobileLocationToggle) {
+    mobileLocationToggle = document.createElement('button');
   // Toggle mobile location search
-  if (mobileLocationToggle) {
-    mobileLocationToggle.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      
-      if (!isMobileLocationActive) {
-        try {
-          mobileLocationToggle.innerHTML = '<div class="w-4 h-4 border-2 border-gurmaogold border-t-transparent rounded-full animate-spin"></div>';
-          await locationSearch.getUserLocation();
-          mobileLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>';
-          mobileLocationToggle.classList.add('text-gurmaogold');
-          isMobileLocationActive = true;
-          
-          // Trigger search with location
-          if (mobileNavSearchInput.value.trim()) {
-            mobileNavSearchInput.dispatchEvent(new Event('input'));
-          }
-        } catch (error) {
-          console.error('Chyba při získávání pozice:', error);
-          mobileLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
-          alert('Nepodařilo se získat vaši pozici. Povolte prosím přístup k poloze.');
-        }
-      } else {
-        locationSearch.disable();
-        mobileLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
-        mobileLocationToggle.classList.remove('text-gurmaogold');
-        isMobileLocationActive = false;
+  mobileLocationToggle.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    
+    if (!isMobileLocationActive) {
+      try {
+        mobileLocationToggle.innerHTML = '<div class="w-4 h-4 border-2 border-gurmaogold border-t-transparent rounded-full animate-spin"></div>';
+        await locationSearch.getUserLocation();
+        mobileLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>';
+        mobileLocationToggle.classList.add('text-gurmaogold');
+        isMobileLocationActive = true;
         
-        // Trigger search without location
+        // Trigger search with location
         if (mobileNavSearchInput.value.trim()) {
           mobileNavSearchInput.dispatchEvent(new Event('input'));
         }
+      } catch (error) {
+        console.error('Chyba při získávání pozice:', error);
+        mobileLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
+        alert('Nepodařilo se získat vaši pozici. Povolte prosím přístup k poloze.');
       }
-    });
-  }
+    } else {
+      locationSearch.disable();
+      mobileLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
+      mobileLocationToggle.classList.remove('text-gurmaogold');
+      isMobileLocationActive = false;
+      
+      // Trigger search without location
+      if (mobileNavSearchInput.value.trim()) {
+        mobileNavSearchInput.dispatchEvent(new Event('input'));
+      }
+    }
+  });
   
   // Toggle mobile search box
   mobileSearchToggle.addEventListener('click', (e) => {
