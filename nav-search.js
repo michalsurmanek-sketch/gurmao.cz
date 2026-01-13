@@ -145,7 +145,7 @@ function initDesktopSearch() {
                 <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('\${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
                 <div class="flex-1 min-w-0">
                   <div class="text-sm font-medium truncate">\${r.name}</div>
-                  <div class="text-xs text-white/60 truncate">\${r.city} • \${r.tag || ''}</div>
+                  <div class="text-xs text-white/60 truncate">\${r.city}</div>
                   <div class="text-xs text-white/50 truncate">\${r.vibe}</div>
                 </div>
                 \${distanceHTML}
