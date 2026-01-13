@@ -142,7 +142,7 @@ function initFooterSearch() {
                   <div class="text-sm font-medium truncate">${r.name}${distanceHTML}</div>
                   <div class="text-xs text-white/60 flex items-center gap-2">
                     <span class="flex-1 truncate">${r.city}</span>
-                    <span class="text-gurmaogold">🍽️</span>
+                    <span class="text-gurmaogold font-bold text-base">☰</span>
                   </div>
                   <div class="text-xs text-white/50 truncate">${r.vibe}</div>
                 </div>
