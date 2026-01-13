@@ -274,9 +274,12 @@
 <footer class="hidden md:block fixed bottom-0 left-0 right-0 bg-gurmaoblack/90 backdrop-blur border-t border-white/10 py-3 z-40">
   <div class="max-w-7xl mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-3">
     <div class="md:hidden flex flex-wrap justify-center md:justify-start gap-3 md:gap-4 text-xs text-white/60">
-      <a href="https://gurmao.cz/legal.html" class="hover:text-gurmaogold transition">Informace</a>
-      <a href="legal.html#cookies" class="hover:text-gurmaogold transition">Cookies</a>
-      <a href="kontakt.html" class="hover:text-gurmaogold transition">Kontakt</a>
+      <button id="legalToggleMobile" class="hover:text-gurmaogold transition cursor-pointer">Informace ▼</button>
+      <div id="legalLinksMobile" class="hidden flex-wrap gap-3 md:gap-4">
+        <a href="legal.html#gdpr" class="hover:text-gurmaogold transition">Právní</a>
+        <a href="legal.html#cookies" class="hover:text-gurmaogold transition">Cookies</a>
+        <a href="kontakt.html" class="hover:text-gurmaogold transition">Kontakt</a>
+      </div>
       <span class="text-white/40">© 2025 GUR<span class="text-gurmaogold">M</span>AO.cz · Nejez. <span class="text-gurmaogold">Prožij.</span></span>
     </div>
     
