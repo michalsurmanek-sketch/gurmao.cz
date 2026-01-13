@@ -64,11 +64,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         footerSearchInput.classList.remove('opacity-0', 'w-0');
         footerSearchInput.classList.add('opacity-100', 'flex-1', 'pr-2');
         
-        // Skrytí sociálních sítí na mobilu
-        socialIcons.forEach(icon => {
-          icon.style.display = 'none';
-        });
-        if (socialLabel) socialLabel.style.display = 'none';
+        // Skrytí sociálních sítí pouze na mobilu (ne na desktopu)
+        const isMobile = window.innerWidth < 768;
+        if (isMobile) {
+          socialIcons.forEach(icon => {
+            icon.style.display = 'none';
+          });
+          if (socialLabel) socialLabel.style.display = 'none';
+        }
         
         setTimeout(() => footerSearchInput.focus(), 300);
         isFooterExpanded = true;
