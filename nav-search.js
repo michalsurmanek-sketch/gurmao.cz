@@ -147,8 +147,8 @@ function initDesktopSearch() {
                   <div class="text-sm font-medium truncate">\${r.name}</div>
                   <div class="text-xs text-white/60 flex items-center gap-2">
                     <span class="flex-1 truncate">\${r.city}</span>
-                    <svg class="w-5 h-5 text-gurmaogold flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                    <svg class="w-6 h-6 text-gurmaogold flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                     </svg>
                   </div>
                   <div class="text-xs text-white/50 truncate">\${r.vibe}</div>
