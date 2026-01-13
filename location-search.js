@@ -71,7 +71,7 @@ export class LocationSearch {
         }
         return null;
       })
-      .filter(r => r !== null && r.distance <= this.maxDistance)
+      .filter(r => r !== null)
       .sort((a, b) => a.distance - b.distance);
   }
 
