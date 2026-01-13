@@ -176,9 +176,6 @@ function initHeaderSearch() {
               </div>
             </div>
             `;
-              </div>
-            </a>
-            `;
           }).join('');
         } else {
           const noResultsMsg = isLocationActive && locationSearch && locationSearch.userLocation 
