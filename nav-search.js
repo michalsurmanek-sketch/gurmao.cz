@@ -184,7 +184,7 @@ function initMobileSearch() {
   const mobileNavSearchInput = document.getElementById('mobileNavSearchInput');
   const mobileNavSearchResults = document.getElementById('mobileNavSearchResults');
   const mobileLogo = document.querySelector('header a.modal-title');
-  const hamburgerBtn = document.getElementById('menuBtn');
+  const menuBtn = document.getElementById('menuBtn');
   
   if (!mobileSearchBox || !mobileSearchToggle || !mobileNavSearchInput || !mobileNavSearchResults) return;
   
@@ -247,7 +247,7 @@ function initMobileSearch() {
       const isMobile = window.innerWidth < 768;
       if (isMobile) {
         if (mobileLogo) mobileLogo.style.display = 'none';
-        if (hamburgerBtn) hamburgerBtn.style.display = 'none';
+        if (menuBtn) menuBtn.style.display = 'none';
       }
       
       setTimeout(() => mobileNavSearchInput.focus(), 300);
@@ -275,7 +275,7 @@ function initMobileSearch() {
       
       // Zobrazit logo a hamburger zpět
       if (mobileLogo) mobileLogo.style.display = '';
-      if (hamburgerBtn) hamburgerBtn.style.display = '';
+      if (menuBtn) menuBtn.style.display = '';
       
       isMobileExpanded = false;
     }
