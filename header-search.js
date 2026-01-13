@@ -155,10 +155,18 @@ function initHeaderSearch() {
           .or(`name.ilike.%${query}%,restaurant_name.ilike.%${query}%`)
           .limit(10);
         
+        console.log('👨‍🍳 Chefs dotaz:', { query, chefs, chefsError });
+        
         if (chefsError) throw chefsError;
         
         let results = restaurants || [];
         let chefResults = chefs || [];
+        
+        console.log('🔍 Vyhledávání:', { 
+          query, 
+          restaurants: results.length, 
+          chefs: chefResults.length 
+        });
         
         if (isLocationActive && locationSearch && locationSearch.userLocation) {
           results = locationSearch.filterByDistance(results);
