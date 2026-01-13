@@ -221,9 +221,10 @@
     preloadCriticalImages();
     adaptToNetworkSpeed();
     
-    if (process.env.NODE_ENV !== 'production') {
-      monitorImagePerformance();
-    }
+    // Monitor performance only in development
+    // if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
+    //   monitorImagePerformance();
+    // }
     
     console.log('✅ Lazy loading inicializován');
   }
