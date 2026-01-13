@@ -114,8 +114,9 @@ function initMobileSearch() {
       mobileNavSearchInput.classList.remove('opacity-0', 'w-0');
       mobileNavSearchInput.classList.add('opacity-100', 'w-full', 'px-4');
       
-      // Skrýt logo na mobilu
-      if (mobileLogo) mobileLogo.style.display = 'none';
+      // Skrýt logo pouze na mobilu (ne na desktopu)
+      const isMobile = window.innerWidth < 768;
+      if (mobileLogo && isMobile) mobileLogo.style.display = 'none';
       
       setTimeout(() => mobileNavSearchInput.focus(), 300);
       isMobileExpanded = true;
