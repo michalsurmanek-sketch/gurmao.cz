@@ -155,13 +155,11 @@ function initHeaderSearch() {
                 <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
                 <div class="flex-1 min-w-0">
                   <div class="text-sm font-medium truncate">${r.name}${distanceHTML}</div>
-                  <div class="text-xs text-white/60 truncate">${r.city}</div>
-                  <div class="text-xs text-white/50 truncate">${r.vibe}</div>
-                </div>
-                <div class="flex-shrink-0">
-                  <div class="px-3 py-1.5 rounded-full bg-gurmaogold/10 border border-gurmaogold/30 text-gurmaogold text-xs font-medium hover:bg-gurmaogold/20 transition">
-                    🍽️ Menu
+                  <div class="text-xs text-white/60 flex items-center gap-2">
+                    <span class="flex-1 truncate">${r.city}</span>
+                    <span class="text-gurmaogold">🍽️</span>
                   </div>
+                  <div class="text-xs text-white/50 truncate">${r.vibe}</div>
                 </div>
               </div>
             </a>
