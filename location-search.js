@@ -4,6 +4,7 @@ export class LocationSearch {
     this.userLocation = null;
     this.maxDistance = 20; // km
     this.isLocationEnabled = false;
+    this.watchId = null; // Pro sledování pozice
     
     // Načíst uložený stav polohy z localStorage
     this.loadLocationState();
@@ -61,6 +62,13 @@ export class LocationSearch {
 
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          // Kontrola přesnosti - pokud je horší než 5 km, odmítni ji
+          if (position.coords.accuracy > 5000) {
+            console.warn('⚠️ GPS je velmi nepřesná (±' + Math.round(position.coords.accuracy/1000) + ' km) - ignoruji');
+            reject(new Error('GPS pozice není dostatečně přesná'));
+            return;
+          }
+          
           this.userLocation = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
@@ -68,6 +76,9 @@ export class LocationSearch {
           };
           this.isLocationEnabled = true;
           this.saveLocationState();
+          
+          // Spustit automatickou aktualizaci pozice každých 30 sekund
+          this.startWatchingPosition();
           
           console.log('📍 GPS POZICE ZÍSKÁNA:', {
             latitude: position.coords.latitude,
@@ -90,9 +101,7 @@ export class LocationSearch {
           });
           console.log(`🏙️ NEJBLIŽŠÍ MĚSTO: ${nearestCity} (${Math.round(minDistance)} km)`);
           
-          if (position.coords.accuracy > 5000) {
-            console.warn('⚠️ GPS je nepřesná (±' + Math.round(position.coords.accuracy/1000) + ' km) - používá IP adresu místo GPS');
-          } else if (position.coords.accuracy > 1000) {
+          if (position.coords.accuracy > 1000) {
             console.warn('⚠️ Nízká přesnost GPS (±' + Math.round(position.coords.accuracy) + 'm)');
           }
           
@@ -178,9 +187,45 @@ export class LocationSearch {
 
   // Vypnout lokační vyhledávání
   disable() {
-    this.isLocationEnabled = false;
-    this.userLocation = null;
+    this.itopWatchingPosition();
     this.saveLocationState();
+  }
+  
+  // Spustit automatickou aktualizaci pozice
+  startWatchingPosition() {
+    if (this.watchId) return; // Už běží
+    
+    this.watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        // Aktualizuj jen pokud je přesnost dostatečná
+        if (position.coords.accuracy <= 5000) {
+          this.userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy
+          };
+          this.saveLocationState();
+          console.log('🔄 Pozice aktualizována:', `±${Math.round(position.coords.accuracy)}m`);
+        }
+      },
+      (error) => {
+        console.warn('Chyba při sledování pozice:', error.message);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 30000 // Aktualizuj max každých 30 sekund
+      }
+    );
+  }
+  
+  // Zastavit automatickou aktualizaci pozice
+  stopWatchingPosition() {
+    if (this.watchId) {
+      navigator.geolocation.clearWatch(this.watchId);
+      this.watchId = null;
+      console.log('⏹️ Sledování pozice zastaveno');
+    }
   }
   
   // Uložit stav polohy do localStorage
@@ -208,8 +253,13 @@ export class LocationSearch {
         // Pokud není přihlášený, platí jen 1 hodinu
         const shouldLoad = isLoggedIn || (Date.now() - state.timestamp < 3600000);
         
-        if (shouldLoad) {
+        if (shouldLoad && state.isEnabled) {
           this.isLocationEnabled = state.isEnabled;
+          this.userLocation = state.location;
+          console.log('📍 Načten uložený stav polohy:', state, isLoggedIn ? '(trvale - přihlášený)' : '(1 hodina)');
+          
+          // Spustit sledování pozice pokud byla lokace aktivní
+          this.startWatchingPosition(
           this.userLocation = state.location;
           console.log('📍 Načten uložený stav polohy:', state, isLoggedIn ? '(trvale - přihlášený)' : '(1 hodina)');
         }
