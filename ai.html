@@ -108,21 +108,28 @@
     
     <nav class="hidden md:flex gap-6 text-sm items-center">
       <!-- Search Box with Location -->
-      <div id="headerSearchBox" class="relative flex items-center gap-2 w-9 h-9 bg-white/5 border border-white/15 rounded-full hover:border-gurmaogold transition-all duration-300 overflow-visible">
-        <button id="headerSearchToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaogold transition">
+      <div id="headerSearchBox" class="relative flex items-center justify-end w-9 h-9">
+        <div id="headerSearchPanel" class="absolute right-0 top-0 flex items-center gap-2 h-9 w-0 opacity-0 pointer-events-none bg-white/5 border border-white/15 rounded-full hover:border-gurmaogold transition-all duration-300 overflow-hidden">
+          <button id="headerSearchClose" class="flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaored transition opacity-0 pointer-events-none">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+          <input id="headerSearchInput" type="text" placeholder="Vyhledat restauraci..." class="bg-transparent text-white text-sm outline-none opacity-0 w-0 transition-all duration-300 pl-3" />
+          <button id="headerLocationToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaogold transition opacity-0 pointer-events-none">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </button>
+        </div>
+        <button id="headerSearchToggle" class="relative z-20 flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaogold transition">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
         </button>
-        <button id="headerLocationToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaogold transition opacity-0 pointer-events-none">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-          </svg>
-        </button>
-        <input id="headerSearchInput" type="text" placeholder="Vyhledat restauraci..." class="bg-transparent text-white text-sm outline-none opacity-0 w-0 transition-all duration-300" />
         <!-- Search Results -->
-        <div id="headerSearchResults" class="hidden absolute top-full left-0 mt-2 w-96 max-h-96 overflow-y-auto bg-gurmaoblack border border-white/20 rounded-2xl shadow-2xl z-50"></div>
+        <div id="headerSearchResults" class="hidden absolute top-full right-0 mt-2 w-96 max-h-96 overflow-y-auto bg-gurmaoblack border border-white/20 rounded-2xl shadow-2xl z-50"></div>
       </div>
       
       <a href="feed.html" class="hover:text-gurmaogold">Feed</a>
