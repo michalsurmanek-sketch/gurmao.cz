@@ -271,6 +271,8 @@ if (document.readyState === 'loading') {
 
 // Initialize Mobile Search
 async function initMobileSearch() {
+  console.log('Mobile search initializing...');
+  
   // Wait for LocationSearch to be loaded
   if (!LocationSearch) {
     await loadLocationModule();
