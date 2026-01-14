@@ -87,17 +87,20 @@ function initHeaderSearch() {
   headerSearchToggle.addEventListener('click', (e) => {
     e.stopPropagation();
     if (!isExpanded) {
-      headerSearchBox.classList.remove('w-9');
+      headerSearchBox.classList.remove('w-11');
       headerSearchBox.classList.add('w-80');
-      headerSearchBox.style.transform = 'translateX(-50%)';
-      headerSearchBox.style.left = '50%';
-      headerSearchBox.style.position = 'fixed';
       headerSearchInput.classList.remove('opacity-0', 'w-0');
-      headerSearchInput.classList.add('opacity-100', 'w-full', 'pr-3');
+      headerSearchInput.classList.add('opacity-100', 'w-full');
       
       if (headerLocationToggle) {
         headerLocationToggle.classList.remove('opacity-0', 'pointer-events-none');
         headerLocationToggle.classList.add('opacity-100', 'pointer-events-auto');
+      }
+      
+      const headerSearchClose = document.getElementById('headerSearchClose');
+      if (headerSearchClose) {
+        headerSearchClose.classList.remove('opacity-0', 'pointer-events-none');
+        headerSearchClose.classList.add('opacity-100', 'pointer-events-auto');
       }
       
       setTimeout(() => headerSearchInput.focus(), 300);
@@ -131,13 +134,10 @@ function initHeaderSearch() {
     }
     
     if (isExpanded && !headerSearchBox.contains(e.target) && !headerSearchResults.contains(e.target)) {
-      headerSearchBox.classList.add('w-9');
+      headerSearchBox.classList.add('w-11');
       headerSearchBox.classList.remove('w-80');
-      headerSearchBox.style.transform = '';
-      headerSearchBox.style.left = '';
-      headerSearchBox.style.position = '';
       headerSearchInput.classList.add('opacity-0', 'w-0');
-      headerSearchInput.classList.remove('opacity-100', 'w-full', 'pr-3');
+      headerSearchInput.classList.remove('opacity-100', 'w-full');
       headerSearchInput.value = '';
       headerSearchResults.classList.add('hidden');
       headerSearchResults.innerHTML = '';
@@ -145,6 +145,12 @@ function initHeaderSearch() {
       if (headerLocationToggle) {
         headerLocationToggle.classList.add('opacity-0', 'pointer-events-none');
         headerLocationToggle.classList.remove('opacity-100', 'pointer-events-auto');
+      }
+      
+      const headerSearchClose = document.getElementById('headerSearchClose');
+      if (headerSearchClose) {
+        headerSearchClose.classList.add('opacity-0', 'pointer-events-none');
+        headerSearchClose.classList.remove('opacity-100', 'pointer-events-auto');
       }
       
       isExpanded = false;
