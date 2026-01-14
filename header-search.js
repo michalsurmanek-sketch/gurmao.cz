@@ -89,6 +89,9 @@ function initHeaderSearch() {
     if (!isExpanded) {
       headerSearchBox.classList.remove('w-9');
       headerSearchBox.classList.add('w-80');
+      headerSearchBox.style.transform = 'translateX(-50%)';
+      headerSearchBox.style.left = '50%';
+      headerSearchBox.style.position = 'fixed';
       headerSearchInput.classList.remove('opacity-0', 'w-0');
       headerSearchInput.classList.add('opacity-100', 'w-full', 'pr-3');
       
@@ -130,6 +133,9 @@ function initHeaderSearch() {
     if (isExpanded && !headerSearchBox.contains(e.target) && !headerSearchResults.contains(e.target)) {
       headerSearchBox.classList.add('w-9');
       headerSearchBox.classList.remove('w-80');
+      headerSearchBox.style.transform = '';
+      headerSearchBox.style.left = '';
+      headerSearchBox.style.position = '';
       headerSearchInput.classList.add('opacity-0', 'w-0');
       headerSearchInput.classList.remove('opacity-100', 'w-full', 'pr-3');
       headerSearchInput.value = '';
