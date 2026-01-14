@@ -200,7 +200,7 @@
 <!-- HEADER / NAV -->
 <header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
   <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-    <a href="index.html" class="modal-title text-2xl">GUR<span class="text-gurmaogold">M</span>AO</a>
+    <a href="index.html" id="headerLogo" class="modal-title text-2xl transition-opacity duration-300">GUR<span class="text-gurmaogold">M</span>AO</a>
     
     <nav class="hidden md:flex gap-6 text-sm items-center">
       <!-- Search Box with Location -->
@@ -259,9 +259,39 @@
       <a id="loginLinkDesktop" href="login.html" class="px-4 py-2 rounded-full border border-gurmaogold text-gurmaogold hover:bg-gurmaogold hover:text-black transition">Přihlásit se</a>
     </nav>
     
-    <!-- Mobile hamburger -->
-    <div class="md:hidden flex gap-2">
+    <!-- Mobile Search and Menu -->
+    <div id="mobileHeaderControls" class="md:hidden flex gap-2 transition-opacity duration-300">
+      <button id="mobileSearchBtn" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Vyhledat">
+        <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </button>
       <button id="menuBtn" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
+    </div>
+    
+    <!-- Mobile Search Box (hidden by default) -->
+    <div id="mobileSearchBox" class="md:hidden absolute left-0 right-0 top-0 px-6 py-4 bg-gurmaoblack/80 backdrop-blur border-b border-white/10 hidden">
+      <div class="relative flex items-center gap-2 w-full h-9 bg-white/5 border border-white/15 rounded-full hover:border-gurmaogold transition-all duration-300">
+        <button id="mobileSearchToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaogold transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </button>
+        <button id="mobileLocationToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaogold transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </button>
+        <input id="mobileSearchInput" type="text" placeholder="Vyhledat restauraci..." class="bg-transparent text-white text-sm outline-none flex-1 pr-3" />
+        <button id="mobileSearchClose" class="flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaored transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <!-- Mobile Search Results -->
+      <div id="mobileSearchResults" class="hidden mt-2 max-h-96 overflow-y-auto bg-gurmaoblack border border-white/20 rounded-2xl shadow-2xl"></div>
     </div>
   </div>
 </header>
@@ -708,6 +738,42 @@
     </div>
   </div>
 </footer>
+
+<script>
+  // Mobile Search Toggle
+  const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+  const mobileSearchBox = document.getElementById('mobileSearchBox');
+  const mobileSearchClose = document.getElementById('mobileSearchClose');
+  const mobileSearchInput = document.getElementById('mobileSearchInput');
+  const headerLogo = document.getElementById('headerLogo');
+  const mobileHeaderControls = document.getElementById('mobileHeaderControls');
+  
+  if (mobileSearchBtn && mobileSearchBox) {
+    // Open mobile search
+    mobileSearchBtn.addEventListener('click', () => {
+      mobileSearchBox.classList.remove('hidden');
+      headerLogo.style.opacity = '0';
+      headerLogo.style.pointerEvents = 'none';
+      mobileHeaderControls.style.opacity = '0';
+      mobileHeaderControls.style.pointerEvents = 'none';
+      setTimeout(() => mobileSearchInput.focus(), 300);
+    });
+    
+    // Close mobile search
+    if (mobileSearchClose) {
+      mobileSearchClose.addEventListener('click', () => {
+        mobileSearchBox.classList.add('hidden');
+        headerLogo.style.opacity = '1';
+        headerLogo.style.pointerEvents = 'auto';
+        mobileHeaderControls.style.opacity = '1';
+        mobileHeaderControls.style.pointerEvents = 'auto';
+        mobileSearchInput.value = '';
+        const mobileSearchResults = document.getElementById('mobileSearchResults');
+        if (mobileSearchResults) mobileSearchResults.classList.add('hidden');
+      });
+    }
+  }
+</script>
 
 <script src="footer-legal-toggle.js"></script>
 <script type="module" src="header-search.js"></script>
