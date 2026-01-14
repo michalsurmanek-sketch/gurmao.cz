@@ -258,10 +258,10 @@ export class LocationSearch {
           this.userLocation = state.location;
           console.log('📍 Načten uložený stav polohy:', state, isLoggedIn ? '(trvale - přihlášený)' : '(1 hodina)');
           
-          // Spustit sledování pozice pokud byla lokace aktivní
-          this.startWatchingPosition(
-          this.userLocation = state.location;
-          console.log('📍 Načten uložený stav polohy:', state, isLoggedIn ? '(trvale - přihlášený)' : '(1 hodina)');
+          // Spustit sledování pozice pokud byla lokace aktivní a není ruční
+          if (this.userLocation && !this.userLocation.isManual) {
+            this.startWatchingPosition();
+          }
         }
       }
     } catch (error) {
