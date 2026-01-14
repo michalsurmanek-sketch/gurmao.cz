@@ -129,7 +129,7 @@ function initFooterSearch() {
           .from('restaurants')
           .select('id, slug, name, city, vibe, tag, image_url, latitude, longitude')
           .or(`name.ilike.%${query}%,city.ilike.%${query}%,tag.ilike.%${query}%,vibe.ilike.%${query}%`)
-          .limit(10);
+          .limit(20);
         
         if (restaurantsError) throw restaurantsError;
         
@@ -156,8 +156,20 @@ function initFooterSearch() {
           chefs: chefResults.length 
         });
         
-        if (isLocationActive && locationSearch && locationSearch.userLocation) {
-          results = locationSearch.filterByDistance(results);
+        if (isLocationActive && locationSearch && locationSearch.isLocationEnabled && locationSearch.userLocation) {
+          results = results.map(restaurant => {
+            if (restaurant.latitude && restaurant.longitude) {
+              const distance = locationSearch.calculateDistance(
+                locationSearch.userLocation.lat,
+                locationSearch.userLocation.lng,
+                restaurant.latitude,
+                restaurant.longitude
+              );
+              return { ...restaurant, distance };
+            }
+            return restaurant;
+          });
+          results.sort((a, b) => (a.distance || 999) - (b.distance || 999));
         }
         
         if (results.length > 0 || chefResults.length > 0) {
