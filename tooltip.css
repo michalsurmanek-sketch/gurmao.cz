@@ -1,4 +1,4 @@
-/* Tooltip styles */
+/* Tooltip styles - GURMAO Design */
 .vibe-tooltip {
   position: relative;
   display: inline-block;
@@ -8,40 +8,47 @@
 .vibe-tooltip::after {
   content: attr(data-tooltip);
   position: absolute;
-  bottom: calc(100% + 10px);
+  bottom: calc(100% + 12px);
   left: 50%;
-  transform: translateX(-50%) translateY(5px);
+  transform: translateX(-50%) translateY(8px);
   
-  background: rgba(0, 0, 0, 0.95);
-  color: #d4af37;
-  padding: 10px 16px;
-  border-radius: 12px;
+  background: rgba(11, 11, 13, 0.98);
+  backdrop-filter: blur(12px);
+  color: rgba(255, 255, 255, 0.95);
+  padding: 12px 18px;
+  border-radius: 16px;
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   white-space: nowrap;
+  font-family: 'Inter', sans-serif;
   
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(212, 175, 55, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   
   opacity: 0;
   pointer-events: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1000;
 }
 
 .vibe-tooltip::before {
   content: '';
   position: absolute;
-  bottom: calc(100% + 3px);
+  bottom: calc(100% + 4px);
   left: 50%;
-  transform: translateX(-50%) translateY(5px);
+  transform: translateX(-50%) translateY(8px);
   
-  border: 7px solid transparent;
-  border-top-color: rgba(0, 0, 0, 0.95);
+  border: 8px solid transparent;
+  border-top-color: rgba(11, 11, 13, 0.98);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
   
   opacity: 0;
   pointer-events: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1001;
 }
 
@@ -54,16 +61,16 @@
 /* Alternative tooltip positions for edge cases */
 .vibe-tooltip.tooltip-bottom::after {
   bottom: auto;
-  top: calc(100% + 10px);
-  transform: translateX(-50%) translateY(-5px);
+  top: calc(100% + 12px);
+  transform: translateX(-50%) translateY(-8px);
 }
 
 .vibe-tooltip.tooltip-bottom::before {
   bottom: auto;
-  top: calc(100% + 3px);
+  top: calc(100% + 4px);
   border-top-color: transparent;
-  border-bottom-color: rgba(0, 0, 0, 0.95);
-  transform: translateX(-50%) translateY(-5px);
+  border-bottom-color: rgba(11, 11, 13, 0.98);
+  transform: translateX(-50%) translateY(-8px);
 }
 
 .vibe-tooltip.tooltip-bottom:hover::after,
@@ -75,9 +82,14 @@
 @media (max-width: 768px) {
   .vibe-tooltip::after {
     font-size: 12px;
-    padding: 8px 12px;
-    max-width: 200px;
+    padding: 10px 14px;
+    max-width: 220px;
     white-space: normal;
     text-align: center;
+    line-height: 1.4;
+  }
+  
+  .vibe-tooltip::before {
+    border-width: 6px;
   }
 }
