@@ -87,6 +87,14 @@ async function initFooterSearch() {
         footerLocationToggle.classList.add('opacity-100', 'pointer-events-auto');
       }
       
+      // Skrýt sociální sítě
+      const socialIcons = document.querySelectorAll('.footer-social');
+      socialIcons.forEach(icon => {
+        icon.style.transition = 'opacity 0.3s ease, visibility 0.3s ease';
+        icon.style.opacity = '0';
+        icon.style.visibility = 'hidden';
+      });
+      
       setTimeout(() => footerSearchInput.focus(), 300);
       isExpanded = true;
     }
@@ -118,6 +126,13 @@ async function initFooterSearch() {
         footerLocationToggle.classList.add('opacity-0', 'pointer-events-none');
         footerLocationToggle.classList.remove('opacity-100', 'pointer-events-auto');
       }
+      
+      // Zobrazit sociální sítě zpět
+      const socialIcons = document.querySelectorAll('.footer-social');
+      socialIcons.forEach(icon => {
+        icon.style.opacity = '1';
+        icon.style.visibility = 'visible';
+      });
       
       isExpanded = false;
     }
