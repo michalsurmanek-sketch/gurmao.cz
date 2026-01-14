@@ -5,6 +5,9 @@ export class LocationSearch {
     this.maxDistance = 20; // km
     this.isLocationEnabled = false;
     
+    // Načíst uložený stav polohy z localStorage
+    this.loadLocationState();
+    
     // Předdefinované města s GPS souřadnicemi
     this.cities = {
       'praha': { lat: 50.0755, lng: 14.4378, name: 'Praha' },
@@ -35,6 +38,7 @@ export class LocationSearch {
         cityName: city.name
       };
       this.isLocationEnabled = true;
+      this.saveLocationState();
       console.log('📍 RUČNÍ POZICE:', city.name, `(${city.lat}, ${city.lng})`);
       return city;
     }
@@ -63,6 +67,7 @@ export class LocationSearch {
             accuracy: position.coords.accuracy
           };
           this.isLocationEnabled = true;
+          this.saveLocationState();
           
           console.log('📍 GPS POZICE ZÍSKÁNA:', {
             latitude: position.coords.latitude,
@@ -175,5 +180,42 @@ export class LocationSearch {
   disable() {
     this.isLocationEnabled = false;
     this.userLocation = null;
+    this.saveLocationState();
+  }
+  
+  // Uložit stav polohy do localStorage
+  saveLocationState() {
+    const state = {
+      isEnabled: this.isLocationEnabled,
+      location: this.userLocation,
+      timestamp: Date.now()
+    };
+    localStorage.setItem('gurmao_location_state', JSON.stringify(state));
+  }
+  
+  // Načíst stav polohy z localStorage
+  loadLocationState() {
+    try {
+      const saved = localStorage.getItem('gurmao_location_state');
+      if (saved) {
+        const state = JSON.parse(saved);
+        
+        // Zkontroluj, zda je uživatel přihlášený
+        const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
+        const isLoggedIn = !!user;
+        
+        // Pokud je přihlášený, poloha platí trvale
+        // Pokud není přihlášený, platí jen 1 hodinu
+        const shouldLoad = isLoggedIn || (Date.now() - state.timestamp < 3600000);
+        
+        if (shouldLoad) {
+          this.isLocationEnabled = state.isEnabled;
+          this.userLocation = state.location;
+          console.log('📍 Načten uložený stav polohy:', state, isLoggedIn ? '(trvale - přihlášený)' : '(1 hodina)');
+        }
+      }
+    } catch (error) {
+      console.error('Chyba při načítání stavu polohy:', error);
+    }
   }
 }
