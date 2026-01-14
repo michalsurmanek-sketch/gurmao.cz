@@ -219,8 +219,12 @@ function initHeaderSearch() {
           
           // Restaurace
           if (results.length > 0) {
+            // Get saved restaurants
+            const savedRestaurants = window.GurmaoCollections ? await window.GurmaoCollections.getSaved() : new Set();
+            
             html += results.map(r => {
             const identifier = r.slug || r.id;
+            const isSaved = savedRestaurants.has(identifier);
             let distanceHTML = '';
             if (isLocationActive && r.distance !== undefined) {
               distanceHTML = `<span class="text-gurmaogold text-xs ml-2">${locationSearch.formatDistance(r.distance)}</span>`;
@@ -241,11 +245,19 @@ function initHeaderSearch() {
                   <div class="text-sm font-medium truncate">${r.name}${distanceHTML}</div>
                   <div class="text-xs text-white/60 flex items-center gap-2">
                     <span class="flex-1 truncate">${r.city}</span>
-                    <span data-url="${websiteUrl}" class="menu-icon-link cursor-pointer">
+                    <button type="button" data-restaurant-id="${identifier}" class="save-restaurant-btn opacity-80 hover:opacity-100 transition" onclick="event.preventDefault(); event.stopPropagation(); window.GurmaoCollections?.toggle('${identifier}').then((nowSaved) => { this.innerHTML = nowSaved ? '<svg class=\\'w-6 h-6 text-red-500\\' fill=\\'currentColor\\' viewBox=\\'0 0 24 24\\'><path d=\\'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z\\'/></svg>' : '<svg class=\\'w-6 h-6 text-red-500\\' fill=\\'none\\' stroke=\\'currentColor\\' viewBox=\\'0 0 24 24\\'><path stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\' stroke-width=\\'2\\' d=\\'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z\\'/></svg>'; });" title="${isSaved ? 'Odebrat z oblíbených' : 'Přidat do oblíbených'}">
+                      ${isSaved ? '<svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>' : '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>'}
+                    </button>
+                    <button type="button" data-phone="${r.phone || ''}" data-name="${r.name}" data-city="${r.city}" class="phone-btn opacity-80 hover:opacity-100 transition" onclick="event.preventDefault(); event.stopPropagation(); const phone=this.getAttribute('data-phone'); const name=this.getAttribute('data-name'); const city=this.getAttribute('data-city'); if(phone) { window.location.href='tel:' + phone.replace(/\\s/g,''); } else { window.open('https://www.google.com/search?q=' + encodeURIComponent(name + ' ' + city + ' telefon kontakt'), '_blank'); }" title="${r.phone ? 'Zavolat: ' + r.phone : 'Najít telefon'}">
+                      <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                      </svg>
+                    </button>
+                    <button type="button" data-url="${websiteUrl}" class="menu-icon-link" onclick="event.preventDefault(); event.stopPropagation(); const url=this.getAttribute('data-url'); if(url && url!=='#') window.open(url,'_blank')">
                       <svg class="w-6 h-6 text-gurmaogold hover:text-yellow-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Menu restaurace">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                       </svg>
-                    </span>
+                    </button>
                   </div>
                   <div class="text-xs text-white/50 truncate">${r.vibe}</div>
                 </div>
