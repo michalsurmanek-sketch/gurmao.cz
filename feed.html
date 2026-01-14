@@ -257,8 +257,19 @@
       <a id="loginLinkDesktop" href="login.html" class="px-4 py-2 rounded-full border border-gurmaogold text-gurmaogold hover:bg-gurmaogold hover:text-black transition">Přihlásit se</a>
     </nav>
 
-    <!-- Mobile hamburger -->
+    <!-- Mobile hamburger and search -->
     <div class="md:hidden flex gap-2">
+      <!-- Mobile Search Box -->
+      <div id="mobileSearchBox" class="relative flex items-center gap-2 w-9 h-9 bg-white/5 border border-white/15 rounded-full hover:border-gurmaogold transition-all duration-300 overflow-visible">
+        <button id="mobileSearchToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaogold transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </button>
+        <input id="mobileSearchInput" type="text" placeholder="Vyhledat..." class="bg-transparent text-white text-sm outline-none opacity-0 w-0 transition-all duration-300" />
+        <!-- Mobile Search Results -->
+        <div id="mobileSearchResults" class="hidden absolute top-full right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] max-h-96 overflow-y-auto bg-gurmaoblack border border-white/20 rounded-2xl shadow-2xl z-50"></div>
+      </div>
       <button id="menuBtn" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
     </div>
   </div>
@@ -274,12 +285,6 @@
     </div>
     <nav class="grid gap-2">
       <a href="index.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Domů</a>
-      <a href="restaurace.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 flex items-center gap-2" title="Vyhledat restauraci">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        <span>Vyhledat</span>
-      </a>
       <a href="feed.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Feed</a>
       <a href="restaurace.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Restaurace</a>
       <a href="kuchar.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Kuchaři</a>
@@ -995,7 +1000,9 @@
 
   // Filter function
   function applyFilters() {
-    const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const desktopSearchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const mobileSearchTerm = document.getElementById('mobileSearchInput')?.value.toLowerCase() || '';
+    const searchTerm = desktopSearchTerm || mobileSearchTerm;
     const cityFilter = currentCityValue || '';
     const vibeFilter = currentVibeValue || '';
     
@@ -1064,7 +1071,9 @@
   
   document.getElementById('resetFilters')?.addEventListener('click', () => {
     const searchInput = document.getElementById('searchInput');
+    const mobileSearchInput = document.getElementById('mobileSearchInput');
     if (searchInput) searchInput.value = '';
+    if (mobileSearchInput) mobileSearchInput.value = '';
     currentCityValue = '';
     currentVibeValue = '';
     const cityBtn = document.getElementById('cityFilterBtn');
@@ -1076,6 +1085,7 @@
   
   document.getElementById('clearFilters')?.addEventListener('click', () => {
     if (document.getElementById('searchInput')) document.getElementById('searchInput').value = '';
+    if (document.getElementById('mobileSearchInput')) document.getElementById('mobileSearchInput').value = '';
     if (document.getElementById('cityFilter')) document.getElementById('cityFilter').value = '';
     if (document.getElementById('vibeFilter')) document.getElementById('vibeFilter').value = '';
     applyFilters();
@@ -1311,6 +1321,46 @@
 <script src="footer-legal-toggle.js"></script>
 <script type="module" src="footer-search.js"></script>
 <script type="module" src="header-search.js"></script>
+
+<script>
+  // Mobile Search Box Toggle
+  const mobileSearchBox = document.getElementById('mobileSearchBox');
+  const mobileSearchToggle = document.getElementById('mobileSearchToggle');
+  const mobileSearchInput = document.getElementById('mobileSearchInput');
+  const mobileSearchResults = document.getElementById('mobileSearchResults');
+  
+  if (mobileSearchBox && mobileSearchToggle && mobileSearchInput) {
+    let isMobileSearchExpanded = false;
+    
+    mobileSearchToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!isMobileSearchExpanded) {
+        mobileSearchBox.classList.remove('w-9');
+        mobileSearchBox.classList.add('w-64');
+        mobileSearchInput.classList.remove('opacity-0', 'w-0');
+        mobileSearchInput.classList.add('opacity-100', 'w-full', 'pr-3');
+        setTimeout(() => mobileSearchInput.focus(), 300);
+        isMobileSearchExpanded = true;
+      }
+    });
+    
+    document.addEventListener('click', (e) => {
+      if (!mobileSearchBox.contains(e.target) && isMobileSearchExpanded) {
+        mobileSearchBox.classList.remove('w-64');
+        mobileSearchBox.classList.add('w-9');
+        mobileSearchInput.classList.remove('opacity-100', 'w-full', 'pr-3');
+        mobileSearchInput.classList.add('opacity-0', 'w-0');
+        mobileSearchInput.value = '';
+        if (mobileSearchResults) mobileSearchResults.classList.add('hidden');
+        isMobileSearchExpanded = false;
+        applyFilters();
+      }
+    });
+    
+    // Search functionality
+    mobileSearchInput.addEventListener('input', applyFilters);
+  }
+</script>
 
 </body>
 </html>
