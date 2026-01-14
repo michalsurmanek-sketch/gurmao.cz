@@ -400,7 +400,14 @@ async function initMobileSearch() {
                   <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
                   <div class="flex-1 min-w-0">
                     <div class="text-sm font-medium truncate">${r.name}${distanceHTML}</div>
-                    <div class="text-xs text-white/60 truncate">${r.city}</div>
+                    <div class="text-xs text-white/60 flex items-center gap-2">
+                      <span class="flex-1 truncate">${r.city}</span>
+                      <span data-url="${websiteUrl}" class="menu-icon-link cursor-pointer">
+                        <svg class="w-6 h-6 text-gurmaogold hover:text-yellow-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Menu restaurace">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                      </span>
+                    </div>
                     <div class="text-xs text-white/50 truncate">${r.vibe}</div>
                   </div>
                 </div>
