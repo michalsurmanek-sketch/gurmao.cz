@@ -87,15 +87,10 @@ function initHeaderSearch() {
   headerSearchToggle.addEventListener('click', (e) => {
     e.stopPropagation();
     if (!isExpanded) {
-      // Absolutní pozicionování pro rozbalený stav
-      headerSearchBox.style.position = 'absolute';
-      headerSearchBox.style.right = '0';
-      headerSearchBox.style.top = '0';
-      
       headerSearchBox.classList.remove('w-11');
-      headerSearchBox.classList.add('w-96');
+      headerSearchBox.classList.add('w-80');
       headerSearchInput.classList.remove('opacity-0', 'w-0');
-      headerSearchInput.classList.add('opacity-100', 'w-full');
+      headerSearchInput.classList.add('opacity-100', 'w-full', 'pr-3');
       
       if (headerLocationToggle) {
         headerLocationToggle.classList.remove('opacity-0', 'pointer-events-none');
@@ -139,15 +134,10 @@ function initHeaderSearch() {
     }
     
     if (isExpanded && !headerSearchBox.contains(e.target) && !headerSearchResults.contains(e.target)) {
-      // Reset pozicionování
-      headerSearchBox.style.position = '';
-      headerSearchBox.style.right = '';
-      headerSearchBox.style.top = '';
-      
       headerSearchBox.classList.add('w-11');
-      headerSearchBox.classList.remove('w-96');
+      headerSearchBox.classList.remove('w-80');
       headerSearchInput.classList.add('opacity-0', 'w-0');
-      headerSearchInput.classList.remove('opacity-100', 'w-full');
+      headerSearchInput.classList.remove('opacity-100', 'w-full', 'pr-3');
       headerSearchInput.value = '';
       headerSearchResults.classList.add('hidden');
       headerSearchResults.innerHTML = '';
