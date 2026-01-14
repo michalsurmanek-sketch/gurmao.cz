@@ -20,6 +20,7 @@ loadLocationModule();
 function initHeaderSearch() {
   console.log('🔍 Header search initializing...');
   const headerSearchBox = document.getElementById('headerSearchBox');
+  const headerSearchPanel = document.getElementById('headerSearchPanel');
   const headerSearchToggle = document.getElementById('headerSearchToggle');
   const headerSearchInput = document.getElementById('headerSearchInput');
   const headerSearchResults = document.getElementById('headerSearchResults');
@@ -33,7 +34,7 @@ function initHeaderSearch() {
     headerLocationToggle: !!headerLocationToggle
   });
   
-  if (!headerSearchBox || !headerSearchToggle || !headerSearchInput || !headerSearchResults) {
+  if (!headerSearchBox || !headerSearchPanel || !headerSearchToggle || !headerSearchInput || !headerSearchResults) {
     console.error('❌ Header search elements not found!');
     return;
   }
@@ -87,8 +88,8 @@ function initHeaderSearch() {
   headerSearchToggle.addEventListener('click', (e) => {
     e.stopPropagation();
     if (!isExpanded) {
-      headerSearchBox.classList.remove('w-11');
-      headerSearchBox.classList.add('w-80');
+      headerSearchPanel.classList.remove('w-0', 'opacity-0', 'pointer-events-none');
+      headerSearchPanel.classList.add('w-80', 'opacity-100', 'pointer-events-auto');
       headerSearchInput.classList.remove('opacity-0', 'w-0');
       headerSearchInput.classList.add('opacity-100', 'w-full', 'pr-3');
       
@@ -134,8 +135,8 @@ function initHeaderSearch() {
     }
     
     if (isExpanded && !headerSearchBox.contains(e.target) && !headerSearchResults.contains(e.target)) {
-      headerSearchBox.classList.add('w-11');
-      headerSearchBox.classList.remove('w-80');
+      headerSearchPanel.classList.add('w-0', 'opacity-0', 'pointer-events-none');
+      headerSearchPanel.classList.remove('w-80', 'opacity-100', 'pointer-events-auto');
       headerSearchInput.classList.add('opacity-0', 'w-0');
       headerSearchInput.classList.remove('opacity-100', 'w-full', 'pr-3');
       headerSearchInput.value = '';
