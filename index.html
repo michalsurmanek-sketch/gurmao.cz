@@ -304,12 +304,19 @@
 <!-- Mobile menu (outside header for proper z-index) -->
 <div id="menuBackdrop" class="hidden md:hidden fixed inset-0 bg-black/70 z-[100]"></div>
 <div id="mobileMenu" class="hidden md:hidden fixed inset-x-0 top-[65px] bottom-0 z-[110] overflow-y-auto">
-  <div class="mx-4 my-4 rounded-3xl border border-white/10 bg-gurmaoblack/95 backdrop-blur p-4">
-    <div class="flex items-center justify-between px-2 pb-3">
+  <div class="mx-4 my-4 rounded-3xl border border-gurmaogold/30 bg-gurmaoblack/95 backdrop-blur p-4 relative overflow-hidden">
+    <!-- Zlaté GURMAO pozadí -->
+    <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none" style="font-family: 'Playfair Display', serif;">
+      <div class="text-[20rem] font-bold text-gurmaogold leading-none" style="transform: rotate(-15deg);">
+        GUR<span style="display: inline-block; transform: scale(1.2);">M</span>AO
+      </div>
+    </div>
+    
+    <div class="flex items-center justify-between px-2 pb-3 relative z-10">
       <div class="text-sm text-white/60">Navigace</div>
       <button id="menuClose" class="w-10 h-10 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Zavřít menu">✕</button>
     </div>
-    <nav class="grid gap-2">
+    <nav class="grid gap-2 relative z-10">
       <a href="feed.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Feed</a>
       <a href="restaurace.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Restaurace</a>
       <a href="kuchar.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Kuchaři</a>
