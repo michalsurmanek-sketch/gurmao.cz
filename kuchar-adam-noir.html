@@ -40,15 +40,68 @@
 <header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
   <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
     <a href="index.html" class="modal-title text-2xl">GUR<span class="text-gurmaogold">M</span>AO</a>
-    <nav class="hidden md:flex gap-6 text-sm">
+    
+    <nav class="hidden md:flex gap-6 text-sm items-center">
+      <!-- Search Box with Location -->
+      <div id="headerSearchBox" class="relative flex items-center gap-2 w-9 h-9 bg-white/5 border border-white/15 rounded-full hover:border-gurmaogold transition-all duration-300 overflow-visible">
+        <button id="headerSearchToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaogold transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </button>
+        <button id="headerLocationToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaogold transition opacity-0 pointer-events-none">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </button>
+        <input id="headerSearchInput" type="text" placeholder="Vyhledat restauraci..." class="bg-transparent text-white text-sm outline-none opacity-0 w-0 transition-all duration-300" />
+        <!-- Search Results -->
+        <div id="headerSearchResults" class="hidden absolute top-full left-0 mt-2 w-96 max-h-96 overflow-y-auto bg-gurmaoblack border border-white/20 rounded-2xl shadow-2xl z-50"></div>
+      </div>
+      
       <a href="feed.html" class="hover:text-gurmaogold">Feed</a>
       <a href="restaurace.html" class="hover:text-gurmaogold">Restaurace</a>
       <a href="kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
       <!-- <a href="gear.html" class="hover:text-gurmaogold">Gear</a> -->
       <a href="ai.html" class="hover:text-gurmaogold">AI</a>
+      <a href="mapa.html" class="hover:text-gurmaogold">Mapa</a>
       <a href="collections.html" class="hover:text-gurmaogold">Můj výběr</a>
+      
+      <!-- User menu (desktop) -->
+      <div id="userMenuDesktop" class="hidden relative">
+        <button id="userDropdownBtn" class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold transition">
+          <span id="userNameDesktop" class="text-white/80"></span>
+          <span class="text-xs">▼</span>
+        </button>
+        
+        <!-- Dropdown Menu -->
+        <div id="userDropdownMenu" class="hidden absolute right-0 top-full mt-2 w-48 rounded-2xl bg-gurmaoblack border border-white/20 shadow-2xl overflow-hidden z-50">
+          <a href="collections.html" class="block px-4 py-3 hover:bg-white/10 transition border-b border-white/10">
+            <div class="font-semibold text-sm">Můj výběr</div>
+            <div class="text-xs text-white/60">Uložené restaurace</div>
+          </a>
+          <a href="#" class="block px-4 py-3 hover:bg-white/10 transition border-b border-white/10">
+            <div class="font-semibold text-sm">Můj účet</div>
+            <div class="text-xs text-white/60">Nastavení profilu</div>
+          </a>
+          <a href="admin.html" data-admin-only class="hidden block px-4 py-3 hover:bg-white/10 transition border-b border-white/10">
+            <div class="font-semibold text-sm">🔒 Admin Panel</div>
+            <div class="text-xs text-white/60">Správa obsahu</div>
+          </a>
+          <button data-logout-btn class="w-full text-left px-4 py-3 hover:bg-gurmaored/20 hover:text-gurmaored transition">
+            <div class="font-semibold text-sm">Odhlásit se</div>
+            <div class="text-xs text-white/60">Ukončit relaci</div>
+          </button>
+        </div>
+      </div>
+      <a id="loginLinkDesktop" href="login.html" class="px-4 py-2 rounded-full border border-gurmaogold text-gurmaogold hover:bg-gurmaogold hover:text-black transition">Přihlásit se</a>
     </nav>
-    <button id="menuBtn" class="md:hidden w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
+    
+    <!-- Mobile hamburger -->
+    <div class="md:hidden flex gap-2">
+      <button id="menuBtn" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
+    </div>
   </div>
 
   <!-- Mobile menu -->
@@ -61,6 +114,12 @@
       </div>
       <nav class="grid gap-2">
         <a href="index.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Domů</a>
+        <a href="restaurace.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 flex items-center gap-2" title="Vyhledat restauraci">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <span>Vyhledat</span>
+        </a>
         <a href="feed.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Feed</a>
         <a href="restaurace.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Restaurace</a>
         <a href="kuchar.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Kuchaři</a>
@@ -76,13 +135,13 @@
             <div class="font-semibold text-sm">Můj výběr</div>
             <div class="text-xs text-white/60">Uložené restaurace</div>
           </a>
+          <a href="#" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
+            <div class="font-semibold text-sm">Můj účet</div>
+            <div class="text-xs text-white/60">Nastavení profilu</div>
+          </a>
           <a href="admin.html" data-admin-only class="hidden px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
             <div class="font-semibold text-sm">🔒 Admin Panel</div>
             <div class="text-xs text-white/60">Správa obsahu</div>
-          </a>
-          <a href="profile.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
-            <div class="font-semibold text-sm">Můj účet</div>
-            <div class="text-xs text-white/60">Nastavení profilu</div>
           </a>
           <button data-logout-btn class="w-full px-4 py-3 rounded-2xl border border-gurmaored text-gurmaored hover:bg-gurmaored hover:text-white transition">
             <div class="font-semibold text-sm">Odhlásit se</div>
@@ -230,6 +289,7 @@
 
 <script src="footer-legal-toggle.js"></script>
 <script type="module" src="footer-search.js"></script>
+<script type="module" src="header-search.js"></script>
 <script src="app.js"></script>
 
 <!-- Vibe Tooltips -->

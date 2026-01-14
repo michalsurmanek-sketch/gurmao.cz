@@ -106,46 +106,30 @@
   <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
     <a href="index.html" class="modal-title text-2xl">GUR<span class="text-gurmaogold">M</span>AO</a>
     
-    <div class="flex items-center gap-3 relative">
-      <div class="relative md:hidden">
-        <div id="mobileSearchBox" class="flex flex-row-reverse items-center gap-2 transition-all duration-300 w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold overflow-hidden">
-          <button id="mobileSearchToggle" class="flex-shrink-0 w-11 h-11 flex items-center justify-center">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-          </button>
-          <input 
-            type="text" 
-            id="mobileNavSearchInput" 
-            placeholder="Vyhledej..."
-            class="opacity-0 w-0 bg-transparent border-none outline-none text-white placeholder:text-white/40 text-sm transition-all duration-300"
-          />
-        </div>
-        <div id="mobileNavSearchResults" class="hidden absolute top-full mt-2 right-0 w-80 max-w-[calc(100vw-2rem)] max-h-96 overflow-y-auto rounded-2xl bg-gurmaoblack border border-white/20 shadow-2xl z-50"></div>
+    <nav class="hidden md:flex gap-6 text-sm items-center">
+      <!-- Search Box with Location -->
+      <div id="headerSearchBox" class="relative flex items-center gap-2 w-9 h-9 bg-white/5 border border-white/15 rounded-full hover:border-gurmaogold transition-all duration-300 overflow-visible">
+        <button id="headerSearchToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaogold transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </button>
+        <button id="headerLocationToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaogold transition opacity-0 pointer-events-none">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </button>
+        <input id="headerSearchInput" type="text" placeholder="Vyhledat restauraci..." class="bg-transparent text-white text-sm outline-none opacity-0 w-0 transition-all duration-300" />
+        <!-- Search Results -->
+        <div id="headerSearchResults" class="hidden absolute top-full left-0 mt-2 w-96 max-h-96 overflow-y-auto bg-gurmaoblack border border-white/20 rounded-2xl shadow-2xl z-50"></div>
       </div>
-
-      <nav class="hidden md:flex gap-6 text-sm items-center">
-      <div class="relative z-20">
-        <div id="searchBox" class="flex flex-row-reverse items-center gap-2 transition-all duration-300 w-9 h-9 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold overflow-hidden">
-          <button id="searchToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-          </button>
-          <input 
-            type="text" 
-            id="navSearchInput" 
-            placeholder="Vyhledej tu svou..."
-            class="opacity-0 w-0 bg-transparent border-none outline-none text-white placeholder:text-white/40 text-sm transition-all duration-300"
-          />
-        </div>
-        <div id="navSearchResults" class="hidden absolute top-full mt-2 w-96 max-h-96 overflow-y-auto rounded-2xl bg-gurmaoblack border border-white/20 shadow-2xl z-50"></div>
-      </div>
+      
       <a href="feed.html" class="hover:text-gurmaogold">Feed</a>
       <a href="restaurace.html" class="hover:text-gurmaogold">Restaurace</a>
       <a href="kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
       <!-- <a href="gear.html" class="hover:text-gurmaogold">Gear</a> -->
-      <a href="ai.html" class="text-gurmaogold">AI</a>
+      <a href="ai.html" class="hover:text-gurmaogold text-gurmaogold">AI</a>
       <a href="mapa.html" class="hover:text-gurmaogold">Mapa</a>
       <a href="collections.html" class="hover:text-gurmaogold">Můj výběr</a>
       
@@ -162,9 +146,9 @@
             <div class="font-semibold text-sm">Můj výběr</div>
             <div class="text-xs text-white/60">Uložené restaurace</div>
           </a>
-          <a href="profile.html" class="block px-4 py-3 hover:bg-white/10 transition border-b border-white/10">
-            <div class="font-semibold text-sm">Profil</div>
-            <div class="text-xs text-white/60">Nastavení účtu</div>
+          <a href="#" class="block px-4 py-3 hover:bg-white/10 transition border-b border-white/10">
+            <div class="font-semibold text-sm">Můj účet</div>
+            <div class="text-xs text-white/60">Nastavení profilu</div>
           </a>
           <a href="admin.html" data-admin-only class="hidden block px-4 py-3 hover:bg-white/10 transition border-b border-white/10">
             <div class="font-semibold text-sm">🔒 Admin Panel</div>
@@ -179,7 +163,9 @@
       <a id="loginLinkDesktop" href="login.html" class="px-4 py-2 rounded-full border border-gurmaogold text-gurmaogold hover:bg-gurmaogold hover:text-black transition">Přihlásit se</a>
     </nav>
     
-      <button id="menuBtn" class="md:hidden w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
+    <!-- Mobile hamburger -->
+    <div class="md:hidden flex gap-2">
+      <button id="menuBtn" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
     </div>
   </div>
 </header>
@@ -192,38 +178,43 @@
       <div class="text-sm text-white/60">Navigace</div>
       <button id="menuClose" class="w-10 h-10 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Zavřít menu">✕</button>
     </div>
-      <nav class="grid gap-2">
-        <a href="index.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Domů</a>
-        <a href="feed.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Feed</a>
-        <a href="restaurace.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Restaurace</a>
-        <a href="kuchar.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Kuchaři</a>
-        <!-- <a href="gear.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Gear</a> -->
-        <a href="ai.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">AI</a>
-        <a href="mapa.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Mapa</a>
-        <!-- User menu (mobile) -->
-        <div id="userMenuMobile" class="hidden mt-2 pt-2 border-t border-white/10">
-          <div class="px-2 mb-2 text-sm text-white/60">
-            <span id="userNameMobile"></span>
-          </div>
-          <a href="collections.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
-            <div class="font-semibold text-sm">Můj výběr</div>
-            <div class="text-xs text-white/60">Uložené restaurace</div>
+    <nav class="grid gap-2">
+      <a href="index.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Domů</a>
+      <a href="restaurace.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 flex items-center gap-2" title="Vyhledat restauraci">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <span>Vyhledat</span>
+      </a>
+      <a href="feed.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Feed</a>
+      <a href="restaurace.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Restaurace</a>
+      <a href="kuchar.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Kuchaři</a>
+      <!-- <a href="gear.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Gear</a> -->
+      <a href="ai.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">AI</a>
+      <a href="mapa.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Mapa</a>
+      <!-- User menu (mobile) -->
+      <div id="userMenuMobile" class="hidden mt-2 pt-2 border-t border-white/10">
+        <div class="px-2 mb-2 text-sm text-white/60">
+          <span id="userNameMobile"></span>
+        </div>
+        <a href="collections.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
+          <div class="font-semibold text-sm">Můj výběr</div>
+          <div class="text-xs text-white/60">Uložené restaurace</div>
+        </a>
+          <a href="#" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
+            <div class="font-semibold text-sm">Můj účet</div>
+            <div class="text-xs text-white/60">Nastavení profilu</div>
           </a>
           <a href="admin.html" data-admin-only class="hidden px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
-            <div class="font-semibold text-sm">🔒 Admin Panel</div>
-            <div class="text-xs text-white/60">Správa obsahu</div>
-          </a>
-          <a href="profile.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
-            <div class="font-semibold text-sm">Profil</div>
-            <div class="text-xs text-white/60">Nastavení účtu</div>
-          </a>
-          <button data-logout-btn class="w-full px-4 py-3 rounded-2xl border border-gurmaored text-gurmaored hover:bg-gurmaored hover:text-white transition">
-            <div class="font-semibold text-sm">Odhlásit se</div>
-          </button>
-        </div>
-        <a id="loginLinkMobile" href="login.html" class="px-4 py-3 rounded-2xl border border-white/20 hover:border-gurmaogold hover:text-gurmaogold">Přihlásit se</a>
-      </nav>
-    </div>
+          <div class="font-semibold text-sm">🔒 Admin Panel</div>
+          <div class="text-xs text-white/60">Správa obsahu</div>
+        </a>
+        <button data-logout-btn class="w-full px-4 py-3 rounded-2xl border border-gurmaored text-gurmaored hover:bg-gurmaored hover:text-white transition">
+          <div class="font-semibold text-sm">Odhlásit se</div>
+        </button>
+      </div>
+      <a id="loginLinkMobile" href="login.html" class="px-4 py-3 rounded-2xl border border-white/20 hover:border-gurmaogold hover:text-gurmaogold">Přihlásit se</a>
+    </nav>
   </div>
 </div>
 
@@ -578,7 +569,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 <script src="footer-legal-toggle.js"></script>
 <script type="module" src="footer-search.js"></script>
-<script type="module" src="nav-search.js"></script>
+<script type="module" src="header-search.js"></script>
 
 </body>
 </html>
