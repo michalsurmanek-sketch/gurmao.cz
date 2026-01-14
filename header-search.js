@@ -339,13 +339,13 @@ async function initMobileSearch() {
           .from('restaurants')
           .select('id, name, slug, city, vibe, image_url, latitude, longitude')
           .or(`name.ilike.%${query}%,city.ilike.%${query}%,vibe.ilike.%${query}%`)
-          .limit(5);
+          .limit(20);
         
         let chefQuery = supabase
           .from('chefs')
           .select('id, name, slug, image_url')
           .ilike('name', `%${query}%`)
-          .limit(3);
+          .limit(10);
         
         const [restaurantData, chefData] = await Promise.all([
           restaurantQuery,
