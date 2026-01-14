@@ -4,19 +4,24 @@ let LocationSearch;
 let locationSearch;
 
 // Load modules asynchronously
-(async function() {
+async function loadModules() {
   try {
     const supabaseModule = await import('./supabase-client.js');
     supabase = supabaseModule.supabase;
     const locationModule = await import('./location-search.js');
     LocationSearch = locationModule.LocationSearch;
     locationSearch = new LocationSearch();
+    return true;
   } catch (error) {
     console.error('Failed to load modules:', error);
+    return false;
   }
-})();
+}
 
-function initFooterSearch() {
+async function initFooterSearch() {
+  // Počkat na načtení modulů
+  await loadModules();
+  
   const footerSearchBox = document.getElementById('footerSearchBox');
   const footerSearchToggle = document.getElementById('footerSearchToggle');
   const footerSearchInput = document.getElementById('footerSearchInput');
