@@ -353,7 +353,7 @@ async function initMobileSearch() {
       try {
         let restaurantQuery = supabase
           .from('restaurants')
-          .select('id, name, slug, city, vibe, image_url, latitude, longitude, phone')
+          .select('id, name, slug, city, vibe, image_url, latitude, longitude')
           .or(`name.ilike.%${query}%,city.ilike.%${query}%,vibe.ilike.%${query}%`)
           .limit(20);
         
