@@ -56,6 +56,15 @@ function initHeaderSearch() {
     }
   };
 
+  const hideToggle = () => {
+    if (!isDesktop()) return;
+    headerSearchToggle.classList.add('opacity-0', 'pointer-events-none');
+  };
+
+  const showToggle = () => {
+    headerSearchToggle.classList.remove('opacity-0', 'pointer-events-none');
+  };
+
   const restoreTogglePosition = () => {
     if (!originalToggleParent) return;
     if (originalToggleParent.contains(headerSearchToggle)) return;
@@ -112,6 +121,7 @@ function initHeaderSearch() {
     e.stopPropagation();
     if (!isExpanded) {
       moveToggleIntoPanel();
+      hideToggle();
       headerSearchPanel.classList.remove('w-0', 'opacity-0', 'pointer-events-none');
       headerSearchPanel.classList.add('w-80', 'opacity-100', 'pointer-events-auto');
       headerSearchInput.classList.remove('opacity-0', 'w-0');
@@ -145,6 +155,18 @@ function initHeaderSearch() {
       }
       return;
     }
+
+    // Handle lunch menu clicks
+    if (e.target.closest('.lunch-menu-link')) {
+      e.preventDefault();
+      e.stopPropagation();
+      const menuLink = e.target.closest('.lunch-menu-link');
+      const url = menuLink.getAttribute('data-url');
+      if (url) {
+        window.open(url, '_blank');
+      }
+      return;
+    }
     
     // Handle menu icon clicks
     if (e.target.closest('.menu-icon-link')) {
@@ -167,6 +189,7 @@ function initHeaderSearch() {
       headerSearchResults.classList.add('hidden');
       headerSearchResults.innerHTML = '';
 
+      showToggle();
       restoreTogglePosition();
       
       if (headerLocationToggle) {
@@ -316,6 +339,42 @@ function initHeaderSearch() {
               </a>
               `;
             }).join('');
+          }
+
+          // Polední menu (spodní kontejner)
+          if (results.length > 0) {
+            const topRestaurant = results[0];
+            html += `
+            <div class="p-3 border-t border-white/10 bg-white/5">
+              <div class="text-xs uppercase tracking-wide text-white/50">Polední menu</div>
+              <div class="mt-2 rounded-xl border border-white/10 bg-gurmaoblack/70 overflow-hidden">
+                <div class="px-3 py-2 border-b border-white/10 flex items-center justify-between">
+                  <div class="text-sm font-semibold truncate">${topRestaurant.name}</div>
+                  <div class="text-[11px] text-white/50">Dnes</div>
+                </div>
+                <div class="p-3 space-y-2 text-xs text-white/80">
+                  <div class="flex items-start gap-2">
+                    <span class="text-white/40">1.</span>
+                    <span class="flex-1">Polévka dne</span>
+                    <span class="text-gurmaogold whitespace-nowrap">59 Kč</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <span class="text-white/40">2.</span>
+                    <span class="flex-1">Hlavní chod dne</span>
+                    <span class="text-gurmaogold whitespace-nowrap">149 Kč</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <span class="text-white/40">3.</span>
+                    <span class="flex-1">Vegetariánské</span>
+                    <span class="text-gurmaogold whitespace-nowrap">139 Kč</span>
+                  </div>
+                </div>
+                <div class="px-3 py-2 border-t border-white/10 text-[11px] text-white/50">
+                  Obsah karty brzy napojíme na Supabase.
+                </div>
+              </div>
+            </div>
+            `;
           }
           
           headerSearchResults.innerHTML = html;
@@ -521,6 +580,42 @@ async function initMobileSearch() {
               </a>
               `;
             }).join('');
+          }
+
+          // Polední menu (spodní kontejner)
+          if (restaurantResults.length > 0) {
+            const topRestaurant = restaurantResults[0];
+            html += `
+            <div class="p-3 border-t border-white/10 bg-white/5">
+              <div class="text-xs uppercase tracking-wide text-white/50">Polední menu</div>
+              <div class="mt-2 rounded-xl border border-white/10 bg-gurmaoblack/70 overflow-hidden">
+                <div class="px-3 py-2 border-b border-white/10 flex items-center justify-between">
+                  <div class="text-sm font-semibold truncate">${topRestaurant.name}</div>
+                  <div class="text-[11px] text-white/50">Dnes</div>
+                </div>
+                <div class="p-3 space-y-2 text-xs text-white/80">
+                  <div class="flex items-start gap-2">
+                    <span class="text-white/40">1.</span>
+                    <span class="flex-1">Polévka dne</span>
+                    <span class="text-gurmaogold whitespace-nowrap">59 Kč</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <span class="text-white/40">2.</span>
+                    <span class="flex-1">Hlavní chod dne</span>
+                    <span class="text-gurmaogold whitespace-nowrap">149 Kč</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <span class="text-white/40">3.</span>
+                    <span class="flex-1">Vegetariánské</span>
+                    <span class="text-gurmaogold whitespace-nowrap">139 Kč</span>
+                  </div>
+                </div>
+                <div class="px-3 py-2 border-t border-white/10 text-[11px] text-white/50">
+                  Obsah karty brzy napojíme na Supabase.
+                </div>
+              </div>
+            </div>
+            `;
           }
           
           mobileSearchResults.innerHTML = html;

@@ -112,6 +112,18 @@ async function initFooterSearch() {
       }
       return;
     }
+
+    // Handle lunch menu clicks
+    if (e.target.closest('.lunch-menu-link')) {
+      e.preventDefault();
+      e.stopPropagation();
+      const menuLink = e.target.closest('.lunch-menu-link');
+      const url = menuLink.getAttribute('data-url');
+      if (url) {
+        window.open(url, '_blank');
+      }
+      return;
+    }
     
     if (isExpanded && !footerSearchBox.contains(e.target) && !footerSearchResults.contains(e.target)) {
       footerSearchBox.classList.add('w-9');
@@ -258,6 +270,42 @@ async function initFooterSearch() {
               </a>
               `;
             }).join('');
+          }
+
+          // Polední menu (spodní kontejner)
+          if (results.length > 0) {
+            const topRestaurant = results[0];
+            html += `
+            <div class="p-3 border-t border-white/10 bg-white/5">
+              <div class="text-xs uppercase tracking-wide text-white/50">Polední menu</div>
+              <div class="mt-2 rounded-xl border border-white/10 bg-gurmaoblack/70 overflow-hidden">
+                <div class="px-3 py-2 border-b border-white/10 flex items-center justify-between">
+                  <div class="text-sm font-semibold truncate">${topRestaurant.name}</div>
+                  <div class="text-[11px] text-white/50">Dnes</div>
+                </div>
+                <div class="p-3 space-y-2 text-xs text-white/80">
+                  <div class="flex items-start gap-2">
+                    <span class="text-white/40">1.</span>
+                    <span class="flex-1">Polévka dne</span>
+                    <span class="text-gurmaogold whitespace-nowrap">59 Kč</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <span class="text-white/40">2.</span>
+                    <span class="flex-1">Hlavní chod dne</span>
+                    <span class="text-gurmaogold whitespace-nowrap">149 Kč</span>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <span class="text-white/40">3.</span>
+                    <span class="flex-1">Vegetariánské</span>
+                    <span class="text-gurmaogold whitespace-nowrap">139 Kč</span>
+                  </div>
+                </div>
+                <div class="px-3 py-2 border-t border-white/10 text-[11px] text-white/50">
+                  Obsah karty brzy napojíme na Supabase.
+                </div>
+              </div>
+            </div>
+            `;
           }
           
           footerSearchResults.innerHTML = html;
