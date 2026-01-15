@@ -43,6 +43,29 @@ function initHeaderSearch() {
   
   let isExpanded = false;
   let isLocationActive = false;
+
+  const originalToggleParent = headerSearchToggle.parentElement;
+  const originalToggleNextSibling = headerSearchToggle.nextSibling;
+
+  const isDesktop = () => window.matchMedia('(min-width: 768px)').matches;
+
+  const moveToggleIntoPanel = () => {
+    if (!isDesktop()) return;
+    if (!headerSearchPanel.contains(headerSearchToggle)) {
+      headerSearchPanel.insertBefore(headerSearchToggle, headerSearchPanel.firstChild);
+    }
+  };
+
+  const restoreTogglePosition = () => {
+    if (!originalToggleParent) return;
+    if (originalToggleParent.contains(headerSearchToggle)) return;
+
+    if (originalToggleNextSibling && originalToggleNextSibling.parentNode === originalToggleParent) {
+      originalToggleParent.insertBefore(headerSearchToggle, originalToggleNextSibling);
+    } else {
+      originalToggleParent.appendChild(headerSearchToggle);
+    }
+  };
   
   // Načíst uložený stav polohy
   if (locationSearch && locationSearch.isLocationEnabled) {
@@ -88,6 +111,7 @@ function initHeaderSearch() {
   headerSearchToggle.addEventListener('click', (e) => {
     e.stopPropagation();
     if (!isExpanded) {
+      moveToggleIntoPanel();
       headerSearchPanel.classList.remove('w-0', 'opacity-0', 'pointer-events-none');
       headerSearchPanel.classList.add('w-80', 'opacity-100', 'pointer-events-auto');
       headerSearchInput.classList.remove('opacity-0', 'w-0');
@@ -142,6 +166,8 @@ function initHeaderSearch() {
       headerSearchInput.value = '';
       headerSearchResults.classList.add('hidden');
       headerSearchResults.innerHTML = '';
+
+      restoreTogglePosition();
       
       if (headerLocationToggle) {
         headerLocationToggle.classList.add('opacity-0', 'pointer-events-none');
