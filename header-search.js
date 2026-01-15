@@ -407,9 +407,11 @@ async function initMobileSearch() {
     await loadLocationModule();
   }
   
+  const mobileSearchBox = document.getElementById('mobileSearchBox');
   const mobileSearchInput = document.getElementById('mobileSearchInput');
   const mobileSearchResults = document.getElementById('mobileSearchResults');
   const mobileLocationToggle = document.getElementById('mobileLocationToggle');
+  const mobileSearchRow = mobileSearchBox ? mobileSearchBox.querySelector('div.relative') : null;
   
   if (!mobileSearchInput || !mobileSearchResults) {
     return;
@@ -468,6 +470,10 @@ async function initMobileSearch() {
     
     if (!query) {
       mobileSearchResults.classList.add('hidden');
+      if (mobileSearchRow) {
+        mobileSearchRow.classList.remove('hidden');
+      }
+      mobileSearchInput.classList.remove('opacity-0', 'w-0', 'pointer-events-none');
       return;
     }
     
@@ -512,6 +518,10 @@ async function initMobileSearch() {
         
         if (restaurantResults.length > 0 || chefResults.length > 0) {
           mobileSearchResults.classList.remove('hidden');
+          if (mobileSearchRow) {
+            mobileSearchRow.classList.add('hidden');
+          }
+          mobileSearchInput.classList.add('opacity-0', 'w-0', 'pointer-events-none');
           
           let html = '';
           
@@ -625,6 +635,10 @@ async function initMobileSearch() {
             : 'Žádné výsledky';
           mobileSearchResults.classList.remove('hidden');
           mobileSearchResults.innerHTML = `<div class="p-4 text-sm text-white/60 text-center">${noResultsMsg}</div>`;
+          if (mobileSearchRow) {
+            mobileSearchRow.classList.remove('hidden');
+          }
+          mobileSearchInput.classList.remove('opacity-0', 'w-0', 'pointer-events-none');
         }
       } catch (error) {
         console.error('Mobile search error:', error);
