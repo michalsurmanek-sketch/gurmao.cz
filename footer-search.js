@@ -278,7 +278,7 @@ async function initFooterSearch() {
             html += `
             <div class="p-3 border-t border-white/10 bg-white/5">
               <div class="text-xs uppercase tracking-wide text-white/50">Polední menu</div>
-              <div class="mt-2 rounded-xl border border-white/10 bg-gurmaoblack/70 overflow-hidden">
+              <div class="mt-3 rounded-2xl border border-white/20 bg-white/5 shadow-lg overflow-hidden">
                 <div class="px-3 py-2 border-b border-white/10 flex items-center justify-between">
                   <div class="text-sm font-semibold truncate">${topRestaurant.name}</div>
                   <div class="text-[11px] text-white/50">Dnes</div>
