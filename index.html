@@ -187,20 +187,21 @@
     }
 
     /* responsive */
-@media (max-width: 980px){
-  .vibe-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
+    @media (max-width: 980px){
+      .vibe-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
 
-@media (max-width: 520px){
-  .vibe-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.hero-bg{
-  background:
-    linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
-    url("gurmao.png") center/cover no-repeat;
-  background-attachment: fixed;
-  transform: translateZ(0);
-}
-    </style>
+    @media (max-width: 520px){
+      .vibe-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    .hero-bg{
+      background:
+        linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+        url("gurmao.png") center/cover no-repeat;
+      background-attachment: fixed;
+    }
+  </style>
 </head>
 <body class="bg-gurmaoblack text-white overflow-x-hidden">
 
