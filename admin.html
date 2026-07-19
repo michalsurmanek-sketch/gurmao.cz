@@ -26,9 +26,9 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   
-  <!-- Mapbox for coordinate picker -->
-  <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
-  <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+  <!-- Leaflet coordinate picker (no API token required) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   
   <style>
     body { font-family: 'Inter', sans-serif; }
@@ -200,34 +200,13 @@
     .notification-item:last-child {
       border-bottom: none;
     }
+    html:not(.admin-authorized) body { visibility: hidden; }
   </style>
 </head>
 <body class="bg-gurmaoblack text-white">
 
 <script src="toast.js"></script>
-<script>
-  // Admin access control - inline check
-  (function() {
-    const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
-    
-    // Not logged in
-    if (!user || !user.loggedIn) {
-      alert('Pro přístup do admin panelu se musíš přihlásit.\n\nBudeš přesměrován na přihlášení.');
-      window.location.href = 'login.html';
-      return;
-    }
-    
-    // Check admin email
-    if (user.email !== 'michalsurmanek@seznam.cz') {
-      alert('Nemáš oprávnění k admin panelu.\n\nTvůj email: ' + user.email + '\nAdmin email: michalsurmanek@seznam.cz\n\nBudeš přesměrován na homepage.');
-      window.location.href = 'index.html';
-      return;
-    }
-    
-    // Access granted
-    console.log('✅ Admin přístup povolen pro:', user.email);
-  })();
-</script>
+<script type="module" src="admin-guard.js"></script>
 <script type="module" src="supabase-client.js"></script>
 <script type="module" src="auth-redirect.js"></script>
 
@@ -1641,19 +1620,16 @@ function switchTab(tab) {
   }
 }
 
-// Initialize coordinate picker map
-mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
-
+// Initialize coordinate picker map without embedding an API token.
 let marker;
-const coordMap = new mapboxgl.Map({
-  container: 'coordMap',
-  style: 'mapbox://styles/mapbox/satellite-streets-v12',
-  center: [15.5, 49.8],
-  zoom: 6
-});
+const coordMap = L.map('coordMap').setView([49.8, 15.5], 6);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(coordMap);
 
 coordMap.on('click', (e) => {
-  const { lng, lat } = e.lngLat;
+  const { lng, lat } = e.latlng;
   
   // Update inputs
   document.querySelector('input[name="latitude"]').value = lat.toFixed(6);
@@ -1663,9 +1639,7 @@ coordMap.on('click', (e) => {
   if (marker) marker.remove();
 
   // Add new marker
-  marker = new mapboxgl.Marker({ color: '#d4af37' })
-    .setLngLat([lng, lat])
-    .addTo(coordMap);
+  marker = L.marker([lat, lng]).addTo(coordMap);
 });
 
 // Load restaurants
@@ -1822,10 +1796,8 @@ async function editRestaurant(id) {
 
     // Update map marker
     if (marker) marker.remove();
-    marker = new mapboxgl.Marker({ color: '#d4af37' })
-      .setLngLat([data.longitude, data.latitude])
-      .addTo(coordMap);
-    coordMap.flyTo({ center: [data.longitude, data.latitude], zoom: 12 });
+    marker = L.marker([data.latitude, data.longitude]).addTo(coordMap);
+    coordMap.setView([data.latitude, data.longitude], 12);
 
     // Update UI
     document.getElementById('formTitle').textContent = 'Upravit restauraci';
