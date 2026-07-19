@@ -32,19 +32,51 @@ document.addEventListener('DOMContentLoaded', () => {
   const close = document.getElementById('menuClose');
   const backdrop = document.getElementById('menuBackdrop');
   const menu = document.getElementById('mobileMenu');
+  const header = document.querySelector('header');
   
   if (!btn || !close || !backdrop || !menu) return;
+
+  let scrollPosition = 0;
+
+  const syncHeaderHeight = () => {
+    const height = header?.getBoundingClientRect().height || 65;
+    document.documentElement.style.setProperty('--gurmao-header-height', `${Math.ceil(height)}px`);
+  };
+
+  btn.setAttribute('aria-controls', 'mobileMenu');
+  btn.setAttribute('aria-expanded', 'false');
+  close.setAttribute('aria-label', close.getAttribute('aria-label') || 'Zavřít menu');
+  menu.setAttribute('aria-hidden', 'true');
+  menu.setAttribute('role', 'dialog');
+  menu.setAttribute('aria-label', 'Mobilní navigace');
+  syncHeaderHeight();
   
   const open = () => {
+    syncHeaderHeight();
+    scrollPosition = window.scrollY;
     backdrop.classList.remove('hidden');
     menu.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
+    btn.setAttribute('aria-expanded', 'true');
+    menu.setAttribute('aria-hidden', 'false');
+    document.documentElement.classList.add('gurmao-menu-open');
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollPosition}px`;
+    document.body.style.width = '100%';
+    close.focus({ preventScroll: true });
   };
   
   const shut = () => {
+    if (menu.classList.contains('hidden')) return;
     backdrop.classList.add('hidden');
     menu.classList.add('hidden');
-    document.body.style.overflow = '';
+    btn.setAttribute('aria-expanded', 'false');
+    menu.setAttribute('aria-hidden', 'true');
+    document.documentElement.classList.remove('gurmao-menu-open');
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo({ top: scrollPosition, behavior: 'instant' });
+    btn.focus({ preventScroll: true });
   };
   
   btn.addEventListener('click', open);
@@ -53,6 +85,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') shut();
   });
+
+  window.addEventListener('resize', () => {
+    syncHeaderHeight();
+    if (window.innerWidth >= 768) shut();
+  }, { passive: true });
   
   // Close menu when clicking any link
   menu.querySelectorAll('a').forEach(link => {
