@@ -1,4 +1,7 @@
 import { supabase } from './supabase-client.js';
+import { escapeHtml, safeImageUrl, safeWebUrl } from './security-utils.js';
+
+const fallbackRestaurantImage = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4';
 
 // Get chef slug from URL parameter
 const urlParams = new URLSearchParams(window.location.search);
@@ -68,16 +71,16 @@ function populateChefDetail(chef) {
 
   // Hero section
   if (chef.image_url) {
-    document.getElementById('heroImage').style.backgroundImage = `url('${chef.image_url}')`;
+    document.getElementById('heroImage').style.backgroundImage = `url('${safeImageUrl(chef.image_url, '')}')`;
   }
 
   // Chef info
   document.getElementById('chefName').textContent = chef.name;
   
   if (chef.role && chef.vibe) {
-    document.getElementById('chefRole').innerHTML = `🧑‍🍳 ${chef.role} · ${chef.vibe}`;
+    document.getElementById('chefRole').textContent = `🧑‍🍳 ${chef.role} · ${chef.vibe}`;
   } else if (chef.role) {
-    document.getElementById('chefRole').innerHTML = `🧑‍🍳 ${chef.role}`;
+    document.getElementById('chefRole').textContent = `🧑‍🍳 ${chef.role}`;
   }
 
   if (chef.bio) {
@@ -107,7 +110,7 @@ function populateChefDetail(chef) {
     
     // Restaurant link
     const restaurantLink = document.getElementById('restaurantLink');
-    restaurantLink.href = `restaurace-detail.html?id=${chef.restaurants.slug}`;
+    restaurantLink.href = `restaurace-detail.html?id=${encodeURIComponent(chef.restaurants.slug)}`;
     restaurantLink.classList.remove('hidden');
   }
 
@@ -119,7 +122,7 @@ function populateChefDetail(chef) {
     const specialtiesArray = chef.specialties.split('·').map(s => s.trim());
     const specialtiesHTML = specialtiesArray.map(s => `
       <div class="rounded-2xl p-4 bg-white/5 text-center">
-        <div class="text-sm text-white/60">${s}</div>
+        <div class="text-sm text-white/60">${escapeHtml(s)}</div>
       </div>
     `).join('');
     document.getElementById('chefSpecialties').innerHTML = specialtiesHTML;
@@ -138,12 +141,12 @@ async function loadRelatedRestaurants(restaurantId) {
     if (error || !restaurant) return;
 
     const html = `
-      <a href="restaurace-detail.html?id=${restaurant.slug}" class="block rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
-        <div class="aspect-square bg-cover bg-center" style="background-image: url('${restaurant.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
+      <a href="restaurace-detail.html?id=${encodeURIComponent(restaurant.slug)}" class="block rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
+        <div class="aspect-square bg-cover bg-center" style="background-image: url('${escapeHtml(safeImageUrl(restaurant.image_url, fallbackRestaurantImage))}')"></div>
         <div class="p-6">
-          <div class="text-gurmaogold text-sm mb-1">${restaurant.vibe || 'Restaurace'}</div>
-          <div class="text-2xl font-semibold">${restaurant.name}</div>
-          <div class="text-white/60 mt-1">${restaurant.city || ''}</div>
+          <div class="text-gurmaogold text-sm mb-1">${escapeHtml(restaurant.vibe || 'Restaurace')}</div>
+          <div class="text-2xl font-semibold">${escapeHtml(restaurant.name)}</div>
+          <div class="text-white/60 mt-1">${escapeHtml(restaurant.city || '')}</div>
         </div>
       </a>
     `;
@@ -167,7 +170,12 @@ function updateSocialMediaLinks(chef) {
     const linkElement = document.getElementById(social.id);
     if (linkElement) {
       if (social.url && social.url.trim() !== '') {
-        linkElement.href = social.url;
+        const safeUrl = safeWebUrl(social.url);
+        linkElement.href = safeUrl;
+        if (safeUrl === '#') {
+          linkElement.classList.add('opacity-50', 'pointer-events-none');
+          return;
+        }
         linkElement.classList.remove('hidden', 'opacity-50', 'pointer-events-none');
       } else {
         // Hide or disable if no URL
@@ -183,7 +191,7 @@ function showError(message) {
   loadingState.innerHTML = `
     <div class="text-center">
       <div class="text-4xl mb-4">😕</div>
-      <div class="text-white/60 mb-4">${message}</div>
+      <div class="text-white/60 mb-4">${escapeHtml(message)}</div>
       <a href="kuchar.html" class="px-6 py-3 rounded-full bg-gurmaogold text-black font-bold inline-block hover:scale-105 transition">
         ← Zpět na kuchaře
       </a>
