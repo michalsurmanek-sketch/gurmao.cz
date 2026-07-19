@@ -1,0 +1,112 @@
+name: Import restaurací z Overture
+
+on:
+  workflow_dispatch:
+    inputs:
+      region:
+        description: Kraj pro kontrolu nebo uložení do čekárny
+        required: true
+        type: choice
+        default: CZ072
+        options:
+          - CZ010
+          - CZ020
+          - CZ031
+          - CZ032
+          - CZ041
+          - CZ042
+          - CZ051
+          - CZ052
+          - CZ053
+          - CZ063
+          - CZ064
+          - CZ071
+          - CZ072
+          - CZ080
+      stage:
+        description: Uložit kandidáty do neveřejné čekárny
+        required: true
+        type: boolean
+        default: false
+      min_confidence:
+        description: Minimální důvěryhodnost Overture (0 až 1)
+        required: true
+        type: string
+        default: '0.65'
+      limit:
+        description: Maximum kandidátů; prázdné znamená bez omezení
+        required: false
+        type: string
+  schedule:
+    - cron: '17 2 5 * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: overture-czech-restaurants-${{ github.event_name }}
+  cancel-in-progress: false
+
+jobs:
+  import:
+    name: ${{ matrix.region }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        region: ${{ fromJSON(github.event_name == 'schedule' && '["CZ010","CZ020","CZ031","CZ032","CZ041","CZ042","CZ051","CZ052","CZ053","CZ063","CZ064","CZ071","CZ072","CZ080"]' || format('["{0}"]', inputs.region)) }}
+
+    steps:
+      - name: Stáhnout repozitář
+        uses: actions/checkout@v7
+
+      - name: Nastavit Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Nainstalovat oficiální Overture klient
+        run: python -m pip install --disable-pip-version-check overturemaps
+
+      - name: Zjistit aktuální Overture release
+        id: release
+        shell: bash
+        run: |
+          RELEASE=$(curl --fail --silent --show-error https://stac.overturemaps.org/catalog.json | python -c "import json,sys; print(json.load(sys.stdin)['latest'])")
+          echo "release=$RELEASE" >> "$GITHUB_OUTPUT"
+
+      - name: Stáhnout místa pro kraj
+        shell: bash
+        run: |
+          BBOX=$(node scripts/import-czech-restaurants.mjs --print-bbox --region=${{ matrix.region }})
+          overturemaps download --bbox="$BBOX" --type=place -f geojson -o "/tmp/overture-${{ matrix.region }}.geojson"
+
+      - name: Zkontrolovat a připravit kandidáty
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        shell: bash
+        run: |
+          ARGS=(
+            "--input=/tmp/overture-${{ matrix.region }}.geojson"
+            "--region=${{ matrix.region }}"
+            "--source-release=${{ steps.release.outputs.release }}"
+            "--report=import-report-${{ matrix.region }}.json"
+          )
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            ARGS+=("--min-confidence=${{ inputs.min_confidence }}")
+            if [[ -n "${{ inputs.limit }}" ]]; then ARGS+=("--limit=${{ inputs.limit }}"); fi
+            if [[ "${{ inputs.stage }}" == "true" ]]; then ARGS+=("--stage"); fi
+          fi
+          node scripts/import-czech-restaurants.mjs "${ARGS[@]}"
+
+      - name: Uložit kontrolní report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: overture-report-${{ matrix.region }}
+          path: import-report-${{ matrix.region }}.json
+          if-no-files-found: warn
+          retention-days: 30
