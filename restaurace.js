@@ -1,9 +1,21 @@
 // Import Supabase client
 import { supabase } from './supabase-client.js';
 
+const VIBE_PARAM_TO_FILTER = Object.freeze({
+  luxe: '🍷 LUXE',
+  drama: '🔥 DRAMA',
+  chaos: '🌮 CHAOS',
+  pure: '🌿 PURE',
+  dark: '🖤 DARK',
+  calm: '🌊 CALM'
+});
+
+const initialParams = new URLSearchParams(window.location.search);
+
 let allRestaurants = [];
-let currentFilter = 'all';
-let searchQuery = '';
+window.filteredRestaurants = [];
+let currentFilter = VIBE_PARAM_TO_FILTER[(initialParams.get('vibe') || '').toLowerCase()] || 'all';
+let searchQuery = sanitizeSearchTerm(initialParams.get('q') || '');
 let userLocation = null;
 let sortByDistance = false;
 // Desktop: 24 restaurací, Mobile: 12 restaurací (pak infinite scroll)
@@ -16,12 +28,65 @@ const PAGE_SIZE = 30; // Načíst po 30 restauracích (sníženo z 50)
 let totalCount = 0;
 let isLoading = false;
 let hasMoreData = true;
+let requestVersion = 0;
+let searchDebounce;
+
+function sanitizeSearchTerm(value) {
+  return String(value || '')
+    .normalize('NFKC')
+    .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 80);
+}
+
+function getSortedRestaurants() {
+  const restaurants = [...allRestaurants];
+
+  if (sortByDistance && userLocation) {
+    restaurants.sort((a, b) => (a.distance || 999) - (b.distance || 999));
+  }
+
+  return restaurants;
+}
+
+function updateUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  const vibeParam = Object.entries(VIBE_PARAM_TO_FILTER)
+    .find(([, filterValue]) => filterValue === currentFilter)?.[0];
+
+  if (searchQuery) params.set('q', searchQuery);
+  else params.delete('q');
+
+  if (vibeParam) params.set('vibe', vibeParam);
+  else params.delete('vibe');
+
+  const queryString = params.toString();
+  const nextUrl = `${window.location.pathname}${queryString ? `?${queryString}` : ''}${window.location.hash}`;
+  window.history.replaceState(null, '', nextUrl);
+}
+
+async function reloadRestaurants() {
+  requestVersion += 1;
+  currentPage = 0;
+  totalCount = 0;
+  hasMoreData = true;
+  allRestaurants = [];
+  window.filteredRestaurants = [];
+  currentlyDisplayed = 0;
+  isLoading = false;
+
+  document.getElementById('loadMoreBtn')?.remove();
+  const resultCount = document.getElementById('resultCount');
+  if (resultCount) resultCount.textContent = 'Hledám odpovídající restaurace…';
+  return loadRestaurants(false);
+}
 
 // Load and display restaurants with pagination
 async function loadRestaurants(append = false) {
   if (isLoading || !hasMoreData) return;
-  
-  const container = document.getElementById('restaurantsList');
+
+  const loadVersion = requestVersion;
   isLoading = true;
   
   // Show loading indicator
@@ -33,11 +98,28 @@ async function loadRestaurants(append = false) {
     const from = currentPage * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
     
-    const { data: restaurants, error, count } = await supabase
+    let query = supabase
       .from('restaurants')
       .select('*', { count: 'exact' })
-      .order('created_at', { ascending: false })
-      .range(from, to);
+      .order('created_at', { ascending: false });
+
+    if (currentFilter !== 'all') {
+      query = query.eq('vibe', currentFilter);
+    }
+
+    if (searchQuery) {
+      const pattern = `%${searchQuery}%`;
+      query = query.or([
+        `name.ilike.${pattern}`,
+        `city.ilike.${pattern}`,
+        `tag.ilike.${pattern}`,
+        `description.ilike.${pattern}`
+      ].join(','));
+    }
+
+    const { data: restaurants, error, count } = await query.range(from, to);
+
+    if (loadVersion !== requestVersion) return;
     
     if (error) throw error;
     
@@ -49,27 +131,30 @@ async function loadRestaurants(append = false) {
     } else {
       allRestaurants = restaurants || [];
     }
+
+    if (sortByDistance && userLocation) {
+      (restaurants || []).forEach(restaurant => {
+        restaurant.distance = restaurant.latitude && restaurant.longitude
+          ? calculateDistance(userLocation.lat, userLocation.lng, restaurant.latitude, restaurant.longitude)
+          : 999;
+      });
+    }
     
     // Check if more data available
     hasMoreData = (from + (restaurants || []).length) < totalCount;
     currentPage++;
     
-    displayRestaurants(allRestaurants);
-    
-    if (!append) {
-      initializeFilters();
-      initializeSearch();
-      initializePerPageButtons();
-      initializeInfiniteScroll();
-    }
+    const displayCount = append ? currentlyDisplayed + perPage : perPage;
+    displayRestaurants(getSortedRestaurants(), displayCount);
     
     hideLoadingSpinner();
   } catch (error) {
+    if (loadVersion !== requestVersion) return;
     console.error('Error loading restaurants:', error);
     showError();
     hideLoadingSpinner();
   } finally {
-    isLoading = false;
+    if (loadVersion === requestVersion) isLoading = false;
   }
 }
 
@@ -84,7 +169,7 @@ function hideLoadingSpinner() {
 }
 
 // Display restaurants
-function displayRestaurants(restaurants) {
+function displayRestaurants(restaurants, displayCount = perPage) {
   const container = document.getElementById('restaurantsList');
   if (!container) return;
   
@@ -96,6 +181,7 @@ function displayRestaurants(restaurants) {
   }
   
   if (restaurants.length === 0) {
+    document.getElementById('loadMoreBtn')?.remove();
     container.innerHTML = `
       <div class="col-span-full text-center py-20">
         <p class="text-white/40 text-lg">Žádné restaurace neodpovídají vašim kritériím.</p>
@@ -106,7 +192,7 @@ function displayRestaurants(restaurants) {
   
   // Display only first perPage items, store filtered list for infinite scroll
   window.filteredRestaurants = restaurants;
-  currentlyDisplayed = Math.min(perPage, restaurants.length);
+  currentlyDisplayed = Math.min(displayCount, restaurants.length);
   const toShow = restaurants.slice(0, currentlyDisplayed);
   
   container.innerHTML = toShow.map(restaurant => createRestaurantCard(restaurant)).join('');
@@ -452,7 +538,12 @@ async function initializeRatings(restaurants) {
 // Initialize filters
 function initializeFilters() {
   const filterButtons = document.querySelectorAll('#filters button');
-  
+
+  filterButtons.forEach(button => {
+    const filterValue = VIBE_PARAM_TO_FILTER[button.dataset.vibe] || 'all';
+    button.classList.toggle('is-active', filterValue === currentFilter);
+  });
+
   filterButtons.forEach(button => {
     button.addEventListener('click', () => {
       // Remove active state from all filter buttons
@@ -463,27 +554,9 @@ function initializeFilters() {
       // Add active state to clicked button
       button.classList.add('is-active');
       
-      // Get filter value from vibe-name div or text content
-      const vibeNameEl = button.querySelector('.vibe-name');
-      const filterText = vibeNameEl ? vibeNameEl.textContent.trim() : button.textContent.trim();
-      
-      // Map filter text to database vibe format (with emoji)
-      const vibeMap = {
-        'Vše': 'all',
-        'LUXE': '🍷 LUXE',
-        'DRAMA': '🔥 DRAMA',
-        'CHAOS': '🌮 CHAOS',
-        'PURE': '🌿 PURE',
-        'DARK': '🖤 DARK',
-        'CALM': '🌊 CALM'
-      };
-      
-      currentFilter = vibeMap[filterText] || 'all';
-      
-      console.log('Filter clicked:', filterText, '→ DB value:', currentFilter);
-      
-      // Filter restaurants (keeps distance sorting if active)
-      applyFilters();
+      currentFilter = VIBE_PARAM_TO_FILTER[button.dataset.vibe] || 'all';
+      updateUrlParams();
+      reloadRestaurants();
     });
   });
 }
@@ -492,9 +565,18 @@ function initializeFilters() {
 function initializeSearch() {
   const searchInput = document.getElementById('searchInput');
   if (searchInput) {
+    searchInput.value = searchQuery;
+
     searchInput.addEventListener('input', (e) => {
-      searchQuery = e.target.value.toLowerCase().trim();
-      applyFilters();
+      window.clearTimeout(searchDebounce);
+      searchDebounce = window.setTimeout(() => {
+        const nextQuery = sanitizeSearchTerm(e.target.value);
+        if (nextQuery === searchQuery) return;
+
+        searchQuery = nextQuery;
+        updateUrlParams();
+        reloadRestaurants();
+      }, 300);
     });
   }
 }
@@ -502,7 +584,14 @@ function initializeSearch() {
 // Initialize per-page buttons
 function initializePerPageButtons() {
   const buttons = document.querySelectorAll('.per-page-btn');
-  
+
+  buttons.forEach(button => {
+    const isActive = Number(button.dataset.count) === perPage;
+    button.classList.toggle('bg-gurmaogold', isActive);
+    button.classList.toggle('text-black', isActive);
+    button.classList.toggle('bg-white/5', !isActive);
+  });
+
   buttons.forEach(button => {
     button.addEventListener('click', () => {
       // Remove active state from all buttons
@@ -523,32 +612,10 @@ function initializePerPageButtons() {
   });
 }
 
-// Apply all filters (vibe + search)
+// Keep the current result set and optionally sort it by distance.
+// Vibe and text search are applied server-side in loadRestaurants().
 function applyFilters() {
-  let filtered = allRestaurants;
-  
-  // Apply vibe filter
-  if (currentFilter !== 'all') {
-    filtered = filtered.filter(r => r.vibe === currentFilter);
-  }
-  
-  // Apply search filter
-  if (searchQuery) {
-    filtered = filtered.filter(r => {
-      const cityMatch = r.city && r.city.toLowerCase().includes(searchQuery);
-      const nameMatch = r.name && r.name.toLowerCase().includes(searchQuery);
-      const tagMatch = r.tag && r.tag.toLowerCase().includes(searchQuery);
-      return cityMatch || nameMatch || tagMatch;
-    });
-  }
-  
-  displayRestaurants(filtered);
-  
-  // Sort by distance if location is enabled
-  if (sortByDistance && userLocation) {
-    filtered.sort((a, b) => (a.distance || 999) - (b.distance || 999));
-    displayRestaurants(filtered);
-  }
+  displayRestaurants(getSortedRestaurants(), Math.max(currentlyDisplayed, perPage));
 }
 
 // Filter restaurants by vibe (kept for backwards compatibility)
@@ -709,6 +776,10 @@ function initializeFlipCards() {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+  initializeFilters();
+  initializeSearch();
+  initializePerPageButtons();
+  initializeInfiniteScroll();
   loadRestaurants();
   
   // Location button handler

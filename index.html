@@ -35,7 +35,6 @@
   <link rel="preconnect" href="https://txfuxrezyrgybjvjnhom.supabase.co">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="https://images.unsplash.com">
   <link rel="preload" as="image" href="gurmao-hero.webp" type="image/webp" fetchpriority="high">
 
   <!-- Compiled Tailwind CSS -->
@@ -187,6 +186,10 @@
         linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
         url("gurmao-hero.webp") center/cover no-repeat;
       background-attachment: fixed;
+    }
+
+    @media (max-width: 767px){
+      .hero-bg{ background-attachment: scroll; }
     }
   </style>
 </head>
@@ -346,37 +349,60 @@
   </div>
 </div>
 
-<!-- HERO / FEED -->
-<section class="hero-bg min-h-screen flex flex-col items-center justify-center px-6 text-center relative">
+<!-- HERO / VYHLEDÁVÁNÍ PODLE CHUTI -->
+<section class="hero-bg min-h-[calc(100dvh-65px)] flex flex-col items-center justify-center px-5 py-16 text-center relative overflow-hidden">
   <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(212,175,55,0.15),transparent_70%)]"></div>
 
-  <h1 class="modal-title relative text-5xl md:text-7xl">
-    GUR<span class="text-gurmaogold">M</span>AO
-  </h1>
-
-  <p class="relative mt-6 text-xl md:text-2xl text-white/80 max-w-xl">
-    Nejez.<br />
-    <span class="text-gurmaogold font-semibold">Prožij.</span>
-  </p>
-
-  <!-- CTA Buttons - different for logged in users -->
-  <div id="heroCTA" class="relative mt-10 flex w-full max-w-sm flex-col sm:w-auto sm:max-w-none sm:flex-row gap-4">
-    <a href="feed.html" class="px-8 py-4 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-105 transition inline-block">Prozkoumat feed</a>
-    <a id="heroLoginBtn" href="login.html" class="px-8 py-4 rounded-full border border-white/30 hover:border-gurmaogold hover:text-gurmaogold transition inline-block">Přihlásit se</a>
+  <div class="relative mb-5 inline-flex items-center gap-2 rounded-full border border-gurmaogold/30 bg-black/35 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-gurmaogold backdrop-blur">
+    Vyhledávač restaurací podle chuti
   </div>
 
-  <p class="relative mt-12 text-sm text-white/40">
-    Kurátorovaný svět gastronomie. Pouze vybrané restaurace.
+  <h1 class="relative max-w-4xl text-4xl leading-tight sm:text-5xl md:text-7xl">
+    Na co máš dnes <span class="text-gurmaogold">chuť?</span>
+  </h1>
+
+  <p class="relative mt-6 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg md:text-xl">
+    Napiš jídlo, kuchyni, město nebo atmosféru. Gurmao ti ukáže restaurace, které odpovídají tomu, co právě hledáš.
   </p>
+
+  <form action="restaurace.html" method="get" role="search" class="relative mt-9 flex w-full max-w-3xl flex-col gap-3 rounded-[2rem] border border-white/15 bg-black/55 p-3 shadow-2xl backdrop-blur-md sm:flex-row sm:rounded-full">
+    <label for="heroSearchInput" class="sr-only">Hledat restauraci podle chuti, kuchyně, města nebo názvu</label>
+    <div class="flex min-w-0 flex-1 items-center gap-3 px-3 sm:px-4">
+      <svg class="h-5 w-5 flex-none text-gurmaogold" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" />
+      </svg>
+      <input id="heroSearchInput" name="q" type="search" maxlength="80" autocomplete="off" placeholder="Pizza, sushi, steak, Brno…" class="min-h-12 w-full min-w-0 bg-transparent text-base text-white outline-none placeholder:text-white/40" />
+    </div>
+    <button type="submit" class="min-h-12 rounded-full bg-gurmaogold px-7 font-semibold text-black shadow-glow transition hover:scale-[1.02] hover:bg-gurmaogold/90">
+      Najít restauraci
+    </button>
+  </form>
+
+  <div class="relative mt-5 flex max-w-3xl flex-wrap items-center justify-center gap-2 text-sm">
+    <span class="mr-1 text-white/45">Oblíbené chutě:</span>
+    <a href="restaurace.html?q=pizza" class="rounded-full border border-white/15 bg-black/30 px-4 py-2 text-white/75 transition hover:border-gurmaogold hover:text-gurmaogold">Pizza</a>
+    <a href="restaurace.html?q=sushi" class="rounded-full border border-white/15 bg-black/30 px-4 py-2 text-white/75 transition hover:border-gurmaogold hover:text-gurmaogold">Sushi</a>
+    <a href="restaurace.html?q=burger" class="rounded-full border border-white/15 bg-black/30 px-4 py-2 text-white/75 transition hover:border-gurmaogold hover:text-gurmaogold">Burger</a>
+    <a href="restaurace.html?q=steak" class="rounded-full border border-white/15 bg-black/30 px-4 py-2 text-white/75 transition hover:border-gurmaogold hover:text-gurmaogold">Steak</a>
+    <a href="restaurace.html?q=vegan" class="rounded-full border border-white/15 bg-black/30 px-4 py-2 text-white/75 transition hover:border-gurmaogold hover:text-gurmaogold">Vegan</a>
+    <a href="restaurace.html?q=brunch" class="rounded-full border border-white/15 bg-black/30 px-4 py-2 text-white/75 transition hover:border-gurmaogold hover:text-gurmaogold">Brunch</a>
+  </div>
+
+  <div id="heroCTA" class="relative mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm">
+    <a href="restaurace.html" class="font-semibold text-white/80 transition hover:text-gurmaogold">Procházet všechny restaurace →</a>
+    <a href="mapa.html" class="font-semibold text-white/80 transition hover:text-gurmaogold">Otevřít mapu →</a>
+    <a id="heroLoginBtn" href="login.html" class="font-semibold text-white/80 transition hover:text-gurmaogold">Přihlásit se →</a>
+  </div>
 </section>
 
 <!-- ====== VYBER SI PODLE NÁLADY (HTML) ====== -->
 <section class="vibe-section">
-  <div class="vibe-title">Vyber si podle nálady</div>
+  <div class="vibe-title">Nebo vyber atmosféru</div>
+  <p class="mx-auto mb-6 max-w-2xl text-center text-white/55">Když nevíš přesné jídlo, začni pocitem, který chceš u stolu zažít.</p>
 
   <div class="vibe-grid">
     <div class="vibe-item">
-      <a href="restaurace.html?vibe=luxe" class="vibe-pill luxe is-active">
+      <a href="restaurace.html?vibe=luxe" class="vibe-pill luxe">
         <div class="vibe-ico">🍷</div>
         <div class="vibe-name">LUXE</div>
       </a>
@@ -425,154 +451,37 @@
   </div>
 </section>
 
-<!-- FEED PREVIEW -->
-<section class="py-20 border-t border-white/10">
-  <div class="max-w-6xl mx-auto px-6">
-    <h2 class="text-3xl md:text-4xl mb-10">GURMAO <span class="text-gurmaogold">feed</span></h2>
-
-    <div class="grid md:grid-cols-3 gap-8">
-      <!-- CARD 1 -->
-      <div class="group rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
-        <a href="restaurace-noir-table.html" class="block">
-          <div class="aspect-[3/4] bg-[url('https://images.unsplash.com/photo-1541544741938-0af808871cc0')] bg-cover bg-center"></div>
-        </a>
-        <div class="p-5 flex items-start justify-between gap-4">
-          <div>
-            <div class="text-sm text-gurmaogold mb-1">🍷 LUXE</div>
-            <a href="restaurace-noir-table.html" class="text-xl font-semibold hover:text-gurmaogold">Noir Table</a>
-            <div class="text-white/60 text-sm mt-1">Praha · fine dining</div>
-          </div>
-          <button data-save="noir-table" class="save-btn w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition flex-shrink-0" aria-label="Uložit">🤍</button>
-        </div>
-      </div>
-
-      <!-- CARD 2 -->
-      <div class="hidden md:block group rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
-        <a href="restaurace-noir-table.html" class="block">
-          <div class="aspect-[3/4] bg-[url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092')] bg-cover bg-center"></div>
-        </a>
-        <div class="p-5 flex items-start justify-between gap-4">
-          <div>
-            <div class="text-sm text-gurmaogold mb-1">🔥 DRAMA</div>
-            <a href="restaurace-noir-table.html" class="text-xl font-semibold hover:text-gurmaogold">Ember Steak</a>
-            <div class="text-white/60 text-sm mt-1">Brno · steakhouse</div>
-          </div>
-          <button data-save="ember-steak" class="save-btn w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition flex-shrink-0" aria-label="Uložit">🤍</button>
-        </div>
-      </div>
-
-      <!-- CARD 3 -->
-      <div class="hidden md:block group rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
-        <a href="restaurace-noir-table.html" class="block">
-          <div class="aspect-[3/4] bg-[url('https://images.unsplash.com/photo-1529692236671-f1dc2c0f2c0e')] bg-cover bg-center"></div>
-        </a>
-        <div class="p-5 flex items-start justify-between gap-4">
-          <div>
-            <div class="text-sm text-gurmaogold mb-1">🌮 CHAOS</div>
-            <a href="restaurace-noir-table.html" class="text-xl font-semibold hover:text-gurmaogold">La Calle</a>
-            <div class="text-white/60 text-sm mt-1">Ostrava · street food</div>
-          </div>
-          <button data-save="la-calle" class="save-btn w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition flex-shrink-0" aria-label="Uložit">🤍</button>
-        </div>
-      </div>
+<!-- JAK GURMAO FUNGUJE -->
+<section class="border-t border-white/10 py-20 md:py-24">
+  <div class="mx-auto max-w-6xl px-6">
+    <div class="mx-auto mb-12 max-w-2xl text-center">
+      <div class="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-gurmaogold">Jednoduše k dobrému jídlu</div>
+      <h2 class="text-3xl md:text-5xl">Jak Gurmao funguje</h2>
+      <p class="mt-5 text-white/60">Žádné dlouhé procházení katalogu. Začni chutí a postupně si výběr zpřesni.</p>
     </div>
 
-    <div class="mt-14 text-center">
-      <a href="feed.html" class="inline-block px-10 py-4 rounded-full border border-white/30 hover:border-gurmaogold hover:text-gurmaogold transition">
-        Načíst celý feed
-      </a>
+    <div class="grid gap-5 md:grid-cols-3">
+      <article class="rounded-3xl border border-white/10 bg-white/[0.04] p-7 transition hover:border-gurmaogold/35 hover:bg-white/[0.07]">
+        <div class="mb-6 flex h-11 w-11 items-center justify-center rounded-full border border-gurmaogold/30 bg-gurmaogold/10 font-semibold text-gurmaogold">1</div>
+        <h3 class="text-2xl">Řekni, na co máš chuť</h3>
+        <p class="mt-3 leading-relaxed text-white/60">Pizza, sushi, brunch, konkrétní kuchyně nebo jen město. Hledání projde celou databázi.</p>
+      </article>
+
+      <article class="rounded-3xl border border-white/10 bg-white/[0.04] p-7 transition hover:border-gurmaogold/35 hover:bg-white/[0.07]">
+        <div class="mb-6 flex h-11 w-11 items-center justify-center rounded-full border border-gurmaogold/30 bg-gurmaogold/10 font-semibold text-gurmaogold">2</div>
+        <h3 class="text-2xl">Zvol atmosféru</h3>
+        <p class="mt-3 leading-relaxed text-white/60">LUXE, DRAMA, CHAOS, PURE, DARK nebo CALM ti pomohou najít správný zážitek, ne jen adresu.</p>
+      </article>
+
+      <article class="rounded-3xl border border-white/10 bg-white/[0.04] p-7 transition hover:border-gurmaogold/35 hover:bg-white/[0.07]">
+        <div class="mb-6 flex h-11 w-11 items-center justify-center rounded-full border border-gurmaogold/30 bg-gurmaogold/10 font-semibold text-gurmaogold">3</div>
+        <h3 class="text-2xl">Vyber a vyraz</h3>
+        <p class="mt-3 leading-relaxed text-white/60">Porovnej detaily, otevři mapu a ulož si místa, ke kterým se chceš vrátit.</p>
+      </article>
     </div>
-  </div>
-</section>
 
-<!-- RESTAURACE DETAIL PREVIEW -->
-<section class="py-24 border-t border-white/10">
-  <div class="max-w-6xl mx-auto px-6">
-    <h2 class="text-3xl md:text-4xl mb-12">Ukázka <span class="text-gurmaogold">detailu restaurace</span></h2>
-
-    <div class="grid md:grid-cols-2 gap-12 items-start">
-      <!-- IMAGE -->
-      <div class="rounded-3xl overflow-hidden shadow-glow">
-        <div class="aspect-[4/5] bg-[url('https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c')] bg-cover bg-center"></div>
-      </div>
-
-      <!-- INFO -->
-      <div>
-        <div class="text-gurmaogold text-sm mb-2">🍷 LUXE · večerní fine dining</div>
-        <h3 class="text-4xl font-semibold mb-4">Noir Table</h3>
-        <p class="text-white/70 mb-6">
-          Místo, kde se zpomalí čas. Minimalistická kuchyně, otevřený oheň,
-          ticho u stolu a precizní servis. Nechodíš se najíst. Přicházíš pro zážitek.
-        </p>
-
-        <div class="grid grid-cols-3 gap-4 mb-8">
-          <div class="rounded-2xl p-4 bg-white/5 text-center">
-            <div class="text-xl">🔥</div>
-            <div class="text-sm text-white/60">WOW efekt</div>
-          </div>
-          <div class="rounded-2xl p-4 bg-white/5 text-center">
-            <div class="text-xl">🤤</div>
-            <div class="text-sm text-white/60">Chuť</div>
-          </div>
-          <div class="rounded-2xl p-4 bg-white/5 text-center">
-            <div class="text-xl">🖤</div>
-            <div class="text-sm text-white/60">Atmosféra</div>
-          </div>
-        </div>
-
-        <div class="rounded-2xl p-6 bg-white/5 mb-6">
-          <div class="text-sm text-gurmaogold mb-1">Signature dish</div>
-          <div class="text-lg">Hovězí steak na uhlí · fermentovaný pepř · máslo</div>
-        </div>
-
-        <div class="rounded-2xl p-6 bg-white/5">
-          <div class="text-sm text-gurmaogold mb-2">Používané vybavení</div>
-          <div class="text-white/80">Japonský nůž Gyuto · litinová pánev · otevřený gril</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CHEF PROFILE PREVIEW -->
-<section class="py-24 border-t border-white/10">
-  <div class="max-w-6xl mx-auto px-6">
-    <h2 class="text-3xl md:text-4xl mb-12">Profil <span class="text-gurmaogold">kuchaře</span></h2>
-
-    <div class="grid md:grid-cols-2 gap-12 items-center">
-      <div class="rounded-3xl overflow-hidden shadow-glow">
-        <div id="chefImage" class="aspect-[4/5] bg-[url('https://images.unsplash.com/photo-1600891965050-dc6c28c5a12b')] bg-cover bg-center"></div>
-      </div>
-
-      <div>
-        <div id="chefLabel" class="text-gurmaogold text-sm mb-2">🧑‍🍳 Head Chef · 🍷 LUXE</div>
-        <h3 id="chefName" class="text-4xl font-semibold mb-4">Adam Noir</h3>
-        <p id="chefBio" class="text-white/70 mb-6">
-          Kuchař posedlý detailem, ohněm a tichem v kuchyni. Věří, že jídlo má mluvit samo.
-          Každý talíř je podpis, každý večer rituál.
-        </p>
-
-        <div class="grid grid-cols-3 gap-4 mb-8">
-          <div class="rounded-2xl p-4 bg-white/5 text-center"><div class="text-xl">🔥</div><div class="text-sm text-white/60">Intenzita</div></div>
-          <div class="rounded-2xl p-4 bg-white/5 text-center"><div class="text-xl">🎯</div><div class="text-sm text-white/60">Preciznost</div></div>
-          <div class="rounded-2xl p-4 bg-white/5 text-center"><div class="text-xl">🖤</div><div class="text-sm text-white/60">Styl</div></div>
-        </div>
-
-        <div id="chefRestaurantCard" class="rounded-2xl p-6 bg-white/5 mb-6">
-          <div class="text-sm text-gurmaogold mb-1">Aktuální restaurace</div>
-          <div id="chefRestaurant" class="text-lg">Noir Table · Praha</div>
-        </div>
-
-        <div id="chefCuisinesCard" class="rounded-2xl p-6 bg-white/5 mb-6">
-          <div class="text-sm text-gurmaogold mb-2">Oblíbená kuchyně</div>
-          <div id="chefCuisines" class="text-white/80">—</div>
-        </div>
-
-        <div class="rounded-2xl p-6 bg-white/5">
-          <div class="text-sm text-gurmaogold mb-2">Oblíbené vybavení</div>
-          <div class="text-white/80">Gyuto 240 mm · uhlí Binchotan · litina</div>
-        </div>
-      </div>
+    <div class="mt-10 text-center">
+      <a href="restaurace.html" class="inline-block rounded-full bg-gurmaogold px-9 py-4 font-semibold text-black shadow-glow transition hover:scale-[1.02]">Začít hledat</a>
     </div>
   </div>
 </section>
@@ -614,80 +523,27 @@
 </section> -->
 
 <!-- AI GURMAO -->
-<section class="vibe-section border-t border-white/10 relative overflow-hidden">
+<section class="relative overflow-hidden border-t border-white/10 px-6 py-20 md:py-24">
   <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.12),transparent_70%)]"></div>
-  <div class="relative">
-    <div class="vibe-title">Kam dnes podle nálady?</div>
-    <p class="text-xl text-white/70 mb-10 text-center max-w-2xl mx-auto">
-      Nehledej. Nepřemýšlej. Jen si vyber pocit.
-    </p>
-
-    <div class="vibe-grid max-w-[800px]">
-      <div class="vibe-item">
-        <a href="ai.html?vibe=drama" class="vibe-pill drama">
-          <div class="vibe-ico">🔥</div>
-          <div class="vibe-name">DRAMA</div>
-        </a>
-      </div>
-
-      <div class="vibe-item">
-        <a href="ai.html?vibe=dark" class="vibe-pill dark">
-          <div class="vibe-ico">🌙</div>
-          <div class="vibe-name">DARK</div>
-        </a>
-      </div>
-
-      <div class="vibe-item">
-        <a href="ai.html?vibe=pure" class="vibe-pill pure">
-          <div class="vibe-ico">🌿</div>
-          <div class="vibe-name">PURE</div>
-        </a>
-      </div>
-
-      <div class="vibe-item">
-        <a href="ai.html?vibe=luxe" class="vibe-pill luxe">
-          <div class="vibe-ico">🍷</div>
-          <div class="vibe-name">LUXE</div>
-        </a>
-      </div>
-
-      <div class="vibe-item">
-        <a href="ai.html?vibe=chaos" class="vibe-pill chaos">
-          <div class="vibe-ico">🌮</div>
-          <div class="vibe-name">CHAOS</div>
-        </a>
-      </div>
-
-      <div class="vibe-item">
-        <a href="ai.html?vibe=calm" class="vibe-pill calm">
-          <div class="vibe-ico">🌊</div>
-          <div class="vibe-name">CALM</div>
-        </a>
-      </div>
-    </div>
-
-    <div class="text-center mt-10">
-      <a href="ai.html" class="inline-block px-10 py-4 rounded-full bg-gurmaogold text-black font-semibold shadow-glow hover:scale-105 transition">
-        Doporuč mi místo
-      </a>
-      <p class="mt-6 text-sm text-white/40">
-        Jedno doporučení. Žádné scrollování.
-      </p>
-    </div>
+  <div class="relative mx-auto max-w-4xl rounded-[2rem] border border-gurmaogold/25 bg-white/[0.04] px-6 py-12 text-center shadow-2xl md:px-12 md:py-16">
+    <div class="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-gurmaogold">AI GURMAO</div>
+    <h2 class="text-3xl md:text-5xl">Nevíš přesně? Nech si doporučit.</h2>
+    <p class="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-white/65">Vyber náladu a Gurmao ti nabídne jedno místo. Bez nekonečného scrollování a rozhodovací únavy.</p>
+    <a href="ai.html" class="mt-9 inline-block rounded-full border border-gurmaogold bg-gurmaogold px-9 py-4 font-semibold text-black shadow-glow transition hover:scale-[1.02]">Doporuč mi místo</a>
   </div>
 </section>
 
 <!-- MANIFEST -->
 <section class="py-20 bg-gradient-to-b from-transparent to-black">
   <div class="max-w-4xl mx-auto px-6 text-center">
-    <h2 class="text-4xl md:text-5xl mb-8">GURMAO není katalog</h2>
+    <h2 class="text-4xl md:text-5xl mb-8">Vyhledávač, který začíná chutí</h2>
     <p class="text-xl text-white/80 leading-relaxed">
-      Sledujeme emoce, návraty, ticho u stolu a moment,<br />
-      kdy se svět na vteřinu zastaví.
+      Nejdřív si řekni, co chceš jíst a jak se chceš cítit.<br />
+      Gurmao ti pomůže najít místo, které tomu odpovídá.
     </p>
 
     <p class="mt-10 text-gurmaogold font-semibold">
-      Restaurace, které tu jsou, tu chtějí být.
+      Nejez. Prožij.
     </p>
   </div>
 </section>
@@ -799,6 +655,14 @@
       "@type": "ImageObject",
       "url": "https://gurmao.cz/favicon.svg"
     }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://gurmao.cz/restaurace.html?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
   }
 }
 </script>
@@ -808,7 +672,7 @@
 <script src="auth-ui.js"></script>
 <script src="onboarding.js"></script>
 <script src="cookie-consent.js"></script>
-<script type="module">
+<script>
   // Homepage: Change CTA for logged-in users
   const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
   if (user) {
@@ -818,74 +682,6 @@
       heroLoginBtn.textContent = 'Můj výběr';
     }
   }
-
-  // Load featured chef profile
-  import { supabase } from './supabase-client.js';
-  
-  async function loadFeaturedChef() {
-    try {
-      // Load first chef (you can change this to load a specific chef by slug)
-      const { data: chef, error } = await supabase
-        .from('chefs')
-        .select(`
-          *,
-          restaurants (
-            name,
-            city
-          )
-        `)
-        .limit(1)
-        .single();
-      
-      if (error) throw error;
-      
-      console.log('Loaded chef data:', chef); // Debug log
-      
-      if (chef) {
-        // Update chef profile section
-        if (chef.image_url) {
-          const chefImage = document.getElementById('chefImage');
-          chefImage.style.backgroundImage = `url('${chef.image_url}')`;
-        }
-        
-        if (chef.name) {
-          document.getElementById('chefName').textContent = chef.name;
-        }
-        
-        if (chef.bio) {
-          document.getElementById('chefBio').textContent = chef.bio;
-        }
-        
-        // Update label with vibe
-        if (chef.vibe) {
-          document.getElementById('chefLabel').textContent = `🧑‍🍳 Head Chef · ${chef.vibe}`;
-        }
-        
-        // Update restaurant
-        if (chef.restaurants) {
-          const restaurantText = chef.restaurants.city 
-            ? `${chef.restaurants.name} · ${chef.restaurants.city}`
-            : chef.restaurants.name;
-          document.getElementById('chefRestaurant').textContent = restaurantText;
-        }
-        
-        // Update favorite cuisines
-        console.log('Chef favorite_cuisines:', chef.favorite_cuisines); // Debug
-        if (chef.favorite_cuisines && chef.favorite_cuisines.trim() !== '') {
-          document.getElementById('chefCuisines').textContent = chef.favorite_cuisines;
-        } else {
-          console.log('No favorite cuisines - keeping placeholder'); // Debug
-          document.getElementById('chefCuisines').textContent = '—';
-        }
-      }
-    } catch (err) {
-      console.error('Error loading featured chef:', err);
-      // Keep default content if loading fails
-    }
-  }
-  
-  // Load on page load
-  loadFeaturedChef();
 </script>
 
 <!-- Vibe Tooltips -->
