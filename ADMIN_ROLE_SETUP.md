@@ -21,7 +21,7 @@ https://app.supabase.com
 Pro `michalsurmanek@seznam.cz`:
 ```sql
 UPDATE auth.users 
-SET raw_user_meta_data = raw_user_meta_data || '{"role": "admin"}'::jsonb 
+SET raw_app_meta_data = COALESCE(raw_app_meta_data, '{}'::jsonb) || '{"role": "admin"}'::jsonb
 WHERE email = 'michalsurmanek@seznam.cz';
 ```
 
@@ -37,7 +37,7 @@ Po spuštění SQL příkazu:
 Pro přidání dalšího admin uživatele:
 ```sql
 UPDATE auth.users 
-SET raw_user_meta_data = raw_user_meta_data || '{"role": "admin"}'::jsonb 
+SET raw_app_meta_data = COALESCE(raw_app_meta_data, '{}'::jsonb) || '{"role": "admin"}'::jsonb
 WHERE email = 'novy-admin@example.com';
 ```
 
@@ -45,7 +45,7 @@ WHERE email = 'novy-admin@example.com';
 
 ```sql
 UPDATE auth.users 
-SET raw_user_meta_data = raw_user_meta_data - 'role'
+SET raw_app_meta_data = raw_app_meta_data - 'role'
 WHERE email = 'uzivatel@example.com';
 ```
 
@@ -53,7 +53,7 @@ WHERE email = 'uzivatel@example.com';
 
 Pro ověření, že je role správně nastavená:
 ```sql
-SELECT email, raw_user_meta_data->>'role' as role
+SELECT email, raw_app_meta_data->>'role' as role
 FROM auth.users 
 WHERE email = 'michalsurmanek@seznam.cz';
 ```
@@ -68,10 +68,10 @@ michalsurmanek@seznam.cz  | admin
 ## Technické detaily
 
 ### Jak to funguje:
-1. **auth-ui.js** kontroluje `user_metadata.role === 'admin'`
+1. **auth-ui.js** kontroluje ověřeného uživatele a `app_metadata.role === 'admin'`
 2. Pokud je admin, odstraní `hidden` třídu z `[data-admin-only]` odkazů
 3. **admin-guard.js** brání přímému přístupu na admin.html bez admin role
-4. Email `michalsurmanek@seznam.cz` má hardcoded admin přístup jako fallback
+4. `localStorage` ani e-mail ve frontendu neposkytují admin oprávnění
 
 ### Soubory v projektu:
 - `auth-ui.js` - kontrola admin role a zobrazení linků
