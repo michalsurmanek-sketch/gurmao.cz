@@ -1,95 +1,62 @@
-// User Authentication UI Handler
-// Displays logged in user menu and logout button
-
 (async function initAuthUI() {
-  // Check if user is logged in
-  const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
-  
   const userMenuDesktop = document.getElementById('userMenuDesktop');
   const userMenuMobile = document.getElementById('userMenuMobile');
   const loginLinkDesktop = document.getElementById('loginLinkDesktop');
   const loginLinkMobile = document.getElementById('loginLinkMobile');
-  
-  if (user && user.loggedIn) {
-    // Show user menu
-    if (userMenuDesktop) userMenuDesktop.classList.remove('hidden');
-    if (userMenuMobile) userMenuMobile.classList.remove('hidden');
-    if (loginLinkDesktop) loginLinkDesktop.classList.add('hidden');
-    if (loginLinkMobile) loginLinkMobile.classList.add('hidden');
-    
-    // Display user name
-    const userName = user.name || user.email.split('@')[0];
+
+  const setLoggedOutUI = () => {
+    loginLinkDesktop?.classList.remove('hidden');
+    loginLinkMobile?.classList.remove('hidden');
+    userMenuDesktop?.classList.add('hidden');
+    userMenuMobile?.classList.add('hidden');
+    document.querySelectorAll('[data-admin-only]').forEach(link => link.classList.add('hidden'));
+  };
+
+  try {
+    const { supabase } = await import('./supabase-client.js');
+    const { data: { user }, error } = await supabase.auth.getUser();
+
+    if (error || !user) {
+      localStorage.removeItem('gurmao_user');
+      setLoggedOutUI();
+      return;
+    }
+
+    userMenuDesktop?.classList.remove('hidden');
+    userMenuMobile?.classList.remove('hidden');
+    loginLinkDesktop?.classList.add('hidden');
+    loginLinkMobile?.classList.add('hidden');
+
+    const userName = user.user_metadata?.name || user.email?.split('@')[0] || 'Uživatel';
     const userNameDesktop = document.getElementById('userNameDesktop');
     const userNameMobile = document.getElementById('userNameMobile');
-    
     if (userNameDesktop) userNameDesktop.textContent = userName;
     if (userNameMobile) userNameMobile.textContent = `Přihlášen: ${userName}`;
-    
-    // Check for admin role and show admin link
-    let isAdmin = false;
-    
-    // First check: email match in localStorage
-    if (user.email === 'michalsurmanek@seznam.cz') {
-      isAdmin = true;
+
+    if (user.app_metadata?.role === 'admin') {
+      document.querySelectorAll('[data-admin-only]').forEach(link => link.classList.remove('hidden'));
     }
-    
-    // Second check: Supabase user metadata (if available)
-    if (!isAdmin) {
-      try {
-        if (window.supabase) {
-          const { data: { user: supabaseUser } } = await supabase.auth.getUser();
-          if (supabaseUser?.user_metadata?.role === 'admin') {
-            isAdmin = true;
-          }
-        }
-      } catch (error) {
-        console.error('Error checking admin role:', error);
-      }
-    }
-    
-    // Show admin links if user is admin
-    if (isAdmin) {
-      const adminLinks = document.querySelectorAll('[data-admin-only]');
-      adminLinks.forEach(link => link.classList.remove('hidden'));
-    }
-    
-    // Desktop dropdown toggle
+
     const userDropdownBtn = document.getElementById('userDropdownBtn');
     const userDropdownMenu = document.getElementById('userDropdownMenu');
-    
     if (userDropdownBtn && userDropdownMenu) {
-      userDropdownBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
+      userDropdownBtn.addEventListener('click', event => {
+        event.stopPropagation();
         userDropdownMenu.classList.toggle('hidden');
       });
-      
-      // Close dropdown when clicking outside
-      document.addEventListener('click', () => {
-        if (!userDropdownMenu.classList.contains('hidden')) {
-          userDropdownMenu.classList.add('hidden');
-        }
-      });
-      
-      // Prevent closing when clicking inside dropdown
-      userDropdownMenu.addEventListener('click', (e) => {
-        e.stopPropagation();
-      });
+      document.addEventListener('click', () => userDropdownMenu.classList.add('hidden'));
+      userDropdownMenu.addEventListener('click', event => event.stopPropagation());
     }
-    
-    // Logout handlers
-    const logoutBtns = document.querySelectorAll('[data-logout-btn]');
-    
-    logoutBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
+
+    document.querySelectorAll('[data-logout-btn]').forEach(button => {
+      button.addEventListener('click', async () => {
+        await supabase.auth.signOut();
         localStorage.removeItem('gurmao_user');
         window.location.href = 'index.html';
       });
     });
-  } else {
-    // User is NOT logged in - show login links
-    if (loginLinkDesktop) loginLinkDesktop.classList.remove('hidden');
-    if (loginLinkMobile) loginLinkMobile.classList.remove('hidden');
-    if (userMenuDesktop) userMenuDesktop.classList.add('hidden');
-    if (userMenuMobile) userMenuMobile.classList.add('hidden');
+  } catch (error) {
+    console.error('Authentication UI failed:', error);
+    setLoggedOutUI();
   }
 })();

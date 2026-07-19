@@ -2,28 +2,7 @@
 
 ## Jak nastavit admin uživatele v Supabase
 
-### Metoda 1: Přes Supabase Dashboard (Doporučeno)
-
-1. **Přihlaš se do Supabase Dashboard**
-   - Jdi na https://supabase.com
-   - Otevři svůj projekt
-
-2. **Najdi uživatele v Authentication**
-   - V levém menu klikni na **Authentication** → **Users**
-   - Najdi uživatele, kterého chceš udělat adminem
-
-3. **Přidej admin role do User Metadata**
-   - Klikni na uživatele
-   - V sekci **User Metadata** klikni na **Edit**
-   - Přidej následující JSON:
-   ```json
-   {
-     "role": "admin"
-   }
-   ```
-   - Uložit změny
-
-### Metoda 2: Přes SQL Editor
+### Přes SQL Editor (doporučeno)
 
 1. **Otevři SQL Editor**
    - V Supabase Dashboard jdi na **SQL Editor**
@@ -31,31 +10,11 @@
 2. **Spusť tento SQL příkaz**
    ```sql
    UPDATE auth.users
-   SET raw_user_meta_data = raw_user_meta_data || '{"role": "admin"}'::jsonb
+   SET raw_app_meta_data = COALESCE(raw_app_meta_data, '{}'::jsonb) || '{"role": "admin"}'::jsonb
    WHERE email = 'michalsurmanek@seznam.cz';
    ```
 
-### Metoda 3: Při registraci (Pro development)
-
-Upravit sign-up funkci v `supabase-client.js`:
-
-```javascript
-export async function signUpAdmin(email, password, displayName = null) {
-  const { data, error } = await supabase.auth.signUp({
-    email: email,
-    password: password,
-    options: {
-      data: {
-        display_name: displayName || email.split('@')[0],
-        role: 'admin'  // ← Přidej tuto řádku
-      }
-    }
-  });
-  
-  if (error) throw error;
-  return data;
-}
-```
+Admin roli nikdy nenastavuj při registraci ani přes klientská `user_metadata`.
 
 ## Jak to funguje
 
@@ -64,15 +23,14 @@ export async function signUpAdmin(email, password, displayName = null) {
 Soubor `admin-guard.js` kontroluje:
 
 1. ✅ Je uživatel přihlášený?
-2. ✅ Má uživatel `role: "admin"` v metadatech?
-3. ✅ Nebo je to email `admin@gurmao.cz`?
+2. ✅ Má uživatel `role: "admin"` v serverových `app_metadata`?
 
 Pokud ne → přesměrování na hlavní stránku + chybová hláška
 
 ### Bezpečnostní tipy
 
 ⚠️ **DŮLEŽITÉ:**
-- Admin role je uložena v `user_metadata`, což je upravitelné pouze ze serveru
+- Admin role je uložena v serverově spravovaných `app_metadata`
 - Nikdy nepoužívej pouze localStorage pro ověření admin práv
 - Vždy kontroluj oprávnění i na backend straně (Supabase RLS policies)
 
@@ -92,7 +50,7 @@ CREATE POLICY "Only admins can insert/update/delete restaurants"
 ON restaurants FOR ALL
 TO authenticated
 USING (
-  (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
+  (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
 );
 ```
 
@@ -108,15 +66,15 @@ USING (
 ### Odebrat admin práva
 ```sql
 UPDATE auth.users
-SET raw_user_meta_data = raw_user_meta_data - 'role'
+SET raw_app_meta_data = raw_app_meta_data - 'role'
 WHERE email = 'michalsurmanek@seznam.cz';
 ```
 
 ### Zobrazit všechny adminy
 ```sql
-SELECT email, raw_user_meta_data->>'role' as role
+SELECT email, raw_app_meta_data->>'role' as role
 FROM auth.users
-WHERE raw_user_meta_data->>'role' = 'admin';
+WHERE raw_app_meta_data->>'role' = 'admin';
 ```
 
 ## Automatické nastavení prvního admina
@@ -129,7 +87,7 @@ RETURNS TRIGGER AS $$
 BEGIN
   -- Pokud je to první uživatel, udělej ho adminem
   IF (SELECT COUNT(*) FROM auth.users) = 1 THEN
-    NEW.raw_user_meta_data = NEW.raw_user_meta_data || '{"role": "admin"}'::jsonb;
+    NEW.raw_app_meta_data = COALESCE(NEW.raw_app_meta_data, '{}'::jsonb) || '{"role": "admin"}'::jsonb;
   END IF;
   RETURN NEW;
 END;

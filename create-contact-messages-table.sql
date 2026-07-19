@@ -27,20 +27,20 @@ CREATE POLICY "Anyone can submit contact messages"
   TO anon, authenticated
   WITH CHECK (true);
 
--- Pouze authenticated uživatelé mohou číst zprávy
--- (Později můžeš zpřísnit na konkrétní admin emaily)
-CREATE POLICY "Authenticated users can read contact messages"
+-- Číst a upravovat zprávy smí pouze admin s rolí v app_metadata.
+CREATE POLICY "Only admins can read contact messages"
   ON contact_messages
   FOR SELECT
   TO authenticated
-  USING (true);
+  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
 -- Pouze authenticated uživatelé mohou upravovat status
-CREATE POLICY "Authenticated users can update contact messages"
+CREATE POLICY "Only admins can update contact messages"
   ON contact_messages
   FOR UPDATE
   TO authenticated
-  USING (true);
+  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+  WITH CHECK ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
 -- Trigger pro aktualizaci updated_at
 CREATE OR REPLACE FUNCTION update_contact_messages_updated_at()
