@@ -8,7 +8,6 @@
   <!-- Preconnect pro rychlejší načítání -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
   
   <!-- Primary Meta Tags -->
   <title>Feed restaurací – GURMAO | Prohlížej podle nálady</title>
@@ -31,24 +30,8 @@
   <meta name="twitter:description" content="Kurátorovaný feed gastro zážitků podle tvé nálady." />
   <meta name="twitter:image" content="https://gurmao.cz/og-image.jpg" />
 
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            gurmaoblack: '#0b0b0d',
-            gurmaogold: '#d4af37',
-            gurmaored: '#8b1d18',
-          },
-          boxShadow: {
-            glow: '0 0 40px rgba(212,175,55,0.35)'
-          }
-        }
-      }
-    }
-  </script>
+  <!-- Compiled Tailwind CSS -->
+  <link rel="stylesheet" href="tailwind.min.css">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -588,7 +571,7 @@
               <div class="max-w-2xl mx-auto space-y-6">
                 <!-- Image -->
                 <div class="aspect-[4/3] rounded-2xl overflow-hidden">
-                  <img src="${x.img}" alt="${x.name}" class="w-full h-full object-cover" />
+                  <img src="${x.img}" alt="${x.name}" loading="lazy" decoding="async" class="w-full h-full object-cover" />
                 </div>
                 
                 <!-- Info Cards -->

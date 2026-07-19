@@ -285,7 +285,7 @@ async function loadSimilarRestaurants(vibe, currentSlug) {
         const imageUrl = safeImageUrl(r.image_url || r.image || r.photo_url, fallbackRestaurantImage);
         return `
           <a href="restaurace-detail.html?id=${encodeURIComponent(r.slug)}" class="block rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
-            <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(r.name)}" class="aspect-[3/4] w-full object-cover" />
+            <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(r.name)}" loading="lazy" decoding="async" class="aspect-[3/4] w-full object-cover" />
             <div class="p-5">
               <div class="text-sm text-gurmaogold mb-1">${escapeHtml(r.vibe || '')}</div>
               <div class="text-xl font-semibold mb-1">${escapeHtml(r.name)}</div>

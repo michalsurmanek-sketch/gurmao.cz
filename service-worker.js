@@ -1,8 +1,8 @@
 // GURMAO.cz - Service Worker for PWA
 // Poskytuje offline funkčnost a cache strategii
 
-const CACHE_NAME = 'gurmao-v1.0.1';
-const RUNTIME_CACHE = 'gurmao-runtime';
+const CACHE_NAME = 'gurmao-v1.0.2';
+const RUNTIME_CACHE = 'gurmao-runtime-v1.0.2';
 
 // Statické assety k okamžitému cachování
 const PRECACHE_ASSETS = [
@@ -12,6 +12,7 @@ const PRECACHE_ASSETS = [
   '/restaurace.html',
   '/mapa.html',
   '/global.css',
+  '/tailwind.min.css',
   '/app.js',
   '/favicon.svg',
   '/offline.html' // Fallback stránka
@@ -74,6 +75,13 @@ self.addEventListener('fetch', (event) => {
 
   // Skip non-GET requests
   if (request.method !== 'GET') {
+    return;
+  }
+
+  // Never cache authenticated Supabase API responses. Storage images are safe
+  // to handle through the image strategy below.
+  if (url.hostname.endsWith('.supabase.co') && request.destination !== 'image') {
+    event.respondWith(fetch(request));
     return;
   }
 
