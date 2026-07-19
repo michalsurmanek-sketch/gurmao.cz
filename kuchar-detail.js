@@ -63,15 +63,27 @@ async function loadChefDetail() {
 
 // Populate chef detail page
 function populateChefDetail(chef) {
+  const canonicalUrl = new URL('kuchar-detail.html', window.location.origin);
+  canonicalUrl.searchParams.set('id', chef.slug || chef.id);
+  const description = chef.bio || chef.description || `${chef.name} – kuchař na GURMAO`;
+  const imageUrl = safeImageUrl(chef.image_url, `${window.location.origin}/og-image.jpg`);
+
   // Meta tags
   document.getElementById('pageTitle').textContent = `${chef.name} – GURMAO`;
-  document.getElementById('pageDescription').content = chef.bio || chef.description || 'Detail kuchaře';
+  document.getElementById('pageDescription').content = description;
   document.getElementById('ogTitle').content = `${chef.name} – GURMAO`;
-  document.getElementById('ogDescription').content = chef.bio || chef.description || '';
+  document.getElementById('ogDescription').content = description;
+  document.getElementById('ogUrl').content = canonicalUrl.href;
+  document.getElementById('ogImage').content = imageUrl;
+  document.getElementById('twitterTitle').content = `${chef.name} – GURMAO`;
+  document.getElementById('twitterDescription').content = description;
+  document.getElementById('twitterImage').content = imageUrl;
+  document.getElementById('canonicalUrl').href = canonicalUrl.href;
+  updateChefStructuredData(chef, canonicalUrl.href, imageUrl, description);
 
   // Hero section
   if (chef.image_url) {
-    document.getElementById('heroImage').style.backgroundImage = `url('${safeImageUrl(chef.image_url, '')}')`;
+    document.getElementById('heroImage').style.backgroundImage = `url('${imageUrl}')`;
   }
 
   // Chef info
@@ -127,6 +139,34 @@ function populateChefDetail(chef) {
     `).join('');
     document.getElementById('chefSpecialties').innerHTML = specialtiesHTML;
   }
+}
+
+function updateChefStructuredData(chef, url, imageUrl, description) {
+  const restaurant = chef.restaurants;
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: chef.name,
+    description,
+    image: imageUrl,
+    url,
+    jobTitle: chef.role || 'Kuchař',
+    knowsAbout: [chef.signature_style, chef.favorite_cuisines].filter(Boolean),
+    worksFor: restaurant ? {
+      '@type': 'Restaurant',
+      name: restaurant.name,
+      url: restaurant.slug ? `${window.location.origin}/restaurace-detail.html?id=${encodeURIComponent(restaurant.slug)}` : undefined
+    } : undefined
+  };
+
+  let script = document.getElementById('chefStructuredData');
+  if (!script) {
+    script = document.createElement('script');
+    script.id = 'chefStructuredData';
+    script.type = 'application/ld+json';
+    document.head.appendChild(script);
+  }
+  script.textContent = JSON.stringify(data);
 }
 
 // Load related restaurants
