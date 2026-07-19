@@ -106,7 +106,7 @@ V Supabase → SQL Editor:
 
 ```sql
 UPDATE auth.users 
-SET raw_user_meta_data = raw_user_meta_data || '{"role": "admin"}'::jsonb 
+SET raw_app_meta_data = COALESCE(raw_app_meta_data, '{}'::jsonb) || '{"role": "admin"}'::jsonb
 WHERE email = 'michalsurmanek@seznam.cz';
 ```
 
