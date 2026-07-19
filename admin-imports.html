@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Importy restaurací | GURMAO Admin</title>
+  <link rel="stylesheet" href="global.css">
+  <link rel="stylesheet" href="toast.css">
+  <link rel="stylesheet" href="admin-imports.css">
+</head>
+<body class="admin-imports-page">
+  <script type="module" src="admin-guard.js"></script>
+  <script src="toast.js"></script>
+
+  <header class="imports-header">
+    <div class="imports-header__inner">
+      <div class="imports-header__brand">
+        <a href="admin.html">← Admin panel</a>
+        <strong>📥 Importy restaurací</strong>
+        <small>Neveřejná kontrolní fronta</small>
+      </div>
+      <div class="imports-header__actions">
+        <a class="btn desktop-only" href="admin-contact.html">📬 Zprávy</a>
+        <button class="btn" id="refreshBtn" type="button">↻ Obnovit</button>
+        <button class="btn btn-danger" id="logoutBtn" type="button">Odhlásit</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="imports-main">
+    <section class="imports-hero">
+      <div>
+        <h1>Kontrola nových restaurací</h1>
+        <p>
+          Kandidáti z automatického importu se na webu neukážou, dokud je zde
+          ručně neschválíš, nedoplníš atmosféru a krátký popis a nezveřejníš.
+        </p>
+      </div>
+      <div class="imports-toolbar">
+        <a class="btn" href="IMPORT_CZECH_RESTAURANTS.md">Návod</a>
+      </div>
+    </section>
+
+    <section class="stats-grid" aria-label="Statistiky importů">
+      <article class="stat-card"><span>Celkem</span><strong id="statTotal">–</strong></article>
+      <article class="stat-card"><span>Nové</span><strong id="statNew">–</strong></article>
+      <article class="stat-card"><span>Duplicity</span><strong id="statDuplicates">–</strong></article>
+      <article class="stat-card"><span>Schválené</span><strong id="statApproved">–</strong></article>
+      <article class="stat-card"><span>Zveřejněné</span><strong id="statImported">–</strong></article>
+    </section>
+
+    <form class="filters-panel" id="filtersForm">
+      <div class="field">
+        <label for="searchInput">Hledat restauraci nebo město</label>
+        <input id="searchInput" type="search" maxlength="80" placeholder="Např. Bistro, Zlín…" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="statusFilter">Stav</label>
+        <select id="statusFilter">
+          <option value="review">Čeká na kontrolu</option>
+          <option value="new">Pouze nové</option>
+          <option value="probable_duplicate">Možné duplicity</option>
+          <option value="approved">Schválené</option>
+          <option value="rejected">Odmítnuté</option>
+          <option value="imported">Zveřejněné</option>
+          <option value="all">Všechny</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="regionFilter">Kraj</label>
+        <select id="regionFilter">
+          <option value="all">Všechny kraje</option>
+        </select>
+      </div>
+    </form>
+
+    <div class="info-banner" id="infoBanner">
+      Bod 3 nic nezveřejňuje automaticky. Tlačítko „Zveřejnit“ se objeví až po schválení kandidáta.
+    </div>
+    <div class="info-banner is-error hidden" id="errorBanner" role="alert"></div>
+
+    <div class="loading-state" id="loadingState">Načítám kandidáty…</div>
+    <div class="candidate-list" id="candidateList"></div>
+    <div class="empty-state hidden" id="emptyState">Pro zvolené filtry tu nejsou žádní kandidáti.</div>
+
+    <nav class="pagination hidden" id="pagination" aria-label="Stránkování kandidátů">
+      <button class="btn" id="previousPage" type="button">← Předchozí</button>
+      <span id="pageLabel">Strana 1</span>
+      <button class="btn" id="nextPage" type="button">Další →</button>
+    </nav>
+  </main>
+
+  <dialog class="publish-dialog" id="publishDialog">
+    <div class="publish-dialog__inner">
+      <h2>Zveřejnit restauraci</h2>
+      <p id="publishCandidateName"></p>
+      <form class="publish-form" id="publishForm">
+        <div class="field">
+          <label for="vibeInput">Atmosféra Gurmao *</label>
+          <select id="vibeInput" required>
+            <option value="">Vyber atmosféru</option>
+            <option value="🍷 LUXE">🍷 LUXE – elegance a servis</option>
+            <option value="🔥 DRAMA">🔥 DRAMA – výrazné chutě</option>
+            <option value="🌮 CHAOS">🌮 CHAOS – street food a odvaha</option>
+            <option value="🌿 PURE">🌿 PURE – lehkost a příroda</option>
+            <option value="🖤 DARK">🖤 DARK – večer a intimita</option>
+            <option value="🌊 CALM">🌊 CALM – klid a pohoda</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="descriptionInput">Krátký pravdivý popis *</label>
+          <textarea id="descriptionInput" maxlength="500" required placeholder="Napiš stručně, čím je restaurace zajímavá. Nevymýšlej neověřené informace."></textarea>
+        </div>
+        <div class="field">
+          <label for="imageInput">URL obrázku</label>
+          <input id="imageInput" type="url" maxlength="1000" placeholder="https://…">
+        </div>
+        <label class="duplicate-confirmation hidden" id="duplicateConfirmation">
+          <input id="forceDuplicateInput" type="checkbox">
+          <span>Možnou duplicitu jsem ručně zkontroloval a opravdu chci vytvořit nový podnik.</span>
+        </label>
+        <div class="modal-actions">
+          <button class="btn" id="cancelPublish" type="button">Zrušit</button>
+          <button class="btn btn-primary" id="confirmPublish" type="submit">Zveřejnit na Gurmao.cz</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <script type="module" src="admin-imports.js"></script>
+</body>
+</html>
