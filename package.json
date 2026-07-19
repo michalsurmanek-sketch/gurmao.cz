@@ -5,6 +5,7 @@
   "main": "admin-guard.js",
   "scripts": {
     "build:css": "tailwindcss -i tailwind-input.css -o tailwind.min.css --minify",
+    "build:sitemap": "node scripts/generate-sitemap.mjs",
     "test": "npm run build:css"
   },
   "repository": {

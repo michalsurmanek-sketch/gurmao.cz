@@ -95,14 +95,25 @@ async function loadRestaurantDetail() {
 
 // Populate restaurant detail into HTML
 function populateRestaurantDetail(restaurant) {
+  const canonicalUrl = new URL('restaurace-detail.html', window.location.origin);
+  canonicalUrl.searchParams.set('id', restaurant.slug || restaurant.id);
+  const description = restaurant.description || `${restaurant.name} v ${restaurant.city || 'ČR'}`;
+  const imageUrl = safeImageUrl(restaurant.image_url || restaurant.image || restaurant.photo_url, `${window.location.origin}/og-image.jpg`);
+
   // Update page title and meta
   document.getElementById('pageTitle').textContent = `${restaurant.name} – GURMAO`;
-  document.getElementById('pageDescription').content = restaurant.description || `${restaurant.name} v ${restaurant.city}`;
+  document.getElementById('pageDescription').content = description;
   document.getElementById('ogTitle').content = `${restaurant.name} – GURMAO`;
-  document.getElementById('ogDescription').content = restaurant.description || `${restaurant.name} v ${restaurant.city}`;
+  document.getElementById('ogDescription').content = description;
+  document.getElementById('ogUrl').content = canonicalUrl.href;
+  document.getElementById('ogImage').content = imageUrl;
+  document.getElementById('twitterTitle').content = `${restaurant.name} – GURMAO`;
+  document.getElementById('twitterDescription').content = description;
+  document.getElementById('twitterImage').content = imageUrl;
+  document.getElementById('canonicalUrl').href = canonicalUrl.href;
+  updateRestaurantStructuredData(restaurant, canonicalUrl.href, imageUrl, description);
   
   // Hero section
-  const imageUrl = safeImageUrl(restaurant.image_url || restaurant.image || restaurant.photo_url, fallbackRestaurantImage);
   document.getElementById('heroImage').style.backgroundImage = `url('${imageUrl}')`;
   
   // Vibe label
@@ -240,6 +251,41 @@ function populateRestaurantDetail(restaurant) {
   
   // Initialize share functionality
   initializeShareButton(restaurant);
+}
+
+function updateRestaurantStructuredData(restaurant, url, imageUrl, description) {
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'Restaurant',
+    name: restaurant.name,
+    description,
+    url,
+    image: imageUrl,
+    telephone: restaurant.phone || undefined,
+    email: restaurant.email || undefined,
+    servesCuisine: restaurant.cuisine_type || undefined,
+    priceRange: restaurant.price_range || undefined,
+    address: (restaurant.address || restaurant.city) ? {
+      '@type': 'PostalAddress',
+      streetAddress: restaurant.address || undefined,
+      addressLocality: restaurant.city || undefined,
+      addressCountry: 'CZ'
+    } : undefined,
+    geo: (restaurant.latitude && restaurant.longitude) ? {
+      '@type': 'GeoCoordinates',
+      latitude: Number(restaurant.latitude),
+      longitude: Number(restaurant.longitude)
+    } : undefined
+  };
+
+  let script = document.getElementById('restaurantStructuredData');
+  if (!script) {
+    script = document.createElement('script');
+    script.id = 'restaurantStructuredData';
+    script.type = 'application/ld+json';
+    document.head.appendChild(script);
+  }
+  script.textContent = JSON.stringify(data);
 }
 
 // Initialize share button
