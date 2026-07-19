@@ -249,12 +249,13 @@
     .notification-item:last-child {
       border-bottom: none;
     }
+    html:not(.admin-authorized) body { visibility: hidden; }
   </style>
 </head>
 
 <body class="bg-gurmaoblack text-gray-100 min-h-screen">
   <!-- Admin Guard -->
-  <script src="admin-guard.js"></script>
+  <script type="module" src="admin-guard.js"></script>
   
   <!-- Toast Container -->
   <div id="toast-container"></div>
