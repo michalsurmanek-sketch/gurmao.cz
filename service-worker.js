@@ -1,7 +1,7 @@
 // GURMAO.cz - Service Worker for PWA
 // Poskytuje offline funkčnost a cache strategii
 
-const CACHE_NAME = 'gurmao-v1.0.0';
+const CACHE_NAME = 'gurmao-v1.0.1';
 const RUNTIME_CACHE = 'gurmao-runtime';
 
 // Statické assety k okamžitému cachování
@@ -11,8 +11,8 @@ const PRECACHE_ASSETS = [
   '/feed.html',
   '/restaurace.html',
   '/mapa.html',
-  '/dist/css/output.css',
-  '/dist/js/app.js',
+  '/global.css',
+  '/app.js',
   '/favicon.svg',
   '/offline.html' // Fallback stránka
 ];
