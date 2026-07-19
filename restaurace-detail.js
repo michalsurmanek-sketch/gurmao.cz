@@ -1,5 +1,8 @@
 // Import Supabase client
 import { supabase } from './supabase-client.js';
+import { escapeHtml, safeEmailUrl, safeImageUrl, safePhoneUrl, safeWebUrl } from './security-utils.js';
+
+const fallbackRestaurantImage = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800';
 
 // Get restaurant slug from URL parameter
 const urlParams = new URLSearchParams(window.location.search);
@@ -99,14 +102,14 @@ function populateRestaurantDetail(restaurant) {
   document.getElementById('ogDescription').content = restaurant.description || `${restaurant.name} v ${restaurant.city}`;
   
   // Hero section
-  const imageUrl = restaurant.image_url || restaurant.image || restaurant.photo_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800';
+  const imageUrl = safeImageUrl(restaurant.image_url || restaurant.image || restaurant.photo_url, fallbackRestaurantImage);
   document.getElementById('heroImage').style.backgroundImage = `url('${imageUrl}')`;
   
   // Vibe label
   const vibe = restaurant.vibe || '';
   const vibeKey = Object.keys(vibeConfig).find(key => vibe.includes(key));
   const vibeInfo = vibeKey ? vibeConfig[vibeKey] : { emoji: '📍', label: 'Restaurace' };
-  document.getElementById('vibeLabel').innerHTML = `${vibeInfo.emoji} ${vibeInfo.label}${restaurant.cuisine_type ? ' · ' + restaurant.cuisine_type : ''}`;
+  document.getElementById('vibeLabel').textContent = `${vibeInfo.emoji} ${vibeInfo.label}${restaurant.cuisine_type ? ' · ' + restaurant.cuisine_type : ''}`;
   
   // Restaurant name and description
   document.getElementById('restaurantName').textContent = restaurant.name;
@@ -117,7 +120,7 @@ function populateRestaurantDetail(restaurant) {
   if (restaurant.city) metaInfo.push(`📍 ${restaurant.city}`);
   if (restaurant.price_range) metaInfo.push(`💰 ${restaurant.price_range}`);
   if (restaurant.cuisine_type) metaInfo.push(`🍽️ ${restaurant.cuisine_type}`);
-  document.getElementById('restaurantMetaInfo').innerHTML = metaInfo.map(info => `<span>${info}</span>`).join('');
+  document.getElementById('restaurantMetaInfo').innerHTML = metaInfo.map(info => `<span>${escapeHtml(info)}</span>`).join('');
   
   // Save button
   const saveBtn = document.getElementById('saveButton');
@@ -134,7 +137,7 @@ function populateRestaurantDetail(restaurant) {
       <span class="text-xl">${info.icon}</span>
       <div>
         <div class="text-white/60 text-xs mb-1">${info.label}</div>
-        <div class="text-white">${info.value}</div>
+        <div class="text-white">${escapeHtml(info.value)}</div>
       </div>
     </div>
   `).join('');
@@ -148,7 +151,7 @@ function populateRestaurantDetail(restaurant) {
       icon: '👨‍🍳', 
       label: 'Jméno', 
       value: chef.name,
-      link: `kuchar-detail.html?id=${chef.slug}`
+      link: `kuchar-detail.html?id=${encodeURIComponent(chef.slug)}`
     });
     
     if (chef.signature_style) {
@@ -165,8 +168,8 @@ function populateRestaurantDetail(restaurant) {
         <div class="flex-1 min-w-0">
           <div class="text-white/60 text-xs mb-1">${info.label}</div>
           ${info.link ? 
-            `<a href="${info.link}" class="text-white hover:text-gurmaogold transition break-words">${info.value}</a>` :
-            `<div class="text-white break-words">${info.value}</div>`
+            `<a href="${info.link}" class="text-white hover:text-gurmaogold transition break-words">${escapeHtml(info.value)}</a>` :
+            `<div class="text-white break-words">${escapeHtml(info.value)}</div>`
           }
         </div>
       </div>
@@ -177,16 +180,16 @@ function populateRestaurantDetail(restaurant) {
   
   // Contact Info
   const contactInfo = [];
-  if (restaurant.phone) contactInfo.push({ icon: '📞', label: 'Telefon', value: restaurant.phone, link: `tel:${restaurant.phone}` });
-  if (restaurant.email) contactInfo.push({ icon: '✉️', label: 'Email', value: restaurant.email, link: `mailto:${restaurant.email}` });
-  if (restaurant.website) contactInfo.push({ icon: '🌐', label: 'Web', value: 'Navštívit web', link: restaurant.website });
+  if (restaurant.phone) contactInfo.push({ icon: '📞', label: 'Telefon', value: restaurant.phone, link: safePhoneUrl(restaurant.phone) });
+  if (restaurant.email) contactInfo.push({ icon: '✉️', label: 'Email', value: restaurant.email, link: safeEmailUrl(restaurant.email) });
+  if (restaurant.website) contactInfo.push({ icon: '🌐', label: 'Web', value: 'Navštívit web', link: safeWebUrl(restaurant.website) });
   
   document.getElementById('contactInfo').innerHTML = contactInfo.map(info => `
     <div class="flex items-start gap-3">
       <span class="text-xl">${info.icon}</span>
       <div>
         <div class="text-white/60 text-xs mb-1">${info.label}</div>
-        <a href="${info.link}" target="_blank" rel="noopener" class="text-white hover:text-gurmaogold transition">${info.value}</a>
+        <a href="${escapeHtml(info.link)}" target="_blank" rel="noopener" class="text-white hover:text-gurmaogold transition">${escapeHtml(info.value)}</a>
       </div>
     </div>
   `).join('');
@@ -206,8 +209,8 @@ function populateRestaurantDetail(restaurant) {
       <div>
         <div class="text-white/60 text-xs mb-1">${info.label}</div>
         ${info.link ? 
-          `<a href="${info.link}" target="_blank" rel="noopener" class="text-white hover:text-gurmaogold transition">${info.value}</a>` :
-          `<div class="text-white">${info.value}</div>`
+          `<a href="${escapeHtml(info.link)}" target="_blank" rel="noopener" class="text-white hover:text-gurmaogold transition">${escapeHtml(info.value)}</a>` :
+          `<div class="text-white">${escapeHtml(info.value)}</div>`
         }
       </div>
     </div>
@@ -223,7 +226,7 @@ function populateRestaurantDetail(restaurant) {
   if (restaurant.specialty) features.push(restaurant.specialty);
   
   document.getElementById('featuresContainer').innerHTML = features.map(feature => `
-    <span class="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-sm">${feature}</span>
+    <span class="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-sm">${escapeHtml(feature)}</span>
   `).join('');
   
   // Show main content, hide loading
@@ -279,14 +282,14 @@ async function loadSimilarRestaurants(vibe, currentSlug) {
       document.getElementById('similarSection').classList.remove('hidden');
       
       document.getElementById('similarRestaurants').innerHTML = restaurants.map(r => {
-        const imageUrl = r.image_url || r.image || r.photo_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800';
+        const imageUrl = safeImageUrl(r.image_url || r.image || r.photo_url, fallbackRestaurantImage);
         return `
-          <a href="restaurace-detail.html?id=${r.slug}" class="block rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
-            <img src="${imageUrl}" alt="${r.name}" class="aspect-[3/4] w-full object-cover" />
+          <a href="restaurace-detail.html?id=${encodeURIComponent(r.slug)}" class="block rounded-3xl overflow-hidden bg-white/5 hover:bg-white/10 transition">
+            <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(r.name)}" class="aspect-[3/4] w-full object-cover" />
             <div class="p-5">
-              <div class="text-sm text-gurmaogold mb-1">${r.vibe || ''}</div>
-              <div class="text-xl font-semibold mb-1">${r.name}</div>
-              <div class="text-white/60 text-sm">${r.city || ''}</div>
+              <div class="text-sm text-gurmaogold mb-1">${escapeHtml(r.vibe || '')}</div>
+              <div class="text-xl font-semibold mb-1">${escapeHtml(r.name)}</div>
+              <div class="text-white/60 text-sm">${escapeHtml(r.city || '')}</div>
             </div>
           </a>
         `;
@@ -430,7 +433,7 @@ async function loadReviews() {
     document.getElementById('reviewsList').classList.remove('hidden');
     
     // Calculate average rating
-    const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+    const avgRating = reviews.reduce((sum, r) => sum + Math.min(5, Math.max(1, Number(r.rating) || 1)), 0) / reviews.length;
     document.getElementById('avgRating').textContent = avgRating.toFixed(1);
     document.getElementById('avgStars').textContent = '★'.repeat(Math.round(avgRating)) + '☆'.repeat(5 - Math.round(avgRating));
     document.getElementById('reviewCount').textContent = `${reviews.length} ${reviews.length === 1 ? 'recenze' : reviews.length < 5 ? 'recenze' : 'recenzí'}`;
@@ -443,19 +446,20 @@ async function loadReviews() {
         day: 'numeric'
       });
       
+      const rating = Math.min(5, Math.max(1, Number(review.rating) || 1));
       return `
         <div class="bg-white/5 backdrop-blur border border-white/10 rounded-3xl p-6">
           <div class="flex items-start justify-between mb-4">
             <div>
               <div class="flex items-center gap-2 mb-1">
-                <span class="font-semibold">${review.user_name || 'Anonym'}</span>
-                <span class="text-gurmaogold text-sm">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</span>
+                <span class="font-semibold">${escapeHtml(review.user_name || 'Anonym')}</span>
+                <span class="text-gurmaogold text-sm">${'★'.repeat(rating)}${'☆'.repeat(5 - rating)}</span>
               </div>
               <div class="text-xs text-white/60">${date}</div>
             </div>
           </div>
-          ${review.title ? `<h4 class="font-semibold mb-2">${review.title}</h4>` : ''}
-          <p class="text-white/80 leading-relaxed">${review.comment}</p>
+          ${review.title ? `<h4 class="font-semibold mb-2">${escapeHtml(review.title)}</h4>` : ''}
+          <p class="text-white/80 leading-relaxed">${escapeHtml(review.comment)}</p>
         </div>
       `;
     }).join('');
