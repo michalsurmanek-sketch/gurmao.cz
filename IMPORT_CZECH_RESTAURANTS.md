@@ -9,8 +9,9 @@ ukládá do neveřejné tabulky `restaurant_import_candidates`; veřejná tabulk
 
 1. V Supabase SQL Editoru spusťte `czech-republic-database.sql` z bodu 1.
 2. Potom spusťte `czech-import-pipeline.sql`.
-3. V GitHub repozitáři otevřete **Settings → Secrets and variables → Actions**.
-4. Přidejte `SUPABASE_URL` a `SUPABASE_SERVICE_ROLE_KEY`.
+3. Pro administrační schvalování spusťte `czech-import-review.sql`.
+4. V GitHub repozitáři otevřete **Settings → Secrets and variables → Actions**.
+5. Přidejte `SUPABASE_URL` a `SUPABASE_SERVICE_ROLE_KEY`.
 
 Servisní klíč nikdy nevkládejte do zdrojového kódu ani do veřejného frontendového
 JavaScriptu.
@@ -25,6 +26,17 @@ JavaScriptu.
 
 Když report vypadá správně, spusťte stejný běh znovu se zapnutým uložením do
 čekárny. Ani tento krok nic nezveřejní na Gurmao.cz.
+
+## Kontrola a zveřejnění
+
+Po uložení kandidátů otevřete `admin-imports.html`. Administrátor zde vidí skóre
+kvality, zdrojová data a možné duplicity. Bezpečný postup má dva samostatné kroky:
+
+1. kandidáta zkontrolovat a schválit,
+2. vybrat atmosféru Gurmao, napsat pravdivý popis a teprve potom zveřejnit.
+
+Zveřejnění probíhá databázovou funkcí, která znovu ověří administrátorskou roli,
+schválený stav a duplicitu. Běžný přihlášený uživatel importní frontu neuvidí.
 
 ## Automatický režim
 
