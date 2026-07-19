@@ -258,7 +258,10 @@
       <input 
         type="text" 
         id="searchInput" 
-        placeholder="Hledat podle města nebo názvu restaurace..." 
+        maxlength="80"
+        autocomplete="off"
+        aria-label="Hledat podle jídla, kuchyně, města nebo názvu restaurace"
+        placeholder="Hledat jídlo, kuchyni, město nebo restauraci..."
         class="w-full min-w-0 flex-1 px-6 py-4 rounded-2xl bg-white/5 border border-white/15 text-white placeholder-white/40 focus:border-gurmaogold focus:outline-none transition"
       />
       <button 
@@ -276,30 +279,30 @@
     
     <!-- Vibe Filters -->
     <div id="filters" class="flex flex-wrap gap-3 mb-4">
-      <button class="vibe-pill all is-active">
+      <button class="vibe-pill all is-active" data-vibe="all">
         <div class="vibe-name">Vše</div>
       </button>
-      <button class="vibe-pill luxe">
+      <button class="vibe-pill luxe" data-vibe="luxe">
         <div class="vibe-ico">🍷</div>
         <div class="vibe-name">LUXE</div>
       </button>
-      <button class="vibe-pill drama">
+      <button class="vibe-pill drama" data-vibe="drama">
         <div class="vibe-ico">🔥</div>
         <div class="vibe-name">DRAMA</div>
       </button>
-      <button class="vibe-pill chaos">
+      <button class="vibe-pill chaos" data-vibe="chaos">
         <div class="vibe-ico">🌮</div>
         <div class="vibe-name">CHAOS</div>
       </button>
-      <button class="vibe-pill pure">
+      <button class="vibe-pill pure" data-vibe="pure">
         <div class="vibe-ico">🌿</div>
         <div class="vibe-name">PURE</div>
       </button>
-      <button class="vibe-pill dark">
+      <button class="vibe-pill dark" data-vibe="dark">
         <div class="vibe-ico">🌙</div>
         <div class="vibe-name">DARK</div>
       </button>
-      <button class="vibe-pill calm">
+      <button class="vibe-pill calm" data-vibe="calm">
         <div class="vibe-ico">🌊</div>
         <div class="vibe-name">CALM</div>
       </button>
@@ -312,7 +315,7 @@
       <button class="per-page-btn px-4 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-count="24">24</button>
       <button class="per-page-btn px-4 py-2 rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition" data-count="48">48</button>
     </div>
-    <div id="resultCount" class="text-sm text-white/60 mt-2"></div>
+    <div id="resultCount" class="text-sm text-white/60 mt-2" aria-live="polite"></div>
   </div>
 </section>
 
