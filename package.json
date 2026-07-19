@@ -4,7 +4,8 @@
   "description": "**Nejez. Prožij.**",
   "main": "admin-guard.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:css": "tailwindcss -i tailwind-input.css -o tailwind.min.css --minify",
+    "test": "npm run build:css"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,7 @@
   },
   "homepage": "https://github.com/michalsurmanek-sketch/gurmao.cz#readme",
   "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
     "autoprefixer": "^10.4.23",
     "esbuild": "^0.27.2",
     "postcss": "^8.5.6",

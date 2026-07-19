@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@source "./*.html";
+@source "./*.js";
+
+@theme {
+  --color-gurmaoblack: #0b0b0d;
+  --color-gurmaogold: #d4af37;
+  --color-gurmaored: #8b1d18;
+  --shadow-glow: 0 0 40px rgba(212, 175, 55, 0.35);
+}

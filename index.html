@@ -34,25 +34,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="dns-prefetch" href="https://images.unsplash.com">
+  <link rel="preload" as="image" href="gurmao-hero.webp" type="image/webp" fetchpriority="high">
 
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            gurmaoblack: '#0b0b0d',
-            gurmaogold: '#d4af37',
-            gurmaored: '#8b1d18',
-          },
-          boxShadow: {
-            glow: '0 0 40px rgba(212,175,55,0.35)'
-          }
-        }
-      }
-    }
-  </script>
+  <!-- Compiled Tailwind CSS -->
+  <link rel="stylesheet" href="tailwind.min.css">
 
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -198,7 +183,7 @@
     .hero-bg{
       background:
         linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
-        url("gurmao.png") center/cover no-repeat;
+        url("gurmao-hero.webp") center/cover no-repeat;
       background-attachment: fixed;
     }
   </style>
