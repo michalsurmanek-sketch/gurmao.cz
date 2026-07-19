@@ -1,5 +1,93 @@
 /* Global styles for GURMAO */
 
+html {
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+img,
+video,
+svg {
+  max-width: 100%;
+}
+
+/* Shared mobile navigation */
+@media (max-width: 767px) {
+  #menuBtn,
+  #menuClose,
+  #mobileMenu a,
+  #mobileMenu button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  #menuBtn,
+  #menuClose {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    touch-action: manipulation;
+  }
+
+  #menuBackdrop {
+    overscroll-behavior: contain;
+  }
+
+  #mobileMenu {
+    top: var(--gurmao-header-height, 65px) !important;
+    height: calc(100dvh - var(--gurmao-header-height, 65px));
+    padding-bottom: env(safe-area-inset-bottom);
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #mobileMenu > div {
+    width: auto;
+    max-width: 32rem;
+    margin-left: max(1rem, env(safe-area-inset-left));
+    margin-right: max(1rem, env(safe-area-inset-right));
+    margin-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  #mobileMenu nav a,
+  #mobileMenu nav button {
+    display: flex;
+    align-items: center;
+  }
+
+  html.gurmao-menu-open,
+  html.gurmao-menu-open body {
+    overscroll-behavior: none;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Prevent text selection on static elements */
 body {
   -webkit-user-select: none;

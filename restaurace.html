@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="nav-search.css">
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="global.css">
   <script>
     tailwind.config = {
       theme: {
@@ -252,7 +253,7 @@
 <!-- HERO -->
 <section class="py-20 border-b border-white/10">
   <div class="max-w-6xl mx-auto px-6">
-    <h1 class="text-5xl md:text-6xl mb-6">Restaurace</h1>
+    <h1 class="text-4xl sm:text-5xl md:text-6xl mb-6">Restaurace</h1>
     <p class="text-white/70 max-w-xl">
       Ne všechny. Jen ty, které mají důvod existovat.
     </p>
@@ -263,16 +264,16 @@
 <section class="py-10 border-b border-white/10">
   <div class="max-w-6xl mx-auto px-6">
     <!-- Search Box with Location -->
-    <div class="mb-6 flex gap-3">
+    <div class="mb-6 flex flex-col sm:flex-row gap-3">
       <input 
         type="text" 
         id="searchInput" 
         placeholder="Hledat podle města nebo názvu restaurace..." 
-        class="flex-1 px-6 py-4 rounded-2xl bg-white/5 border border-white/15 text-white placeholder-white/40 focus:border-gurmaogold focus:outline-none transition"
+        class="w-full min-w-0 flex-1 px-6 py-4 rounded-2xl bg-white/5 border border-white/15 text-white placeholder-white/40 focus:border-gurmaogold focus:outline-none transition"
       />
       <button 
         id="locationBtn" 
-        class="px-6 py-4 rounded-2xl bg-white/5 border border-white/15 hover:border-gurmaogold transition flex items-center gap-2 whitespace-nowrap"
+        class="w-full sm:w-auto px-6 py-4 rounded-2xl bg-white/5 border border-white/15 hover:border-gurmaogold transition flex items-center justify-center gap-2 whitespace-nowrap"
         title="Najít nejbližší restaurace"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
