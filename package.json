@@ -6,7 +6,8 @@
   "scripts": {
     "build:css": "tailwindcss -i tailwind-input.css -o tailwind.min.css --minify",
     "build:sitemap": "node scripts/generate-sitemap.mjs",
-    "test": "npm run build:css"
+    "test:import": "node --test scripts/import-czech-restaurants.test.mjs",
+    "test": "npm run build:css && npm run test:import"
   },
   "repository": {
     "type": "git",
