@@ -88,6 +88,6 @@
   }
 
   if (path.endsWith('/ai.html')) {
-    loadEnhancement('ai-redesign.css', 'ai-redesign.js', '1');
+    loadEnhancement('ai-redesign.css', 'ai-redesign.js', '2');
   }
 })();
