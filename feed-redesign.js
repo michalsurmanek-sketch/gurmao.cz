@@ -1,4 +1,4 @@
-(() => {
+function applyFeedRedesign() {
   const path = window.location.pathname.replace(/\/+$/, '');
   if (!path.endsWith('/feed.html')) return;
 
@@ -23,7 +23,7 @@
     if (actions) actions.classList.add('feed-hero-actions');
   }
 
-  if (filterRow) {
+  if (filterRow && !filterRow.closest('.feed-filter-panel')) {
     const panel = document.createElement('section');
     panel.className = 'feed-filter-panel';
     filterRow.parentNode.insertBefore(panel, filterRow);
@@ -43,7 +43,14 @@
     if (text && !text.startsWith('✦')) resultCount.textContent = `✦ ${text}`;
   };
 
-  const observer = new MutationObserver(updateCount);
-  if (resultCount) observer.observe(resultCount, { childList: true, characterData: true, subtree: true });
+  if (resultCount) {
+    new MutationObserver(updateCount).observe(resultCount, { childList: true, characterData: true, subtree: true });
+  }
   updateCount();
-})();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', applyFeedRedesign, { once: true });
+} else {
+  applyFeedRedesign();
+}
