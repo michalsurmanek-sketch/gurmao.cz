@@ -1,4 +1,46 @@
 // Vizuální a ovládací vrstva katalogu restaurací.
+function applyRestaurantSort(sortValue) {
+  const list = document.getElementById('restaurantsList');
+  if (!list) return;
+
+  const cards = [...list.querySelectorAll(':scope > .card-wrapper')];
+  cards.forEach((card, index) => {
+    if (!card.dataset.originalOrder) card.dataset.originalOrder = String(index);
+  });
+
+  const getName = card => (card.querySelector('h3')?.textContent || '').trim();
+  const collator = new Intl.Collator('cs', { sensitivity: 'base' });
+
+  cards.sort((a, b) => {
+    if (sortValue === 'name-asc') return collator.compare(getName(a), getName(b));
+    if (sortValue === 'name-desc') return collator.compare(getName(b), getName(a));
+    return Number(a.dataset.originalOrder) - Number(b.dataset.originalOrder);
+  });
+
+  cards.forEach(card => list.appendChild(card));
+}
+
+function initializeRestaurantSorting(select) {
+  const list = document.getElementById('restaurantsList');
+  if (!select || !list) return;
+
+  const refreshOriginalOrder = () => {
+    [...list.querySelectorAll(':scope > .card-wrapper')].forEach((card, index) => {
+      if (!card.dataset.originalOrder) card.dataset.originalOrder = String(index);
+    });
+  };
+
+  select.addEventListener('change', () => applyRestaurantSort(select.value));
+
+  const observer = new MutationObserver(() => {
+    refreshOriginalOrder();
+    if (select.value !== 'recommended') applyRestaurantSort(select.value);
+  });
+  observer.observe(list, { childList: true });
+
+  refreshOriginalOrder();
+}
+
 function applyRestaurantRedesign() {
   if (!/\/restaurace\.html$/.test(window.location.pathname) && window.location.pathname !== '/restaurace.html') return;
 
@@ -131,8 +173,27 @@ function applyRestaurantRedesign() {
         const toolbar = document.createElement('div');
         toolbar.className = 'restaurants-toolbar restaurants-toolbar-outside';
         inner.insertAdjacentElement('afterend', toolbar);
-        toolbar.appendChild(resultCount);
+
+        const leftSide = document.createElement('div');
+        leftSide.className = 'restaurants-toolbar-left';
+        leftSide.appendChild(resultCount);
+
+        const sortWrap = document.createElement('label');
+        sortWrap.className = 'restaurants-sort-wrap';
+        sortWrap.innerHTML = `
+          <span>Seřadit podle:</span>
+          <select id="restaurantSort" aria-label="Seřadit restaurace">
+            <option value="recommended">Doporučené</option>
+            <option value="name-asc">Název A–Z</option>
+            <option value="name-desc">Název Z–A</option>
+          </select>
+        `;
+        leftSide.appendChild(sortWrap);
+
+        toolbar.appendChild(leftSide);
         toolbar.appendChild(perPageContainer);
+
+        initializeRestaurantSorting(sortWrap.querySelector('#restaurantSort'));
       }
     }
   }
