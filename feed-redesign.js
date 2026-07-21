@@ -21,7 +21,7 @@ function applyFeedRedesign() {
     const heading = headingRow.querySelector('h1');
     const subtitle = headingRow.querySelector('p');
     const actions = headingRow.children[1];
-    if (heading) heading.innerHTML = 'Inspirace pro váš <span class="text-gurmaogold">další zážitek</span>';
+    if (heading) heading.innerHTML = 'Inspirace pro váš<br><span class="text-gurmaogold">další zážitek</span>';
     if (subtitle) subtitle.textContent = 'Objevujte restaurace podle nálady, města a kuchyně. Každý tip je začátkem nového gastronomického zážitku.';
     if (actions) actions.classList.add('feed-hero-actions');
   }
