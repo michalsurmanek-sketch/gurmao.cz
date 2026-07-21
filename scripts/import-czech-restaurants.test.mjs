@@ -6,6 +6,7 @@ import {
   findProbableDuplicate,
   isRestaurantCategory,
   normalizeOvertureFeature,
+  parseImportLimit,
   prepareCandidates,
   slugify
 } from './cz-import-core.mjs';
@@ -97,4 +98,8 @@ test('připraví čekárnu a oddělí odmítnuté záznamy', () => {
 test('pomocné hodnoty jsou stabilní', () => {
   assert.equal(slugify('Žlutý Kůň'), 'zluty-kun');
   assert.equal(bboxForRegion('CZ010'), '14.22,49.94,14.71,50.18');
+  assert.equal(parseImportLimit(undefined), Infinity);
+  assert.equal(parseImportLimit(''), Infinity);
+  assert.equal(parseImportLimit('50'), 50);
+  assert.throws(() => parseImportLimit('0'), /kladné celé číslo/);
 });
