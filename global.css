@@ -64,6 +64,100 @@ body .hero-bg .hero-discovery .taste-grid-mood {
   grid-template-columns: repeat(9, minmax(0, 1fr)) !important;
 }
 
+/* Premium redesign: Jak Gurmao funguje */
+.vibe-section + section {
+  position: relative;
+  overflow: hidden;
+  padding-top: 72px !important;
+  padding-bottom: 42px !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(212,175,55,.08), transparent 34%),
+    linear-gradient(180deg, #090a0b 0%, #070809 100%);
+}
+.vibe-section + section > div { max-width: 1320px !important; }
+.vibe-section + section > div > div:first-child { margin-bottom: 38px !important; }
+.vibe-section + section h2 { font-size: clamp(3rem, 5vw, 5.4rem) !important; line-height: 1; letter-spacing: -.035em; }
+.vibe-section + section h2 + p { margin-top: 22px !important; font-size: clamp(1rem, 1.25vw, 1.3rem) !important; }
+.vibe-section + section > div > .grid { gap: 22px !important; }
+.vibe-section + section article {
+  min-height: 420px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 38px 32px 30px !important;
+  border-radius: 28px !important;
+  border: 1px solid rgba(255,255,255,.13) !important;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018)),
+    #101113 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035), 0 24px 60px rgba(0,0,0,.22);
+}
+.vibe-section + section article:hover {
+  transform: translateY(-5px);
+  border-color: rgba(212,175,55,.42) !important;
+  background: linear-gradient(145deg, rgba(212,175,55,.07), rgba(255,255,255,.025)), #101113 !important;
+}
+.vibe-section + section article > div:first-child {
+  width: 60px !important;
+  height: 60px !important;
+  margin-bottom: 92px !important;
+  font-size: 1.35rem;
+  border-color: rgba(212,175,55,.55) !important;
+  background: rgba(212,175,55,.10) !important;
+}
+.vibe-section + section article::before {
+  position: absolute;
+  top: 22px;
+  right: 28px;
+  font-size: 76px;
+  line-height: 1;
+  filter: drop-shadow(0 12px 16px rgba(0,0,0,.45));
+  opacity: .94;
+}
+.vibe-section + section article:nth-child(1)::before { content: "🍕"; transform: rotate(-8deg); }
+.vibe-section + section article:nth-child(2)::before { content: "🕯️"; }
+.vibe-section + section article:nth-child(3)::before { content: "📍"; }
+.vibe-section + section article h3 { font-size: clamp(1.8rem, 2.1vw, 2.45rem) !important; line-height: 1.12; }
+.vibe-section + section article p { font-size: 1.05rem; line-height: 1.65 !important; color: rgba(255,255,255,.68) !important; }
+.vibe-section + section article::after {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 24px;
+  border: 1px solid rgba(212,175,55,.74);
+  border-radius: 999px;
+  color: #e8c43a;
+  font-weight: 650;
+  font-size: 1rem;
+  box-shadow: inset 0 0 0 1px rgba(212,175,55,.04);
+}
+.vibe-section + section article:nth-child(1)::after { content: "⌕  Začít hledat"; }
+.vibe-section + section article:nth-child(2)::after { content: "☆  Vybrat atmosféru"; }
+.vibe-section + section article:nth-child(3)::after { content: "⌖  Otevřít mapu"; }
+.vibe-section + section .mt-10 { margin-top: 42px !important; }
+.vibe-section + section .mt-10 a {
+  min-width: 290px;
+  padding: 19px 38px !important;
+  font-size: 1.25rem;
+  background: linear-gradient(135deg, #f2cf4a, #d8aa20) !important;
+  box-shadow: 0 14px 34px rgba(212,175,55,.24) !important;
+}
+.vibe-section + section::after {
+  content: "▣  Ověřené recenze     ◴  Stále aktualizováno     ◇  Chytré doporučení     ♧  Mapa & trasa";
+  display: block;
+  max-width: 1320px;
+  margin: 36px auto 0;
+  padding: 26px 28px 0;
+  border-top: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.74);
+  text-align: center;
+  word-spacing: 8px;
+  font-size: .98rem;
+}
+
 @media (min-width:1024px) {
   .hero-bg { min-height:calc(100dvh - 65px)!important; padding-top:20px!important; padding-bottom:14px!important; }
   .hero-bg h1 { font-size:clamp(3rem,5.1vw,5.15rem)!important; }
@@ -93,10 +187,19 @@ body .hero-bg .hero-discovery .taste-grid-mood {
   body .hero-bg .hero-discovery .taste-grid-cuisine { grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:12px 4px; }
   body .hero-bg .hero-discovery .taste-grid-mood { grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:12px 4px; }
   .taste-heading { margin-top:14px; }
+  .vibe-section + section article { min-height: 360px; }
+  .vibe-section + section article > div:first-child { margin-bottom: 72px !important; }
+  .vibe-section + section::after { line-height: 2.2; word-spacing: 2px; }
 }
 @media (max-width:520px) {
   body .hero-bg .hero-discovery .taste-grid-cuisine,
   body .hero-bg .hero-discovery .taste-grid-mood { grid-template-columns:repeat(3,minmax(0,1fr)) !important; }
   .taste-item svg { width:29px!important; height:29px!important; min-width:29px; max-width:29px; }
   .taste-more { min-height:56px; display:grid; place-items:center; }
+  .vibe-section + section { padding-top: 56px !important; }
+  .vibe-section + section article { min-height: 390px; padding: 30px 24px 24px !important; }
+  .vibe-section + section article::before { top: 24px; right: 20px; font-size: 62px; }
+  .vibe-section + section article > div:first-child { margin-bottom: 82px !important; }
+  .vibe-section + section .mt-10 a { min-width: 0; width: 100%; }
+  .vibe-section + section::after { padding-left: 18px; padding-right: 18px; font-size: .9rem; }
 }
