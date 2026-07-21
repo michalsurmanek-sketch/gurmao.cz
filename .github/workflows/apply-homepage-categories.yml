@@ -1,0 +1,30 @@
+name: Apply homepage categories
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-homepage-categories.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch homepage categories
+        run: python scripts/patch-homepage-categories.py
+      - name: Commit generated changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html global.css
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Add compact cuisine and mood categories to homepage"
+            git push
+          fi
