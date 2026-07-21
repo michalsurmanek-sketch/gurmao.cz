@@ -37,6 +37,7 @@ on:
         description: Maximum kandidátů; prázdné znamená bez omezení
         required: false
         type: string
+        default: '50'
   schedule:
     - cron: '17 2 5 * *'
 
