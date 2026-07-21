@@ -129,8 +129,10 @@ function applyRestaurantRedesign() {
         const toolbar = document.createElement('div');
         toolbar.className = 'restaurants-toolbar';
         perPageContainer.parentNode.insertBefore(toolbar, perPageContainer);
-        toolbar.appendChild(resultCount);
         toolbar.appendChild(perPageContainer);
+
+        resultCount.classList.add('restaurants-result-count-outside');
+        inner.insertAdjacentElement('afterend', resultCount);
       }
     }
   }
