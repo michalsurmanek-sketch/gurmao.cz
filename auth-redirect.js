@@ -98,10 +98,30 @@ function applyHomepageCuisineLayout() {
   `;
 }
 
+function loadRestaurantRedesign() {
+  const isRestaurantPage = window.location.pathname.endsWith('/restaurace.html') || window.location.pathname === '/restaurace.html';
+  if (!isRestaurantPage) return;
+
+  if (!document.querySelector('link[href^="restaurace-redesign.css"]')) {
+    const stylesheet = document.createElement('link');
+    stylesheet.rel = 'stylesheet';
+    stylesheet.href = 'restaurace-redesign.css?v=1';
+    document.head.appendChild(stylesheet);
+  }
+
+  if (!document.querySelector('script[src^="restaurace-redesign.js"]')) {
+    const script = document.createElement('script');
+    script.src = 'restaurace-redesign.js?v=1';
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+}
+
 function initializeHomepageDynamicContent() {
   updateHomepageRestaurantCount();
   addWineBarHomepageCategory();
   applyHomepageCuisineLayout();
+  loadRestaurantRedesign();
 }
 
 if (document.readyState === 'loading') {
