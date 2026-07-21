@@ -12,6 +12,9 @@ function applyFeedRedesign() {
   const headingRow = shell.firstElementChild;
   const filterRow = shell.querySelector('#searchInput')?.closest('.mt-8');
   const resultCount = document.getElementById('resultsCount');
+  const grid = document.getElementById('grid');
+  let totalRestaurants = null;
+  let countUpdatePending = false;
 
   if (headingRow) {
     headingRow.classList.add('feed-hero');
@@ -37,16 +40,40 @@ function applyFeedRedesign() {
     if (resultCount) toolbar.insertBefore(resultCount, toolbar.firstChild);
   }
 
+  const visibleCardCount = () => grid?.querySelectorAll('[data-restaurant-card]').length || 0;
+
   const updateCount = () => {
-    if (!resultCount) return;
-    const text = resultCount.textContent.trim();
-    if (text && !text.startsWith('✦')) resultCount.textContent = `✦ ${text}`;
+    if (!resultCount || countUpdatePending) return;
+    countUpdatePending = true;
+    requestAnimationFrame(() => {
+      const visible = visibleCardCount();
+      if (totalRestaurants !== null) {
+        resultCount.textContent = `✦ Zobrazeno ${visible.toLocaleString('cs-CZ')} z ${totalRestaurants.toLocaleString('cs-CZ')} restaurací`;
+      } else {
+        resultCount.textContent = `✦ Zobrazeno ${visible.toLocaleString('cs-CZ')} restaurací`;
+      }
+      countUpdatePending = false;
+    });
   };
 
-  if (resultCount) {
-    new MutationObserver(updateCount).observe(resultCount, { childList: true, characterData: true, subtree: true });
+  if (grid) {
+    new MutationObserver(updateCount).observe(grid, { childList: true, subtree: false });
   }
-  updateCount();
+
+  import('./supabase-client.js')
+    .then(({ supabase }) => supabase.from('restaurants').select('*', { count: 'exact', head: true }))
+    .then(({ count, error }) => {
+      if (error) throw error;
+      totalRestaurants = Number.isFinite(count) ? count : null;
+      updateCount();
+    })
+    .catch(error => {
+      console.warn('Feed total count failed:', error);
+      updateCount();
+    });
+
+  setTimeout(updateCount, 0);
+  setTimeout(updateCount, 600);
 }
 
 if (document.readyState === 'loading') {
