@@ -206,36 +206,86 @@ function applyRestaurantRedesign() {
           }
 
           const cuisineSearchTerms = Object.freeze({
-            'česká': 'česk',
-            'italská': 'ital',
-            'asijská': 'asi',
-            'mexická': 'mex',
-            'indická': 'ind',
-            'americká': 'amer',
-            'středomořská': 'středomoř',
-            'vegetariánská': 'veget',
-            'vegan': 'vegan'
+            'česká': ['česk', 'czech'],
+            'italská': ['ital'],
+            'asijská': ['asi', 'asian'],
+            'mexická': ['mex'],
+            'indická': ['ind'],
+            'americká': ['amer'],
+            'středomořská': ['středomoř', 'mediterr'],
+            'vegetariánská': ['veget'],
+            'vegan': ['vegan']
           });
 
           let manualSearchValue = searchInput.value.trim();
           let programmaticSearchChange = false;
+          let filterTimer = null;
 
           searchInput.addEventListener('input', () => {
             if (!programmaticSearchChange) manualSearchValue = searchInput.value.trim();
           });
+
+          const normalize = value => String(value || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLocaleLowerCase('cs');
+
+          const applyCombinedFilters = () => {
+            const list = document.getElementById('restaurantsList');
+            if (!list) return;
+
+            const locality = normalize(localitySelect.value);
+            const cuisineTerms = (cuisineSearchTerms[cuisineSelect.value] || []).map(normalize);
+            let visibleCount = 0;
+
+            [...list.querySelectorAll(':scope > .card-wrapper')].forEach(card => {
+              const cardText = normalize(card.textContent);
+              const localityMatches = !locality || cardText.includes(locality);
+              const cuisineMatches = cuisineTerms.length === 0 || cuisineTerms.some(term => cardText.includes(term));
+              const visible = localityMatches && cuisineMatches;
+              card.hidden = !visible;
+              if (visible) visibleCount += 1;
+            });
+
+            const emptyMessage = list.querySelector('.restaurants-combined-empty');
+            if (emptyMessage) emptyMessage.remove();
+
+            if (visibleCount === 0 && list.querySelector('.card-wrapper')) {
+              const message = document.createElement('div');
+              message.className = 'restaurants-combined-empty col-span-full text-center py-14';
+              message.innerHTML = '<p class="text-white/50">Pro tuto kombinaci kuchyně a lokality nebyla nalezena restaurace.</p>';
+              list.appendChild(message);
+            }
+          };
+
+          const scheduleCombinedFilters = () => {
+            window.clearTimeout(filterTimer);
+            filterTimer = window.setTimeout(applyCombinedFilters, 80);
+          };
+
+          const list = document.getElementById('restaurantsList');
+          if (list) {
+            const listObserver = new MutationObserver(mutations => {
+              const cardsChanged = mutations.some(mutation =>
+                [...mutation.addedNodes].some(node => node.nodeType === 1 && (node.matches?.('.card-wrapper') || node.querySelector?.('.card-wrapper')))
+              );
+              if (cardsChanged) scheduleCombinedFilters();
+            });
+            listObserver.observe(list, { childList: true });
+          }
 
           const submitSearchValue = value => {
             programmaticSearchChange = true;
             searchInput.value = value;
             searchInput.dispatchEvent(new Event('input', { bubbles: true }));
             programmaticSearchChange = false;
+            scheduleCombinedFilters();
           };
 
           const runSearch = () => {
-            const cuisineQuery = cuisineSearchTerms[cuisineSelect.value] || '';
-            const localityQuery = localitySelect.value.trim();
-            const query = cuisineQuery || localityQuery || manualSearchValue;
-            submitSearchValue(query);
+            const cuisineTerms = cuisineSearchTerms[cuisineSelect.value] || [];
+            const serverQuery = manualSearchValue || localitySelect.value.trim() || cuisineTerms[0] || '';
+            submitSearchValue(serverQuery);
           };
 
           searchBtn.addEventListener('click', runSearch);
