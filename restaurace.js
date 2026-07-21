@@ -6,6 +6,7 @@ const VIBE_PARAM_TO_FILTER = Object.freeze({
 });
 const FILTER_TO_VIBE_PARAM = Object.fromEntries(Object.entries(VIBE_PARAM_TO_FILTER).map(([k,v]) => [v,k]));
 const params = new URLSearchParams(location.search);
+const savedView = localStorage.getItem('gurmaoRestaurantView');
 
 const state = {
   search: sanitize(params.get('q') || ''),
@@ -13,6 +14,7 @@ const state = {
   city: sanitize(params.get('city') || ''),
   vibe: VIBE_PARAM_TO_FILTER[(params.get('vibe') || '').toLowerCase()] || 'all',
   sort: params.get('sort') || 'recommended',
+  view: savedView === 'rows' ? 'rows' : 'cards',
   userLocation: null,
   page: 0,
   pageSize: 30,
@@ -110,11 +112,16 @@ function card(r) {
   const tag=escapeHtml(r.tag||'');
   const vibe=escapeHtml(r.vibe||'');
   const distance=Number.isFinite(r.distance)?` · <span class="text-gurmaogold">${formatDistance(r.distance)}</span>`:'';
+  if (state.view === 'rows') {
+    return `<article class="restaurant-row"><a href="restaurace-${slug}.html" class="restaurant-row-image"><img src="${image}" alt="${name}" loading="lazy" decoding="async"></a><div class="restaurant-row-main"><div class="restaurant-row-vibe">${vibe}</div><h3>${name}</h3><p>${city}${city&&tag?' · ':''}${tag}${distance}</p></div><div class="restaurant-row-actions"><button data-save="${slug}" class="save-btn" aria-label="Uložit restauraci">🤍</button><a href="restaurace-${slug}.html" class="restaurant-row-detail">Detail</a></div></article>`;
+  }
   return `<article class="card-wrapper"><div class="card-front rounded-3xl bg-white/5 overflow-hidden h-full"><a href="restaurace-${slug}.html" class="block"><img src="${image}" alt="${name}" loading="lazy" decoding="async" class="aspect-[3/4] w-full object-cover"></a><div class="p-6"><div class="text-sm text-gurmaogold mb-1">${vibe}</div><h3 class="text-xl font-semibold">${name}</h3><p class="text-white/60 text-sm mt-1">${city}${city&&tag?' · ':''}${tag}${distance}</p><div class="mt-5 flex gap-2"><a href="restaurace-${slug}.html" class="flex-1 px-4 py-2 rounded-full bg-gurmaogold text-black text-center font-semibold">Detail</a><button data-save="${slug}" class="save-btn w-11 h-11 rounded-full border border-white/20">🤍</button></div><div data-restaurant-rating="${slug}" class="mt-3"></div></div></div></article>`;
 }
 function render() {
   const list=document.getElementById('restaurantsList'); if(!list) return;
   const rows=sortedRows();
+  list.classList.toggle('restaurants-row-view',state.view==='rows');
+  list.dataset.view=state.view;
   setCount(`Celkem: ${state.total} restaurací`);
   if (!rows.length) { list.innerHTML='<div class="col-span-full text-center py-20"><p class="text-white/50 text-lg">Žádné restaurace neodpovídají zvoleným filtrům.</p></div>'; document.getElementById('loadMoreBtn')?.remove(); return; }
   const visible=rows.slice(0,state.shown);
@@ -122,6 +129,7 @@ function render() {
   window.filteredRestaurants=rows;
   if (typeof window.updateSaveButtons==='function') window.updateSaveButtons();
   updateLoadMore();
+  syncControls();
 }
 function updateLoadMore() {
   document.getElementById('loadMoreBtn')?.remove();
@@ -138,12 +146,19 @@ function updateLoadMore() {
 function applyState(patch,{reload=true}={}) {
   Object.assign(state,patch); updateUrl(); syncControls(); if(reload) load(true); else render();
 }
+function setView(view) {
+  state.view=view==='rows'?'rows':'cards';
+  localStorage.setItem('gurmaoRestaurantView',state.view);
+  syncControls();
+  render();
+}
 function syncControls() {
   const search=document.getElementById('searchInput'); if(search&&search.value!==state.search) search.value=state.search;
   const cuisine=document.getElementById('cuisineFilter'); if(cuisine) cuisine.value=state.cuisine;
   const city=document.getElementById('localityFilter'); if(city) city.value=state.city;
   const sort=document.getElementById('restaurantSort'); if(sort) sort.value=state.sort;
   document.querySelectorAll('#filters button').forEach(btn=>btn.classList.toggle('is-active',(VIBE_PARAM_TO_FILTER[btn.dataset.vibe]||'all')===state.vibe));
+  document.querySelectorAll('[data-restaurant-view]').forEach(btn=>{const active=btn.dataset.restaurantView===state.view;btn.classList.toggle('is-active',active);btn.setAttribute('aria-pressed',String(active));});
 }
 function initializeBaseControls() {
   const search=document.getElementById('searchInput');
@@ -167,6 +182,7 @@ window.GurmaoRestaurantSearch={
     vibe:patch.vibe!==undefined?patch.vibe:state.vibe,
     sort:patch.sort!==undefined?patch.sort:state.sort
   }),
+  setView,
   clear:()=>applyState({search:'',cuisine:'',city:'',vibe:'all',sort:'recommended',userLocation:null}),
   reload:()=>load(true)
 };
