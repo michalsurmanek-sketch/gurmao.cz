@@ -157,7 +157,7 @@ async function readLimitedHtml(response, maxBytes = 750_000) {
   return html + decoder.decode();
 }
 
-export async function fetchOfficialImage(website, options = {}) {
+export async function fetchOfficialHtml(website, options = {}) {
   const fetchImpl = options.fetchImpl || fetch;
   const lookupImpl = options.lookupImpl || lookup;
   if (!isSafePublicUrl(website)) return null;
@@ -198,9 +198,14 @@ export async function fetchOfficialImage(website, options = {}) {
     const type = response.headers.get('content-type') || '';
     if (type && !type.includes('text/html') && !type.includes('application/xhtml+xml')) return null;
     const html = await readLimitedHtml(response);
-    return html ? extractOfficialImageUrl(html, current) : null;
+    return html ? { html, url: current.href } : null;
   }
   return null;
+}
+
+export async function fetchOfficialImage(website, options = {}) {
+  const page = await fetchOfficialHtml(website, options);
+  return page ? extractOfficialImageUrl(page.html, page.url) : null;
 }
 
 async function mapConcurrent(items, concurrency, worker) {
