@@ -1,44 +1,82 @@
 // Vizuální a ovládací vrstva katalogu restaurací.
-function applyRestaurantSort(sortValue) {
-  const list = document.getElementById('restaurantsList');
-  if (!list) return;
-
-  const cards = [...list.querySelectorAll(':scope > .card-wrapper')];
-  cards.forEach((card, index) => {
-    if (!card.dataset.originalOrder) card.dataset.originalOrder = String(index);
-  });
-
-  const getName = card => (card.querySelector('h3')?.textContent || '').trim();
-  const collator = new Intl.Collator('cs', { sensitivity: 'base' });
-
-  cards.sort((a, b) => {
-    if (sortValue === 'name-asc') return collator.compare(getName(a), getName(b));
-    if (sortValue === 'name-desc') return collator.compare(getName(b), getName(a));
-    return Number(a.dataset.originalOrder) - Number(b.dataset.originalOrder);
-  });
-
-  cards.forEach(card => list.appendChild(card));
-}
-
 function initializeRestaurantSorting(select) {
   const list = document.getElementById('restaurantsList');
   if (!select || !list) return;
 
-  const refreshOriginalOrder = () => {
-    [...list.querySelectorAll(':scope > .card-wrapper')].forEach((card, index) => {
-      if (!card.dataset.originalOrder) card.dataset.originalOrder = String(index);
+  const collator = new Intl.Collator('cs', { sensitivity: 'base' });
+  let observer;
+  let originalOrderCounter = 0;
+
+  const getCards = () => [...list.querySelectorAll(':scope > .card-wrapper')];
+
+  const registerOriginalOrder = () => {
+    getCards().forEach(card => {
+      if (!card.hasAttribute('data-original-order')) {
+        card.dataset.originalOrder = String(originalOrderCounter++);
+      }
     });
   };
 
-  select.addEventListener('change', () => applyRestaurantSort(select.value));
+  const getName = card => (card.querySelector('.card-front h3')?.textContent || '').trim();
 
-  const observer = new MutationObserver(() => {
-    refreshOriginalOrder();
-    if (select.value !== 'recommended') applyRestaurantSort(select.value);
+  const getRating = card => {
+    const ratingBox = card.querySelector('[data-restaurant-rating]');
+    if (!ratingBox) return 0;
+
+    const candidates = [
+      ratingBox.querySelector('[data-average-rating]')?.dataset.averageRating,
+      ratingBox.querySelector('.average-rating')?.textContent,
+      ratingBox.textContent
+    ];
+
+    for (const value of candidates) {
+      const match = String(value || '').replace(',', '.').match(/\b([0-5](?:\.\d+)?)\b/);
+      if (match) return Number(match[1]);
+    }
+
+    return 0;
+  };
+
+  const applySort = () => {
+    registerOriginalOrder();
+    const cards = getCards();
+
+    cards.sort((a, b) => {
+      switch (select.value) {
+        case 'rating-desc': {
+          const ratingDifference = getRating(b) - getRating(a);
+          return ratingDifference || collator.compare(getName(a), getName(b));
+        }
+        case 'name-asc':
+          return collator.compare(getName(a), getName(b));
+        case 'name-desc':
+          return collator.compare(getName(b), getName(a));
+        case 'recommended':
+        default:
+          return Number(a.dataset.originalOrder) - Number(b.dataset.originalOrder);
+      }
+    });
+
+    observer?.disconnect();
+    cards.forEach(card => list.appendChild(card));
+    observer?.observe(list, { childList: true });
+  };
+
+  select.addEventListener('change', applySort);
+
+  observer = new MutationObserver(mutations => {
+    const hasNewCards = mutations.some(mutation =>
+      [...mutation.addedNodes].some(node => node.nodeType === 1 && node.matches?.('.card-wrapper'))
+    );
+
+    if (!hasNewCards) return;
+    registerOriginalOrder();
+    applySort();
   });
-  observer.observe(list, { childList: true });
 
-  refreshOriginalOrder();
+  observer.observe(list, { childList: true });
+  registerOriginalOrder();
+  applySort();
 }
 
 function applyRestaurantRedesign() {
@@ -184,6 +222,7 @@ function applyRestaurantRedesign() {
           <span>Seřadit podle:</span>
           <select id="restaurantSort" aria-label="Seřadit restaurace">
             <option value="recommended">Doporučené</option>
+            <option value="rating-desc">Nejlépe hodnocené</option>
             <option value="name-asc">Název A–Z</option>
             <option value="name-desc">Název Z–A</option>
           </select>
