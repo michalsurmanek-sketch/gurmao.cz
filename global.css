@@ -143,3 +143,9 @@ body .hero-bg .hero-discovery .taste-grid-mood { grid-template-columns:repeat(9,
   .vibe-section + section .mt-10 a { width:100%; min-width:0; }
   .vibe-section + section::after { margin-top:18px; padding:16px 18px 0; line-height:2; font-size:.86rem; word-spacing:2px; }
 }
+
+/* Keep only the real HTML restaurant counter; disable the legacy generated duplicate. */
+body .hero-bg form[role="search"] + div.hero-discovery::before {
+  content: none !important;
+  display: none !important;
+}
