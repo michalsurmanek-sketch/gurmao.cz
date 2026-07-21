@@ -402,3 +402,11 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     }
   });
 });
+// Oprava vzhledu po návratu tlačítkem Zpět
+window.addEventListener('pageshow', (event) => {
+  const navigation = performance.getEntriesByType('navigation')[0];
+
+  if (event.persisted || navigation?.type === 'back_forward') {
+    window.location.reload();
+  }
+});
