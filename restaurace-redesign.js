@@ -275,9 +275,11 @@ function applyRestaurantRedesign() {
           }
 
           const submitSearchValue = value => {
+            const visibleValue = manualSearchValue;
             programmaticSearchChange = true;
             searchInput.value = value;
             searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+            searchInput.value = visibleValue;
             programmaticSearchChange = false;
             scheduleCombinedFilters();
           };
