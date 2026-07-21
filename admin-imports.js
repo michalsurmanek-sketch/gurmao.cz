@@ -16,6 +16,7 @@ const state = {
   total: 0,
   candidates: new Map(),
   regions: new Map(),
+  editing: null,
   publishing: null,
   loading: false
 };
@@ -34,6 +35,19 @@ const elements = {
   regionFilter: document.getElementById('regionFilter'),
   refreshBtn: document.getElementById('refreshBtn'),
   logoutBtn: document.getElementById('logoutBtn'),
+  editDialog: document.getElementById('editDialog'),
+  editForm: document.getElementById('editForm'),
+  editCandidateName: document.getElementById('editCandidateName'),
+  editNameInput: document.getElementById('editNameInput'),
+  editCategoryInput: document.getElementById('editCategoryInput'),
+  editCityInput: document.getElementById('editCityInput'),
+  editAddressInput: document.getElementById('editAddressInput'),
+  editPostalCodeInput: document.getElementById('editPostalCodeInput'),
+  editPhoneInput: document.getElementById('editPhoneInput'),
+  editWebsiteInput: document.getElementById('editWebsiteInput'),
+  editLatitudeInput: document.getElementById('editLatitudeInput'),
+  editLongitudeInput: document.getElementById('editLongitudeInput'),
+  confirmEdit: document.getElementById('confirmEdit'),
   publishDialog: document.getElementById('publishDialog'),
   publishForm: document.getElementById('publishForm'),
   publishCandidateName: document.getElementById('publishCandidateName'),
@@ -86,16 +100,21 @@ function coordinatesLink(candidate) {
 }
 
 function actionButtons(candidate) {
+  const editButton = ['imported', 'already_imported'].includes(candidate.candidate_status)
+    ? ''
+    : `<button class="btn btn-edit" data-action="edit" data-id="${escapeHtml(candidate.id)}" title="Upravit importované údaje">✏️ Upravit</button>`;
   if (['imported', 'already_imported', 'rejected', 'invalid'].includes(candidate.candidate_status)) {
-    return '';
+    return editButton;
   }
   if (candidate.candidate_status === 'approved') {
     return `
+      ${editButton}
       <button class="btn btn-success" data-action="publish" data-id="${escapeHtml(candidate.id)}">Zveřejnit</button>
       <button class="btn btn-danger" data-action="reject" data-id="${escapeHtml(candidate.id)}">Odmítnout</button>
     `;
   }
   return `
+    ${editButton}
     <button class="btn btn-primary" data-action="approve" data-id="${escapeHtml(candidate.id)}">Schválit</button>
     <button class="btn btn-danger" data-action="reject" data-id="${escapeHtml(candidate.id)}">Odmítnout</button>
   `;
@@ -284,6 +303,75 @@ async function reviewCandidate(candidate, status) {
   await Promise.all([loadCandidates(), loadStats()]);
 }
 
+function editValue(value) {
+  return value == null ? '' : String(value);
+}
+
+function openEditDialog(candidate) {
+  state.editing = candidate;
+  elements.editForm.reset();
+  elements.editCandidateName.textContent = `${candidate.name} · ${candidate.city || 'bez města'}`;
+  elements.editNameInput.value = editValue(candidate.name);
+  elements.editCategoryInput.value = editValue(candidate.category_label || candidate.category);
+  elements.editCityInput.value = editValue(candidate.city);
+  elements.editAddressInput.value = editValue(candidate.address);
+  elements.editPostalCodeInput.value = editValue(candidate.postal_code);
+  elements.editPhoneInput.value = editValue(candidate.phone);
+  elements.editWebsiteInput.value = editValue(candidate.website);
+  elements.editLatitudeInput.value = editValue(candidate.latitude);
+  elements.editLongitudeInput.value = editValue(candidate.longitude);
+  elements.editDialog.showModal();
+}
+
+function closeEditDialog() {
+  state.editing = null;
+  elements.editDialog.close();
+}
+
+function nullableInput(element) {
+  const value = element.value.trim();
+  return value || null;
+}
+
+async function saveCandidateEdit(event) {
+  event.preventDefault();
+  const candidate = state.editing;
+  if (!candidate) return;
+
+  const latitude = nullableInput(elements.editLatitudeInput);
+  const longitude = nullableInput(elements.editLongitudeInput);
+  if ((latitude == null) !== (longitude == null)) {
+    window.toast?.show('Vyplň obě souřadnice, nebo obě nech prázdné.', 'error');
+    return;
+  }
+
+  elements.confirmEdit.disabled = true;
+  const toastId = window.toast?.loading('Ukládám úpravy…');
+  try {
+    const { error } = await supabase.rpc('update_restaurant_import_candidate', {
+      p_candidate_id: candidate.id,
+      p_name: elements.editNameInput.value.trim(),
+      p_category_label: nullableInput(elements.editCategoryInput),
+      p_city: elements.editCityInput.value.trim(),
+      p_address: nullableInput(elements.editAddressInput),
+      p_postal_code: nullableInput(elements.editPostalCodeInput),
+      p_phone: nullableInput(elements.editPhoneInput),
+      p_website: nullableInput(elements.editWebsiteInput),
+      p_latitude: latitude == null ? null : Number(latitude),
+      p_longitude: longitude == null ? null : Number(longitude)
+    });
+    if (error) throw error;
+    if (toastId) window.toast?.update(toastId, 'Importované údaje byly upraveny', 'success');
+    closeEditDialog();
+    await Promise.all([loadCandidates(), loadStats()]);
+  } catch (error) {
+    console.error('Candidate update failed:', error);
+    if (toastId) window.toast?.update(toastId, `Chyba: ${error.message}`, 'error');
+  } finally {
+    elements.confirmEdit.disabled = false;
+  }
+}
+
 function openPublishDialog(candidate) {
   state.publishing = candidate;
   elements.publishForm.reset();
@@ -337,6 +425,7 @@ elements.candidateList.addEventListener('click', async (event) => {
   if (!candidate) return;
   button.disabled = true;
   try {
+    if (button.dataset.action === 'edit') openEditDialog(candidate);
     if (button.dataset.action === 'approve') await reviewCandidate(candidate, 'approved');
     if (button.dataset.action === 'reject') await reviewCandidate(candidate, 'rejected');
     if (button.dataset.action === 'publish') openPublishDialog(candidate);
@@ -382,6 +471,11 @@ elements.refreshBtn.addEventListener('click', () => Promise.all([loadCandidates(
 elements.logoutBtn.addEventListener('click', async () => {
   await supabase.auth.signOut();
   window.location.href = 'login.html';
+});
+elements.editForm.addEventListener('submit', saveCandidateEdit);
+document.getElementById('cancelEdit').addEventListener('click', closeEditDialog);
+elements.editDialog.addEventListener('click', (event) => {
+  if (event.target === elements.editDialog) closeEditDialog();
 });
 elements.publishForm.addEventListener('submit', publishCandidate);
 document.getElementById('cancelPublish').addEventListener('click', closePublishDialog);
