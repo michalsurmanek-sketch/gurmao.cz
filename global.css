@@ -2,6 +2,25 @@
 
 /* Stable expanded homepage discovery */
 .hero-bg > * { transform: none !important; }
+
+/* Neutralize legacy form + div rules for the new discovery block */
+.hero-bg form[role="search"] + .hero-discovery {
+  display: block !important;
+  width: min(1240px, 92vw) !important;
+  max-width: none !important;
+  margin-top: 14px !important;
+  gap: initial !important;
+  grid-template-columns: none !important;
+  align-items: initial !important;
+}
+.hero-bg form[role="search"] + .hero-discovery::before {
+  content: none !important;
+  display: none !important;
+}
+.hero-bg form[role="search"] + .hero-discovery > span {
+  display: initial !important;
+}
+
 .hero-discovery { position: relative; width: min(1240px, 92vw); margin-top: 14px; z-index: 1; }
 .hero-count { text-align: center; color: rgba(255,255,255,.86); font-size: 15px; margin-bottom: 8px; }
 .hero-count strong { color: #e4bd3d; font-weight: 600; }
