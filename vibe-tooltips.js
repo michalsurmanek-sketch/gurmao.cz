@@ -81,8 +81,8 @@ function ensureRestaurantCardOverlays() {
     save.className = 'save-btn';
     save.setAttribute('data-save', slug);
     save.setAttribute('aria-label', 'Uložit restauraci');
-    save.innerHTML = '🤍';
-    save.style.cssText = 'width:44px;height:44px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(8,8,8,.78);color:white;font-size:21px;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35);backdrop-filter:blur(10px);';
+    save.innerHTML = '♥';
+    save.style.cssText = 'width:44px;height:44px;display:grid;place-items:center;border:1px solid rgba(212,175,55,.72);border-radius:999px;background:rgba(8,8,8,.82);color:#e8c43a;font-size:24px;line-height:1;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35),0 0 18px rgba(212,175,55,.12);backdrop-filter:blur(10px);';
 
     const share = document.createElement('button');
     share.type = 'button';
@@ -91,7 +91,7 @@ function ensureRestaurantCardOverlays() {
     share.setAttribute('title', 'Sdílet');
     share.setAttribute('data-restaurant', escapeAttribute(JSON.stringify({ id: slug, name, vibe, city, tag, img: image, href })));
     share.innerHTML = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
-    share.style.cssText = 'width:44px;height:44px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(8,8,8,.78);color:white;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35);backdrop-filter:blur(10px);';
+    share.style.cssText = 'width:44px;height:44px;display:grid;place-items:center;border:1px solid rgba(212,175,55,.72);border-radius:999px;background:rgba(8,8,8,.82);color:#e8c43a;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35),0 0 18px rgba(212,175,55,.12);backdrop-filter:blur(10px);';
 
     actions.append(save, share);
     overlay.appendChild(actions);
