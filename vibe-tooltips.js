@@ -42,6 +42,12 @@ function injectRestaurantActionHoverStyles() {
       }
     }
 
+    #restaurantsList .flip-btn {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
     #restaurantsList .save-btn,
     #restaurantsList .share-btn,
     #restaurantsList .flip-btn {
