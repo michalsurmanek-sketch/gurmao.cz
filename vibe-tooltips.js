@@ -54,9 +54,11 @@ function ensureRestaurantCardOverlays() {
 
     let vibe = String(row.vibe || row.atmosphere || row.mood || '').trim();
     if (!vibe) {
-      const existingVibe = card.querySelector('.vibe-tooltip');
+      const existingVibe = card.querySelector('.card-front .p-6 .vibe-tooltip');
       vibe = existingVibe?.textContent?.trim() || '';
     }
+
+    card.querySelectorAll('.card-front .p-6 .vibe-tooltip').forEach(element => element.remove());
 
     const overlay = document.createElement('div');
     overlay.className = 'gurmao-card-overlay';
