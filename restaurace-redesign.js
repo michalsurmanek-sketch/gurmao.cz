@@ -47,10 +47,55 @@ function initializeRestaurantSorting(select) {
   registerOriginalOrder();
 }
 
+function injectClearFiltersStyles() {
+  if (document.getElementById('restaurants-clear-filters-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'restaurants-clear-filters-styles';
+  style.textContent = `
+    body[data-page="restaurants-redesign"] .restaurants-location-actions {
+      display:flex;
+      flex-direction:column;
+      gap:7px;
+      min-width:0;
+    }
+    body[data-page="restaurants-redesign"] .restaurants-location-actions #locationBtn {
+      width:100%;
+    }
+    body[data-page="restaurants-redesign"] .restaurants-clear-filters {
+      min-height:34px;
+      width:100%;
+      padding:6px 10px;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:11px;
+      background:transparent;
+      color:rgba(255,255,255,.68);
+      font-size:12px;
+      line-height:1;
+      cursor:pointer;
+      transition:border-color .2s ease,color .2s ease,background .2s ease;
+    }
+    body[data-page="restaurants-redesign"] .restaurants-clear-filters:hover,
+    body[data-page="restaurants-redesign"] .restaurants-clear-filters:focus-visible {
+      border-color:#d4af37;
+      color:#e8c43a;
+      background:rgba(212,175,55,.08);
+      outline:none;
+    }
+    @media(max-width:1180px) {
+      body[data-page="restaurants-redesign"] .restaurants-location-actions {
+        grid-column:1/-1;
+        width:100%;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 function applyRestaurantRedesign() {
   if (!/\/restaurace\.html$/.test(window.location.pathname) && window.location.pathname !== '/restaurace.html') return;
 
   document.body.dataset.page = 'restaurants-redesign';
+  injectClearFiltersStyles();
 
   const sections = [...document.querySelectorAll('body > section')];
   const hero = sections[0];
@@ -136,6 +181,23 @@ function applyRestaurantRedesign() {
           originalRow.insertBefore(localitySelect, locationBtn || null);
           originalRow.insertBefore(moreFiltersBtn, locationBtn || null);
           originalRow.insertBefore(searchBtn, locationBtn || null);
+
+          if (locationBtn) {
+            const locationActions = document.createElement('div');
+            locationActions.className = 'restaurants-location-actions';
+            locationBtn.parentNode.insertBefore(locationActions, locationBtn);
+            locationActions.appendChild(locationBtn);
+
+            const clearFiltersBtn = document.createElement('button');
+            clearFiltersBtn.type = 'button';
+            clearFiltersBtn.id = 'clearRestaurantFilters';
+            clearFiltersBtn.className = 'restaurants-clear-filters';
+            clearFiltersBtn.textContent = 'Vymazat filtry';
+            clearFiltersBtn.addEventListener('click', () => {
+              window.location.assign(window.location.pathname);
+            });
+            locationActions.appendChild(clearFiltersBtn);
+          }
 
           const vibeFilters = inner.querySelector('#filters');
           if (vibeFilters) {
