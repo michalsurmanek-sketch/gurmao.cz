@@ -10,6 +10,11 @@ import {
   prepareCandidates,
   slugify
 } from './cz-import-core.mjs';
+import {
+  extractOfficialImageUrl,
+  isSafePublicUrl,
+  suggestCandidateContent
+} from './restaurant-content-suggestions.mjs';
 
 function place(overrides = {}) {
   const { properties: propertyOverrides = {}, ...featureOverrides } = overrides;
@@ -102,4 +107,33 @@ test('pomocné hodnoty jsou stabilní', () => {
   assert.equal(parseImportLimit(''), Infinity);
   assert.equal(parseImportLimit('50'), 50);
   assert.throws(() => parseImportLimit('0'), /kladné celé číslo/);
+});
+
+test('navrhne atmosféru a faktický popis z importovaných údajů', () => {
+  const suggestion = suggestCandidateContent({
+    name: 'Test Steakhouse',
+    category: 'steakhouse',
+    category_label: 'maso / gril',
+    city: 'Zlín',
+    address: 'Dlouhá 1',
+    website: 'https://example.cz'
+  });
+  assert.equal(suggestion.vibe, '🔥 DRAMA');
+  assert.match(suggestion.description, /Test Steakhouse je restaurace zaměřená na maso a gril v Zlíně? na adrese Dlouhá 1\./);
+  assert.match(suggestion.description, /oficiálním webu/);
+});
+
+test('převezme obrázek jen z bezpečných metadat oficiálního webu', () => {
+  const html = '<meta property="og:image" content="/images/restaurace.webp">';
+  assert.equal(
+    extractOfficialImageUrl(html, 'https://restaurace.example/menu'),
+    'https://restaurace.example/images/restaurace.webp'
+  );
+  assert.equal(isSafePublicUrl('https://restaurace.example'), true);
+  assert.equal(isSafePublicUrl('http://127.0.0.1/admin'), false);
+  assert.equal(isSafePublicUrl('http://192.168.1.1/image.jpg'), false);
+  assert.equal(
+    extractOfficialImageUrl('<meta property="og:image" content="http://restaurace.example/image.jpg">', 'https://restaurace.example'),
+    null
+  );
 });

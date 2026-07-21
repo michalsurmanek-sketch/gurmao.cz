@@ -8,6 +8,7 @@ import {
   parseImportLimit,
   prepareCandidates
 } from './cz-import-core.mjs';
+import { enrichCandidateSuggestions } from './restaurant-content-suggestions.mjs';
 
 function parseArgs(argv) {
   const args = {};
@@ -184,6 +185,7 @@ async function main() {
     sourceRelease: args['source-release'] || null
   }, existing.rows);
   const candidates = prepared.candidates.slice(0, limit);
+  await enrichCandidateSuggestions(candidates);
 
   const statusCounts = candidates.reduce((counts, item) => {
     counts[item.candidate_status] = (counts[item.candidate_status] || 0) + 1;
@@ -202,6 +204,10 @@ async function main() {
     candidate_statuses: statusCounts,
     rejected: prepared.rejected,
     database_duplicate_check: existing.checked,
+    content_suggestions: {
+      generated: candidates.length,
+      official_images: candidates.filter((candidate) => candidate.suggested_image_url).length
+    },
     sample: candidates.slice(0, 20).map(({ raw_source, ...candidate }) => candidate)
   };
 

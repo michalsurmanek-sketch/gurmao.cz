@@ -54,6 +54,7 @@ const elements = {
   vibeInput: document.getElementById('vibeInput'),
   descriptionInput: document.getElementById('descriptionInput'),
   imageInput: document.getElementById('imageInput'),
+  contentSuggestionStatus: document.getElementById('contentSuggestionStatus'),
   duplicateConfirmation: document.getElementById('duplicateConfirmation'),
   forceDuplicateInput: document.getElementById('forceDuplicateInput'),
   confirmPublish: document.getElementById('confirmPublish')
@@ -376,6 +377,14 @@ function openPublishDialog(candidate) {
   state.publishing = candidate;
   elements.publishForm.reset();
   elements.publishCandidateName.textContent = `${candidate.name} · ${candidate.city || 'bez města'}`;
+  elements.vibeInput.value = candidate.suggested_vibe || '';
+  elements.descriptionInput.value = candidate.suggested_description || '';
+  elements.imageInput.value = candidate.suggested_image_url || '';
+  const hasSuggestion = Boolean(candidate.suggested_vibe || candidate.suggested_description || candidate.suggested_image_url);
+  elements.contentSuggestionStatus.textContent = hasSuggestion
+    ? `✨ Návrh byl automaticky předvyplněn${candidate.suggested_image_url ? ' včetně obrázku z oficiálního webu' : '; oficiální obrázek nebyl nalezen'}. Před zveřejněním vše zkontroluj.`
+    : 'Automatický návrh zatím není připraven. Doplň údaje ručně nebo zopakuj import po nasazení návrhů.';
+  elements.contentSuggestionStatus.classList.toggle('is-empty', !hasSuggestion);
   const hasDuplicate = Boolean(candidate.duplicate_restaurant_id);
   elements.duplicateConfirmation.classList.toggle('hidden', !hasDuplicate);
   elements.forceDuplicateInput.required = hasDuplicate;

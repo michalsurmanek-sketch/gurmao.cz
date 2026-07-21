@@ -33,6 +33,10 @@ CREATE TABLE IF NOT EXISTS public.restaurant_import_candidates (
   candidate_status text NOT NULL DEFAULT 'new',
   duplicate_restaurant_id uuid REFERENCES public.restaurants(id) ON DELETE SET NULL,
   review_notes text,
+  suggested_vibe text,
+  suggested_description text,
+  suggested_image_url text,
+  suggestions_generated_at timestamptz,
   raw_source jsonb NOT NULL DEFAULT '{}'::jsonb,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
@@ -53,6 +57,12 @@ CREATE TABLE IF NOT EXISTS public.restaurant_import_candidates (
       (latitude BETWEEN -90 AND 90 AND longitude BETWEEN -180 AND 180)
     )
 );
+
+ALTER TABLE public.restaurant_import_candidates
+  ADD COLUMN IF NOT EXISTS suggested_vibe text,
+  ADD COLUMN IF NOT EXISTS suggested_description text,
+  ADD COLUMN IF NOT EXISTS suggested_image_url text,
+  ADD COLUMN IF NOT EXISTS suggestions_generated_at timestamptz;
 
 CREATE INDEX IF NOT EXISTS idx_import_candidates_batch
   ON public.restaurant_import_candidates(import_batch_id);

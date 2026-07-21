@@ -494,6 +494,22 @@ body.admin-imports-page {
   line-height: 1.45;
 }
 
+.content-suggestion-status {
+  padding: 11px 13px;
+  border: 1px solid rgba(96, 165, 250, 0.25);
+  border-radius: 12px;
+  color: #bfdbfe;
+  background: rgba(96, 165, 250, 0.08);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.content-suggestion-status.is-empty {
+  color: var(--admin-text-soft);
+  border-color: var(--admin-border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
 .duplicate-confirmation input {
   width: 18px;
   height: 18px;
