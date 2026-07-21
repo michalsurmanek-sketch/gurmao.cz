@@ -1,7 +1,7 @@
 // Auth redirect handler - determines where user lands after auth actions
 // Must be loaded on EVERY page
 
-import { onAuthStateChange } from './supabase-client.js';
+import { onAuthStateChange, supabase } from './supabase-client.js';
 
 onAuthStateChange((event, session) => {
   if (event === 'PASSWORD_RECOVERY') {
@@ -23,3 +23,25 @@ onAuthStateChange((event, session) => {
     // Stay on current page
   }
 });
+
+async function updateHomepageRestaurantCount() {
+  const countElement = document.querySelector('.hero-count strong');
+  if (!countElement) return;
+
+  try {
+    const { count, error } = await supabase
+      .from('restaurants')
+      .select('id', { count: 'exact', head: true });
+
+    if (error) throw error;
+    countElement.textContent = Number(count || 0).toLocaleString('cs-CZ');
+  } catch (error) {
+    console.error('Nepodařilo se načíst počet restaurací:', error);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', updateHomepageRestaurantCount, { once: true });
+} else {
+  updateHomepageRestaurantCount();
+}
