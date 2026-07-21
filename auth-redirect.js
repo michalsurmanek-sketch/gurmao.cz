@@ -40,8 +40,36 @@ async function updateHomepageRestaurantCount() {
   }
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', updateHomepageRestaurantCount, { once: true });
-} else {
+function addWineBarHomepageCategory() {
+  const cuisineGrid = document.querySelector('.taste-grid-cuisine');
+  if (!cuisineGrid || cuisineGrid.querySelector('[data-category="vinarna"]')) return;
+
+  const wineBar = document.createElement('a');
+  wineBar.className = 'taste-item';
+  wineBar.href = 'restaurace.html?q=vinárna';
+  wineBar.dataset.category = 'vinarna';
+  wineBar.innerHTML = `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M7 3h10c0 5-1.7 8-5 8S7 8 7 3Z"/>
+      <path d="M12 11v7M8.5 21h7M9 18h6"/>
+    </svg>
+    <span>Vinárna</span>
+  `;
+
+  const pivnice = [...cuisineGrid.querySelectorAll('.taste-item')]
+    .find((item) => item.textContent.trim() === 'Pivnice');
+
+  if (pivnice) pivnice.insertAdjacentElement('afterend', wineBar);
+  else cuisineGrid.appendChild(wineBar);
+}
+
+function initializeHomepageDynamicContent() {
   updateHomepageRestaurantCount();
+  addWineBarHomepageCategory();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeHomepageDynamicContent, { once: true });
+} else {
+  initializeHomepageDynamicContent();
 }
