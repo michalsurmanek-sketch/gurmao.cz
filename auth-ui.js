@@ -64,25 +64,26 @@
 (function loadPageSpecificEnhancements() {
   const path = window.location.pathname.replace(/\/+$/, '');
 
-  if (path.endsWith('/kuchar.html')) {
+  const loadEnhancement = (css, js, version) => {
     const stylesheet = document.createElement('link');
     stylesheet.rel = 'stylesheet';
-    stylesheet.href = 'chef-redesign.css?v=4';
+    stylesheet.href = `${css}?v=${version}`;
     document.head.appendChild(stylesheet);
 
     const script = document.createElement('script');
-    script.src = 'chef-redesign.js?v=4';
+    script.src = `${js}?v=${version}`;
     document.body.appendChild(script);
+  };
+
+  if (path.endsWith('/kuchar.html')) {
+    loadEnhancement('chef-redesign.css', 'chef-redesign.js', '4');
   }
 
   if (path.endsWith('/restaurace.html')) {
-    const stylesheet = document.createElement('link');
-    stylesheet.rel = 'stylesheet';
-    stylesheet.href = 'restaurace-redesign.css?v=3';
-    document.head.appendChild(stylesheet);
+    loadEnhancement('restaurace-redesign.css', 'restaurace-redesign.js', '3');
+  }
 
-    const script = document.createElement('script');
-    script.src = 'restaurace-redesign.js?v=3';
-    document.body.appendChild(script);
+  if (path.endsWith('/feed.html')) {
+    loadEnhancement('feed-redesign.css', 'feed-redesign.js', '1');
   }
 })();
