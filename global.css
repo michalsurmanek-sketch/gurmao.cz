@@ -330,17 +330,16 @@ textarea,
 
 #heroCTA a {
   min-width: 250px;
-  padding: 15px 24px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,.24);
-  background: rgba(6,6,6,.66);
+  padding: 10px 4px;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
   font-size: 1rem;
 }
 
 #heroCTA a:first-child {
-  border-color: rgba(212,175,55,.82);
   color: #e3bd45 !important;
-  box-shadow: 0 0 22px rgba(212,175,55,.10);
 }
 
 #heroCTA a:first-child::before {
@@ -353,8 +352,9 @@ textarea,
 
 #heroCTA a:hover {
   transform: translateY(-2px);
-  border-color: rgba(212,175,55,.78);
   color: #e4bf4a !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 @media (max-width: 767px) {
