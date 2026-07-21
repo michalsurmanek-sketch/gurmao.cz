@@ -86,4 +86,8 @@
   if (path.endsWith('/feed.html')) {
     loadEnhancement('feed-redesign.css', 'feed-redesign.js', '7');
   }
+
+  if (path.endsWith('/ai.html')) {
+    loadEnhancement('ai-redesign.css', 'ai-redesign.js', '1');
+  }
 })();
