@@ -46,10 +46,21 @@ CREATE INDEX IF NOT EXISTS chef_import_candidates_duplicate_idx
   ON public.chef_import_candidates(duplicate_chef_id)
   WHERE duplicate_chef_id IS NOT NULL;
 
+CREATE OR REPLACE FUNCTION public.touch_chef_import_candidate_updated_at()
+RETURNS trigger
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$;
+
 DROP TRIGGER IF EXISTS chef_import_candidates_touch ON public.chef_import_candidates;
 CREATE TRIGGER chef_import_candidates_touch
   BEFORE UPDATE ON public.chef_import_candidates
-  FOR EACH ROW EXECUTE FUNCTION public.touch_updated_at();
+  FOR EACH ROW EXECUTE FUNCTION public.touch_chef_import_candidate_updated_at();
 
 ALTER TABLE public.chef_import_candidates ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON public.chef_import_candidates FROM anon, authenticated;
