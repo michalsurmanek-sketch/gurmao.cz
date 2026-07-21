@@ -63,9 +63,45 @@ function addWineBarHomepageCategory() {
   else cuisineGrid.appendChild(wineBar);
 }
 
+function applyHomepageCuisineLayout() {
+  if (!document.querySelector('.taste-grid-cuisine')) return;
+
+  const styleId = 'homepage-cuisine-flex-layout';
+  let style = document.getElementById(styleId);
+  if (!style) {
+    style = document.createElement('style');
+    style.id = styleId;
+    document.head.appendChild(style);
+  }
+
+  style.textContent = `
+    @media (min-width: 1024px) {
+      body .hero-bg .hero-discovery .taste-grid-cuisine {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        justify-content: center !important;
+        align-items: flex-start !important;
+        gap: clamp(8px, 1.15vw, 18px) !important;
+        width: 100% !important;
+      }
+
+      body .hero-bg .hero-discovery .taste-grid-cuisine .taste-item {
+        flex: 0 1 82px !important;
+        width: auto !important;
+        min-width: 62px !important;
+        max-width: 86px !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        font-size: 12px !important;
+      }
+    }
+  `;
+}
+
 function initializeHomepageDynamicContent() {
   updateHomepageRestaurantCount();
   addWineBarHomepageCategory();
+  applyHomepageCuisineLayout();
 }
 
 if (document.readyState === 'loading') {
