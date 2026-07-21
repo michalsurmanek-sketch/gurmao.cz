@@ -60,3 +60,17 @@
     setLoggedOutUI();
   }
 })();
+
+(function loadPageSpecificEnhancements() {
+  if (!/\/kuchar\.html$/.test(window.location.pathname)) return;
+
+  const stylesheet = document.createElement('link');
+  stylesheet.rel = 'stylesheet';
+  stylesheet.href = 'chef-redesign.css?v=1';
+  document.head.appendChild(stylesheet);
+
+  const script = document.createElement('script');
+  script.src = 'chef-redesign.js?v=1';
+  script.defer = true;
+  document.head.appendChild(script);
+})();
