@@ -1,0 +1,52 @@
+name: Najít kuchaře na oficiálních webech
+
+on:
+  workflow_dispatch:
+    inputs:
+      restaurant_id:
+        description: Volitelné UUID jedné restaurace
+        required: false
+        type: string
+      limit:
+        description: Počet nejnovějších restaurací ke kontrole
+        required: true
+        default: '50'
+        type: string
+      stage:
+        description: Uložit nalezené kuchaře do neveřejné čekárny
+        required: true
+        default: false
+        type: boolean
+  schedule:
+    - cron: '37 3 8 * *'
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Najít ověřitelné profily kuchařů
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        shell: bash
+        run: |
+          ARGS=("--limit=${{ inputs.limit || '50' }}")
+          if [[ -n "${{ inputs.restaurant_id }}" ]]; then ARGS+=("--restaurant-id=${{ inputs.restaurant_id }}"); fi
+          if [[ "${{ github.event_name }}" == "schedule" || "${{ inputs.stage }}" == "true" ]]; then ARGS+=("--stage"); fi
+          node scripts/discover-chefs.mjs "${ARGS[@]}" | tee chef-discovery-report.json
+      - name: Uložit kontrolní report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: chef-discovery-report
+          path: chef-discovery-report.json
+          if-no-files-found: warn
+          retention-days: 30
