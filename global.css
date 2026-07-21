@@ -229,6 +229,12 @@ textarea,
   z-index: 1;
 }
 
+@media (min-width: 1024px) {
+  .hero-bg > * {
+    transform: translateX(-6vw);
+  }
+}
+
 .hero-bg > div:nth-of-type(2) {
   border-color: rgba(212,175,55,.56) !important;
   background: rgba(8,8,8,.68) !important;
