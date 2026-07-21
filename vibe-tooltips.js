@@ -35,6 +35,13 @@ function injectRestaurantActionHoverStyles() {
   const style = document.createElement('style');
   style.id = 'gurmao-action-hover-styles';
   style.textContent = `
+    @media (min-width: 768px) {
+      body[data-page="restaurants-redesign"] #restaurantsList:not(.restaurants-row-view),
+      #restaurantsList:not(.restaurants-row-view) {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      }
+    }
+
     #restaurantsList .save-btn,
     #restaurantsList .share-btn,
     #restaurantsList .flip-btn {
