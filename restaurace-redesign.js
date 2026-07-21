@@ -205,16 +205,44 @@ function applyRestaurantRedesign() {
             vibeFilters.hidden = true;
           }
 
-          const runSearch = () => {
-            const terms = [searchInput.value.trim(), cuisineSelect.value, localitySelect.value].filter(Boolean);
-            searchInput.value = terms.join(' ');
+          const cuisineSearchTerms = Object.freeze({
+            'česká': 'česk',
+            'italská': 'ital',
+            'asijská': 'asi',
+            'mexická': 'mex',
+            'indická': 'ind',
+            'americká': 'amer',
+            'středomořská': 'středomoř',
+            'vegetariánská': 'veget',
+            'vegan': 'vegan'
+          });
+
+          let manualSearchValue = searchInput.value.trim();
+          let programmaticSearchChange = false;
+
+          searchInput.addEventListener('input', () => {
+            if (!programmaticSearchChange) manualSearchValue = searchInput.value.trim();
+          });
+
+          const submitSearchValue = value => {
+            programmaticSearchChange = true;
+            searchInput.value = value;
             searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+            programmaticSearchChange = false;
+          };
+
+          const runSearch = () => {
+            const cuisineQuery = cuisineSearchTerms[cuisineSelect.value] || '';
+            const localityQuery = localitySelect.value.trim();
+            const query = cuisineQuery || localityQuery || manualSearchValue;
+            submitSearchValue(query);
           };
 
           searchBtn.addEventListener('click', runSearch);
           searchInput.addEventListener('keydown', event => {
             if (event.key === 'Enter') {
               event.preventDefault();
+              manualSearchValue = searchInput.value.trim();
               runSearch();
             }
           });
