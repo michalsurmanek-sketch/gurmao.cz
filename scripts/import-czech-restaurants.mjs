@@ -5,6 +5,7 @@ import process from 'node:process';
 import {
   REGIONS,
   bboxForRegion,
+  parseImportLimit,
   prepareCandidates
 } from './cz-import-core.mjs';
 
@@ -172,8 +173,7 @@ async function main() {
   if (!Number.isFinite(minConfidence) || minConfidence < 0 || minConfidence > 1) {
     throw new Error('--min-confidence musí být číslo od 0 do 1.');
   }
-  const limit = args.limit == null ? Infinity : Number(args.limit);
-  if (!Number.isInteger(limit) || limit <= 0) throw new Error('--limit musí být kladné celé číslo.');
+  const limit = parseImportLimit(args.limit);
 
   const features = await readFeatures(args.input);
   const config = supabaseConfig(Boolean(args.stage));
