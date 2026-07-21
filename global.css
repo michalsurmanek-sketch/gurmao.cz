@@ -21,6 +21,9 @@
 .taste-more:hover { background:rgba(212,175,55,.1); border-color:#d4af37; }
 .hero-discovery + #heroCTA { margin-top:44px !important; }
 
+/* Remove duplicated legacy atmosphere section */
+.vibe-section { display: none !important; }
+
 /* FINAL OVERRIDE: disable every legacy form + div rule */
 body .hero-bg form[role="search"] + div.hero-discovery {
   display: block !important;
