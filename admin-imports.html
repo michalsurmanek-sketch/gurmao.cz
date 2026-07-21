@@ -91,6 +91,58 @@
     </nav>
   </main>
 
+  <dialog class="publish-dialog edit-dialog" id="editDialog">
+    <div class="publish-dialog__inner">
+      <h2>Upravit importované údaje</h2>
+      <p id="editCandidateName"></p>
+      <form class="publish-form edit-form" id="editForm">
+        <div class="edit-form__grid">
+          <div class="field field-span-2">
+            <label for="editNameInput">Název restaurace *</label>
+            <input id="editNameInput" type="text" maxlength="160" required autocomplete="organization">
+          </div>
+          <div class="field">
+            <label for="editCategoryInput">Kategorie / typ kuchyně</label>
+            <input id="editCategoryInput" type="text" maxlength="120" placeholder="Např. česká kuchyně">
+          </div>
+          <div class="field">
+            <label for="editCityInput">Město *</label>
+            <input id="editCityInput" type="text" maxlength="120" required autocomplete="address-level2">
+          </div>
+          <div class="field field-span-2">
+            <label for="editAddressInput">Adresa</label>
+            <input id="editAddressInput" type="text" maxlength="500" autocomplete="street-address">
+          </div>
+          <div class="field">
+            <label for="editPostalCodeInput">PSČ</label>
+            <input id="editPostalCodeInput" type="text" maxlength="20" autocomplete="postal-code">
+          </div>
+          <div class="field">
+            <label for="editPhoneInput">Telefon</label>
+            <input id="editPhoneInput" type="tel" maxlength="80" autocomplete="tel">
+          </div>
+          <div class="field field-span-2">
+            <label for="editWebsiteInput">Web restaurace</label>
+            <input id="editWebsiteInput" type="url" maxlength="1000" placeholder="https://…" autocomplete="url">
+          </div>
+          <div class="field">
+            <label for="editLatitudeInput">Zeměpisná šířka</label>
+            <input id="editLatitudeInput" type="number" min="-90" max="90" step="any" inputmode="decimal">
+          </div>
+          <div class="field">
+            <label for="editLongitudeInput">Zeměpisná délka</label>
+            <input id="editLongitudeInput" type="number" min="-180" max="180" step="any" inputmode="decimal">
+          </div>
+        </div>
+        <div class="edit-note">Zdrojové ID zůstává uzamčené. Úprava schváleného kandidáta vyžaduje nové schválení.</div>
+        <div class="modal-actions">
+          <button class="btn" id="cancelEdit" type="button">Zrušit</button>
+          <button class="btn btn-primary" id="confirmEdit" type="submit">Uložit úpravy</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
   <dialog class="publish-dialog" id="publishDialog">
     <div class="publish-dialog__inner">
       <h2>Zveřejnit restauraci</h2>
