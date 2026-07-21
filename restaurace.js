@@ -104,6 +104,7 @@ async function load(reset=false) {
 function setCount(text) { const el=document.getElementById('resultCount'); if(el) el.textContent=text; }
 function toggleSpinner(show) { document.getElementById('loadingSpinner')?.classList.toggle('hidden',!show); }
 function formatDistance(km) { return km<1 ? `${Math.round(km*1000)} m` : `${km.toFixed(1)} km`; }
+
 function card(r) {
   const image=escapeHtml(r.image_url||r.image||r.photo_url||'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800');
   const slug=escapeHtml(r.slug||'');
@@ -112,11 +113,77 @@ function card(r) {
   const tag=escapeHtml(r.tag||'');
   const vibe=escapeHtml(r.vibe||'');
   const distance=Number.isFinite(r.distance)?` · <span class="text-gurmaogold">${formatDistance(r.distance)}</span>`:'';
+
   if (state.view === 'rows') {
     return `<article class="restaurant-row"><a href="restaurace-${slug}.html" class="restaurant-row-image"><img src="${image}" alt="${name}" loading="lazy" decoding="async"></a><div class="restaurant-row-main"><div class="restaurant-row-vibe">${vibe}</div><h3>${name}</h3><p>${city}${city&&tag?' · ':''}${tag}${distance}</p></div><div class="restaurant-row-actions"><button data-save="${slug}" class="save-btn" aria-label="Uložit restauraci">🤍</button><a href="restaurace-${slug}.html" class="restaurant-row-detail">Detail</a></div></article>`;
   }
-  return `<article class="card-wrapper"><div class="card-front rounded-3xl bg-white/5 overflow-hidden h-full"><a href="restaurace-${slug}.html" class="block"><img src="${image}" alt="${name}" loading="lazy" decoding="async" class="aspect-[3/4] w-full object-cover"></a><div class="p-6"><div class="text-sm text-gurmaogold mb-1">${vibe}</div><h3 class="text-xl font-semibold">${name}</h3><p class="text-white/60 text-sm mt-1">${city}${city&&tag?' · ':''}${tag}${distance}</p><div class="mt-5 flex gap-2"><a href="restaurace-${slug}.html" class="flex-1 px-4 py-2 rounded-full bg-gurmaogold text-black text-center font-semibold">Detail</a><button data-save="${slug}" class="save-btn w-11 h-11 rounded-full border border-white/20">🤍</button></div><div data-restaurant-rating="${slug}" class="mt-3"></div></div></div></article>`;
+
+  const vibeTooltips = {
+    '🍷 LUXE': 'Elegantní zážitek, důraz na detail, klidná atmosféra',
+    '🔥 DRAMA': 'Výrazné chutě, silná osobnost, nezapomenutelné kombinace',
+    '🖤 DARK': 'Intimní atmosféra, večerní vibe, tlumené světlo',
+    '🌊 CALM': 'Klidná atmosféra, harmonie, pohoda'
+  };
+  const tooltip=escapeHtml(vibeTooltips[r.vibe]||'');
+  const shareData=escapeHtml(JSON.stringify({id:r.slug,name:r.name,vibe:r.vibe,city:r.city,tag:r.tag,img:image,href:`restaurace-${r.slug}.html`}));
+  const menuItems=[
+    {name:'Hovězí tatarák',desc:'s trhaným žloutkem',price:'380 Kč'},
+    {name:'Grilovaný losos',desc:'s citrusovou salsou',price:'450 Kč'},
+    {name:'Pasta carbonara',desc:'domácí těstoviny',price:'320 Kč'},
+    {name:'Degustační menu',desc:'5 chodů',price:'1250 Kč'}
+  ];
+
+  return `<div class="card-wrapper" style="perspective:1200px;">
+    <div class="card-inner" style="position:relative;width:100%;transition:transform .4s ease-in-out;transform-style:preserve-3d;">
+      <div class="card-front rounded-3xl bg-white/5 overflow-hidden" style="backface-visibility:hidden;">
+        <div class="relative">
+          <a href="restaurace-${slug}.html" class="block"><img src="${image}" alt="${name}" loading="lazy" decoding="async" class="aspect-[3/4] w-full h-full object-cover"></a>
+          <div class="absolute bottom-3 right-3 flex gap-2">
+            <button data-save="${slug}" class="save-btn w-11 h-11 rounded-full bg-black/30 backdrop-blur border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center" aria-label="Uložit">🤍</button>
+            <button class="share-btn w-11 h-11 rounded-full bg-black/30 backdrop-blur border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center" data-restaurant="${shareData}" title="Sdílet" aria-label="Sdílet">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            </button>
+          </div>
+        </div>
+        <div class="p-6">
+          <div class="flex items-start justify-between gap-3 mb-2">
+            <div class="flex-1"><div class="vibe-tooltip text-sm text-gurmaogold mb-1" data-tooltip="${tooltip}">${vibe}</div><h3 class="text-xl font-semibold">${name}</h3><p class="text-white/60 text-sm mt-1">${city}${city&&tag?' · ':''}${tag}${distance}</p></div>
+            <button class="flip-btn hidden md:flex w-11 h-11 rounded-full bg-gurmaogold text-black hover:bg-gurmaogold/80 transition items-center justify-center flex-shrink-0" title="Zobrazit menu" aria-label="Zobrazit menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="9" y1="9" x2="15" y2="9"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg></button>
+          </div>
+          <div data-restaurant-rating="${slug}"><div class="border-t border-white/10 pt-3 mt-3"><div class="flex items-center gap-2 mb-2"><div class="inline-flex items-center gap-0.5 text-sm"><span class="text-white/20">⭐</span><span class="text-white/20">⭐</span><span class="text-white/20">⭐</span><span class="text-white/20">⭐</span><span class="text-white/20">⭐</span></div><span class="text-xs text-white/40">—</span></div><div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div><div class="inline-flex items-center gap-1 text-base"><span class="text-white/20">⭐</span><span class="text-white/20">⭐</span><span class="text-white/20">⭐</span><span class="text-white/20">⭐</span><span class="text-white/20">⭐</span></div></div></div>
+        </div>
+      </div>
+      <div class="card-back rounded-3xl bg-white/5 overflow-hidden" style="position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);">
+        <div class="flex flex-col h-full p-6"><div class="mb-4"><h3 class="text-xl font-semibold mb-1">${name}</h3><p class="text-gurmaogold text-sm">Dnešní menu</p></div><div class="flex-1 overflow-y-auto space-y-3">${menuItems.map(item=>`<div class="border-b border-white/10 pb-3"><div class="flex justify-between items-start gap-3"><div class="flex-1"><div class="font-medium">${item.name}</div><div class="text-sm text-white/60 mt-0.5">${item.desc}</div></div><div class="text-gurmaogold font-semibold whitespace-nowrap">${item.price}</div></div></div>`).join('')}</div><div class="mt-4 flex gap-2"><a href="restaurace-${slug}.html" class="flex-1 px-4 py-2 rounded-full bg-gurmaogold text-black text-center font-semibold hover:bg-gurmaogold/80 transition">Detail</a><button class="flip-back-btn px-4 py-2 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition">Zpět</button></div></div>
+      </div>
+    </div>
+  </div>`;
 }
+
+function initializeCardInteractions(rows) {
+  document.querySelectorAll('.card-wrapper').forEach(wrapper=>{
+    const inner=wrapper.querySelector('.card-inner');
+    wrapper.querySelector('.flip-btn')?.addEventListener('click',()=>{inner.style.transform='rotateY(180deg)';});
+    wrapper.querySelector('.flip-back-btn')?.addEventListener('click',()=>{inner.style.transform='rotateY(0deg)';});
+  });
+  if (window.ratingManager) {
+    rows.forEach(async restaurant=>{
+      const container=document.querySelector(`[data-restaurant-rating="${CSS.escape(String(restaurant.slug||''))}"]`);
+      if (!container) return;
+      try {
+        const average=await window.ratingManager.getAverageRating(restaurant.slug);
+        let html='<div class="border-t border-white/10 pt-3 mt-3">';
+        if (average && average.count>0) html+=window.ratingManager.renderAverageRating(average.average,average.count);
+        else html+='<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
+        html+='<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
+        html+=await window.ratingManager.renderInteractiveStars(restaurant.slug,0);
+        html+='</div>';
+        container.innerHTML=html;
+      } catch (error) { console.error('Rating init failed:',error); }
+    });
+  }
+}
+
 function render() {
   const list=document.getElementById('restaurantsList'); if(!list) return;
   const rows=sortedRows();
@@ -128,6 +195,7 @@ function render() {
   list.innerHTML=visible.map(card).join('');
   window.filteredRestaurants=rows;
   if (typeof window.updateSaveButtons==='function') window.updateSaveButtons();
+  if (state.view==='cards') initializeCardInteractions(visible);
   updateLoadMore();
   syncControls();
 }
