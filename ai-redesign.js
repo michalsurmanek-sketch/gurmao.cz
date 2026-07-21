@@ -3,6 +3,15 @@
   if(!path.endsWith('/ai.html'))return;
   document.body.classList.add('ai-page-redesign');
 
+  document.querySelectorAll('a[href="ai.html"]').forEach(link=>{
+    link.classList.add('text-gurmaogold');
+    link.style.textDecoration='underline';
+    link.style.textDecorationColor='#d4af37';
+    link.style.textDecorationThickness='2px';
+    link.style.textUnderlineOffset='8px';
+    link.setAttribute('aria-current','page');
+  });
+
   const section=[...document.querySelectorAll('body > section')].find(s=>s.querySelector('#aiRecommendationForm'));
   const form=document.getElementById('aiRecommendationForm');
   const results=document.getElementById('aiResults');
@@ -86,15 +95,32 @@
     form.scrollIntoView({behavior:'smooth',block:'center'});
   }));
 
-  form.addEventListener('submit',event=>{event.preventDefault();event.stopImmediatePropagation();render();},true);
+  const submitButton=form.querySelector('button[type="submit"]');
+  const handleSubmit=event=>{
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    render();
+  };
+  form.addEventListener('submit',handleSubmit,true);
+  submitButton?.addEventListener('click',handleSubmit,true);
+  if(submitButton){
+    submitButton.disabled=false;
+    submitButton.style.pointerEvents='auto';
+    submitButton.style.cursor='pointer';
+    submitButton.style.position='relative';
+    submitButton.style.zIndex='10';
+  }
+
   document.getElementById('resetForm')?.addEventListener('click',()=>{
     ['moodBtn','occasionBtn','groupSizeBtn','cityBtn','priceLevelBtn'].forEach(id=>{const b=document.getElementById(id);if(b)delete b.dataset.value;});
     setSelect('cityBtn','','-- Vyber kraj --');results.innerHTML='';
-  });
+  },true);
 
   function render(){
     const q={mood:valueFromButton('moodBtn'),occasion:valueFromButton('occasionBtn'),group:valueFromButton('groupSizeBtn'),region:valueFromButton('cityBtn'),price:valueFromButton('priceLevelBtn'),free:text(form.querySelector('[name="freeText"]')?.value).toLowerCase()};
     results.innerHTML='<div class="ai-loading">✨ Gurmao prochází restaurace a hledá nejlepší shodu…</div>';
+    results.scrollIntoView({behavior:'smooth',block:'start'});
     setTimeout(()=>{
       if(!restaurants.length){results.innerHTML='<div class="ai-empty">Restaurace se nyní nepodařilo načíst. Zkuste stránku obnovit.</div>';return;}
       const tokens=[q.mood,q.occasion,q.free].filter(Boolean).join(' ').split(/\s+/).filter(w=>w.length>2);
