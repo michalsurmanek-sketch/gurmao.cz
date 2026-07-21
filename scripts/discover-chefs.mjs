@@ -17,7 +17,17 @@ function slugify(value) {
 }
 
 function cleanText(value, max = 1000) {
-  return String(value || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max) || null;
+  return String(value || '')
+    .replace(/<script\b[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style\b[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replaceAll('&nbsp;', ' ')
+    .replaceAll('&amp;', '&')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&#39;', "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, max) || null;
 }
 
 function asArray(value) {
@@ -114,6 +124,77 @@ export function extractChefCandidates(html, pageUrl, restaurant) {
   return [...new Map(results.map((item) => [item.normalized_name, item])).values()];
 }
 
+const CHEF_PAGE_HINT = /(?:chef|šéfkuchař|sefkuchar|kuchař|kuchar|team|tým|tym|náš tým|nas tym|o nás|o-nas|about|people|kuchyně|kuchyne)/i;
+const NAME_PART = String.raw`[\p{Lu}][\p{L}'’.-]+`;
+// Lazy opakování zabrání, aby case-insensitive hledání role přibralo do jména
+// i následující běžná slova z biografie.
+const FULL_NAME = `${NAME_PART}(?:\\s+${NAME_PART}){1,3}?`;
+const ROLE = String.raw`(?:šéfkuchař(?:ka)?|sefkuchar(?:ka)?|executive chef|head chef|sous chef|chef de cuisine|kuchař(?:ka)?|kuchar(?:ka)?)`;
+
+function validPersonName(value) {
+  const name = cleanText(value, 160);
+  if (!name || !(new RegExp(`^${FULL_NAME}$`, 'u')).test(name)) return false;
+  const normalized = normalizeName(name);
+  return !/(?:restaurace|restaurant|hotel|menu|kuchyne|kitchen|team|tym)/.test(normalized);
+}
+
+export function extractRelevantChefLinks(html, pageUrl) {
+  const links = [];
+  const anchorPattern = /<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  const origin = new URL(pageUrl).origin;
+  for (const match of html.matchAll(anchorPattern)) {
+    const label = cleanText(match[2], 200) || '';
+    if (!CHEF_PAGE_HINT.test(`${match[1]} ${label}`)) continue;
+    const url = absoluteSafeUrl(match[1], pageUrl);
+    if (!url || new URL(url).origin !== origin) continue;
+    const normalized = new URL(url);
+    normalized.hash = '';
+    if (!links.includes(normalized.href) && normalized.href !== pageUrl) links.push(normalized.href);
+    if (links.length >= 3) break;
+  }
+  return links;
+}
+
+export function extractChefCandidatesFromText(html, pageUrl, restaurant) {
+  const text = cleanText(html, 200_000) || '';
+  const patterns = [
+    new RegExp(`(${ROLE})\\s*[:|–—-]?\\s*(${FULL_NAME})`, 'giu'),
+    new RegExp(`(${FULL_NAME})\\s*[,|–—-]\\s*(${ROLE})`, 'giu')
+  ];
+  const results = [];
+
+  for (const [patternIndex, pattern] of patterns.entries()) {
+    for (const match of text.matchAll(pattern)) {
+      const name = patternIndex === 0 ? match[2] : match[1];
+      const title = patternIndex === 0 ? match[1] : match[2];
+      if (!validPersonName(name)) continue;
+      const start = Math.max(0, match.index - 180);
+      const end = Math.min(text.length, match.index + match[0].length + 420);
+      const excerpt = cleanText(text.slice(start, end), 600);
+      const normalizedName = normalizeName(name);
+      results.push({
+        restaurant_id: restaurant.id,
+        normalized_name: normalizedName,
+        name: cleanText(name, 160),
+        proposed_slug: slugify(name),
+        source_url: pageUrl,
+        bio: excerpt,
+        vibe: null,
+        signature_style: cleanText(title, 160),
+        image_url: null,
+        instagram_url: null,
+        tiktok_url: null,
+        facebook_url: null,
+        youtube_url: null,
+        confidence: 0.72,
+        evidence: `Oficiální web uvádí spojení „${cleanText(match[0], 240)}“ na profilové stránce.`,
+        raw_source: { source: pageUrl, matched_text: cleanText(match[0], 240), extraction: 'explicit-role-text' }
+      });
+    }
+  }
+  return [...new Map(results.map((item) => [item.normalized_name, item])).values()];
+}
+
 async function supabaseRequest(path, options = {}) {
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     ...options,
@@ -152,11 +233,33 @@ export async function discoverChefs(options = {}) {
   const existingChefs = await supabaseRequest('chefs?select=id,name,restaurant_id&limit=5000');
   const existingByName = new Map((existingChefs || []).map((chef) => [`${chef.restaurant_id}:${normalizeName(chef.name)}`, chef.id]));
   const candidates = [];
+  let pagesChecked = 0;
 
   for (const restaurant of restaurants || []) {
-    const page = await fetchOfficialHtml(restaurant.website);
-    if (!page) continue;
-    for (const candidate of extractChefCandidates(page.html, page.url, restaurant)) {
+    const homepage = await fetchOfficialHtml(restaurant.website);
+    if (!homepage) continue;
+    const pages = [homepage];
+    for (const link of extractRelevantChefLinks(homepage.html, homepage.url)) {
+      const page = await fetchOfficialHtml(link);
+      if (page) pages.push(page);
+    }
+    pagesChecked += pages.length;
+
+    const restaurantCandidates = new Map();
+    for (const page of pages) {
+      const found = [
+        ...extractChefCandidates(page.html, page.url, restaurant),
+        ...extractChefCandidatesFromText(page.html, page.url, restaurant)
+      ];
+      for (const candidate of found) {
+        const previous = restaurantCandidates.get(candidate.normalized_name);
+        if (!previous || candidate.confidence > previous.confidence) {
+          restaurantCandidates.set(candidate.normalized_name, candidate);
+        }
+      }
+    }
+
+    for (const candidate of restaurantCandidates.values()) {
       const duplicate = existingByName.get(`${restaurant.id}:${candidate.normalized_name}`) || null;
       candidate.duplicate_chef_id = duplicate;
       candidate.candidate_status = duplicate ? 'probable_duplicate' : 'new';
@@ -171,13 +274,14 @@ export async function discoverChefs(options = {}) {
       body: JSON.stringify(candidates)
     });
   }
-  return { restaurants_checked: restaurants?.length || 0, candidates, staged: options.stage };
+  return { restaurants_checked: restaurants?.length || 0, pages_checked: pagesChecked, candidates, staged: options.stage };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const result = await discoverChefs(parseArgs(process.argv.slice(2)));
   console.log(JSON.stringify({
     restaurants_checked: result.restaurants_checked,
+    pages_checked: result.pages_checked,
     candidates_found: result.candidates.length,
     staged: result.staged,
     candidates: result.candidates.map(({ raw_source, ...candidate }) => candidate)
