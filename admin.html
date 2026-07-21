@@ -342,6 +342,8 @@
         Načítání restaurací...
       </div>
     </div>
+
+    <div id="restaurantsPagination" class="mt-6 flex flex-wrap items-center justify-center gap-3"></div>
   </div>
 
   <!-- Tab Content: Chefs List -->
@@ -1631,23 +1633,89 @@ coordMap.on('click', (e) => {
   marker = L.marker([lat, lng]).addTo(coordMap);
 });
 
-// Load restaurants
-async function loadRestaurants() {
+const RESTAURANTS_PAGE_SIZE = 50;
+let restaurantsPage = 1;
+let restaurantsSearch = '';
+let restaurantsSearchTimer;
+
+function sanitizeRestaurantSearch(value) {
+  return String(value || '').replace(/[,%()]/g, ' ').trim();
+}
+
+function renderRestaurantsPagination(filteredCount) {
+  const container = document.getElementById('restaurantsPagination');
+  const totalPages = Math.max(1, Math.ceil(filteredCount / RESTAURANTS_PAGE_SIZE));
+  const resultLabel = restaurantsSearch
+    ? `${filteredCount} výsledků · strana ${restaurantsPage} z ${totalPages}`
+    : `Strana ${restaurantsPage} z ${totalPages}`;
+
+  container.innerHTML = `
+    <button
+      type="button"
+      onclick="changeRestaurantsPage(${restaurantsPage - 1})"
+      ${restaurantsPage <= 1 ? 'disabled' : ''}
+      class="min-w-32 px-5 py-3 rounded-full bg-white/10 hover:bg-gurmaogold hover:text-black transition disabled:opacity-30 disabled:cursor-not-allowed"
+    >← Předchozí</button>
+    <span class="min-w-48 text-center text-sm text-white/60">${resultLabel}</span>
+    <button
+      type="button"
+      onclick="changeRestaurantsPage(${restaurantsPage + 1})"
+      ${restaurantsPage >= totalPages ? 'disabled' : ''}
+      class="min-w-32 px-5 py-3 rounded-full bg-white/10 hover:bg-gurmaogold hover:text-black transition disabled:opacity-30 disabled:cursor-not-allowed"
+    >Další →</button>
+  `;
+}
+
+function changeRestaurantsPage(page) {
+  restaurantsPage = Math.max(1, Number(page) || 1);
+  loadRestaurants(restaurantsPage);
+  document.getElementById('content-restaurants').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Load restaurants with an exact total and server-side pagination.
+async function loadRestaurants(page = restaurantsPage) {
   // Wait for supabase to be available
   while (!window.supabase) {
     await new Promise(resolve => setTimeout(resolve, 100));
   }
   
   try {
-    const { data, error } = await window.supabase
+    restaurantsPage = Math.max(1, Number(page) || 1);
+    const from = (restaurantsPage - 1) * RESTAURANTS_PAGE_SIZE;
+    const to = from + RESTAURANTS_PAGE_SIZE - 1;
+
+    let restaurantsQuery = window.supabase
       .from('restaurants')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(from, to);
+
+    if (restaurantsSearch) {
+      const pattern = `%${restaurantsSearch}%`;
+      restaurantsQuery = restaurantsQuery.or(
+        `name.ilike.${pattern},city.ilike.${pattern},tag.ilike.${pattern},description.ilike.${pattern}`
+      );
+    }
+
+    const [restaurantsResult, totalResult] = await Promise.all([
+      restaurantsQuery,
+      window.supabase.from('restaurants').select('id', { count: 'exact', head: true })
+    ]);
+
+    const { data = [], error, count = 0 } = restaurantsResult;
+    const { count: totalCount = 0, error: totalError } = totalResult;
 
     if (error) throw error;
+    if (totalError) throw totalError;
 
-    document.getElementById('totalCount').textContent = data.length;
-    document.getElementById('stat-restaurants').textContent = data.length;
+    const totalPages = Math.max(1, Math.ceil(count / RESTAURANTS_PAGE_SIZE));
+    if (restaurantsPage > totalPages) {
+      return loadRestaurants(totalPages);
+    }
+
+    document.getElementById('totalCount').textContent = totalCount;
+    document.getElementById('stat-restaurants').textContent = totalCount;
+    renderRestaurantsPagination(count);
 
     const html = data.map(r => `
       <div class="bg-white/5 rounded-2xl border border-white/10 p-6 hover:bg-white/10 transition">
@@ -1821,11 +1889,10 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
 
 // Search
 document.getElementById('searchRestaurants').addEventListener('input', (e) => {
-  const query = e.target.value.toLowerCase();
-  document.querySelectorAll('#restaurantsList > div').forEach(card => {
-    const text = card.textContent.toLowerCase();
-    card.style.display = text.includes(query) ? 'block' : 'none';
-  });
+  restaurantsSearch = sanitizeRestaurantSearch(e.target.value);
+  restaurantsPage = 1;
+  clearTimeout(restaurantsSearchTimer);
+  restaurantsSearchTimer = setTimeout(() => loadRestaurants(1), 250);
 });
 
 // Load on page load
