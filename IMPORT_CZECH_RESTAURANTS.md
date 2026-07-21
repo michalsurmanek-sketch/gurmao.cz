@@ -11,8 +11,9 @@ ukládá do neveřejné tabulky `restaurant_import_candidates`; veřejná tabulk
 2. Potom spusťte `czech-import-pipeline.sql`.
 3. Pro administrační schvalování spusťte `czech-import-review.sql`.
 4. Pro ruční opravy importovaných údajů spusťte `czech-import-candidate-edit.sql`.
-5. V GitHub repozitáři otevřete **Settings → Secrets and variables → Actions**.
-6. Přidejte `SUPABASE_URL` a `SUPABASE_SERVICE_ROLE_KEY`.
+5. Pro automatické návrhy obsahu spusťte `czech-import-content-suggestions.sql`.
+6. V GitHub repozitáři otevřete **Settings → Secrets and variables → Actions**.
+7. Přidejte `SUPABASE_URL` a `SUPABASE_SERVICE_ROLE_KEY`.
 
 Servisní klíč nikdy nevkládejte do zdrojového kódu ani do veřejného frontendového
 JavaScriptu.
@@ -37,6 +38,11 @@ kvality, zdrojová data a možné duplicity. Bezpečný postup má dva samostatn
   adresu, telefon, web a souřadnice. Zdrojové ID zůstává uzamčené.
 - Úprava již schváleného kandidáta vrátí jeho stav na `new`, aby musel znovu
   projít kontrolou.
+- Při importu se automaticky navrhne atmosféra a krátký faktický popis. Import se
+  také pokusí získat `og:image` pouze z oficiálního webu restaurace. Pokud jej
+  web neposkytuje, URL obrázku zůstane prázdná.
+- Po schválení se návrhy předvyplní do publikačního formuláře, ale administrátor
+  je může před zveřejněním libovolně upravit.
 
 1. kandidáta zkontrolovat a schválit,
 2. vybrat atmosféru Gurmao, napsat pravdivý popis a teprve potom zveřejnit.
