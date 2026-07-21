@@ -36,6 +36,9 @@ test('administrace používá pouze kontrolovaná RPC, ne přímý INSERT do res
   assert.doesNotMatch(client, /from\(['"]restaurants['"]\)\s*\.insert/);
   assert.match(client, /function escapeHtml/);
   assert.match(client, /function safeUrl/);
+  assert.match(client, /candidate\.suggested_vibe/);
+  assert.match(client, /candidate\.suggested_description/);
+  assert.match(client, /candidate\.suggested_image_url/);
 });
 
 test('stránka je chráněná admin guardem a dostupná z obou admin navigací', () => {
