@@ -8,6 +8,7 @@
     "build:sitemap": "node scripts/generate-sitemap.mjs",
     "test:import": "node --test scripts/import-czech-restaurants.test.mjs",
     "test:import-review": "node --test scripts/import-review.test.mjs",
+    "test:chef-import": "node --test scripts/discover-chefs.test.mjs scripts/chef-import-review.test.mjs",
     "test": "npm run build:css && npm run test:import && npm run test:import-review"
   },
   "repository": {
