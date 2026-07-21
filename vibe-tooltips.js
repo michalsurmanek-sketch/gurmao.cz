@@ -66,21 +66,16 @@ function injectRestaurantActionHoverStyles() {
       box-shadow: 0 10px 26px rgba(0, 0, 0, .42), 0 0 24px rgba(212, 175, 55, .58) !important;
     }
 
-    #restaurantsList .save-btn:hover {
-      transform: translateY(-3px) scale(1.12) rotate(-6deg) !important;
-    }
-
-    #restaurantsList .share-btn:hover svg {
-      transform: rotate(12deg) scale(1.06);
-    }
-
-    #restaurantsList .flip-btn:hover svg {
-      transform: rotate(8deg) scale(1.08);
-    }
-
+    #restaurantsList .save-btn .gurmao-heart,
     #restaurantsList .share-btn svg,
     #restaurantsList .flip-btn svg {
       transition: transform .22s ease;
+    }
+
+    #restaurantsList .save-btn:hover .gurmao-heart,
+    #restaurantsList .share-btn:hover svg,
+    #restaurantsList .flip-btn:hover svg {
+      transform: rotate(8deg) scale(1.08);
     }
 
     #restaurantsList .save-btn:active,
@@ -96,10 +91,18 @@ function injectRestaurantActionHoverStyles() {
       outline-offset: 3px;
     }
 
+    #restaurantsList .save-btn.saved {
+      background: rgba(212, 175, 55, .96) !important;
+      border-color: #f4d66a !important;
+      color: #090909 !important;
+      box-shadow: 0 0 24px rgba(212, 175, 55, .42) !important;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       #restaurantsList .save-btn,
       #restaurantsList .share-btn,
       #restaurantsList .flip-btn,
+      #restaurantsList .save-btn .gurmao-heart,
       #restaurantsList .share-btn svg,
       #restaurantsList .flip-btn svg {
         transition: none !important;
@@ -163,7 +166,8 @@ function ensureRestaurantCardOverlays() {
     save.className = 'save-btn';
     save.setAttribute('data-save', slug);
     save.setAttribute('aria-label', 'Uložit restauraci');
-    save.innerHTML = '♥';
+    save.setAttribute('title', 'Uložit');
+    save.innerHTML = '<span class="gurmao-heart" aria-hidden="true">♥</span>';
     save.style.cssText = 'width:44px;height:44px;display:grid;place-items:center;border:1px solid rgba(212,175,55,.72);border-radius:999px;background:rgba(8,8,8,.82);color:#e8c43a;font-size:24px;line-height:1;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.35),0 0 18px rgba(212,175,55,.12);backdrop-filter:blur(10px);';
 
     const share = document.createElement('button');
