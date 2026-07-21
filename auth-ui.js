@@ -84,6 +84,6 @@
   }
 
   if (path.endsWith('/feed.html')) {
-    loadEnhancement('feed-redesign.css', 'feed-redesign.js', '5');
+    loadEnhancement('feed-redesign.css', 'feed-redesign.js', '6');
   }
 })();
