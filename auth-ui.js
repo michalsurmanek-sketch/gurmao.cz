@@ -80,7 +80,7 @@
   }
 
   if (path.endsWith('/restaurace.html')) {
-    loadEnhancement('restaurace-redesign.css', 'restaurace-redesign.js', '3');
+    loadEnhancement('restaurace-redesign.css', 'restaurace-redesign.js', '4');
   }
 
   if (path.endsWith('/feed.html')) {
