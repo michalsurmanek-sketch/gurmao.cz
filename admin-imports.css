@@ -338,10 +338,20 @@ body.admin-imports-page {
 }
 
 .candidate-actions {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(88px, 1fr);
   align-self: center;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  max-width: 280px;
+  width: 330px;
+  max-width: 100%;
+  gap: 8px;
+}
+
+.candidate-actions .btn {
+  width: 100%;
+  min-width: 0;
+  padding-inline: 9px;
+  white-space: nowrap;
 }
 
 .btn {
@@ -499,7 +509,7 @@ body.admin-imports-page {
 @media (max-width: 900px) {
   .stats-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .candidate-card { grid-template-columns: 74px minmax(0, 1fr); }
-  .candidate-actions { grid-column: 1 / -1; max-width: none; justify-content: flex-start; }
+  .candidate-actions { grid-column: 1 / -1; width: 100%; }
 }
 
 @media (max-width: 680px) {
@@ -518,7 +528,7 @@ body.admin-imports-page {
   .candidate-card { display: block; padding: 17px; }
   .quality-score { width: 58px; height: 58px; float: right; margin-left: 12px; }
   .candidate-actions { margin-top: 18px; }
-  .candidate-actions .btn { flex: 1 1 130px; }
+  .candidate-actions .btn { padding-inline: 6px; font-size: 12px; }
   .candidate-details dl { grid-template-columns: 1fr; gap: 3px; }
   .candidate-details dd { margin-bottom: 7px; }
   .publish-dialog__inner { padding: 19px; }
