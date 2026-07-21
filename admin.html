@@ -88,6 +88,10 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      width: 100%;
+      border: 0;
+      font: inherit;
+      text-align: left;
       color: #ffffff !important;
       background: transparent !important;
     }
@@ -95,6 +99,12 @@
     .custom-option:hover {
       background: rgba(212, 175, 55, 0.15) !important;
       color: #d4af37 !important;
+    }
+
+    .custom-option.is-selected {
+      background: #d4af37 !important;
+      color: #0b0b0d !important;
+      font-weight: 700;
     }
     
     .custom-option:first-child {
@@ -337,12 +347,22 @@
     </div>
 
     <div class="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto]">
-      <select id="filterRestaurantCity" class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none">
-        <option value="">Všechna města</option>
-      </select>
-      <select id="filterRestaurantVibe" class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none">
-        <option value="">Všechny atmosféry</option>
-      </select>
+      <div class="custom-select">
+        <button id="filterRestaurantCityBtn" type="button" aria-expanded="false" class="custom-select-trigger w-full pl-4 pr-10 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+          Všechna města
+        </button>
+        <div id="filterRestaurantCityOptions" class="custom-options hidden" role="listbox">
+          <button type="button" class="custom-option is-selected" data-value="">Všechna města</button>
+        </div>
+      </div>
+      <div class="custom-select">
+        <button id="filterRestaurantVibeBtn" type="button" aria-expanded="false" class="custom-select-trigger w-full pl-4 pr-10 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white">
+          Všechny atmosféry
+        </button>
+        <div id="filterRestaurantVibeOptions" class="custom-options hidden" role="listbox">
+          <button type="button" class="custom-option is-selected" data-value="">Všechny atmosféry</button>
+        </div>
+      </div>
       <button id="resetRestaurantFilters" type="button" class="px-5 py-3 rounded-xl bg-white/10 hover:bg-gurmaogold hover:text-black transition">
         Vyčistit filtry
       </button>
@@ -1687,13 +1707,58 @@ function changeRestaurantsPage(page) {
   document.getElementById('content-restaurants').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function replaceRestaurantFilterOptions(selectId, placeholder, values) {
-  const select = document.getElementById(selectId);
-  const selectedValue = select.value;
-  const options = [new Option(placeholder, '')];
-  values.forEach(value => options.push(new Option(value, value)));
-  select.replaceChildren(...options);
-  if (values.includes(selectedValue)) select.value = selectedValue;
+function replaceRestaurantFilterOptions(optionsId, buttonId, placeholder, values, selectedValue) {
+  const options = document.getElementById(optionsId);
+  const button = document.getElementById(buttonId);
+  const fragment = document.createDocumentFragment();
+
+  [{ value: '', label: placeholder }, ...values.map(value => ({ value, label: value }))]
+    .forEach(item => {
+      const option = document.createElement('button');
+      option.type = 'button';
+      option.className = `custom-option${item.value === selectedValue ? ' is-selected' : ''}`;
+      option.dataset.value = item.value;
+      option.textContent = item.label;
+      option.setAttribute('role', 'option');
+      option.setAttribute('aria-selected', item.value === selectedValue ? 'true' : 'false');
+      fragment.appendChild(option);
+    });
+
+  options.replaceChildren(fragment);
+  button.textContent = selectedValue && values.includes(selectedValue) ? selectedValue : placeholder;
+}
+
+function setRestaurantFilterDropdownValue(buttonId, optionsId, value, placeholder) {
+  const button = document.getElementById(buttonId);
+  const options = document.getElementById(optionsId);
+  button.textContent = value || placeholder;
+  options.querySelectorAll('.custom-option').forEach(option => {
+    const selected = option.dataset.value === value;
+    option.classList.toggle('is-selected', selected);
+    option.setAttribute('aria-selected', selected ? 'true' : 'false');
+  });
+}
+
+function initRestaurantFilterDropdown(buttonId, optionsId, onSelect) {
+  const button = document.getElementById(buttonId);
+  const options = document.getElementById(optionsId);
+
+  button.addEventListener('click', event => {
+    event.stopPropagation();
+    document.querySelectorAll('.custom-options').forEach(other => {
+      if (other !== options) other.classList.add('hidden');
+    });
+    options.classList.toggle('hidden');
+    button.setAttribute('aria-expanded', options.classList.contains('hidden') ? 'false' : 'true');
+  });
+
+  options.addEventListener('click', event => {
+    const option = event.target.closest('.custom-option');
+    if (!option) return;
+    options.classList.add('hidden');
+    button.setAttribute('aria-expanded', 'false');
+    onSelect(option.dataset.value || '', option.textContent);
+  });
 }
 
 async function loadRestaurantFilterOptions() {
@@ -1722,8 +1787,20 @@ async function loadRestaurantFilterOptions() {
     const vibes = [...new Set(rows.map(row => row.vibe).filter(Boolean))]
       .sort((a, b) => a.localeCompare(b, 'cs'));
 
-    replaceRestaurantFilterOptions('filterRestaurantCity', 'Všechna města', cities);
-    replaceRestaurantFilterOptions('filterRestaurantVibe', 'Všechny atmosféry', vibes);
+    replaceRestaurantFilterOptions(
+      'filterRestaurantCityOptions',
+      'filterRestaurantCityBtn',
+      'Všechna města',
+      cities,
+      restaurantCityFilter
+    );
+    replaceRestaurantFilterOptions(
+      'filterRestaurantVibeOptions',
+      'filterRestaurantVibeBtn',
+      'Všechny atmosféry',
+      vibes,
+      restaurantVibeFilter
+    );
   } catch (error) {
     console.error('Error loading restaurant filters:', error);
   }
@@ -1962,14 +2039,16 @@ document.getElementById('searchRestaurants').addEventListener('input', (e) => {
   restaurantsSearchTimer = setTimeout(() => loadRestaurants(1), 250);
 });
 
-document.getElementById('filterRestaurantCity').addEventListener('change', (e) => {
-  restaurantCityFilter = e.target.value;
+initRestaurantFilterDropdown('filterRestaurantCityBtn', 'filterRestaurantCityOptions', (value, label) => {
+  restaurantCityFilter = value;
+  setRestaurantFilterDropdownValue('filterRestaurantCityBtn', 'filterRestaurantCityOptions', value, label);
   restaurantsPage = 1;
   loadRestaurants(1);
 });
 
-document.getElementById('filterRestaurantVibe').addEventListener('change', (e) => {
-  restaurantVibeFilter = e.target.value;
+initRestaurantFilterDropdown('filterRestaurantVibeBtn', 'filterRestaurantVibeOptions', (value, label) => {
+  restaurantVibeFilter = value;
+  setRestaurantFilterDropdownValue('filterRestaurantVibeBtn', 'filterRestaurantVibeOptions', value, label);
   restaurantsPage = 1;
   loadRestaurants(1);
 });
@@ -1980,8 +2059,8 @@ document.getElementById('resetRestaurantFilters').addEventListener('click', () =
   restaurantVibeFilter = '';
   restaurantsPage = 1;
   document.getElementById('searchRestaurants').value = '';
-  document.getElementById('filterRestaurantCity').value = '';
-  document.getElementById('filterRestaurantVibe').value = '';
+  setRestaurantFilterDropdownValue('filterRestaurantCityBtn', 'filterRestaurantCityOptions', '', 'Všechna města');
+  setRestaurantFilterDropdownValue('filterRestaurantVibeBtn', 'filterRestaurantVibeOptions', '', 'Všechny atmosféry');
   loadRestaurants(1);
 });
 
