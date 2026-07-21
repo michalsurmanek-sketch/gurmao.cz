@@ -60,7 +60,7 @@ function applyRestaurantRedesign() {
     hero.classList.add('restaurants-hero');
     const title = hero.querySelector('h1');
     const subtitle = hero.querySelector('p');
-    if (title) title.textContent = 'Všechny restaurace';
+    if (title) title.innerHTML = 'Všechny <span style="color:#D4AF37">restaurace</span>';
     if (subtitle) subtitle.textContent = 'Objevte restaurace, které odpovídají tomu, co právě hledáte.';
   }
 
