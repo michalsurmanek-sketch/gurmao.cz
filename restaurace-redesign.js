@@ -126,13 +126,13 @@ function applyRestaurantRedesign() {
       const perPageContainer = perPageLabel?.parentElement;
       if (resultCount && perPageContainer) {
         perPageContainer.classList.add('restaurants-per-page');
-        const toolbar = document.createElement('div');
-        toolbar.className = 'restaurants-toolbar';
-        perPageContainer.parentNode.insertBefore(toolbar, perPageContainer);
-        toolbar.appendChild(perPageContainer);
-
         resultCount.classList.add('restaurants-result-count-outside');
-        inner.insertAdjacentElement('afterend', resultCount);
+
+        const toolbar = document.createElement('div');
+        toolbar.className = 'restaurants-toolbar restaurants-toolbar-outside';
+        inner.insertAdjacentElement('afterend', toolbar);
+        toolbar.appendChild(resultCount);
+        toolbar.appendChild(perPageContainer);
       }
     }
   }
