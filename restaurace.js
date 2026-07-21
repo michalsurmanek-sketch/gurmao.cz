@@ -1,833 +1,174 @@
-// Import Supabase client
 import { supabase } from './supabase-client.js';
 
 const VIBE_PARAM_TO_FILTER = Object.freeze({
-  luxe: '🍷 LUXE',
-  drama: '🔥 DRAMA',
-  chaos: '🌮 CHAOS',
-  pure: '🌿 PURE',
-  dark: '🖤 DARK',
-  calm: '🌊 CALM'
+  luxe: '🍷 LUXE', drama: '🔥 DRAMA', chaos: '🌮 CHAOS',
+  pure: '🌿 PURE', dark: '🖤 DARK', calm: '🌊 CALM'
 });
+const FILTER_TO_VIBE_PARAM = Object.fromEntries(Object.entries(VIBE_PARAM_TO_FILTER).map(([k,v]) => [v,k]));
+const params = new URLSearchParams(location.search);
 
-const initialParams = new URLSearchParams(window.location.search);
+const state = {
+  search: sanitize(params.get('q') || ''),
+  cuisine: sanitize(params.get('cuisine') || ''),
+  city: sanitize(params.get('city') || ''),
+  vibe: VIBE_PARAM_TO_FILTER[(params.get('vibe') || '').toLowerCase()] || 'all',
+  sort: params.get('sort') || 'recommended',
+  userLocation: null,
+  page: 0,
+  pageSize: 30,
+  perPage: innerWidth < 768 ? 12 : 24,
+  total: 0,
+  loading: false,
+  hasMore: true,
+  requestId: 0,
+  rows: [],
+  shown: 0
+};
 
-let allRestaurants = [];
-window.filteredRestaurants = [];
-let currentFilter = VIBE_PARAM_TO_FILTER[(initialParams.get('vibe') || '').toLowerCase()] || 'all';
-let searchQuery = sanitizeSearchTerm(initialParams.get('q') || '');
-let userLocation = null;
-let sortByDistance = false;
-// Desktop: 24 restaurací, Mobile: 12 restaurací (pak infinite scroll)
-let perPage = window.innerWidth < 768 ? 12 : 24;
-let currentlyDisplayed = 0;
-
-// Pagination for server-side
-let currentPage = 0;
-const PAGE_SIZE = 30; // Načíst po 30 restauracích (sníženo z 50)
-let totalCount = 0;
-let isLoading = false;
-let hasMoreData = true;
-let requestVersion = 0;
-let searchDebounce;
-
-function sanitizeSearchTerm(value) {
-  return String(value || '')
-    .normalize('NFKC')
-    .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, 80);
+function sanitize(value) {
+  return String(value || '').normalize('NFKC').replace(/[^\p{L}\p{N}\s-]/gu, ' ').replace(/\s+/g, ' ').trim().slice(0, 80);
 }
-
-function getSortedRestaurants() {
-  const restaurants = [...allRestaurants];
-
-  if (sortByDistance && userLocation) {
-    restaurants.sort((a, b) => (a.distance || 999) - (b.distance || 999));
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+function updateUrl() {
+  const p = new URLSearchParams();
+  if (state.search) p.set('q', state.search);
+  if (state.cuisine) p.set('cuisine', state.cuisine);
+  if (state.city) p.set('city', state.city);
+  if (state.vibe !== 'all') p.set('vibe', FILTER_TO_VIBE_PARAM[state.vibe]);
+  if (state.sort !== 'recommended') p.set('sort', state.sort);
+  history.replaceState(null, '', `${location.pathname}${p.toString() ? `?${p}` : ''}${location.hash}`);
+}
+function distanceKm(lat1, lon1, lat2, lon2) {
+  const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function sortedRows() {
+  const rows=[...state.rows];
+  const collator=new Intl.Collator('cs',{sensitivity:'base'});
+  if (state.userLocation) rows.forEach(r => r.distance = Number(r.latitude) && Number(r.longitude) ? distanceKm(state.userLocation.lat,state.userLocation.lng,Number(r.latitude),Number(r.longitude)) : Infinity);
+  if (state.sort==='distance') rows.sort((a,b)=>(a.distance??Infinity)-(b.distance??Infinity));
+  else if (state.sort==='name-asc') rows.sort((a,b)=>collator.compare(a.name||'',b.name||''));
+  else if (state.sort==='name-desc') rows.sort((a,b)=>collator.compare(b.name||'',a.name||''));
+  else if (state.sort==='rating-desc') rows.sort((a,b)=>Number(b.rating||b.average_rating||0)-Number(a.rating||a.average_rating||0));
+  return rows;
+}
+function buildQuery(from,to) {
+  let q=supabase.from('restaurants').select('*',{count:'exact'});
+  if (state.vibe!=='all') q=q.eq('vibe',state.vibe);
+  if (state.city) q=q.ilike('city',state.city);
+  if (state.cuisine) q=q.ilike('tag',`%${state.cuisine}%`);
+  if (state.search) {
+    const s=state.search.replace(/[,%()]/g,' ');
+    const pattern=`%${s}%`;
+    q=q.or(`name.ilike.${pattern},description.ilike.${pattern},tag.ilike.${pattern},city.ilike.${pattern}`);
   }
-
-  return restaurants;
+  if (state.sort==='name-asc') q=q.order('name',{ascending:true});
+  else if (state.sort==='name-desc') q=q.order('name',{ascending:false});
+  else if (state.sort==='rating-desc') q=q.order('rating',{ascending:false,nullsFirst:false});
+  else q=q.order('created_at',{ascending:false});
+  return q.range(from,to);
 }
-
-function updateUrlParams() {
-  const params = new URLSearchParams(window.location.search);
-  const vibeParam = Object.entries(VIBE_PARAM_TO_FILTER)
-    .find(([, filterValue]) => filterValue === currentFilter)?.[0];
-
-  if (searchQuery) params.set('q', searchQuery);
-  else params.delete('q');
-
-  if (vibeParam) params.set('vibe', vibeParam);
-  else params.delete('vibe');
-
-  const queryString = params.toString();
-  const nextUrl = `${window.location.pathname}${queryString ? `?${queryString}` : ''}${window.location.hash}`;
-  window.history.replaceState(null, '', nextUrl);
-}
-
-async function reloadRestaurants() {
-  requestVersion += 1;
-  currentPage = 0;
-  totalCount = 0;
-  hasMoreData = true;
-  allRestaurants = [];
-  window.filteredRestaurants = [];
-  currentlyDisplayed = 0;
-  isLoading = false;
-
-  document.getElementById('loadMoreBtn')?.remove();
-  const resultCount = document.getElementById('resultCount');
-  if (resultCount) resultCount.textContent = 'Hledám odpovídající restaurace…';
-  return loadRestaurants(false);
-}
-
-// Load and display restaurants with pagination
-async function loadRestaurants(append = false) {
-  if (isLoading || !hasMoreData) return;
-
-  const loadVersion = requestVersion;
-  isLoading = true;
-  
-  // Show loading indicator
-  if (append) {
-    showLoadingSpinner();
-  }
-  
-  try {
-    const from = currentPage * PAGE_SIZE;
-    const to = from + PAGE_SIZE - 1;
-    
-    let query = supabase
-      .from('restaurants')
-      .select('*', { count: 'exact' })
-      .order('created_at', { ascending: false });
-
-    if (currentFilter !== 'all') {
-      query = query.eq('vibe', currentFilter);
-    }
-
-    if (searchQuery) {
-      const pattern = `%${searchQuery}%`;
-      query = query.or([
-        `name.ilike.${pattern}`,
-        `city.ilike.${pattern}`,
-        `tag.ilike.${pattern}`,
-        `description.ilike.${pattern}`
-      ].join(','));
-    }
-
-    const { data: restaurants, error, count } = await query.range(from, to);
-
-    if (loadVersion !== requestVersion) return;
-    
-    if (error) throw error;
-    
-    totalCount = count || 0;
-    
-    // Append or replace
-    if (append) {
-      allRestaurants = [...allRestaurants, ...(restaurants || [])];
-    } else {
-      allRestaurants = restaurants || [];
-    }
-
-    if (sortByDistance && userLocation) {
-      (restaurants || []).forEach(restaurant => {
-        restaurant.distance = restaurant.latitude && restaurant.longitude
-          ? calculateDistance(userLocation.lat, userLocation.lng, restaurant.latitude, restaurant.longitude)
-          : 999;
-      });
-    }
-    
-    // Check if more data available
-    hasMoreData = (from + (restaurants || []).length) < totalCount;
-    currentPage++;
-    
-    const displayCount = append ? currentlyDisplayed + perPage : perPage;
-    displayRestaurants(getSortedRestaurants(), displayCount);
-    
-    hideLoadingSpinner();
-  } catch (error) {
-    if (loadVersion !== requestVersion) return;
-    console.error('Error loading restaurants:', error);
-    showError();
-    hideLoadingSpinner();
-  } finally {
-    if (loadVersion === requestVersion) isLoading = false;
-  }
-}
-
-function showLoadingSpinner() {
-  const spinner = document.getElementById('loadingSpinner');
-  if (spinner) spinner.classList.remove('hidden');
-}
-
-function hideLoadingSpinner() {
-  const spinner = document.getElementById('loadingSpinner');
-  if (spinner) spinner.classList.add('hidden');
-}
-
-// Display restaurants
-function displayRestaurants(restaurants, displayCount = perPage) {
-  const container = document.getElementById('restaurantsList');
-  if (!container) return;
-  
-  // Update result count (use server total if available)
-  const resultCount = document.getElementById('resultCount');
-  if (resultCount) {
-    const total = totalCount > 0 ? totalCount : restaurants.length;
-    resultCount.textContent = `Celkem: ${total} restaurací`;
-  }
-  
-  if (restaurants.length === 0) {
+async function load(reset=false) {
+  if (state.loading) return;
+  if (reset) {
+    state.requestId++; state.page=0; state.total=0; state.hasMore=true; state.rows=[]; state.shown=0;
     document.getElementById('loadMoreBtn')?.remove();
-    container.innerHTML = `
-      <div class="col-span-full text-center py-20">
-        <p class="text-white/40 text-lg">Žádné restaurace neodpovídají vašim kritériím.</p>
-      </div>
-    `;
-    return;
+    setCount('Hledám odpovídající restaurace…');
   }
-  
-  // Display only first perPage items, store filtered list for infinite scroll
-  window.filteredRestaurants = restaurants;
-  currentlyDisplayed = Math.min(displayCount, restaurants.length);
-  const toShow = restaurants.slice(0, currentlyDisplayed);
-  
-  container.innerHTML = toShow.map(restaurant => createRestaurantCard(restaurant)).join('');
-  
-  // Show "Load more" button if there are more items
-  updateLoadMoreButton();
-  
-  // Initialize ratings after a short delay to ensure rating.js is loaded
-  setTimeout(() => {
-    initializeRatings(toShow);
-  }, 100);
-  
-  // Update save buttons state
-  if (typeof window.updateSaveButtons === 'function') {
-    setTimeout(() => {
-      window.updateSaveButtons();
-    }, 100);
-  }
-  
-  // Initialize flip card interactions
-  initializeFlipCards();
-}
-
-// Update or create "Load more" button
-function updateLoadMoreButton() {
-  const container = document.getElementById('restaurantsList');
-  if (!container) return;
-  
-  const existingBtn = document.getElementById('loadMoreBtn');
-  if (existingBtn) existingBtn.remove();
-  
-  // Check if there are more items locally or on server
-  const hasMoreLocal = currentlyDisplayed < window.filteredRestaurants.length;
-  const hasMoreServer = hasMoreData;
-  
-  if (hasMoreLocal || hasMoreServer) {
-    const remaining = hasMoreServer ? 
-      (totalCount - allRestaurants.length) : 
-      (window.filteredRestaurants.length - currentlyDisplayed);
-    
-    const btn = document.createElement('div');
-    btn.id = 'loadMoreBtn';
-    btn.className = 'col-span-full flex justify-center py-8';
-    btn.innerHTML = `
-      <button onclick="loadMoreData()" class="px-8 py-3 rounded-full bg-gurmaogold text-black font-semibold hover:bg-gurmaogold/80 transition">
-        ${hasMoreServer ? 'Načíst další ze serveru' : `Načíst další (ještě ${remaining})`}
-      </button>
-    `;
-    container.insertAdjacentElement('afterend', btn);
-  }
-}
-
-// Load more items (either from local cache or server)
-window.loadMoreData = async function() {
-  // First try to show more from local filtered results
-  if (currentlyDisplayed < window.filteredRestaurants.length) {
-    loadMore(); // Use existing loadMore for local data
-  } 
-  // If all local shown, fetch more from server
-  else if (hasMoreData) {
-    await loadRestaurants(true); // append mode
-  }
-}
-
-// Load more items from local cache
-window.loadMore = function() {
-  const nextBatch = Math.min(currentlyDisplayed + perPage, window.filteredRestaurants.length);
-  const newItems = window.filteredRestaurants.slice(currentlyDisplayed, nextBatch);
-  
-  const container = document.getElementById('restaurantsList');
-  container.innerHTML += newItems.map(restaurant => createRestaurantCard(restaurant)).join('');
-  
-  currentlyDisplayed = nextBatch;
-  updateLoadMoreButton();
-  
-  // Initialize ratings for new items
-  setTimeout(() => {
-    initializeRatings(newItems);
-  }, 100);
-  
-  // Update save buttons state for new items
-  if (typeof window.updateSaveButtons === 'function') {
-    setTimeout(() => {
-      window.updateSaveButtons();
-    }, 100);
-  }
-  
-  // Initialize flip cards for new items
-  initializeFlipCards();
-}
-
-// Initialize infinite scroll
-function initializeInfiniteScroll() {
-  // Desktop: use IntersectionObserver on trigger element
-  const trigger = document.getElementById('scrollTrigger');
-  if (trigger && window.innerWidth >= 768) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !isLoading && (currentlyDisplayed < window.filteredRestaurants.length || hasMoreData)) {
-          loadMoreData();
-        }
-      });
-    }, {
-      rootMargin: '200px' // Trigger 200px before reaching bottom
-    });
-    
-    observer.observe(trigger);
-  }
-  
-  // Mobile: use scroll event
-  if (window.innerWidth < 768) {
-    let scrollIsLoading = false;
-    
-    window.addEventListener('scroll', () => {
-      if (scrollIsLoading) return;
-      if (currentlyDisplayed >= window.filteredRestaurants.length && !hasMoreData) return;
-      
-      const scrollPosition = window.innerHeight + window.scrollY;
-      const pageHeight = document.documentElement.scrollHeight;
-      
-      // Load more when user is 500px from bottom
-      if (scrollPosition > pageHeight - 500) {
-        scrollIsLoading = true;
-        loadMoreData();
-        setTimeout(() => { scrollIsLoading = false; }, 300);
-      }
-    });
-  }
-}
-
-// Create restaurant card HTML
-function createRestaurantCard(restaurant) {
-  const vibeTooltips = {
-    '🍷 LUXE': 'Elegantní zážitek, důraz na detail, klidná atmosféra',
-    '🔥 DRAMA': 'Výrazné chutě, silná osobnost, nezapomenutelné kombinace',
-    '🖤 DARK': 'Intimní atmosféra, večerní vibe, tlumené světlo',
-    '🌊 CALM': 'Klidná atmosféra, harmonie, pohoda'
-  };
-  
-  // Try multiple image sources
-  const imageUrl = restaurant.image_url || 
-                   restaurant.image || 
-                   restaurant.photo_url ||
-                   'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800';
-  
-  
-  // Mock menu data - replace with real data from restaurant object
-  const menuItems = [
-    { name: 'Hovězí tatarák', desc: 's trhaným žloutkem', price: '380 Kč' },
-    { name: 'Grilovaný losos', desc: 's citrusovou salsou', price: '450 Kč' },
-    { name: 'Pasta carbonara', desc: 'domácí těstoviny', price: '320 Kč' },
-    { name: 'Degustační menu', desc: '5 chodů', price: '1250 Kč' }
-  ];
-  
-  return `
-    <div class="card-wrapper" style="perspective: 1200px;">
-      <div class="card-inner" style="position: relative; width: 100%; transition: transform 0.4s ease-in-out; transform-style: preserve-3d;">
-        
-        <!-- FRONT SIDE -->
-        <div class="card-front rounded-3xl bg-white/5 overflow-hidden" style="backface-visibility: hidden;">
-          <div class="relative">
-            <a href="restaurace-${restaurant.slug}.html" class="block">
-              <img src="${imageUrl}" alt="${restaurant.name}" loading="lazy" decoding="async" class="aspect-[3/4] w-full h-full object-cover" />
-            </a>
-            <!-- Buttons on image -->
-            <div class="absolute bottom-3 right-3 flex gap-2">
-              <button data-save="${restaurant.slug}" class="save-btn w-11 h-11 rounded-full bg-black/30 backdrop-blur border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center" aria-label="Uložit">🤍</button>
-              <button class="share-btn w-11 h-11 rounded-full bg-black/30 backdrop-blur border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center" 
-                      data-restaurant='${JSON.stringify({
-                        id: restaurant.slug,
-                        name: restaurant.name,
-                        vibe: restaurant.vibe,
-                        city: restaurant.city,
-                        tag: restaurant.tag,
-                        img: imageUrl,
-                        href: `restaurace-${restaurant.slug}.html`
-                      })}' 
-                      title="Sdílet">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="18" cy="5" r="3"></circle>
-                  <circle cx="6" cy="12" r="3"></circle>
-                  <circle cx="18" cy="19" r="3"></circle>
-                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                </svg>
-              </button>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex items-start justify-between gap-3 mb-2">
-              <div class="flex-1">
-                <div class="vibe-tooltip text-sm text-gurmaogold mb-1" data-tooltip="${vibeTooltips[restaurant.vibe] || ''}">${restaurant.vibe}</div>
-                <h3 class="text-xl font-semibold">${restaurant.name}</h3>
-                <p class="text-white/60 text-sm mt-1">
-                  ${restaurant.city} · ${restaurant.tag}
-                  ${restaurant.distance !== undefined && restaurant.distance < 999 ? ` · <span class="text-gurmaogold">${formatDistance(restaurant.distance)}</span>` : ''}
-                </p>
-              </div>
-              <button class="flip-btn hidden md:flex w-11 h-11 rounded-full bg-gurmaogold text-black hover:bg-gurmaogold/80 transition items-center justify-center flex-shrink-0" title="Zobrazit menu" aria-label="Zobrazit menu">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="9" y1="9" x2="15" y2="9"></line>
-                  <line x1="9" y1="15" x2="15" y2="15"></line>
-                </svg>
-              </button>
-            </div>
-            
-            <!-- Rating Section -->
-            <div data-restaurant-rating="${restaurant.slug}">
-              <div class="border-t border-white/10 pt-3 mt-3">
-                <!-- Average rating (populated later) -->
-                <div class="flex items-center gap-2 mb-2">
-                  <div class="inline-flex items-center gap-0.5 text-sm">
-                    <span class="text-white/20">⭐</span>
-                    <span class="text-white/20">⭐</span>
-                    <span class="text-white/20">⭐</span>
-                    <span class="text-white/20">⭐</span>
-                    <span class="text-white/20">⭐</span>
-                  </div>
-                  <span class="text-xs text-white/40">—</span>
-                </div>
-                <!-- User rating (populated later) -->
-                <div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>
-                <div class="inline-flex items-center gap-1 text-base">
-                  <span class="text-white/20 cursor-pointer hover:scale-110 transition">⭐</span>
-                  <span class="text-white/20 cursor-pointer hover:scale-110 transition">⭐</span>
-                  <span class="text-white/20 cursor-pointer hover:scale-110 transition">⭐</span>
-                  <span class="text-white/20 cursor-pointer hover:scale-110 transition">⭐</span>
-                  <span class="text-white/20 cursor-pointer hover:scale-110 transition">⭐</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- BACK SIDE -->
-        <div class="card-back rounded-3xl bg-white/5 overflow-hidden" style="position: absolute; inset: 0; backface-visibility: hidden; transform: rotateY(180deg);">
-          <div class="flex flex-col h-full p-6">
-            <!-- Header -->
-            <div class="mb-4">
-              <h3 class="text-xl font-semibold mb-1">${restaurant.name}</h3>
-              <p class="text-gurmaogold text-sm">Dnešní menu</p>
-            </div>
-            
-            <!-- Menu Items -->
-            <div class="flex-1 overflow-y-auto space-y-3">
-              ${menuItems.map(item => `
-                <div class="border-b border-white/10 pb-3">
-                  <div class="flex justify-between items-start gap-3">
-                    <div class="flex-1">
-                      <div class="font-medium">${item.name}</div>
-                      ${item.desc ? `<div class="text-sm text-white/60 mt-0.5">${item.desc}</div>` : ''}
-                    </div>
-                    <div class="text-gurmaogold font-semibold whitespace-nowrap">${item.price}</div>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-            
-            <!-- Footer CTAs -->
-            <div class="mt-4 flex gap-2">
-              <a href="restaurace-${restaurant.slug}.html" class="flex-1 px-4 py-2 rounded-full bg-gurmaogold text-black text-center font-semibold hover:bg-gurmaogold/80 transition">
-                Detail
-              </a>
-              <button class="flip-back-btn px-4 py-2 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition">
-                Zpět
-              </button>
-            </div>
-          </div>
-        </div>
-        
-      </div>
-    </div>
-  `;
-}
-
-// Initialize ratings for displayed restaurants
-async function initializeRatings(restaurants) {
-  // Wait for ratingManager to be available and ready
-  if (typeof window.ratingManager === 'undefined') {
-    await new Promise(resolve => setTimeout(resolve, 500));
-  }
-  
-  if (typeof window.ratingManager === 'undefined') {
-    console.error('Rating manager still not available');
-    return;
-  }
-  
-  // Wait for rating manager to be ready
+  if (!state.hasMore) return;
+  const requestId=state.requestId, from=state.page*state.pageSize, to=from+state.pageSize-1;
+  state.loading=true; toggleSpinner(true);
   try {
-    await window.ratingManager.ensureReady();
+    const {data,error,count}=await buildQuery(from,to);
+    if (requestId!==state.requestId) return;
+    if (error) throw error;
+    const batch=data||[];
+    state.total=count||0;
+    state.rows=reset ? batch : [...state.rows,...batch];
+    state.page++;
+    state.hasMore=state.rows.length<state.total;
+    state.shown=Math.min(state.rows.length, reset ? state.perPage : state.shown+state.perPage);
+    render();
   } catch (error) {
-    console.error('Rating manager failed to initialize:', error);
-    return;
-  }
-  
-  // Load all ratings at once
-  await window.ratingManager.loadAllRatings();
-  
-  // Now render all ratings (from cache, super fast)
-  for (const restaurant of restaurants) {
-    const container = document.querySelector(`[data-restaurant-rating="${restaurant.slug}"]`);
-    if (!container) continue;
-    
-    try {
-      const average = await window.ratingManager.getAverage(restaurant.slug);
-      const count = await window.ratingManager.getCount(restaurant.slug);
-      const userRating = await window.ratingManager.getUserRating(restaurant.slug);
-      
-      let html = '<div class="border-t border-white/10 pt-3 mt-3">';
-      
-      if (average > 0) {
-        html += `
-          <div class="flex items-center gap-2 mb-2">
-            ${window.ratingManager.renderStars(average, 'sm')}
-            <span class="text-xs text-white/60">${average.toFixed(1)} (${count})</span>
-          </div>
-        `;
-      }
-      
-      if (userRating > 0) {
-        html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
-        html += await window.ratingManager.renderInteractiveStars(restaurant.slug, userRating);
-      } else if (average === 0) {
-        html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
-        html += '<div class="text-xs text-white/40 mb-1">Ohodnoť jako první:</div>';
-        html += await window.ratingManager.renderInteractiveStars(restaurant.slug, 0);
-      } else {
-        html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
-        html += await window.ratingManager.renderInteractiveStars(restaurant.slug, 0);
-      }
-      
-      html += '</div>';
-      
-      container.innerHTML = html;
-    } catch (error) {
-      console.error(`Error initializing rating for ${restaurant.slug}:`, error);
-      container.innerHTML = '<div class="border-t border-white/10 pt-3 mt-3"><div class="text-xs text-white/40">Hodnocení není dostupné</div></div>';
-    }
-  }
+    console.error('Restaurant search failed:',error);
+    const list=document.getElementById('restaurantsList');
+    if (list) list.innerHTML='<div class="col-span-full text-center py-20"><p class="text-gurmaored text-lg">Vyhledávání se nepodařilo načíst.</p><button id="retryRestaurants" class="mt-4 px-6 py-3 rounded-full bg-gurmaogold text-black">Zkusit znovu</button></div>';
+    document.getElementById('retryRestaurants')?.addEventListener('click',()=>load(true));
+  } finally { state.loading=false; toggleSpinner(false); }
 }
-
-// Initialize filters
-function initializeFilters() {
-  const filterButtons = document.querySelectorAll('#filters button');
-
-  filterButtons.forEach(button => {
-    const filterValue = VIBE_PARAM_TO_FILTER[button.dataset.vibe] || 'all';
-    button.classList.toggle('is-active', filterValue === currentFilter);
+function setCount(text) { const el=document.getElementById('resultCount'); if(el) el.textContent=text; }
+function toggleSpinner(show) { document.getElementById('loadingSpinner')?.classList.toggle('hidden',!show); }
+function formatDistance(km) { return km<1 ? `${Math.round(km*1000)} m` : `${km.toFixed(1)} km`; }
+function card(r) {
+  const image=escapeHtml(r.image_url||r.image||r.photo_url||'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800');
+  const slug=escapeHtml(r.slug||'');
+  const name=escapeHtml(r.name||'Restaurace');
+  const city=escapeHtml(r.city||'');
+  const tag=escapeHtml(r.tag||'');
+  const vibe=escapeHtml(r.vibe||'');
+  const distance=Number.isFinite(r.distance)?` · <span class="text-gurmaogold">${formatDistance(r.distance)}</span>`:'';
+  return `<article class="card-wrapper"><div class="card-front rounded-3xl bg-white/5 overflow-hidden h-full"><a href="restaurace-${slug}.html" class="block"><img src="${image}" alt="${name}" loading="lazy" decoding="async" class="aspect-[3/4] w-full object-cover"></a><div class="p-6"><div class="text-sm text-gurmaogold mb-1">${vibe}</div><h3 class="text-xl font-semibold">${name}</h3><p class="text-white/60 text-sm mt-1">${city}${city&&tag?' · ':''}${tag}${distance}</p><div class="mt-5 flex gap-2"><a href="restaurace-${slug}.html" class="flex-1 px-4 py-2 rounded-full bg-gurmaogold text-black text-center font-semibold">Detail</a><button data-save="${slug}" class="save-btn w-11 h-11 rounded-full border border-white/20">🤍</button></div><div data-restaurant-rating="${slug}" class="mt-3"></div></div></div></article>`;
+}
+function render() {
+  const list=document.getElementById('restaurantsList'); if(!list) return;
+  const rows=sortedRows();
+  setCount(`Celkem: ${state.total} restaurací`);
+  if (!rows.length) { list.innerHTML='<div class="col-span-full text-center py-20"><p class="text-white/50 text-lg">Žádné restaurace neodpovídají zvoleným filtrům.</p></div>'; document.getElementById('loadMoreBtn')?.remove(); return; }
+  const visible=rows.slice(0,state.shown);
+  list.innerHTML=visible.map(card).join('');
+  window.filteredRestaurants=rows;
+  if (typeof window.updateSaveButtons==='function') window.updateSaveButtons();
+  updateLoadMore();
+}
+function updateLoadMore() {
+  document.getElementById('loadMoreBtn')?.remove();
+  const localMore=state.shown<state.rows.length;
+  if (!localMore&&!state.hasMore) return;
+  const wrap=document.createElement('div'); wrap.id='loadMoreBtn'; wrap.className='flex justify-center py-8';
+  wrap.innerHTML='<button class="px-8 py-3 rounded-full bg-gurmaogold text-black font-semibold">Načíst další</button>';
+  wrap.querySelector('button').addEventListener('click',async()=>{
+    if(state.shown<state.rows.length){state.shown=Math.min(state.rows.length,state.shown+state.perPage);render();}
+    else await load(false);
   });
-
-  filterButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      // Remove active state from all filter buttons
-      filterButtons.forEach(btn => {
-        btn.classList.remove('is-active');
-      });
-      
-      // Add active state to clicked button
-      button.classList.add('is-active');
-      
-      currentFilter = VIBE_PARAM_TO_FILTER[button.dataset.vibe] || 'all';
-      updateUrlParams();
-      reloadRestaurants();
-    });
+  document.getElementById('restaurantsList')?.insertAdjacentElement('afterend',wrap);
+}
+function applyState(patch,{reload=true}={}) {
+  Object.assign(state,patch); updateUrl(); syncControls(); if(reload) load(true); else render();
+}
+function syncControls() {
+  const search=document.getElementById('searchInput'); if(search&&search.value!==state.search) search.value=state.search;
+  const cuisine=document.getElementById('cuisineFilter'); if(cuisine) cuisine.value=state.cuisine;
+  const city=document.getElementById('localityFilter'); if(city) city.value=state.city;
+  const sort=document.getElementById('restaurantSort'); if(sort) sort.value=state.sort;
+  document.querySelectorAll('#filters button').forEach(btn=>btn.classList.toggle('is-active',(VIBE_PARAM_TO_FILTER[btn.dataset.vibe]||'all')===state.vibe));
+}
+function initializeBaseControls() {
+  const search=document.getElementById('searchInput');
+  let timer;
+  search?.addEventListener('input',e=>{clearTimeout(timer);timer=setTimeout(()=>applyState({search:sanitize(e.target.value)}),350);});
+  search?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();clearTimeout(timer);applyState({search:sanitize(e.target.value)});}});
+  document.querySelectorAll('#filters button').forEach(btn=>btn.addEventListener('click',()=>applyState({vibe:VIBE_PARAM_TO_FILTER[btn.dataset.vibe]||'all'})));
+  document.querySelectorAll('.per-page-btn').forEach(btn=>btn.addEventListener('click',()=>{state.perPage=Number(btn.dataset.count)||state.perPage;state.shown=Math.min(state.rows.length,state.perPage);render();}));
+  document.getElementById('locationBtn')?.addEventListener('click',()=>{
+    if(state.sort==='distance'){applyState({sort:'recommended',userLocation:null},{reload:false});return;}
+    if(!navigator.geolocation){alert('Váš prohlížeč nepodporuje geolokaci.');return;}
+    navigator.geolocation.getCurrentPosition(pos=>applyState({userLocation:{lat:pos.coords.latitude,lng:pos.coords.longitude},sort:'distance'},{reload:false}),()=>alert('Nepodařilo se získat polohu. Zkontrolujte oprávnění prohlížeče.'));
   });
 }
+window.GurmaoRestaurantSearch={
+  getState:()=>({...state}),
+  setFilters:patch=>applyState({
+    search:patch.search!==undefined?sanitize(patch.search):state.search,
+    cuisine:patch.cuisine!==undefined?sanitize(patch.cuisine):state.cuisine,
+    city:patch.city!==undefined?sanitize(patch.city):state.city,
+    vibe:patch.vibe!==undefined?patch.vibe:state.vibe,
+    sort:patch.sort!==undefined?patch.sort:state.sort
+  }),
+  clear:()=>applyState({search:'',cuisine:'',city:'',vibe:'all',sort:'recommended',userLocation:null}),
+  reload:()=>load(true)
+};
 
-// Initialize search
-function initializeSearch() {
-  const searchInput = document.getElementById('searchInput');
-  if (searchInput) {
-    searchInput.value = searchQuery;
-
-    searchInput.addEventListener('input', (e) => {
-      window.clearTimeout(searchDebounce);
-      searchDebounce = window.setTimeout(() => {
-        const nextQuery = sanitizeSearchTerm(e.target.value);
-        if (nextQuery === searchQuery) return;
-
-        searchQuery = nextQuery;
-        updateUrlParams();
-        reloadRestaurants();
-      }, 300);
-    });
-  }
-}
-
-// Initialize per-page buttons
-function initializePerPageButtons() {
-  const buttons = document.querySelectorAll('.per-page-btn');
-
-  buttons.forEach(button => {
-    const isActive = Number(button.dataset.count) === perPage;
-    button.classList.toggle('bg-gurmaogold', isActive);
-    button.classList.toggle('text-black', isActive);
-    button.classList.toggle('bg-white/5', !isActive);
-  });
-
-  buttons.forEach(button => {
-    button.addEventListener('click', () => {
-      // Remove active state from all buttons
-      buttons.forEach(btn => {
-        btn.classList.remove('bg-gurmaogold', 'text-black');
-        btn.classList.add('bg-white/5');
-      });
-      
-      // Add active state to clicked button
-      button.classList.remove('bg-white/5');
-      button.classList.add('bg-gurmaogold', 'text-black');
-      
-      // Update perPage value and reload
-      perPage = parseInt(button.dataset.count);
-      currentlyDisplayed = 0;
-      applyFilters();
-    });
-  });
-}
-
-// Keep the current result set and optionally sort it by distance.
-// Vibe and text search are applied server-side in loadRestaurants().
-function applyFilters() {
-  displayRestaurants(getSortedRestaurants(), Math.max(currentlyDisplayed, perPage));
-}
-
-// Filter restaurants by vibe (kept for backwards compatibility)
-function filterRestaurants() {
-  applyFilters();
-}
-
-// Calculate distance between two coordinates (Haversine formula)
-function calculateDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371; // Earth's radius in km
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c;
-}
-
-// Format distance for display
-function formatDistance(distance) {
-  if (distance < 1) {
-    return `${Math.round(distance * 1000)} m`;
-  }
-  return `${distance.toFixed(1)} km`;
-}
-
-// Get user location and sort by distance
-function findNearestRestaurants() {
-  const btn = document.getElementById('locationBtn');
-  if (!btn) return;
-  
-  // If already active, deactivate
-  if (sortByDistance) {
-    sortByDistance = false;
-    userLocation = null;
-    
-    // Remove distance from all restaurants
-    allRestaurants.forEach(r => {
-      delete r.distance;
-    });
-    
-    btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <span class="hidden md:inline">Blízko mě</span>';
-    btn.classList.remove('bg-gurmaogold', 'text-black', 'border-gurmaogold');
-    btn.classList.add('bg-white/5', 'border-white/15');
-    applyFilters();
-    return;
-  }
-  
-  btn.disabled = true;
-  btn.innerHTML = '<svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg> <span class="hidden md:inline">Hledám...</span>';
-  
-  if ('geolocation' in navigator) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        userLocation = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        };
-        
-        sortByDistance = true;
-        
-        // Add distance to each restaurant
-        allRestaurants.forEach(r => {
-          if (r.latitude && r.longitude) {
-            r.distance = calculateDistance(
-              userLocation.lat,
-              userLocation.lng,
-              r.latitude,
-              r.longitude
-            );
-          } else {
-            r.distance = 999; // Unknown distance
-          }
-        });
-        
-        applyFilters();
-        
-        btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <span class="hidden md:inline">📍 Podle vzdálenosti</span>';
-        btn.disabled = false;
-        btn.classList.remove('bg-white/5', 'border-white/15');
-        btn.classList.add('bg-gurmaogold', 'text-black', 'border-gurmaogold');
-      },
-      (error) => {
-        console.error('Geolocation error:', error);
-        alert('Nepodařilo se získat vaši polohu. Zkontrolujte oprávnění prohlížeče.');
-        btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <span class="hidden md:inline">Blízko mě</span>';
-        btn.classList.remove('bg-gurmaogold', 'text-black', 'border-gurmaogold');
-        btn.classList.add('bg-white/5', 'border-white/15');
-        btn.disabled = false;
-      }
-    );
-  } else {
-    alert('Váš prohlížeč nepodporuje geolokaci.');
-    btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> <span class="hidden md:inline">Blízko mě</span>';
-    btn.classList.remove('bg-gurmaogold', 'text-black', 'border-gurmaogold');
-    btn.classList.add('bg-white/5', 'border-white/15');
-    btn.disabled = false;
-  }
-}
-
-// Show error message
-function showError() {
-  const container = document.getElementById('restaurantsList');
-  if (container) {
-    container.innerHTML = `
-      <div class="col-span-full text-center py-20">
-        <p class="text-gurmaored text-lg mb-4">Chyba při načítání restaurací</p>
-        <button onclick="location.reload()" class="px-6 py-3 rounded-full bg-gurmaogold text-black hover:scale-105 transition">
-          Zkusit znovu
-        </button>
-      </div>
-    `;
-  }
-}
-
-// Initialize flip card interactions
-function initializeFlipCards() {
-  // Event delegation for flip buttons
-  document.addEventListener('click', (e) => {
-    // Flip to back
-    if (e.target.closest('.flip-btn')) {
-      e.preventDefault();
-      e.stopPropagation();
-      const cardInner = e.target.closest('.card-wrapper').querySelector('.card-inner');
-      if (cardInner) {
-        cardInner.style.transform = 'rotateY(180deg)';
-        cardInner.style.willChange = 'transform';
-      }
-    }
-    
-    // Flip to front
-    if (e.target.closest('.flip-back-btn')) {
-      e.preventDefault();
-      e.stopPropagation();
-      const cardInner = e.target.closest('.card-wrapper').querySelector('.card-inner');
-      if (cardInner) {
-        cardInner.style.transform = 'rotateY(0deg)';
-        setTimeout(() => {
-          cardInner.style.willChange = 'auto';
-        }, 400);
-      }
-    }
-  });
-  
-  // Keyboard accessibility
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      const focused = document.activeElement;
-      if (focused.classList.contains('flip-btn') || focused.classList.contains('flip-back-btn')) {
-        e.preventDefault();
-        focused.click();
-      }
-    }
-  });
-}
-
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  initializeFilters();
-  initializeSearch();
-  initializePerPageButtons();
-  initializeInfiniteScroll();
-  loadRestaurants();
-  
-  // Location button handler
-  const locationBtn = document.getElementById('locationBtn');
-  if (locationBtn) {
-    locationBtn.addEventListener('click', findNearestRestaurants);
-  }
-  
-  // Listen for rating updates and refresh that specific restaurant's rating display
-  window.addEventListener('ratingUpdated', async (event) => {
-    const { restaurantId } = event.detail;
-    const container = document.querySelector(`[data-restaurant-rating="${restaurantId}"]`);
-    if (!container || !window.ratingManager) return;
-    
-    try {
-      // Reload stats for this restaurant
-      const avgRating = await window.ratingManager.getAverage(restaurantId);
-      const count = await window.ratingManager.getCount(restaurantId);
-      const userRating = await window.ratingManager.getUserRating(restaurantId);
-      
-      let html = '<div class="border-t border-white/10 pt-3 mt-3">';
-      
-      if (avgRating > 0) {
-        html += `
-          <div class="flex items-center gap-2 mb-2">
-            ${window.ratingManager.renderStars(avgRating, 'sm')}
-            <span class="text-xs text-white/60">${avgRating.toFixed(1)} (${count})</span>
-          </div>
-        `;
-      }
-      
-      if (userRating > 0) {
-        html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
-        html += await window.ratingManager.renderInteractiveStars(restaurantId, userRating);
-      } else if (avgRating === 0) {
-        html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
-        html += '<div class="text-xs text-white/40 mb-1">Ohodnoť jako první:</div>';
-        html += await window.ratingManager.renderInteractiveStars(restaurantId, 0);
-      } else {
-        html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
-        html += await window.ratingManager.renderInteractiveStars(restaurantId, 0);
-      }
-      
-      html += '</div>';
-      
-      container.innerHTML = html;
-    } catch (error) {
-      console.error('Error updating rating display:', error);
-    }
-  });
-});
+document.addEventListener('DOMContentLoaded',()=>{ initializeBaseControls(); syncControls(); load(true); });
