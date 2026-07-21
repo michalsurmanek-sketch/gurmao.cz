@@ -29,8 +29,77 @@ function escapeAttribute(value) {
     .replace(/>/g, '&gt;');
 }
 
+function injectRestaurantActionHoverStyles() {
+  if (document.getElementById('gurmao-action-hover-styles')) return;
+
+  const style = document.createElement('style');
+  style.id = 'gurmao-action-hover-styles';
+  style.textContent = `
+    #restaurantsList .save-btn,
+    #restaurantsList .share-btn,
+    #restaurantsList .flip-btn {
+      transition: transform .22s ease, background-color .22s ease, border-color .22s ease, color .22s ease, box-shadow .22s ease !important;
+      transform-origin: center;
+      will-change: transform;
+    }
+
+    #restaurantsList .save-btn:hover,
+    #restaurantsList .share-btn:hover,
+    #restaurantsList .flip-btn:hover {
+      transform: translateY(-3px) scale(1.1) !important;
+      background: rgba(212, 175, 55, .96) !important;
+      border-color: #f4d66a !important;
+      color: #090909 !important;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, .42), 0 0 24px rgba(212, 175, 55, .58) !important;
+    }
+
+    #restaurantsList .save-btn:hover {
+      transform: translateY(-3px) scale(1.12) rotate(-6deg) !important;
+    }
+
+    #restaurantsList .share-btn:hover svg {
+      transform: rotate(12deg) scale(1.06);
+    }
+
+    #restaurantsList .flip-btn:hover svg {
+      transform: rotate(8deg) scale(1.08);
+    }
+
+    #restaurantsList .share-btn svg,
+    #restaurantsList .flip-btn svg {
+      transition: transform .22s ease;
+    }
+
+    #restaurantsList .save-btn:active,
+    #restaurantsList .share-btn:active,
+    #restaurantsList .flip-btn:active {
+      transform: scale(.94) !important;
+    }
+
+    #restaurantsList .save-btn:focus-visible,
+    #restaurantsList .share-btn:focus-visible,
+    #restaurantsList .flip-btn:focus-visible {
+      outline: 2px solid #f4d66a;
+      outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #restaurantsList .save-btn,
+      #restaurantsList .share-btn,
+      #restaurantsList .flip-btn,
+      #restaurantsList .share-btn svg,
+      #restaurantsList .flip-btn svg {
+        transition: none !important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 function ensureRestaurantCardOverlays() {
   if (!/\/restaurace\.html$/.test(location.pathname)) return;
+
+  injectRestaurantActionHoverStyles();
 
   const cards = [...document.querySelectorAll('#restaurantsList .card-wrapper')];
   const rows = Array.isArray(window.filteredRestaurants) ? window.filteredRestaurants : [];
