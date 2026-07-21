@@ -23,8 +23,10 @@ test('restaurant search runs against the database', () => {
 });
 
 test('city and atmosphere filters run against the full database', () => {
-  assert.match(adminHtml, /id="filterRestaurantCity"/);
-  assert.match(adminHtml, /id="filterRestaurantVibe"/);
+  assert.match(adminHtml, /id="filterRestaurantCityBtn"/);
+  assert.match(adminHtml, /id="filterRestaurantCityOptions"/);
+  assert.match(adminHtml, /id="filterRestaurantVibeBtn"/);
+  assert.match(adminHtml, /id="filterRestaurantVibeOptions"/);
   assert.match(adminHtml, /restaurantsQuery\.eq\('city', restaurantCityFilter\)/);
   assert.match(adminHtml, /restaurantsQuery\.eq\('vibe', restaurantVibeFilter\)/);
   assert.match(adminHtml, /from \+ 999/);
@@ -34,4 +36,11 @@ test('restaurant filters can be cleared together', () => {
   assert.match(adminHtml, /id="resetRestaurantFilters"/);
   assert.match(adminHtml, /restaurantCityFilter = ''/);
   assert.match(adminHtml, /restaurantVibeFilter = ''/);
+});
+
+test('restaurant filters use Gurmao custom dropdown colors', () => {
+  assert.match(adminHtml, /\.custom-option\.is-selected/);
+  assert.match(adminHtml, /background: #d4af37 !important/);
+  assert.match(adminHtml, /color: #0b0b0d !important/);
+  assert.match(adminHtml, /function initRestaurantFilterDropdown/);
 });
