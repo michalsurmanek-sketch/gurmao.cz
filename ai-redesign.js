@@ -13,7 +13,7 @@
   if(originalInner){
     originalInner.className='ai-shell';
     const grid=originalInner.querySelector('.grid.lg\\:grid-cols-2');
-    if(grid){grid.className='';}
+    if(grid)grid.className='';
   }
   if(heroText){
     heroText.className='ai-hero';
@@ -37,23 +37,15 @@
   title.innerHTML='<h2>Doporučení na míru</h2><p>Výsledky se řadí podle shody s vaším zadáním, krajem, kuchyní a atmosférou.</p>';
   results.parentNode.insertBefore(title,results);
 
-  let restaurants=[];
-  try{
-    const {supabase}=await import('./supabase-client.js');
-    const {data,error}=await supabase.from('restaurants').select('*').limit(1000);
-    if(error)throw error;
-    restaurants=Array.isArray(data)?data:[];
-    populateRegions();
-  }catch(error){console.warn('AI databáze není dostupná:',error);populateRegions();}
-
   function text(v){return v==null?'':String(v).trim();}
-  function allText(r){
-    return [r.name,r.city,r.region,r.kraj,r.county,r.state,r.cuisine,r.cuisine_type,r.category,r.vibe,r.atmosphere,r.description,r.short_description,r.tags,r.address]
-      .flatMap(v=>Array.isArray(v)?v:[v]).map(text).join(' ').toLowerCase();
-  }
   function valueFromButton(id){return document.getElementById(id)?.dataset.value||'';}
   function setSelect(btnId,value,label){const btn=document.getElementById(btnId);if(btn){btn.dataset.value=value;btn.textContent=label;}}
   function regionOf(r){return text(r.region||r.kraj||r.county||r.state);}
+  function bindOptions(box,btnId){
+    box.querySelectorAll('.custom-option').forEach(opt=>opt.addEventListener('click',()=>{
+      setSelect(btnId,opt.dataset.value||'',opt.textContent.trim());box.classList.add('hidden');
+    }));
+  }
   function populateRegions(){
     const box=document.getElementById('cityOptions');
     const btn=document.getElementById('cityBtn');
@@ -65,12 +57,22 @@
     box.innerHTML='<div class="custom-option" data-value="">-- Všechny kraje --</div>'+regions.map(region=>`<div class="custom-option" data-value="${escapeHtml(region)}">📍 ${escapeHtml(region)}</div>`).join('');
     bindOptions(box,'cityBtn');
   }
-  function bindOptions(box,btnId){
-    box.querySelectorAll('.custom-option').forEach(opt=>opt.addEventListener('click',()=>{
-      setSelect(btnId,opt.dataset.value||'',opt.textContent.trim());box.classList.add('hidden');
-    }));
-  }
+
+  populateRegions();
   [['moodOptions','moodBtn'],['occasionOptions','occasionBtn'],['groupSizeOptions','groupSizeBtn'],['priceLevelOptions','priceLevelBtn']].forEach(([o,b])=>{const box=document.getElementById(o);if(box)bindOptions(box,b);});
+
+  let restaurants=[];
+  try{
+    const {supabase}=await import('./supabase-client.js');
+    const {data,error}=await supabase.from('restaurants').select('*').limit(1000);
+    if(error)throw error;
+    restaurants=Array.isArray(data)?data:[];
+  }catch(error){console.warn('AI databáze není dostupná:',error);}
+
+  function allText(r){
+    return [r.name,r.city,r.region,r.kraj,r.county,r.state,r.cuisine,r.cuisine_type,r.category,r.vibe,r.atmosphere,r.description,r.short_description,r.tags,r.address]
+      .flatMap(v=>Array.isArray(v)?v:[v]).map(text).join(' ').toLowerCase();
+  }
 
   document.querySelectorAll('.ai-chip').forEach(chip=>chip.addEventListener('click',()=>{
     const [mood,occasion,group,region,price,free]=chip.dataset.aiQuery.split('|');
@@ -84,20 +86,14 @@
     form.scrollIntoView({behavior:'smooth',block:'center'});
   }));
 
-  form.addEventListener('submit',event=>{
-    event.preventDefault();event.stopImmediatePropagation();
-    render();
-  },true);
+  form.addEventListener('submit',event=>{event.preventDefault();event.stopImmediatePropagation();render();},true);
   document.getElementById('resetForm')?.addEventListener('click',()=>{
     ['moodBtn','occasionBtn','groupSizeBtn','cityBtn','priceLevelBtn'].forEach(id=>{const b=document.getElementById(id);if(b)delete b.dataset.value;});
-    setSelect('cityBtn','','-- Vyber kraj --');
-    results.innerHTML='';
+    setSelect('cityBtn','','-- Vyber kraj --');results.innerHTML='';
   });
 
   function render(){
-    const q={
-      mood:valueFromButton('moodBtn'),occasion:valueFromButton('occasionBtn'),group:valueFromButton('groupSizeBtn'),region:valueFromButton('cityBtn'),price:valueFromButton('priceLevelBtn'),free:text(form.querySelector('[name="freeText"]')?.value).toLowerCase()
-    };
+    const q={mood:valueFromButton('moodBtn'),occasion:valueFromButton('occasionBtn'),group:valueFromButton('groupSizeBtn'),region:valueFromButton('cityBtn'),price:valueFromButton('priceLevelBtn'),free:text(form.querySelector('[name="freeText"]')?.value).toLowerCase()};
     results.innerHTML='<div class="ai-loading">✨ Gurmao prochází restaurace a hledá nejlepší shodu…</div>';
     setTimeout(()=>{
       if(!restaurants.length){results.innerHTML='<div class="ai-empty">Restaurace se nyní nepodařilo načíst. Zkuste stránku obnovit.</div>';return;}
@@ -117,11 +113,9 @@
 
   function card(item,index){
     const r=item.r;const name=text(r.name)||'Restaurace';const city=text(r.city)||regionOf(r)||'Česká republika';
-    const cuisine=text(r.cuisine||r.cuisine_type||r.category)||'Restaurace';
-    const desc=text(r.short_description||r.description)||'Podnik vybraný podle vašeho zadání.';
-    const image=text(r.image_url||r.image||r.photo_url||r.cover_image||r.thumbnail_url);
-    const id=encodeURIComponent(r.id||r.slug||name);const href=r.slug?`restaurace-detail.html?slug=${encodeURIComponent(r.slug)}`:`restaurace-detail.html?id=${id}`;
-    const match=Math.min(99,Math.max(55,item.score));
+    const cuisine=text(r.cuisine||r.cuisine_type||r.category)||'Restaurace';const desc=text(r.short_description||r.description)||'Podnik vybraný podle vašeho zadání.';
+    const image=text(r.image_url||r.image||r.photo_url||r.cover_image||r.thumbnail_url);const id=encodeURIComponent(r.id||r.slug||name);
+    const href=r.slug?`restaurace-detail.html?slug=${encodeURIComponent(r.slug)}`:`restaurace-detail.html?id=${id}`;const match=Math.min(99,Math.max(55,item.score));
     return `<article class="ai-card"><div class="ai-card-image"${image?` style="background-image:url('${escapeAttr(image)}')"`:''}><span class="ai-match">${index===0?'Nejlepší shoda · ':''}${match}%</span></div><div class="ai-card-body"><h3>${escapeHtml(name)}</h3><div class="ai-meta">${escapeHtml(city)} · ${escapeHtml(cuisine)}</div><div class="ai-desc">${escapeHtml(desc.slice(0,150))}</div><div class="ai-reasons">${(item.reasons.length?item.reasons:['Doporučeno podle vašeho zadání']).map(x=>`<span>✓ ${escapeHtml(x)}</span>`).join('')}</div><div class="ai-card-actions"><a href="${href}">Zobrazit detail</a><a class="secondary" href="collections.html">Můj výběr</a></div></div></article>`;
   }
   function escapeHtml(v){return text(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
