@@ -4,9 +4,9 @@
 .hero-bg > * { transform: none !important; }
 
 .hero-discovery { position: relative; width: min(1240px, 92vw); margin-top: 14px; z-index: 1; }
-.hero-count { text-align: center; color: rgba(255,255,255,.86); font-size: 15px; margin-bottom: 8px; }
+.hero-count { text-align: center; color: rgba(255,255,255,.86); font-size: 15px; margin-bottom: 22px; }
 .hero-count strong { color: #e4bd3d; font-weight: 600; }
-.taste-heading { display: flex; align-items: center; gap: 16px; color: #d4af37; font-size: 18px; margin: 5px 0 7px; }
+.taste-heading { display: flex; align-items: center; gap: 16px; color: #d4af37; font-size: 18px; margin: 8px 0 12px; }
 .taste-heading::before,.taste-heading::after { content:""; height:1px; flex:1; background:linear-gradient(90deg,transparent,rgba(212,175,55,.48),transparent); }
 .taste-grid { display:grid; align-items:start; width:100%; }
 .taste-grid-cuisine { grid-template-columns:repeat(11,minmax(0,1fr)); gap:4px; }
@@ -15,10 +15,10 @@
 .taste-item svg { display:block !important; width:32px !important; height:32px !important; min-width:32px; max-width:32px; fill:none !important; color:#d4af37 !important; stroke:#d4af37 !important; stroke-width:1.6 !important; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 0 8px rgba(212,175,55,.18)); transform:none !important; }
 .taste-item svg * { fill:none !important; stroke:#d4af37 !important; vector-effect:non-scaling-stroke; }
 .taste-item:hover { color:#f0d27a; transform:translateY(-2px); }
-.taste-heading-mood { margin-top:8px; }
+.taste-heading-mood { margin-top:18px; }
 .taste-more { align-self:center; border:1px solid rgba(212,175,55,.55); border-radius:16px; padding:9px 7px; color:#e7c44f; font-size:13px; line-height:1.35; text-align:center; transition:.2s ease; }
 .taste-more:hover { background:rgba(212,175,55,.1); border-color:#d4af37; }
-.hero-discovery + #heroCTA { margin-top:10px !important; }
+.hero-discovery + #heroCTA { margin-top:32px !important; }
 
 /* FINAL OVERRIDE: disable every legacy form + div rule */
 body .hero-bg form[role="search"] + div.hero-discovery {
@@ -58,7 +58,7 @@ body .hero-bg .hero-discovery .taste-grid-mood {
   .hero-bg h1 { font-size:clamp(3rem,5.1vw,5.15rem)!important; }
   .hero-bg h1 + p { margin-top:14px!important; }
   .hero-bg form[role="search"] { margin-top:18px!important; }
-  #heroCTA { margin-top:10px!important; }
+  #heroCTA { margin-top:32px!important; }
   #heroCTA a { padding-top:5px; padding-bottom:5px; }
 }
 @media (min-width:1024px) and (max-height:820px) {
@@ -68,13 +68,14 @@ body .hero-bg .hero-discovery .taste-grid-mood {
   .hero-bg h1 + p { margin-top:8px!important; font-size:.98rem!important; }
   .hero-bg form[role="search"] { margin-top:12px!important; }
   .hero-discovery { margin-top:8px; }
-  .hero-count { margin-bottom:4px; font-size:13px; }
-  .taste-heading { margin:2px 0 4px; font-size:15px; }
+  .hero-count { margin-bottom:14px; font-size:13px; }
+  .taste-heading { margin:4px 0 7px; font-size:15px; }
   .taste-item svg { width:25px!important; height:25px!important; min-width:25px; max-width:25px; }
   .taste-item { font-size:11px; gap:2px; padding:1px; }
-  .taste-heading-mood { margin-top:4px; }
+  .taste-heading-mood { margin-top:11px; }
   .taste-more { padding:6px 4px; font-size:11px; }
-  .hero-discovery + #heroCTA { margin-top:5px!important; }
+  .hero-discovery + #heroCTA { margin-top:22px!important; }
+  #heroCTA { margin-top:22px!important; }
 }
 @media (max-width:1023px) {
   .hero-discovery { width:min(760px,94vw); }
