@@ -1,0 +1,102 @@
+/* GURMAO – redesign katalogu restaurací */
+body[data-page="restaurants-redesign"]{
+  background:#08090a;
+  background-image:radial-gradient(circle at 82% 8%,rgba(212,175,55,.08),transparent 28%);
+}
+body[data-page="restaurants-redesign"] header{
+  background:rgba(8,9,10,.9)!important;
+  border-color:rgba(255,255,255,.08)!important;
+}
+body[data-page="restaurants-redesign"] header>div{max-width:1280px!important}
+body[data-page="restaurants-redesign"] header nav>a[href="restaurace.html"]{color:#e8c43a;position:relative}
+body[data-page="restaurants-redesign"] header nav>a[href="restaurace.html"]:after{content:"";position:absolute;left:0;right:0;bottom:-22px;height:2px;background:#d4af37;border-radius:2px}
+
+/* Hero */
+body[data-page="restaurants-redesign"] .restaurants-hero{
+  position:relative;
+  overflow:hidden;
+  padding:54px 0 30px!important;
+  border-bottom:0!important;
+  background:
+    linear-gradient(90deg,#08090a 0%,rgba(8,9,10,.94) 45%,rgba(8,9,10,.34) 100%),
+    url("images/gurmao-hero.webp") center right/cover no-repeat;
+}
+body[data-page="restaurants-redesign"] .restaurants-hero>div{max-width:1280px!important}
+body[data-page="restaurants-redesign"] .restaurants-hero h1{font-size:clamp(2.6rem,5vw,4.8rem)!important;line-height:1.02;margin-bottom:14px!important;letter-spacing:-.035em}
+body[data-page="restaurants-redesign"] .restaurants-hero p{max-width:660px!important;font-size:1.08rem;color:rgba(255,255,255,.7)!important}
+
+/* Search panel */
+body[data-page="restaurants-redesign"] .restaurants-filters-section{padding:0 0 26px!important;border-bottom:0!important}
+body[data-page="restaurants-redesign"] .restaurants-filters-section>div{max-width:1280px!important}
+body[data-page="restaurants-redesign"] .restaurants-filter-panel{
+  margin-top:-4px;
+  padding:18px;
+  border:1px solid rgba(212,175,55,.28);
+  border-radius:24px;
+  background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012)),rgba(10,11,12,.94);
+  box-shadow:0 24px 70px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.04);
+}
+body[data-page="restaurants-redesign"] .restaurants-search-row{margin-bottom:14px!important;display:grid!important;grid-template-columns:minmax(280px,1fr) auto;gap:12px!important}
+body[data-page="restaurants-redesign"] #searchInput{height:54px;border-radius:15px!important;background:rgba(255,255,255,.055)!important;border-color:rgba(255,255,255,.12)!important;padding-left:50px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+body[data-page="restaurants-redesign"] .restaurants-search-wrap{position:relative}
+body[data-page="restaurants-redesign"] .restaurants-search-wrap:before{content:"⌕";position:absolute;left:18px;top:50%;transform:translateY(-52%);z-index:2;color:#d4af37;font-size:25px;pointer-events:none}
+body[data-page="restaurants-redesign"] #locationBtn{height:54px;border-radius:15px!important;background:linear-gradient(135deg,#f0cd55,#dbaa27)!important;color:#08090a;font-weight:700;border:0!important;min-width:150px}
+
+/* Filter chips */
+body[data-page="restaurants-redesign"] #filters{gap:9px!important;margin:0!important;padding-top:2px}
+body[data-page="restaurants-redesign"] .vibe-pill{height:38px!important;padding:0 15px!important;background:rgba(255,255,255,.035)!important;border-color:rgba(255,255,255,.13)!important;box-shadow:none!important}
+body[data-page="restaurants-redesign"] .vibe-pill:hover{border-color:rgba(212,175,55,.55)!important;background:rgba(212,175,55,.07)!important}
+body[data-page="restaurants-redesign"] .vibe-pill.is-active{background:rgba(212,175,55,.13)!important;border-color:rgba(212,175,55,.65)!important;color:#f0cd55}
+body[data-page="restaurants-redesign"] .vibe-ico{width:22px!important;height:22px!important;border:0!important;background:transparent!important;box-shadow:none!important}
+body[data-page="restaurants-redesign"] .vibe-name{font-size:11px!important;letter-spacing:.06em!important}
+body[data-page="restaurants-redesign"] .restaurants-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.09)}
+body[data-page="restaurants-redesign"] #resultCount{margin:0!important;padding:10px 14px;border:1px solid rgba(255,255,255,.11);border-radius:12px;color:rgba(255,255,255,.82)!important;background:rgba(255,255,255,.025)}
+body[data-page="restaurants-redesign"] .restaurants-per-page{display:flex;align-items:center;gap:7px}
+body[data-page="restaurants-redesign"] .per-page-btn{padding:8px 13px!important;border:1px solid rgba(255,255,255,.1)}
+
+/* Cards */
+body[data-page="restaurants-redesign"] .restaurants-list-section{padding:20px 0 80px!important}
+body[data-page="restaurants-redesign"] #restaurantsList{max-width:1280px!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:18px!important}
+body[data-page="restaurants-redesign"] .card-wrapper{height:100%}
+body[data-page="restaurants-redesign"] .card-inner{height:100%}
+body[data-page="restaurants-redesign"] .card-front,
+body[data-page="restaurants-redesign"] .card-back{
+  height:100%;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:20px!important;
+  background:linear-gradient(160deg,rgba(255,255,255,.045),rgba(255,255,255,.012)),#101112!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.23);
+  transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease;
+}
+body[data-page="restaurants-redesign"] .card-front:hover{transform:translateY(-4px);border-color:rgba(212,175,55,.45);box-shadow:0 24px 50px rgba(0,0,0,.36)}
+body[data-page="restaurants-redesign"] .card-front>div:first-child{height:205px;overflow:hidden}
+body[data-page="restaurants-redesign"] .card-front>div:first-child img{width:100%!important;height:205px!important;aspect-ratio:auto!important;object-fit:cover;transition:transform .45s ease}
+body[data-page="restaurants-redesign"] .card-front:hover img{transform:scale(1.035)}
+body[data-page="restaurants-redesign"] .card-front .absolute.bottom-3{top:12px!important;bottom:auto!important;right:12px!important}
+body[data-page="restaurants-redesign"] .save-btn,
+body[data-page="restaurants-redesign"] .share-btn{width:38px!important;height:38px!important;background:rgba(5,5,5,.68)!important;border-color:rgba(255,255,255,.25)!important}
+body[data-page="restaurants-redesign"] .card-front>.p-6{padding:20px!important}
+body[data-page="restaurants-redesign"] .card-front h3{font-family:'Inter',sans-serif!important;font-size:1.12rem!important;line-height:1.25;font-weight:700!important}
+body[data-page="restaurants-redesign"] .card-front .vibe-tooltip{display:inline-flex;padding:5px 9px;border:1px solid rgba(212,175,55,.28);border-radius:999px;background:rgba(212,175,55,.07);font-size:10px!important;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px!important}
+body[data-page="restaurants-redesign"] .card-front p{line-height:1.45}
+body[data-page="restaurants-redesign"] .flip-btn{width:38px!important;height:38px!important;background:rgba(212,175,55,.12)!important;color:#e7c44f!important;border:1px solid rgba(212,175,55,.35)}
+body[data-page="restaurants-redesign"] [data-restaurant-rating]>.border-t{border-color:rgba(255,255,255,.08)!important}
+body[data-page="restaurants-redesign"] #loadMoreBtn button{min-width:280px;border-radius:14px!important;padding:15px 26px!important;background:transparent!important;color:#e8c43a!important;border:1px solid rgba(212,175,55,.48)}
+body[data-page="restaurants-redesign"] #loadMoreBtn button:hover{background:rgba(212,175,55,.09)!important}
+
+@media(max-width:1100px){
+  body[data-page="restaurants-redesign"] #restaurantsList{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:767px){
+  body[data-page="restaurants-redesign"] .restaurants-hero{padding:38px 0 24px!important;background:linear-gradient(rgba(8,9,10,.76),rgba(8,9,10,.95)),url("images/gurmao-hero.webp") center/cover}
+  body[data-page="restaurants-redesign"] .restaurants-filter-panel{padding:13px;border-radius:20px}
+  body[data-page="restaurants-redesign"] .restaurants-search-row{grid-template-columns:1fr!important}
+  body[data-page="restaurants-redesign"] #locationBtn{width:100%;min-width:0}
+  body[data-page="restaurants-redesign"] #filters{flex-wrap:nowrap!important;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+  body[data-page="restaurants-redesign"] #filters::-webkit-scrollbar{display:none}
+  body[data-page="restaurants-redesign"] .vibe-pill{flex:0 0 auto}
+  body[data-page="restaurants-redesign"] .restaurants-toolbar{align-items:flex-start;flex-direction:column}
+  body[data-page="restaurants-redesign"] #restaurantsList{grid-template-columns:1fr!important;gap:15px!important;padding-left:16px!important;padding-right:16px!important}
+  body[data-page="restaurants-redesign"] .card-front>div:first-child,
+  body[data-page="restaurants-redesign"] .card-front>div:first-child img{height:220px!important}
+}
