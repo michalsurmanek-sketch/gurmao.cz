@@ -1,5 +1,14 @@
 const CZECHIA_BBOX = [12.09, 48.55, 18.86, 51.06];
 
+export function parseImportLimit(value) {
+  if (value == null || String(value).trim() === '') return Infinity;
+  const limit = Number(value);
+  if (!Number.isInteger(limit) || limit <= 0) {
+    throw new Error('--limit musí být kladné celé číslo.');
+  }
+  return limit;
+}
+
 export const REGIONS = Object.freeze({
   CZ010: {
     name: 'Hlavní město Praha',
