@@ -14,6 +14,8 @@ test('chef candidate queue is private and admin-only', () => {
   assert.match(sql, /Only admins can read chef import candidates/);
   assert.match(sql, /USING \(public\.is_admin\(\)\)/);
   assert.match(sql, /GRANT ALL ON public\.chef_import_candidates TO service_role/);
+  assert.match(sql, /CREATE OR REPLACE FUNCTION public\.touch_chef_import_candidate_updated_at\(\)/);
+  assert.doesNotMatch(sql, /EXECUTE FUNCTION public\.touch_updated_at\(\)/);
 });
 
 test('publishing is available only through protected RPC', () => {
