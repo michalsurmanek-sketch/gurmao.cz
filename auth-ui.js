@@ -62,15 +62,29 @@
 })();
 
 (function loadPageSpecificEnhancements() {
-  if (!/\/kuchar\.html$/.test(window.location.pathname)) return;
+  const path = window.location.pathname;
 
-  const stylesheet = document.createElement('link');
-  stylesheet.rel = 'stylesheet';
-  stylesheet.href = 'chef-redesign.css?v=1';
-  document.head.appendChild(stylesheet);
+  if (/\/kuchar\.html$/.test(path)) {
+    const stylesheet = document.createElement('link');
+    stylesheet.rel = 'stylesheet';
+    stylesheet.href = 'chef-redesign.css?v=1';
+    document.head.appendChild(stylesheet);
 
-  const script = document.createElement('script');
-  script.src = 'chef-redesign.js?v=1';
-  script.defer = true;
-  document.head.appendChild(script);
+    const script = document.createElement('script');
+    script.src = 'chef-redesign.js?v=1';
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+
+  if (/\/restaurace\.html$/.test(path)) {
+    const stylesheet = document.createElement('link');
+    stylesheet.rel = 'stylesheet';
+    stylesheet.href = 'restaurace-redesign.css?v=3';
+    document.head.appendChild(stylesheet);
+
+    const script = document.createElement('script');
+    script.src = 'restaurace-redesign.js?v=3';
+    script.defer = true;
+    document.head.appendChild(script);
+  }
 })();
