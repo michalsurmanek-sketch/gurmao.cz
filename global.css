@@ -9,9 +9,9 @@
 .taste-heading { display:flex; align-items:center; gap:16px; color:#d4af37; font-size:18px; margin:8px 0 12px; }
 .taste-heading::before,.taste-heading::after { content:""; height:1px; flex:1; background:linear-gradient(90deg,transparent,rgba(212,175,55,.48),transparent); }
 .taste-grid { display:grid; align-items:start; width:100%; }
-.taste-grid-cuisine { grid-template-columns:repeat(11,minmax(0,1fr)); gap:4px; }
+.taste-grid-cuisine { grid-template-columns:repeat(12,minmax(0,1fr)); gap:0; }
 .taste-grid-mood { grid-template-columns:repeat(9,minmax(0,1fr)); gap:6px; }
-.taste-item { min-width:0; display:flex; flex-direction:column; align-items:center; gap:5px; padding:4px 2px; color:rgba(255,255,255,.9); font-size:13px; line-height:1.15; text-align:center; transition:.2s ease; }
+.taste-item { min-width:0; display:flex; flex-direction:column; align-items:center; gap:4px; padding:4px 0; color:rgba(255,255,255,.9); font-size:12px; line-height:1.15; text-align:center; transition:.2s ease; }
 .taste-item svg { display:block!important; width:32px!important; height:32px!important; min-width:32px; max-width:32px; fill:none!important; color:#d4af37!important; stroke:#d4af37!important; stroke-width:1.6!important; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 0 8px rgba(212,175,55,.18)); }
 .taste-item svg * { fill:none!important; stroke:#d4af37!important; vector-effect:non-scaling-stroke; }
 .taste-item:hover { color:#f0d27a; transform:translateY(-2px); }
@@ -21,7 +21,7 @@
 .vibe-section { display:none!important; }
 body .hero-bg form[role="search"] + div.hero-discovery { display:block!important; width:min(1240px,92vw)!important; max-width:none!important; margin:14px auto 0!important; padding:0!important; background:transparent!important; border:0!important; box-shadow:none!important; }
 body .hero-bg .hero-discovery .taste-grid { display:grid!important; }
-body .hero-bg .hero-discovery .taste-grid-cuisine { grid-template-columns:repeat(11,minmax(0,1fr))!important; }
+body .hero-bg .hero-discovery .taste-grid-cuisine { grid-template-columns:repeat(12,minmax(0,1fr))!important; gap:0!important; }
 body .hero-bg .hero-discovery .taste-grid-mood { grid-template-columns:repeat(9,minmax(0,1fr))!important; }
 
 /* Approved design: Jak Gurmao funguje */
@@ -125,7 +125,7 @@ body .hero-bg .hero-discovery .taste-grid-mood { grid-template-columns:repeat(9,
 }
 @media (max-width:1023px) {
   .hero-discovery { width:min(760px,94vw); }
-  body .hero-bg .hero-discovery .taste-grid-cuisine { grid-template-columns:repeat(4,minmax(0,1fr))!important; gap:12px 4px; }
+  body .hero-bg .hero-discovery .taste-grid-cuisine { grid-template-columns:repeat(4,minmax(0,1fr))!important; gap:12px 4px!important; }
   body .hero-bg .hero-discovery .taste-grid-mood { grid-template-columns:repeat(3,minmax(0,1fr))!important; gap:12px 4px; }
   .vibe-section + section { padding-top:54px!important; }
   .vibe-section + section article { min-height:320px!important; }
