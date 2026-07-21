@@ -6,6 +6,8 @@ function initializeRestaurantSorting(select) {
   const collator = new Intl.Collator('cs', { sensitivity: 'base' });
   let observer;
   let originalOrderCounter = 0;
+  let isSorting = false;
+  let sortTimer = null;
 
   const getCards = () => [...list.querySelectorAll(':scope > .card-wrapper')];
 
@@ -38,10 +40,12 @@ function initializeRestaurantSorting(select) {
   };
 
   const applySort = () => {
+    if (isSorting) return;
+    isSorting = true;
     registerOriginalOrder();
-    const cards = getCards();
 
-    cards.sort((a, b) => {
+    const cards = getCards();
+    const sortedCards = [...cards].sort((a, b) => {
       switch (select.value) {
         case 'rating-desc': {
           const ratingDifference = getRating(b) - getRating(a);
@@ -57,26 +61,37 @@ function initializeRestaurantSorting(select) {
       }
     });
 
-    observer?.disconnect();
-    cards.forEach(card => list.appendChild(card));
-    observer?.observe(list, { childList: true });
+    const orderChanged = sortedCards.some((card, index) => card !== cards[index]);
+    if (orderChanged) {
+      observer?.disconnect();
+      list.replaceChildren(...sortedCards);
+      observer?.takeRecords();
+      observer?.observe(list, { childList: true });
+    }
+
+    isSorting = false;
   };
 
-  select.addEventListener('change', applySort);
+  select.addEventListener('change', () => {
+    window.clearTimeout(sortTimer);
+    applySort();
+  });
 
   observer = new MutationObserver(mutations => {
+    if (isSorting) return;
+
     const hasNewCards = mutations.some(mutation =>
       [...mutation.addedNodes].some(node => node.nodeType === 1 && node.matches?.('.card-wrapper'))
     );
 
     if (!hasNewCards) return;
     registerOriginalOrder();
-    applySort();
+    window.clearTimeout(sortTimer);
+    sortTimer = window.setTimeout(applySort, 0);
   });
 
   observer.observe(list, { childList: true });
   registerOriginalOrder();
-  applySort();
 }
 
 function applyRestaurantRedesign() {
