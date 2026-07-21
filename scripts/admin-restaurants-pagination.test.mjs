@@ -21,3 +21,17 @@ test('restaurant search runs against the database', () => {
   assert.match(adminHtml, /restaurantsQuery\.or\(/);
   assert.match(adminHtml, /restaurantsSearchTimer = setTimeout\(\(\) => loadRestaurants\(1\), 250\)/);
 });
+
+test('city and atmosphere filters run against the full database', () => {
+  assert.match(adminHtml, /id="filterRestaurantCity"/);
+  assert.match(adminHtml, /id="filterRestaurantVibe"/);
+  assert.match(adminHtml, /restaurantsQuery\.eq\('city', restaurantCityFilter\)/);
+  assert.match(adminHtml, /restaurantsQuery\.eq\('vibe', restaurantVibeFilter\)/);
+  assert.match(adminHtml, /from \+ 999/);
+});
+
+test('restaurant filters can be cleared together', () => {
+  assert.match(adminHtml, /id="resetRestaurantFilters"/);
+  assert.match(adminHtml, /restaurantCityFilter = ''/);
+  assert.match(adminHtml, /restaurantVibeFilter = ''/);
+});

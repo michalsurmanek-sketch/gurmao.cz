@@ -324,16 +324,28 @@
 
   <!-- Tab Content: Restaurants List -->
   <div id="content-restaurants" class="tab-content">
-    <div class="mb-6 flex items-center justify-between">
+    <div class="mb-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
       <input 
         type="text" 
         id="searchRestaurants" 
         placeholder="🔍 Hledat restauraci..."
-        class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none w-full max-w-md"
+        class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none w-full lg:max-w-md"
       />
       <div class="text-white/60 text-sm">
         Celkem: <span id="totalCount" class="text-gurmaogold font-bold">0</span>
       </div>
+    </div>
+
+    <div class="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto]">
+      <select id="filterRestaurantCity" class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none">
+        <option value="">Všechna města</option>
+      </select>
+      <select id="filterRestaurantVibe" class="px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-gurmaogold outline-none">
+        <option value="">Všechny atmosféry</option>
+      </select>
+      <button id="resetRestaurantFilters" type="button" class="px-5 py-3 rounded-xl bg-white/10 hover:bg-gurmaogold hover:text-black transition">
+        Vyčistit filtry
+      </button>
     </div>
 
     <div id="restaurantsList" class="space-y-4">
@@ -1637,6 +1649,8 @@ const RESTAURANTS_PAGE_SIZE = 50;
 let restaurantsPage = 1;
 let restaurantsSearch = '';
 let restaurantsSearchTimer;
+let restaurantCityFilter = '';
+let restaurantVibeFilter = '';
 
 function sanitizeRestaurantSearch(value) {
   return String(value || '').replace(/[,%()]/g, ' ').trim();
@@ -1645,7 +1659,8 @@ function sanitizeRestaurantSearch(value) {
 function renderRestaurantsPagination(filteredCount) {
   const container = document.getElementById('restaurantsPagination');
   const totalPages = Math.max(1, Math.ceil(filteredCount / RESTAURANTS_PAGE_SIZE));
-  const resultLabel = restaurantsSearch
+  const hasActiveFilter = restaurantsSearch || restaurantCityFilter || restaurantVibeFilter;
+  const resultLabel = hasActiveFilter
     ? `${filteredCount} výsledků · strana ${restaurantsPage} z ${totalPages}`
     : `Strana ${restaurantsPage} z ${totalPages}`;
 
@@ -1672,6 +1687,48 @@ function changeRestaurantsPage(page) {
   document.getElementById('content-restaurants').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+function replaceRestaurantFilterOptions(selectId, placeholder, values) {
+  const select = document.getElementById(selectId);
+  const selectedValue = select.value;
+  const options = [new Option(placeholder, '')];
+  values.forEach(value => options.push(new Option(value, value)));
+  select.replaceChildren(...options);
+  if (values.includes(selectedValue)) select.value = selectedValue;
+}
+
+async function loadRestaurantFilterOptions() {
+  while (!window.supabase) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  try {
+    const rows = [];
+    let from = 0;
+
+    while (true) {
+      const { data = [], error } = await window.supabase
+        .from('restaurants')
+        .select('city,vibe')
+        .range(from, from + 999);
+
+      if (error) throw error;
+      rows.push(...data);
+      if (data.length < 1000) break;
+      from += 1000;
+    }
+
+    const cities = [...new Set(rows.map(row => row.city).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b, 'cs'));
+    const vibes = [...new Set(rows.map(row => row.vibe).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b, 'cs'));
+
+    replaceRestaurantFilterOptions('filterRestaurantCity', 'Všechna města', cities);
+    replaceRestaurantFilterOptions('filterRestaurantVibe', 'Všechny atmosféry', vibes);
+  } catch (error) {
+    console.error('Error loading restaurant filters:', error);
+  }
+}
+
 // Load restaurants with an exact total and server-side pagination.
 async function loadRestaurants(page = restaurantsPage) {
   // Wait for supabase to be available
@@ -1686,9 +1743,15 @@ async function loadRestaurants(page = restaurantsPage) {
 
     let restaurantsQuery = window.supabase
       .from('restaurants')
-      .select('*', { count: 'exact' })
-      .order('created_at', { ascending: false })
-      .range(from, to);
+      .select('*', { count: 'exact' });
+
+    if (restaurantCityFilter) {
+      restaurantsQuery = restaurantsQuery.eq('city', restaurantCityFilter);
+    }
+
+    if (restaurantVibeFilter) {
+      restaurantsQuery = restaurantsQuery.eq('vibe', restaurantVibeFilter);
+    }
 
     if (restaurantsSearch) {
       const pattern = `%${restaurantsSearch}%`;
@@ -1696,6 +1759,10 @@ async function loadRestaurants(page = restaurantsPage) {
         `name.ilike.${pattern},city.ilike.${pattern},tag.ilike.${pattern},description.ilike.${pattern}`
       );
     }
+
+    restaurantsQuery = restaurantsQuery
+      .order('created_at', { ascending: false })
+      .range(from, to);
 
     const [restaurantsResult, totalResult] = await Promise.all([
       restaurantsQuery,
@@ -1895,8 +1962,32 @@ document.getElementById('searchRestaurants').addEventListener('input', (e) => {
   restaurantsSearchTimer = setTimeout(() => loadRestaurants(1), 250);
 });
 
+document.getElementById('filterRestaurantCity').addEventListener('change', (e) => {
+  restaurantCityFilter = e.target.value;
+  restaurantsPage = 1;
+  loadRestaurants(1);
+});
+
+document.getElementById('filterRestaurantVibe').addEventListener('change', (e) => {
+  restaurantVibeFilter = e.target.value;
+  restaurantsPage = 1;
+  loadRestaurants(1);
+});
+
+document.getElementById('resetRestaurantFilters').addEventListener('click', () => {
+  restaurantsSearch = '';
+  restaurantCityFilter = '';
+  restaurantVibeFilter = '';
+  restaurantsPage = 1;
+  document.getElementById('searchRestaurants').value = '';
+  document.getElementById('filterRestaurantCity').value = '';
+  document.getElementById('filterRestaurantVibe').value = '';
+  loadRestaurants(1);
+});
+
 // Load on page load
 loadRestaurants();
+loadRestaurantFilterOptions();
 
 // Load all stats on init
 (async function loadAllStats() {
