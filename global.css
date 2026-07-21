@@ -3,24 +3,6 @@
 /* Stable expanded homepage discovery */
 .hero-bg > * { transform: none !important; }
 
-/* Neutralize legacy form + div rules for the new discovery block */
-.hero-bg form[role="search"] + .hero-discovery {
-  display: block !important;
-  width: min(1240px, 92vw) !important;
-  max-width: none !important;
-  margin-top: 14px !important;
-  gap: initial !important;
-  grid-template-columns: none !important;
-  align-items: initial !important;
-}
-.hero-bg form[role="search"] + .hero-discovery::before {
-  content: none !important;
-  display: none !important;
-}
-.hero-bg form[role="search"] + .hero-discovery > span {
-  display: initial !important;
-}
-
 .hero-discovery { position: relative; width: min(1240px, 92vw); margin-top: 14px; z-index: 1; }
 .hero-count { text-align: center; color: rgba(255,255,255,.86); font-size: 15px; margin-bottom: 8px; }
 .hero-count strong { color: #e4bd3d; font-weight: 600; }
@@ -37,6 +19,40 @@
 .taste-more { align-self:center; border:1px solid rgba(212,175,55,.55); border-radius:16px; padding:9px 7px; color:#e7c44f; font-size:13px; line-height:1.35; text-align:center; transition:.2s ease; }
 .taste-more:hover { background:rgba(212,175,55,.1); border-color:#d4af37; }
 .hero-discovery + #heroCTA { margin-top:10px !important; }
+
+/* FINAL OVERRIDE: disable every legacy form + div rule */
+body .hero-bg form[role="search"] + div.hero-discovery {
+  display: block !important;
+  width: min(1240px, 92vw) !important;
+  max-width: none !important;
+  margin: 14px auto 0 !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  grid-template-columns: none !important;
+  align-items: initial !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+body .hero-bg form[role="search"] + div.hero-discovery::before,
+body .hero-bg form[role="search"] + div.hero-discovery::after {
+  content: none !important;
+  display: none !important;
+}
+body .hero-bg form[role="search"] + div.hero-discovery > div {
+  transform: none !important;
+  max-width: none !important;
+}
+body .hero-bg .hero-discovery .taste-grid {
+  display: grid !important;
+}
+body .hero-bg .hero-discovery .taste-grid-cuisine {
+  grid-template-columns: repeat(11, minmax(0, 1fr)) !important;
+}
+body .hero-bg .hero-discovery .taste-grid-mood {
+  grid-template-columns: repeat(9, minmax(0, 1fr)) !important;
+}
+
 @media (min-width:1024px) {
   .hero-bg { min-height:calc(100dvh - 65px)!important; padding-top:20px!important; padding-bottom:14px!important; }
   .hero-bg h1 { font-size:clamp(3rem,5.1vw,5.15rem)!important; }
@@ -62,12 +78,13 @@
 }
 @media (max-width:1023px) {
   .hero-discovery { width:min(760px,94vw); }
-  .taste-grid-cuisine { grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px 4px; }
-  .taste-grid-mood { grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px 4px; }
+  body .hero-bg .hero-discovery .taste-grid-cuisine { grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:12px 4px; }
+  body .hero-bg .hero-discovery .taste-grid-mood { grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:12px 4px; }
   .taste-heading { margin-top:14px; }
 }
 @media (max-width:520px) {
-  .taste-grid-cuisine,.taste-grid-mood { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  body .hero-bg .hero-discovery .taste-grid-cuisine,
+  body .hero-bg .hero-discovery .taste-grid-mood { grid-template-columns:repeat(3,minmax(0,1fr)) !important; }
   .taste-item svg { width:29px!important; height:29px!important; min-width:29px; max-width:29px; }
   .taste-more { min-height:56px; display:grid; place-items:center; }
 }
