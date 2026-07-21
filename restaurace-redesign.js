@@ -4,10 +4,7 @@ function initializeRestaurantSorting(select) {
   if (!select || !list) return;
 
   const collator = new Intl.Collator('cs', { sensitivity: 'base' });
-  let observer;
   let originalOrderCounter = 0;
-  let isSorting = false;
-  let sortTimer = null;
 
   const getCards = () => [...list.querySelectorAll(':scope > .card-wrapper')];
 
@@ -24,73 +21,29 @@ function initializeRestaurantSorting(select) {
   const getRating = card => {
     const ratingBox = card.querySelector('[data-restaurant-rating]');
     if (!ratingBox) return 0;
-
-    const candidates = [
-      ratingBox.querySelector('[data-average-rating]')?.dataset.averageRating,
-      ratingBox.querySelector('.average-rating')?.textContent,
-      ratingBox.textContent
-    ];
-
-    for (const value of candidates) {
-      const match = String(value || '').replace(',', '.').match(/\b([0-5](?:\.\d+)?)\b/);
-      if (match) return Number(match[1]);
-    }
-
-    return 0;
+    const match = (ratingBox.textContent || '').replace(',', '.').match(/\b([0-5](?:\.\d+)?)\b/);
+    return match ? Number(match[1]) : 0;
   };
 
   const applySort = () => {
-    if (isSorting) return;
-    isSorting = true;
     registerOriginalOrder();
-
     const cards = getCards();
-    const sortedCards = [...cards].sort((a, b) => {
-      switch (select.value) {
-        case 'rating-desc': {
-          const ratingDifference = getRating(b) - getRating(a);
-          return ratingDifference || collator.compare(getName(a), getName(b));
-        }
-        case 'name-asc':
-          return collator.compare(getName(a), getName(b));
-        case 'name-desc':
-          return collator.compare(getName(b), getName(a));
-        case 'recommended':
-        default:
-          return Number(a.dataset.originalOrder) - Number(b.dataset.originalOrder);
+
+    cards.sort((a, b) => {
+      if (select.value === 'rating-desc') {
+        return getRating(b) - getRating(a) || collator.compare(getName(a), getName(b));
       }
+      if (select.value === 'name-asc') return collator.compare(getName(a), getName(b));
+      if (select.value === 'name-desc') return collator.compare(getName(b), getName(a));
+      return Number(a.dataset.originalOrder) - Number(b.dataset.originalOrder);
     });
 
-    const orderChanged = sortedCards.some((card, index) => card !== cards[index]);
-    if (orderChanged) {
-      observer?.disconnect();
-      list.replaceChildren(...sortedCards);
-      observer?.takeRecords();
-      observer?.observe(list, { childList: true });
-    }
-
-    isSorting = false;
+    const fragment = document.createDocumentFragment();
+    cards.forEach(card => fragment.appendChild(card));
+    list.appendChild(fragment);
   };
 
-  select.addEventListener('change', () => {
-    window.clearTimeout(sortTimer);
-    applySort();
-  });
-
-  observer = new MutationObserver(mutations => {
-    if (isSorting) return;
-
-    const hasNewCards = mutations.some(mutation =>
-      [...mutation.addedNodes].some(node => node.nodeType === 1 && node.matches?.('.card-wrapper'))
-    );
-
-    if (!hasNewCards) return;
-    registerOriginalOrder();
-    window.clearTimeout(sortTimer);
-    sortTimer = window.setTimeout(applySort, 0);
-  });
-
-  observer.observe(list, { childList: true });
+  select.addEventListener('change', applySort);
   registerOriginalOrder();
 }
 
