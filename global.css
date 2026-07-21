@@ -210,7 +210,8 @@ textarea,
   min-height: calc(100dvh - 65px) !important;
   padding-top: 42px !important;
   padding-bottom: 42px !important;
-  background-position: center right !important;
+  background-position: 72% center !important;
+  background-size: cover !important;
 }
 
 .hero-bg::after {
@@ -219,8 +220,8 @@ textarea,
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(0,0,0,.94) 0%, rgba(0,0,0,.78) 38%, rgba(0,0,0,.48) 68%, rgba(0,0,0,.28) 100%),
-    radial-gradient(circle at 50% 42%, rgba(212,175,55,.12), transparent 44%);
+    linear-gradient(90deg, rgba(0,0,0,.78) 0%, rgba(0,0,0,.58) 35%, rgba(0,0,0,.28) 65%, rgba(0,0,0,.08) 100%),
+    radial-gradient(circle at 55% 40%, rgba(212,175,55,.18), transparent 48%);
   z-index: 0;
 }
 
