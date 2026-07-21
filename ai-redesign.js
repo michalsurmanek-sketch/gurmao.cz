@@ -50,6 +50,14 @@
   function valueFromButton(id){return document.getElementById(id)?.dataset.value||'';}
   function setSelect(btnId,value,label){const btn=document.getElementById(btnId);if(btn){btn.dataset.value=value;btn.textContent=label;}}
   function regionOf(r){return text(r.region||r.kraj||r.county||r.state);}
+  function normalize(v){return text(v).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();}
+  function matchesRegion(r,selectedRegion){
+    const wanted=normalize(selectedRegion);
+    if(!wanted)return true;
+    const direct=normalize(regionOf(r));
+    if(direct===wanted)return true;
+    return [r.region,r.kraj,r.county,r.state,r.address,r.city].some(value=>normalize(value).includes(wanted));
+  }
   function bindOptions(box,btnId){
     box.querySelectorAll('.custom-option').forEach(opt=>opt.addEventListener('click',()=>{
       setSelect(btnId,opt.dataset.value||'',opt.textContent.trim());box.classList.add('hidden');
@@ -123,17 +131,22 @@
     results.scrollIntoView({behavior:'smooth',block:'start'});
     setTimeout(()=>{
       if(!restaurants.length){results.innerHTML='<div class="ai-empty">Restaurace se nyní nepodařilo načíst. Zkuste stránku obnovit.</div>';return;}
+      const regionalRestaurants=q.region?restaurants.filter(r=>matchesRegion(r,q.region)):restaurants;
+      if(q.region&&!regionalRestaurants.length){
+        results.innerHTML=`<div class="ai-empty">V kraji <strong>${escapeHtml(q.region)}</strong> zatím nemáme žádné restaurace.</div>`;
+        return;
+      }
       const tokens=[q.mood,q.occasion,q.free].filter(Boolean).join(' ').split(/\s+/).filter(w=>w.length>2);
-      const ranked=restaurants.map(r=>{
+      const ranked=regionalRestaurants.map(r=>{
         const hay=allText(r);let score=20;const reasons=[];
-        if(q.region){const region=regionOf(r).toLowerCase();if(region&&region===q.region.toLowerCase()){score+=35;reasons.push(`V kraji ${q.region}`);}else if(hay.includes(q.region.toLowerCase())){score+=25;reasons.push(`V kraji ${q.region}`);}else score-=15;}
+        if(q.region)reasons.push(`V kraji ${q.region}`);
         tokens.forEach(t=>{if(hay.includes(t)){score+=12;if(reasons.length<3)reasons.push(`Odpovídá: ${t}`);}});
         const rating=Number(r.rating||r.average_rating||r.google_rating||0);if(rating){score+=Math.min(15,rating*3);reasons.push(`Hodnocení ${rating.toFixed(1)}`);}
         if(q.price&&Number(r.price_level||r.priceLevel||0)===Number(q.price)){score+=10;reasons.push('Sedí rozpočet');}
         return {r,score:Math.max(1,Math.round(score)),reasons:[...new Set(reasons)].slice(0,3)};
       }).sort((a,b)=>b.score-a.score).slice(0,6);
       const prompt=[q.free,q.region,q.mood,q.occasion].filter(Boolean).join(' · ')||'univerzální výběr';
-      results.innerHTML=`<div class="ai-summary"><strong>Gurmao doporučuje:</strong> Nejlepší shody pro „${escapeHtml(prompt)}“. Výběr vychází z údajů restaurací uložených na Gurmao.</div><div class="ai-grid">${ranked.map(card).join('')}</div>`;
+      results.innerHTML=`<div class="ai-summary"><strong>Gurmao doporučuje:</strong> Nejlepší shody pro „${escapeHtml(prompt)}“. ${q.region?`Zobrazeny jsou pouze restaurace z kraje ${escapeHtml(q.region)}.`:'Výběr vychází z údajů restaurací uložených na Gurmao.'}</div><div class="ai-grid">${ranked.map(card).join('')}</div>`;
     },350);
   }
 
