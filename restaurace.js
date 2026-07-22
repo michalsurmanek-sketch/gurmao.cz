@@ -20,6 +20,7 @@ function applyRestaurantFilterStyles(){
   style.id='restaurant-filter-style-fix';
   style.textContent=`
     #filters.filters-drawer,#filters.filters-drawer.open{border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;padding:12px 0 0!important}
+    .recommend{top:28px!important}
     .restaurant-card{position:relative}
     .card-actions{display:flex!important;gap:7px!important}
     .card-menu-panel{position:absolute;inset:0;z-index:8;display:none;flex-direction:column;justify-content:center;align-items:center;padding:24px;text-align:center;background:rgba(8,9,7,.97);backdrop-filter:blur(12px)}
