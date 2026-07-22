@@ -52,7 +52,7 @@
 <section class="hero"><div class="page-shell hero-inner"><div class="hero-copy">
   <h1>Všechny restaurace,<br>které <span class="gold">stojí za to</span></h1><p class="hero-lead">Objevte restaurace, které odpovídají tomu,<br>co právě hledáte.</p>
   <div class="benefits"><div class="benefit"><div class="benefit-icon green">♜</div><div><strong>Podle chuti</strong><span>Najděte kuchyni,<br>na kterou máte chuť</span></div></div><div class="benefit"><div class="benefit-icon">⌖</div><div><strong>Podle lokality</strong><span>Objevte skvělé podniky<br>ve vašem okolí</span></div></div><div class="benefit"><div class="benefit-icon green">☆</div><div><strong>Ověřené recenze</strong><span>Skutečná hodnocení od<br>reálných lidí</span></div></div></div></div>
-  <aside class="recommend" id="recommendedCarousel" aria-live="polite"><div class="recommend-content"><div class="recommend-label">★ <span>Doporučeno dnes</span></div><h2 id="recommendName">Objevte svůj nový podnik</h2><p id="recommendTag">Vyberte podle chuti, atmosféry a vzdálenosti.</p><div class="recommend-rating"><span class="stars">★★★★★</span><span id="recommendRating">4,8</span></div><div class="recommend-location">⌖ <span id="recommendLocation">Česká republika</span></div><a class="recommend-btn" id="recommendLink" href="#restaurantsList">Zobrazit restauraci&nbsp; →</a><div class="recommend-dots" id="recommendDots"></div></div></aside>
+  <aside class="recommend" id="recommendedCarousel" aria-live="polite"><div class="recommend-content"><div class="recommend-label">★ <span>Doporučeno dnes</span></div><h2 id="recommendName">Načítám doporučení…</h2><p id="recommendTag">Připravuji vybrané restaurace.</p><div class="recommend-rating"><span class="stars">★★★★★</span><span id="recommendRating">–</span></div><div class="recommend-location">⌖ <span id="recommendLocation">Česká republika</span></div><a class="recommend-btn" id="recommendLink" href="#restaurantsList">Zobrazit restauraci&nbsp; →</a><div class="recommend-dots" id="recommendDots"></div></div></aside>
 </div></section>
 <section class="page-shell search-wrap"><div class="search-panel">
   <div class="search-field"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><input id="searchInput" class="control field" maxlength="80" autocomplete="off" placeholder="Název restaurace nebo jídlo..."></div>
@@ -65,7 +65,7 @@
 <section class="page-shell toolbar"><div class="toolbar-left"><span style="color:var(--gold2)">☷</span><span id="resultCount">Načítání restaurací…</span><label>Seřadit podle: <select id="restaurantSort" class="sort-box"><option value="recommended">Doporučené</option><option value="rating-desc">Nejlépe hodnocené</option><option value="name-asc">Název A–Z</option><option value="distance">Nejbližší</option></select></label></div><div class="toolbar-right"><span>Zobrazit:</span><button class="per-page-btn active" data-count="12">12</button><button class="per-page-btn" data-count="24">24</button><button class="per-page-btn" data-count="48">48</button><span class="toolbar-divider"></span><button class="view-btn active" data-restaurant-view="cards" aria-label="Mřížka">▦</button><button class="view-btn" data-restaurant-view="rows" aria-label="Seznam">☷</button></div></section>
 <main id="restaurantsList" class="page-shell"></main>
 <footer class="py-8 border-t border-white/10"><div class="page-shell flex flex-wrap justify-between gap-4 text-sm text-white/50"><span>© 2026 GUR<span style="color:var(--gold2)">M</span>AO.cz · Nejez. <span style="color:var(--gold2)">Prožij.</span></span><div><a href="legal.html">Právní</a> · <a href="kontakt.html">Kontakt</a></div></div></footer>
-<script src="app.js"></script><script src="auth-ui.js"></script><script src="social-share.js"></script><script type="module" src="restaurace.js"></script><script src="cookie-consent.js"></script>
+<script src="app.js"></script><script src="auth-ui.js"></script><script src="social-share.js?v=20260722-modern-3"></script><script type="module" src="restaurace.js?v=20260722-carousel-fix"></script><script src="cookie-consent.js"></script>
 <script type="module">
   import { supabase } from './supabase-client.js';
   const box=document.getElementById('recommendedCarousel');
@@ -93,19 +93,28 @@
       box.classList.remove('is-changing');
     },220);
   };
-  const restart=()=>{clearInterval(timer);timer=setInterval(()=>show(index+1),6000)};
+  const restart=()=>{clearInterval(timer);timer=setInterval(()=>show(index+1),5000)};
+  const shuffle=list=>list.map(value=>({value,sort:Math.random()})).sort((a,b)=>a.sort-b.sort).map(item=>item.value);
   async function init(){
     try{
-      const {data,error}=await supabase.from('restaurants').select('name,slug,tag,description,city,rating,average_rating').not('slug','is',null).limit(8);
+      const {data,error}=await supabase.from('restaurants').select('*').not('slug','is',null).limit(40);
       if(error)throw error;
-      items=(data||[]).filter(r=>r.name&&r.slug).slice(0,6);
-      if(!items.length)return;
+      const valid=(data||[]).filter(r=>text(r.name)&&text(r.slug));
+      items=shuffle(valid).slice(0,Math.min(6,valid.length));
+      if(!items.length)throw new Error('Nebyla nalezena žádná restaurace pro doporučení.');
       dotsEl.innerHTML=items.map((_,i)=>`<button class="recommend-dot${i===0?' active':''}" aria-label="Zobrazit doporučení ${i+1}" data-index="${i}"></button>`).join('');
       dotsEl.addEventListener('click',e=>{const dot=e.target.closest('[data-index]');if(!dot)return;show(Number(dot.dataset.index));restart()});
       box.addEventListener('mouseenter',()=>clearInterval(timer));
       box.addEventListener('mouseleave',restart);
-      show(0);restart();
-    }catch(error){console.error('Recommended restaurants carousel failed:',error)}
+      show(0);
+      restart();
+    }catch(error){
+      console.error('Recommended restaurants carousel failed:',error);
+      nameEl.textContent='Objevte svůj nový podnik';
+      tagEl.textContent='Vyberte podle chuti, atmosféry a vzdálenosti.';
+      ratingEl.textContent='4,8';
+      locationEl.textContent='Česká republika';
+    }
   }
   init();
 </script>
