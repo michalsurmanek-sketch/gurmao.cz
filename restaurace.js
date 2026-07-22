@@ -103,6 +103,16 @@ async function load(reset=false) {
 function setCount(text) { const el=document.getElementById('resultCount'); if(el) el.textContent=text; }
 function toggleSpinner(show) { document.getElementById('loadingSpinner')?.classList.toggle('hidden',!show); }
 function formatDistance(km) { return km<1 ? `${Math.round(km*1000)} m` : `${km.toFixed(1)} km`; }
+function formatMenuDate(date = new Date()) {
+  const formatted = new Intl.DateTimeFormat('cs-CZ', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'Europe/Prague'
+  }).format(date);
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+}
 
 function card(r) {
   const image=escapeHtml(r.image_url||r.image||r.photo_url||'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800');
@@ -112,6 +122,7 @@ function card(r) {
   const tag=escapeHtml(r.tag||'');
   const vibe=escapeHtml(r.vibe||'');
   const distance=Number.isFinite(r.distance)?` · <span class="text-gurmaogold">${formatDistance(r.distance)}</span>`:'';
+  const menuDate=escapeHtml(formatMenuDate());
 
   if (state.view === 'rows') {
     return `<article class="restaurant-row"><a href="restaurace-${slug}.html" class="restaurant-row-image"><img src="${image}" alt="${name}" loading="lazy" decoding="async"></a><div class="restaurant-row-main"><div class="restaurant-row-vibe">${vibe}</div><h3>${name}</h3><p>${city}${city&&tag?' · ':''}${tag}${distance}</p></div><div class="restaurant-row-actions"><button data-save="${slug}" class="save-btn" aria-label="Uložit restauraci">🤍</button><a href="restaurace-${slug}.html" class="restaurant-row-detail">Detail</a></div></article>`;
@@ -145,7 +156,7 @@ function card(r) {
         </div>
       </div>
       <div class="card-back rounded-3xl bg-white/5 overflow-hidden" style="position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);">
-        <div class="flex flex-col h-full p-6"><div class="mb-4"><h3 class="text-xl font-semibold mb-1">${name}</h3><p class="text-gurmaogold text-sm">Dnešní menu</p></div><div class="flex-1 overflow-y-auto space-y-3">${menuItems.map(item=>`<div class="border-b border-white/10 pb-3"><div class="flex justify-between items-start gap-3"><div class="flex-1"><div class="font-medium">${item.name}</div><div class="text-sm text-white/60 mt-0.5">${item.desc}</div></div><div class="text-gurmaogold font-semibold whitespace-nowrap">${item.price}</div></div></div>`).join('')}</div><div class="mt-4 flex gap-2"><a href="restaurace-${slug}.html" class="flex-1 px-4 py-2 rounded-full bg-gurmaogold text-black text-center font-semibold hover:bg-gurmaogold/80 transition">Detail</a><button class="flip-back-btn px-4 py-2 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition">Zpět</button></div></div>
+        <div class="flex flex-col h-full p-6"><div class="mb-4"><h3 class="text-xl font-semibold mb-1">${name}</h3><p class="text-gurmaogold text-sm">Dnešní menu</p><p class="menu-date mt-1 flex items-center gap-1.5 text-xs text-white/55"><span aria-hidden="true">▣</span><span>${menuDate}</span></p></div><div class="flex-1 overflow-y-auto space-y-3">${menuItems.map(item=>`<div class="border-b border-white/10 pb-3"><div class="flex justify-between items-start gap-3"><div class="flex-1"><div class="font-medium">${item.name}</div><div class="text-sm text-white/60 mt-0.5">${item.desc}</div></div><div class="text-gurmaogold font-semibold whitespace-nowrap">${item.price}</div></div></div>`).join('')}</div><div class="mt-4 flex gap-2"><a href="restaurace-${slug}.html" class="flex-1 px-4 py-2 rounded-full bg-gurmaogold text-black text-center font-semibold hover:bg-gurmaogold/80 transition">Detail</a><button class="flip-back-btn px-4 py-2 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition">Zpět</button></div></div>
       </div>
     </div>
   </div>`;
