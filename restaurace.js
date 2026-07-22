@@ -130,10 +130,10 @@ function card(r) {
 
   const shareData=escapeHtml(JSON.stringify({id:r.slug,name:r.name,vibe:r.vibe,city:r.city,tag:r.tag,img:image,href:`restaurace-${r.slug}.html`}));
   const menuItems=[
-    {name:'Hovězí tatarák',desc:'s trhaným žloutkem',price:'380 Kč'},
-    {name:'Grilovaný losos',desc:'s citrusovou salsou',price:'450 Kč'},
-    {name:'Pasta carbonara',desc:'domácí těstoviny',price:'320 Kč'},
-    {name:'Degustační menu',desc:'5 chodů',price:'1250 Kč'}
+    {name:'Hovězí tatarák',desc:'s trhaným žloutkem',price:'380 Kč',image:'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=180&q=80'},
+    {name:'Grilovaný losos',desc:'s citrusovou salsou',price:'450 Kč',image:'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=180&q=80'},
+    {name:'Pasta carbonara',desc:'domácí těstoviny',price:'320 Kč',image:'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=180&q=80'},
+    {name:'Degustační menu',desc:'5 chodů',price:'1250 Kč',image:'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=180&q=80'}
   ];
 
   return `<div class="card-wrapper" style="perspective:1200px;">
@@ -156,7 +156,7 @@ function card(r) {
         </div>
       </div>
       <div class="card-back rounded-3xl bg-white/5 overflow-hidden" style="position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);">
-        <div class="flex flex-col h-full p-6"><div class="mb-4"><h3 class="text-xl font-semibold mb-1">${name}</h3><p class="text-gurmaogold text-sm">Dnešní menu</p><p class="menu-date mt-1 flex items-center gap-1.5 text-xs text-white/55"><span aria-hidden="true">▣</span><span>${menuDate}</span></p></div><div class="flex-1 overflow-y-auto space-y-3">${menuItems.map(item=>`<div class="border-b border-white/10 pb-3"><div class="flex justify-between items-start gap-3"><div class="flex-1"><div class="font-medium">${item.name}</div><div class="text-sm text-white/60 mt-0.5">${item.desc}</div></div><div class="text-gurmaogold font-semibold whitespace-nowrap">${item.price}</div></div></div>`).join('')}</div><div class="mt-4 flex gap-2"><a href="restaurace-${slug}.html" class="flex-1 px-4 py-2 rounded-full bg-gurmaogold text-black text-center font-semibold hover:bg-gurmaogold/80 transition">Detail</a><button class="flip-back-btn px-4 py-2 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition">Zpět</button></div></div>
+        <div class="flex flex-col h-full p-6"><div class="mb-4"><h3 class="text-xl font-semibold mb-1">${name}</h3><p class="text-gurmaogold text-sm">Dnešní menu</p><p class="menu-date mt-1 flex items-center gap-1.5 text-xs text-white/55"><span aria-hidden="true">▣</span><span>${menuDate}</span></p></div><div class="flex-1 overflow-y-auto space-y-3">${menuItems.map(item=>`<div class="border-b border-white/10 pb-3"><div class="flex justify-between items-center gap-3"><img src="${item.image}" alt="${item.name}" loading="lazy" decoding="async" style="width:58px;height:58px;flex:0 0 58px;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.12);"><div class="flex-1 min-w-0"><div class="font-medium">${item.name}</div><div class="text-sm text-white/60 mt-0.5">${item.desc}</div></div><div class="text-gurmaogold font-semibold whitespace-nowrap">${item.price}</div></div></div>`).join('')}</div><div class="mt-4 flex gap-2"><a href="restaurace-${slug}.html" class="flex-1 px-4 py-2 rounded-full bg-gurmaogold text-black text-center font-semibold hover:bg-gurmaogold/80 transition">Detail</a><button class="flip-back-btn px-4 py-2 rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition">Zpět</button></div></div>
       </div>
     </div>
   </div>`;
