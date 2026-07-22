@@ -5,22 +5,15 @@ import { onAuthStateChange, supabase } from './supabase-client.js';
 
 onAuthStateChange((event, session) => {
   if (event === 'PASSWORD_RECOVERY') {
-    // User clicked reset password link → redirect to reset form
     if (!window.location.pathname.endsWith('/reset-password.html')) {
       window.location.href = '/reset-password.html';
     }
   }
 
   if (event === 'SIGNED_IN') {
-    // User logged in or registered → redirect to feed
     if (window.location.pathname.endsWith('/login.html')) {
       window.location.href = '/feed.html';
     }
-  }
-
-  if (event === 'USER_UPDATED') {
-    // Email changed or other profile update
-    // Stay on current page
   }
 });
 
@@ -98,30 +91,10 @@ function applyHomepageCuisineLayout() {
   `;
 }
 
-function loadRestaurantRedesign() {
-  const isRestaurantPage = window.location.pathname.endsWith('/restaurace.html') || window.location.pathname === '/restaurace.html';
-  if (!isRestaurantPage) return;
-
-  if (!document.querySelector('link[href^="restaurace-redesign.css"]')) {
-    const stylesheet = document.createElement('link');
-    stylesheet.rel = 'stylesheet';
-    stylesheet.href = 'restaurace-redesign.css?v=1';
-    document.head.appendChild(stylesheet);
-  }
-
-  if (!document.querySelector('script[src^="restaurace-redesign.js"]')) {
-    const script = document.createElement('script');
-    script.src = 'restaurace-redesign.js?v=1';
-    script.defer = true;
-    document.head.appendChild(script);
-  }
-}
-
 function initializeHomepageDynamicContent() {
   updateHomepageRestaurantCount();
   addWineBarHomepageCategory();
   applyHomepageCuisineLayout();
-  loadRestaurantRedesign();
 }
 
 if (document.readyState === 'loading') {
