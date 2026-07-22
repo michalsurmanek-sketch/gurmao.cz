@@ -8,10 +8,10 @@ function applyRestaurantFilterStyles(){
     #filters.filters-drawer,
     #filters.filters-drawer.open{
       border:0!important;
-      border-top:1px solid rgba(255,255,255,.08)!important;
-      border-radius:0 0 14px 14px!important;
+      border-radius:0!important;
       box-shadow:none!important;
-      background:linear-gradient(180deg,#151611,#10110e)!important;
+      background:transparent!important;
+      padding:10px 0 0!important;
     }
   `;
   document.head.appendChild(style);
