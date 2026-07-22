@@ -79,9 +79,9 @@
     loadEnhancement('chef-redesign.css', 'chef-redesign.js', '4');
   }
 
-  if (path.endsWith('/restaurace.html')) {
-    loadEnhancement('restaurace-redesign.css', 'restaurace-redesign.js', '4');
-  }
+  // restaurace.html má nyní vlastní kompletní rozvržení a ovládání.
+  // Starý restaurace-redesign.js vytvářel druhou sadu filtrů a duplicitní ID,
+  // proto se na této stránce už nesmí dynamicky načítat.
 
   if (path.endsWith('/feed.html')) {
     loadEnhancement('feed-redesign.css', 'feed-redesign.js', '7');
