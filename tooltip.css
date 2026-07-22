@@ -19,7 +19,6 @@
   --gurmao-card-gold: #d4af37;
 }
 
-/* One visual card language on Feed, Restaurace and Můj výběr. */
 #grid [data-restaurant-card],
 #restaurantsList .card-wrapper,
 #savedGrid > div,
@@ -42,7 +41,6 @@
   box-shadow: 0 22px 46px rgba(0,0,0,.36), 0 0 28px rgba(212,175,55,.08) !important;
 }
 
-/* Unified 3:4 restaurant photography. */
 #grid [data-restaurant-card] > a,
 #savedGrid > div > a,
 #recommendedGrid > div > a,
@@ -72,7 +70,6 @@
   filter: brightness(.94);
 }
 
-/* Unified lower content panel. Position stays static so image overlays anchor to the whole card. */
 #grid [data-restaurant-card] > .p-5,
 #savedGrid > div > .p-5,
 #recommendedGrid > div > .p-4,
@@ -92,7 +89,6 @@
   color: #fff !important;
 }
 
-/* Shared badge appearance. */
 #grid [data-restaurant-card] > .p-5 > .flex:first-child > .flex-1 > .text-gurmaogold:first-child,
 #savedGrid > div > .p-5 .vibe-tooltip,
 #recommendedGrid > div > .p-4 .vibe-tooltip,
@@ -121,7 +117,6 @@
   line-height: 1 !important;
 }
 
-/* Feed save/share and Collections remove action: same top-right position. */
 #grid [data-restaurant-card] > .p-5 > .flex:first-child > .flex:last-child,
 #restaurantsList .card-front > .relative > .absolute.top-3.right-3 {
   position: absolute !important;
@@ -151,13 +146,11 @@
   box-shadow: 0 8px 20px rgba(0,0,0,.32) !important;
 }
 
-/* Remove the old vibe/action space from card bodies. */
 #grid [data-restaurant-card] > .p-5 > .flex:first-child,
 #savedGrid > div > .p-5 {
   position: static !important;
 }
 
-/* Equal rhythm across all card grids. */
 #grid,
 #restaurantsList,
 #savedGrid {
@@ -165,25 +158,8 @@
   align-items: stretch !important;
 }
 
-/* Compact flipped menu card: visual change only. */
 #restaurantsList .card-back > .flex {
   padding: 18px !important;
-}
-
-#restaurantsList .card-back h3 {
-  margin-bottom: 2px !important;
-  font-family: 'Playfair Display', serif !important;
-  font-size: 1.15rem !important;
-  line-height: 1.2 !important;
-}
-
-#restaurantsList .card-back h3 + p {
-  font-size: .78rem !important;
-  line-height: 1.25 !important;
-}
-
-#restaurantsList .card-back > .flex > div:first-child {
-  margin-bottom: 12px !important;
 }
 
 #restaurantsList .card-back .overflow-y-auto {
@@ -248,47 +224,90 @@
   font-size: .86rem !important;
 }
 
-/* Approved flipped-card header design. */
-#restaurantsList .card-back > .flex > div:first-child {
+/* Exact approved header: centered title, gold subtitle, gray date with gold calendar. */
+html body #restaurantsList .card-wrapper .card-back > div.flex.flex-col > div:first-child {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  margin: 0 0 13px !important;
+  padding: 3px 8px 12px !important;
   text-align: center !important;
-  margin-bottom: 14px !important;
-  padding: 2px 10px 12px !important;
-  border-bottom: 1px solid rgba(255,255,255,.08);
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
 }
 
-#restaurantsList .card-back > .flex > div:first-child h3 {
+html body #restaurantsList .card-wrapper .card-back > div.flex.flex-col > div:first-child > h3 {
+  display: block !important;
+  width: 100% !important;
   margin: 0 0 5px !important;
+  padding: 0 !important;
+  text-align: center !important;
   font-family: 'Playfair Display', serif !important;
-  font-size: 1.12rem !important;
+  font-size: 1.18rem !important;
   font-weight: 600 !important;
   line-height: 1.2 !important;
   color: #fff !important;
 }
 
-#restaurantsList .card-back > .flex > div:first-child h3 + p {
+html body #restaurantsList .card-wrapper .card-back > div.flex.flex-col > div:first-child > h3 + p {
+  display: block !important;
+  width: 100% !important;
   margin: 0 !important;
-  color: var(--gurmao-card-gold) !important;
+  padding: 0 !important;
+  text-align: center !important;
+  color: #d4af37 !important;
   font-size: .82rem !important;
   font-weight: 600 !important;
   line-height: 1.25 !important;
 }
 
-#restaurantsList .card-back .menu-date {
+html body #restaurantsList .card-wrapper .card-back .menu-date {
+  display: flex !important;
+  align-items: center !important;
   justify-content: center !important;
+  width: 100% !important;
   margin: 6px 0 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
   color: rgba(255,255,255,.56) !important;
   font-size: .72rem !important;
   font-weight: 400 !important;
   line-height: 1.25 !important;
 }
 
-#restaurantsList .card-back .menu-date > span:first-child {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--gurmao-card-gold) !important;
-  font-size: .72rem !important;
-  line-height: 1 !important;
+html body #restaurantsList .card-wrapper .card-back .menu-date > span:first-child {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 12px !important;
+  height: 12px !important;
+  overflow: hidden !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  position: relative !important;
+}
+
+html body #restaurantsList .card-wrapper .card-back .menu-date > span:first-child::before {
+  content: '' !important;
+  display: block !important;
+  width: 10px !important;
+  height: 9px !important;
+  border: 1.4px solid #d4af37 !important;
+  border-radius: 1.5px !important;
+  box-sizing: border-box !important;
+}
+
+html body #restaurantsList .card-wrapper .card-back .menu-date > span:first-child::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 1px !important;
+  left: 2px !important;
+  width: 6px !important;
+  height: 2px !important;
+  border-top: 1.4px solid #d4af37 !important;
+  border-bottom: 1.4px solid #d4af37 !important;
 }
 
 @media (max-width: 767px) {
