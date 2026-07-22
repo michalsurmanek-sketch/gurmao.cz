@@ -108,3 +108,22 @@
   opacity: 0 !important;
   visibility: hidden !important;
 }
+
+/* Restaurant cards: force overlays into the image top corners even when Tailwind utility classes are not present in the compiled CSS. */
+.card-wrapper .card-front > .relative > .absolute.top-3.left-3 {
+  position: absolute !important;
+  top: 12px !important;
+  left: 12px !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 20 !important;
+}
+
+.card-wrapper .card-front > .relative > .absolute.top-3.right-3 {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  left: auto !important;
+  bottom: auto !important;
+  z-index: 20 !important;
+}
