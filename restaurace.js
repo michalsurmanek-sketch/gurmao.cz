@@ -31,6 +31,11 @@ function applyRestaurantFilterStyles(){
     .card-badge.vibe-dark{border-color:rgba(183,151,255,.5)!important;background:rgba(35,24,58,.86)!important;color:#c8aaff!important}
     .card-badge.vibe-calm{border-color:rgba(82,183,255,.55)!important;background:rgba(8,42,67,.84)!important;color:#75c8ff!important}
     .rating-source{margin-left:5px;color:rgba(255,255,255,.46);font-size:10px;font-weight:600;letter-spacing:.02em}
+    .opening-status{font-size:12px;font-weight:600;white-space:nowrap}
+    .opening-status.open{color:#69dc83}
+    .opening-status.closing{color:#ffb15f}
+    .opening-status.closed{color:#ff856d}
+    .opening-status.unknown{color:rgba(255,255,255,.55);font-weight:500}
     .card-menu-panel{position:absolute;inset:0;z-index:8;display:none;flex-direction:column;justify-content:center;align-items:center;padding:24px;text-align:center;background:rgba(8,9,7,.97);backdrop-filter:blur(12px)}
     .restaurant-card.menu-open .card-menu-panel{display:flex}
     .card-menu-panel h4{margin:0 0 7px;font:500 20px/1.2 "Playfair Display",serif;color:#fff}
@@ -62,7 +67,51 @@ function fillSelects(){const cuisines=[...new Set(state.all.map(r=>r.tag).filter
 function restaurantRating(r){return Number(r.google_rating||r.rating||r.average_rating||0);}
 function restaurantReviewCount(r){return Number(r.google_review_count||r.google_reviews_count||r.user_ratings_total||r.rating_count||r.review_count||r.reviews_count||0);}
 function hasGoogleRating(r){return Boolean(r.google_place_id||r.place_id||r.google_rating);}
-function ratingHtml(r){const rating=restaurantRating(r);if(!rating)return '<span class="rating-number">Novinka</span>';const reviews=restaurantReviewCount(r);const source=hasGoogleRating(r)?'<span class="rating-source">Google</span>':'';return `<span class="rating-number">${rating.toFixed(1).replace('.',',')}${reviews?` (${reviews.toLocaleString('cs-CZ')})`:''}</span>${source}`;}
+function parseMinutes(value){const match=String(value||'').match(/(\d{1,2})[:.]?(\d{2})?/);if(!match)return null;const h=Number(match[1]),m=Number(match[2]||0);return h>=0&&h<=24&&m>=0&&m<60?h*60+m:null;}
+function todayHours(r){
+  const raw=r.opening_hours||r.hours||r.openingHours||r.google_opening_hours;
+  if(!raw)return '';
+  const now=new Date();
+  const day=now.getDay();
+  const keys=[['sun','sunday','ne','nedele','neděle'],['mon','monday','po','pondeli','pondělí'],['tue','tuesday','ut','úterý','utery'],['wed','wednesday','st','streda','středa'],['thu','thursday','ct','čt','ctvrtek','čtvrtek'],['fri','friday','pa','pá','patek','pátek'],['sat','saturday','so','sobota']][day];
+  if(Array.isArray(raw))return String(raw[day]??raw.find(v=>keys.some(k=>norm(v).startsWith(norm(k))))??'');
+  if(typeof raw==='object'){
+    const entry=Object.entries(raw).find(([key])=>keys.some(k=>norm(key)===norm(k)||norm(key).startsWith(norm(k))));
+    return String(entry?.[1]??'');
+  }
+  const text=String(raw).trim();
+  if(!text)return '';
+  const parts=text.split(/\n|;|\s\|\s/).map(v=>v.trim()).filter(Boolean);
+  const entry=parts.find(v=>keys.some(k=>norm(v).startsWith(norm(k))));
+  return entry?entry.replace(/^[^:–—-]+[:\s-]+/,'').trim():text;
+}
+function openingStatusHtml(r){
+  const value=todayHours(r);
+  if(!value)return '<span class="opening-status unknown">🕐 Otevírací doba neuvedena</span>';
+  const normalized=norm(value);
+  if(/zavreno|closed|neotevira/.test(normalized))return '<span class="opening-status closed">● Dnes zavřeno</span>';
+  const matches=[...value.matchAll(/(\d{1,2}(?::|\.)\d{2})\s*[–—-]\s*(\d{1,2}(?::|\.)\d{2})/g)];
+  if(!matches.length)return `<span class="opening-status unknown">🕐 ${esc(value.slice(0,38))}</span>`;
+  const now=new Date();
+  const current=now.getHours()*60+now.getMinutes();
+  let nextOpen=null;
+  for(const match of matches){
+    const open=parseMinutes(match[1]);
+    const close=parseMinutes(match[2]);
+    if(open===null||close===null)continue;
+    const adjustedClose=close<=open?close+1440:close;
+    const adjustedNow=current<open&&adjustedClose>1440?current+1440:current;
+    if(adjustedNow>=open&&adjustedNow<adjustedClose){
+      const remaining=adjustedClose-adjustedNow;
+      const closeText=match[2].replace('.',':');
+      return remaining<=30?`<span class="opening-status closing">● Zavírá za ${remaining} min</span>`:`<span class="opening-status open">● Otevřeno do ${closeText}</span>`;
+    }
+    if(current<open&&(nextOpen===null||open<nextOpen))nextOpen=open;
+  }
+  if(nextOpen!==null){const h=String(Math.floor(nextOpen/60)).padStart(2,'0'),m=String(nextOpen%60).padStart(2,'0');return `<span class="opening-status closed">● Zavřeno · otevírá v ${h}:${m}</span>`;}
+  return '<span class="opening-status closed">● Zavřeno</span>';
+}
+function ratingHtml(r){const rating=restaurantRating(r);if(!rating)return openingStatusHtml(r);const reviews=restaurantReviewCount(r);const source=hasGoogleRating(r)?'<span class="rating-source">Google</span>':'';return `<span class="rating-number">${rating.toFixed(1).replace('.',',')}${reviews?` (${reviews.toLocaleString('cs-CZ')})`:''}</span>${source}`;}
 
 function applyFilters(reset=true){const q=norm(state.search),c=norm(state.cuisine),city=norm(state.city);let rows=state.all.filter(r=>{const hay=norm([r.name,r.description,r.tag,r.city].join(' '));return(!q||hay.includes(q))&&(!c||norm(r.tag).includes(c))&&(!city||norm(r.city)===city)&&(state.vibe==='all'||r.vibe===state.vibe);});if(state.userLocation)rows.forEach(r=>{const lat=Number(r.latitude),lng=Number(r.longitude);r._distance=lat&&lng?distanceKm(state.userLocation.lat,state.userLocation.lng,lat,lng):Infinity;});if(state.sort==='rating-desc')rows.sort((a,b)=>restaurantRating(b)-restaurantRating(a));else if(state.sort==='name-asc')rows.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'cs'));else if(state.sort==='distance')rows.sort((a,b)=>(a._distance??Infinity)-(b._distance??Infinity));state.filtered=rows;if(reset)state.shown=state.perPage;updateUrl();render();}
 
