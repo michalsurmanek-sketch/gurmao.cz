@@ -158,8 +158,14 @@
   align-items: stretch !important;
 }
 
+#restaurantsList .card-back {
+  position: absolute !important;
+}
+
 #restaurantsList .card-back > .flex {
+  position: relative !important;
   padding: 18px !important;
+  padding-top: 48px !important;
 }
 
 #restaurantsList .card-back .overflow-y-auto {
@@ -217,8 +223,7 @@
   margin-top: 12px !important;
 }
 
-#restaurantsList .card-back > .flex > .mt-4 a,
-#restaurantsList .card-back > .flex > .mt-4 button {
+#restaurantsList .card-back > .flex > .mt-4 a {
   padding-top: 9px !important;
   padding-bottom: 9px !important;
   font-size: .86rem !important;
@@ -230,26 +235,22 @@ html body #restaurantsList .card-wrapper .card-back > div.flex.flex-col > div:fi
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  position: relative !important;
   width: 100% !important;
   margin: 0 0 13px !important;
-  padding: 3px 8px 21px !important;
+  padding: 3px 8px 12px !important;
   text-align: center !important;
   border-bottom: 0 !important;
+  position: relative !important;
 }
 
 html body #restaurantsList .card-wrapper .card-back > div.flex.flex-col > div:first-child::after {
   content: '' !important;
-  position: absolute !important;
-  left: 50% !important;
-  bottom: 6px !important;
-  width: min(74%, 220px) !important;
-  height: 2px !important;
-  transform: translateX(-50%) !important;
-  background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,.12) 12%, rgba(212,175,55,.72) 38%, #f1cf58 50%, rgba(212,175,55,.72) 62%, rgba(212,175,55,.12) 88%, transparent 100%) !important;
-  border-radius: 999px !important;
+  display: block !important;
+  width: min(82%, 250px) !important;
+  height: 1px !important;
+  margin: 12px auto 0 !important;
+  background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,.16) 16%, rgba(212,175,55,.65) 42%, #e7c44f 50%, rgba(212,175,55,.65) 58%, rgba(212,175,55,.16) 84%, transparent 100%) !important;
   box-shadow: 0 0 8px rgba(212,175,55,.22) !important;
-  pointer-events: none !important;
 }
 
 html body #restaurantsList .card-wrapper .card-back > div.flex.flex-col > div:first-child > h3 {
@@ -323,6 +324,44 @@ html body #restaurantsList .card-wrapper .card-back .menu-date > span:first-chil
   height: 2px !important;
   border-top: 1.4px solid #d4af37 !important;
   border-bottom: 1.4px solid #d4af37 !important;
+}
+
+/* Move the existing back action to the top-left and render exactly “< Zpět”. */
+html body #restaurantsList .card-wrapper .card-back .flip-back-btn {
+  position: absolute !important;
+  top: 14px !important;
+  left: 16px !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 40 !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 3px 4px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+}
+
+html body #restaurantsList .card-wrapper .card-back .flip-back-btn::before {
+  content: '< Zpět' !important;
+  color: #d4af37 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: .82rem !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  transition: color .2s ease, text-shadow .2s ease !important;
+}
+
+html body #restaurantsList .card-wrapper .card-back .flip-back-btn:hover::before {
+  color: #f0cf55 !important;
+  text-shadow: 0 0 10px rgba(212,175,55,.35) !important;
 }
 
 @media (max-width: 767px) {
