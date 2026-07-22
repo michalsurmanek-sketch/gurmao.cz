@@ -94,13 +94,17 @@
   }
 }
 
-/* Restaurant cards: vibe label is informational only, without hover explanation. */
-.card-wrapper .vibe-tooltip {
-  cursor: default;
+/* Vibe labels are informational only: never show an explanation bubble. */
+.vibe-tooltip {
+  cursor: default !important;
 }
 
-.card-wrapper .vibe-tooltip::before,
-.card-wrapper .vibe-tooltip::after {
+.vibe-tooltip::before,
+.vibe-tooltip::after,
+.vibe-tooltip:hover::before,
+.vibe-tooltip:hover::after {
   content: none !important;
   display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
