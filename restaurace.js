@@ -1,5 +1,22 @@
 import { supabase } from './supabase-client.js';
 
+function applyRestaurantFilterStyles(){
+  if(document.getElementById('restaurant-filter-style-fix')) return;
+  const style=document.createElement('style');
+  style.id='restaurant-filter-style-fix';
+  style.textContent=`
+    #filters.filters-drawer,
+    #filters.filters-drawer.open{
+      border:0!important;
+      border-top:1px solid rgba(255,255,255,.08)!important;
+      border-radius:0 0 14px 14px!important;
+      box-shadow:none!important;
+      background:linear-gradient(180deg,#151611,#10110e)!important;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 const VIBE_MAP={luxe:'🍷 LUXE',drama:'🔥 DRAMA',chaos:'🌮 CHAOS',pure:'🌿 PURE',dark:'🖤 DARK',calm:'🌊 CALM'};
 const params=new URLSearchParams(location.search);
 const state={search:params.get('q')||'',cuisine:params.get('cuisine')||'',city:params.get('city')||'',vibe:VIBE_MAP[params.get('vibe')]||'all',sort:params.get('sort')||'recommended',view:localStorage.getItem('gurmaoRestaurantView')==='rows'?'rows':'cards',perPage:12,shown:12,userLocation:null,all:[],filtered:[],loading:false};
@@ -27,4 +44,4 @@ function render(){const list=$('restaurantsList');const visible=state.filtered.s
 
 function bind(){let timer;$('searchInput').value=state.search;$('searchInput').addEventListener('input',e=>{clearTimeout(timer);timer=setTimeout(()=>{state.search=clean(e.target.value);applyFilters()},250)});$('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter'){state.search=clean(e.target.value);applyFilters()}});$('searchBtn').onclick=()=>{state.search=clean($('searchInput').value);applyFilters()};$('cuisineFilter').onchange=e=>{state.cuisine=e.target.value;applyFilters()};$('localityFilter').onchange=e=>{state.city=e.target.value;applyFilters()};$('restaurantSort').onchange=e=>{state.sort=e.target.value;applyFilters(false)};$('moreFiltersBtn').onclick=()=>$('filters').classList.toggle('open');document.querySelectorAll('#filters [data-vibe]').forEach(b=>b.onclick=()=>{state.vibe=VIBE_MAP[b.dataset.vibe]||'all';applyFilters()});document.querySelectorAll('.per-page-btn').forEach(b=>b.onclick=()=>{state.perPage=Number(b.dataset.count);state.shown=state.perPage;render()});document.querySelectorAll('[data-restaurant-view]').forEach(b=>b.onclick=()=>{state.view=b.dataset.restaurantView;localStorage.setItem('gurmaoRestaurantView',state.view);render()});$('locationBtn').onclick=()=>{if(!navigator.geolocation)return alert('Prohlížeč nepodporuje polohu.');navigator.geolocation.getCurrentPosition(p=>{state.userLocation={lat:p.coords.latitude,lng:p.coords.longitude};state.sort='distance';$('restaurantSort').value='distance';applyFilters(false)},()=>alert('Polohu se nepodařilo zjistit.'))};}
 
-document.addEventListener('DOMContentLoaded',()=>{bind();loadAll()});
+document.addEventListener('DOMContentLoaded',()=>{applyRestaurantFilterStyles();bind();loadAll()});
