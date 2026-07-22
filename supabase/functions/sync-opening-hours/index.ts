@@ -14,6 +14,20 @@ function emptyHours(): Hours {
   return { mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: [] };
 }
 
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === 'string') return error;
+  if (error && typeof error === 'object') {
+    const value = error as Record<string, unknown>;
+    const parts = [value.message, value.details, value.hint, value.code]
+      .filter(Boolean)
+      .map(String);
+    if (parts.length) return parts.join(' | ');
+    try { return JSON.stringify(error); } catch { return 'Neznámá objektová chyba'; }
+  }
+  return String(error || 'Neznámá chyba');
+}
+
 function timeValue(value: unknown): string | null {
   if (!value || typeof value !== 'object') return null;
   const item = value as { hour?: number; minute?: number };
@@ -28,16 +42,10 @@ function normalizePeriods(periods: unknown): Hours {
   if (!Array.isArray(periods)) return result;
   for (const period of periods) {
     const openDay = Number(period?.open?.day);
-    const closeDay = Number(period?.close?.day);
     const open = timeValue(period?.open);
     const close = timeValue(period?.close);
     if (!Number.isInteger(openDay) || openDay < 0 || openDay > 6 || !open || !close) continue;
-    const key = DAYS[openDay];
-    result[key].push({ open, close });
-    // Přes půlnoc je reprezentováno close <= open; klient s tím počítá.
-    if (Number.isInteger(closeDay) && closeDay !== openDay && close > open) {
-      result[key][result[key].length - 1].close = close;
-    }
+    result[DAYS[openDay]].push({ open, close });
   }
   return result;
 }
@@ -51,7 +59,15 @@ async function googleJson(url: string, apiKey: string, init: RequestInit = {}) {
       ...(init.headers || {}),
     },
   });
-  if (!response.ok) throw new Error(`Google Places ${response.status}: ${await response.text()}`);
+  if (!response.ok) {
+    const text = await response.text();
+    let detail = text;
+    try {
+      const parsed = JSON.parse(text);
+      detail = parsed?.error?.message || parsed?.message || text;
+    } catch {}
+    throw new Error(`Google Places ${response.status}: ${detail}`);
+  }
   return response.json();
 }
 
@@ -120,12 +136,12 @@ Deno.serve(async (req) => {
         if (updateError) throw updateError;
         results.push({ id: restaurant.id, name: restaurant.name, status: periods.length ? 'updated' : 'no_hours', place_id: placeId });
       } catch (itemError) {
-        results.push({ id: restaurant.id, name: restaurant.name, status: 'error', error: itemError instanceof Error ? itemError.message : String(itemError) });
+        results.push({ id: restaurant.id, name: restaurant.name, status: 'error', error: errorMessage(itemError) });
       }
     }
 
     return new Response(JSON.stringify({ processed: results.length, results }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : String(error) }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ error: errorMessage(error) }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
