@@ -10,9 +10,9 @@ alter table public.restaurants
   add column if not exists google_place_id text;
 
 comment on column public.restaurants.opening_hours is
-  'Pravidelná otevírací doba. Klíče mon,tue,wed,thu,fri,sat,sun; hodnota je pole intervalů [{"open":"11:00","close":"22:00"}] nebo prázdné pole pro zavřeno.';
+  'Pravidelná otevírací doba. Klíče mon,tue,wed,thu,fri,sat,sun. Hodnota je text např. "11:00-14:00, 17:00-22:00"; prázdný řetězec nebo "closed" znamená zavřeno.';
 comment on column public.restaurants.special_opening_hours is
-  'Výjimky podle data: [{"date":"2026-12-24","closed":true},{"date":"2026-12-31","intervals":[{"open":"11:00","close":"18:00"}]}].';
+  'Výjimky podle data: [{"date":"2026-12-24","closed":true},{"date":"2026-12-31","hours":"11:00-18:00"}].';
 comment on column public.restaurants.opening_hours_source is
   'owner, admin, website, google, osm nebo import';
 
@@ -33,7 +33,6 @@ create index if not exists restaurants_google_place_id_idx
 create index if not exists restaurants_opening_hours_verified_at_idx
   on public.restaurants (opening_hours_verified_at);
 
--- Ověření základního formátu pravidelné otevírací doby.
 create or replace function public.is_valid_opening_hours(value jsonb)
 returns boolean
 language sql
@@ -48,17 +47,9 @@ as $$
     )
     and not exists (
       select 1
-      from jsonb_each(value) as day(key, intervals)
-      where jsonb_typeof(intervals) <> 'array'
-         or exists (
-           select 1
-           from jsonb_array_elements(intervals) as interval
-           where jsonb_typeof(interval) <> 'object'
-              or not (interval ? 'open')
-              or not (interval ? 'close')
-              or (interval->>'open') !~ '^([01][0-9]|2[0-3]):[0-5][0-9]$'
-              or (interval->>'close') !~ '^([01][0-9]|2[0-3]):[0-5][0-9]$'
-         )
+      from jsonb_each(value) as day(key, hours)
+      where jsonb_typeof(hours) <> 'string'
+         or length(hours #>> '{}') > 80
     );
 $$;
 
@@ -72,16 +63,16 @@ alter table public.restaurants
 -- Přístup pro veřejné čtení zůstává řízen existující RLS politikou tabulky restaurants.
 -- Zápis otevírací doby má probíhat pouze přes administraci / service role.
 
--- Ukázkový zápis:
+-- Ukázkový zápis kompatibilní s kartami restaurací:
 -- update public.restaurants
 -- set opening_hours = '{
---   "mon":[{"open":"11:00","close":"22:00"}],
---   "tue":[{"open":"11:00","close":"22:00"}],
---   "wed":[{"open":"11:00","close":"22:00"}],
---   "thu":[{"open":"11:00","close":"22:00"}],
---   "fri":[{"open":"11:00","close":"23:00"}],
---   "sat":[{"open":"12:00","close":"23:00"}],
---   "sun":[]
+--   "mon":"11:00-22:00",
+--   "tue":"11:00-22:00",
+--   "wed":"11:00-22:00",
+--   "thu":"11:00-22:00",
+--   "fri":"11:00-23:00",
+--   "sat":"12:00-23:00",
+--   "sun":"closed"
 -- }'::jsonb,
 -- opening_hours_source = 'admin',
 -- opening_hours_verified_at = now()
