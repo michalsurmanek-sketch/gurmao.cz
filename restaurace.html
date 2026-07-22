@@ -24,7 +24,7 @@
     .hero{height:350px;position:relative;background-image:linear-gradient(90deg,rgba(4,5,4,.99) 0%,rgba(4,5,4,.94) 28%,rgba(4,5,4,.63) 43%,rgba(4,5,4,.10) 66%,rgba(4,5,4,.25) 100%),url('images/gurmao-hero-restaurant.jpg');background-size:cover;background-position:center 55%;border-bottom:1px solid rgba(255,255,255,.08)}
     .hero-inner{height:100%;position:relative;padding-top:40px}.hero-copy{max-width:680px}.hero h1{margin:0 0 14px;font-size:54px;line-height:1.04;font-weight:500;letter-spacing:-2px}.hero h1 .gold{color:var(--gold2)}.hero-lead{margin:0;font-size:16px;line-height:1.55;color:rgba(255,255,255,.68)}
     .benefits{display:flex;gap:30px;margin-top:22px}.benefit{width:182px;display:flex;gap:11px;align-items:flex-start}.benefit-icon{width:40px;height:40px;flex:0 0 40px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(216,173,52,.3);background:rgba(216,173,52,.13);color:var(--gold2)}.benefit-icon.green{color:#8fd84e;background:rgba(83,150,28,.16);border-color:rgba(111,180,49,.28)}.benefit strong{display:block;margin:2px 0 3px;font-size:13px;font-weight:600}.benefit span{display:block;font-size:11px;line-height:1.45;color:rgba(255,255,255,.55)}
-    .recommend{position:absolute;right:0;top:52px;width:292px;padding:21px 23px;border:1px solid rgba(216,173,52,.72);border-radius:19px;background:linear-gradient(145deg,rgba(31,25,13,.95),rgba(9,10,8,.96));box-shadow:0 22px 70px rgba(0,0,0,.48)}.recommend-label{display:flex;gap:8px;align-items:center;color:var(--gold2);font-size:11px;font-weight:600;margin-bottom:12px}.recommend h2{margin:0 0 7px;font-size:22px;line-height:1.2;font-weight:500}.recommend p{margin:0;color:rgba(255,255,255,.58);font-size:13px}.recommend-rating{display:flex;align-items:center;gap:9px;margin-top:14px;font-size:12px}.stars{color:var(--gold2);letter-spacing:1px}.recommend-location{display:flex;align-items:center;gap:8px;margin-top:13px;color:rgba(255,255,255,.58);font-size:12px}.recommend-btn{display:flex;justify-content:center;align-items:center;margin-top:15px;padding:11px;border:1px solid rgba(216,173,52,.55);border-radius:10px;color:#fff;font-size:14px}.recommend-btn:hover{background:var(--gold);color:#080808}
+    .recommend{position:absolute;right:0;top:52px;width:292px;padding:21px 23px;border:1px solid rgba(216,173,52,.72);border-radius:19px;background:linear-gradient(145deg,rgba(31,25,13,.95),rgba(9,10,8,.96));box-shadow:0 22px 70px rgba(0,0,0,.48);overflow:hidden}.recommend-content{transition:opacity .28s ease,transform .28s ease}.recommend.is-changing .recommend-content{opacity:0;transform:translateY(7px)}.recommend-label{display:flex;gap:8px;align-items:center;color:var(--gold2);font-size:11px;font-weight:600;margin-bottom:12px}.recommend h2{margin:0 0 7px;font-size:22px;line-height:1.2;font-weight:500}.recommend p{margin:0;color:rgba(255,255,255,.58);font-size:13px}.recommend-rating{display:flex;align-items:center;gap:9px;margin-top:14px;font-size:12px}.stars{color:var(--gold2);letter-spacing:1px}.recommend-location{display:flex;align-items:center;gap:8px;margin-top:13px;color:rgba(255,255,255,.58);font-size:12px}.recommend-btn{display:flex;justify-content:center;align-items:center;margin-top:15px;padding:11px;border:1px solid rgba(216,173,52,.55);border-radius:10px;color:#fff;font-size:14px}.recommend-btn:hover{background:var(--gold);color:#080808}.recommend-dots{display:flex;justify-content:center;gap:6px;margin-top:13px}.recommend-dot{width:6px;height:6px;border:0;border-radius:50%;padding:0;background:rgba(255,255,255,.26);cursor:pointer}.recommend-dot.active{width:18px;border-radius:999px;background:var(--gold2)}
     .search-wrap{margin-top:-1px;position:relative;z-index:10}.search-panel{display:grid;grid-template-columns:1.45fr .9fr .9fr .68fr .55fr .62fr;gap:10px;padding:14px 16px;border:1px solid rgba(216,173,52,.34);border-radius:0 0 16px 16px;background:rgba(21,22,20,.98);box-shadow:0 16px 40px rgba(0,0,0,.34)}
     .control{height:48px;border-radius:10px;border:1px solid var(--line);background:#181916;color:#fff;font-size:14px;font-weight:400;transition:border-color .2s,background .2s,box-shadow .2s}.control:hover{border-color:rgba(216,173,52,.5);background:#1c1d19}.control:focus,.control:focus-visible{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(216,173,52,.11)}
     .search-field{position:relative}.search-field svg{position:absolute;left:14px;top:15px;width:18px;color:var(--gold2)}.field{width:100%;padding:0 15px 0 43px}.field::placeholder{color:rgba(255,255,255,.38)}
@@ -52,7 +52,7 @@
 <section class="hero"><div class="page-shell hero-inner"><div class="hero-copy">
   <h1>Všechny restaurace,<br>které <span class="gold">stojí za to</span></h1><p class="hero-lead">Objevte restaurace, které odpovídají tomu,<br>co právě hledáte.</p>
   <div class="benefits"><div class="benefit"><div class="benefit-icon green">♜</div><div><strong>Podle chuti</strong><span>Najděte kuchyni,<br>na kterou máte chuť</span></div></div><div class="benefit"><div class="benefit-icon">⌖</div><div><strong>Podle lokality</strong><span>Objevte skvělé podniky<br>ve vašem okolí</span></div></div><div class="benefit"><div class="benefit-icon green">☆</div><div><strong>Ověřené recenze</strong><span>Skutečná hodnocení od<br>reálných lidí</span></div></div></div></div>
-  <aside class="recommend"><div class="recommend-label">★ <span>Doporučeno dnes</span></div><h2>La Degustation Bohême</h2><p>Moderní česká kuchyně</p><div class="recommend-rating"><span class="stars">★★★★★</span><span>4,8 (512 recenzí)</span></div><div class="recommend-location">⌖ <span>Praha, 0,3 km</span></div><a class="recommend-btn" href="#restaurantsList">Zobrazit detail&nbsp; →</a></aside>
+  <aside class="recommend" id="recommendedCarousel" aria-live="polite"><div class="recommend-content"><div class="recommend-label">★ <span>Doporučeno dnes</span></div><h2 id="recommendName">Objevte svůj nový podnik</h2><p id="recommendTag">Vyberte podle chuti, atmosféry a vzdálenosti.</p><div class="recommend-rating"><span class="stars">★★★★★</span><span id="recommendRating">4,8</span></div><div class="recommend-location">⌖ <span id="recommendLocation">Česká republika</span></div><a class="recommend-btn" id="recommendLink" href="#restaurantsList">Zobrazit restauraci&nbsp; →</a><div class="recommend-dots" id="recommendDots"></div></div></aside>
 </div></section>
 <section class="page-shell search-wrap"><div class="search-panel">
   <div class="search-field"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><input id="searchInput" class="control field" maxlength="80" autocomplete="off" placeholder="Název restaurace nebo jídlo..."></div>
@@ -66,4 +66,47 @@
 <main id="restaurantsList" class="page-shell"></main>
 <footer class="py-8 border-t border-white/10"><div class="page-shell flex flex-wrap justify-between gap-4 text-sm text-white/50"><span>© 2026 GUR<span style="color:var(--gold2)">M</span>AO.cz · Nejez. <span style="color:var(--gold2)">Prožij.</span></span><div><a href="legal.html">Právní</a> · <a href="kontakt.html">Kontakt</a></div></div></footer>
 <script src="app.js"></script><script src="auth-ui.js"></script><script src="social-share.js"></script><script type="module" src="restaurace.js"></script><script src="cookie-consent.js"></script>
+<script type="module">
+  import { supabase } from './supabase-client.js';
+  const box=document.getElementById('recommendedCarousel');
+  const nameEl=document.getElementById('recommendName');
+  const tagEl=document.getElementById('recommendTag');
+  const ratingEl=document.getElementById('recommendRating');
+  const locationEl=document.getElementById('recommendLocation');
+  const linkEl=document.getElementById('recommendLink');
+  const dotsEl=document.getElementById('recommendDots');
+  let items=[],index=0,timer;
+  const text=value=>String(value??'').trim();
+  const show=i=>{
+    if(!items.length||!box)return;
+    index=(i+items.length)%items.length;
+    const r=items[index];
+    box.classList.add('is-changing');
+    setTimeout(()=>{
+      nameEl.textContent=text(r.name)||'Restaurace';
+      tagEl.textContent=text(r.tag||r.description)||'Místo, které stojí za objev.';
+      const rating=Number(r.rating||r.average_rating||0);
+      ratingEl.textContent=rating>0?rating.toFixed(1).replace('.',','):'Novinka';
+      locationEl.textContent=text(r.city)||'Česká republika';
+      linkEl.href=r.slug?`restaurace-${encodeURIComponent(r.slug)}.html`:'#restaurantsList';
+      [...dotsEl.children].forEach((dot,n)=>dot.classList.toggle('active',n===index));
+      box.classList.remove('is-changing');
+    },220);
+  };
+  const restart=()=>{clearInterval(timer);timer=setInterval(()=>show(index+1),6000)};
+  async function init(){
+    try{
+      const {data,error}=await supabase.from('restaurants').select('name,slug,tag,description,city,rating,average_rating').not('slug','is',null).limit(8);
+      if(error)throw error;
+      items=(data||[]).filter(r=>r.name&&r.slug).slice(0,6);
+      if(!items.length)return;
+      dotsEl.innerHTML=items.map((_,i)=>`<button class="recommend-dot${i===0?' active':''}" aria-label="Zobrazit doporučení ${i+1}" data-index="${i}"></button>`).join('');
+      dotsEl.addEventListener('click',e=>{const dot=e.target.closest('[data-index]');if(!dot)return;show(Number(dot.dataset.index));restart()});
+      box.addEventListener('mouseenter',()=>clearInterval(timer));
+      box.addEventListener('mouseleave',restart);
+      show(0);restart();
+    }catch(error){console.error('Recommended restaurants carousel failed:',error)}
+  }
+  init();
+</script>
 </body></html>
