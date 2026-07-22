@@ -1,88 +1,7 @@
-/* Tooltip styles - GURMAO Design */
+/* GURMAO: vibe explanations are disabled. */
 .vibe-tooltip {
-  position: relative;
-  display: inline-block;
-  cursor: help;
+  cursor: default !important;
 }
-
-.vibe-tooltip::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: calc(100% + 12px);
-  left: 50%;
-  transform: translateX(-50%) translateY(8px);
-  background: rgba(11, 11, 13, 0.98);
-  backdrop-filter: blur(12px);
-  color: rgba(255, 255, 255, 0.95);
-  padding: 12px 18px;
-  border-radius: 16px;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  white-space: nowrap;
-  font-family: 'Inter', sans-serif;
-  border: 1px solid rgba(212, 175, 55, 0.25);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 30px rgba(212, 175, 55, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1000;
-}
-
-.vibe-tooltip::before {
-  content: '';
-  position: absolute;
-  bottom: calc(100% + 4px);
-  left: 50%;
-  transform: translateX(-50%) translateY(8px);
-  border: 8px solid transparent;
-  border-top-color: rgba(11, 11, 13, 0.98);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1001;
-}
-
-.vibe-tooltip:hover::after,
-.vibe-tooltip:hover::before {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-.vibe-tooltip.tooltip-bottom::after {
-  bottom: auto;
-  top: calc(100% + 12px);
-  transform: translateX(-50%) translateY(-8px);
-}
-
-.vibe-tooltip.tooltip-bottom::before {
-  bottom: auto;
-  top: calc(100% + 4px);
-  border-top-color: transparent;
-  border-bottom-color: rgba(11, 11, 13, 0.98);
-  transform: translateX(-50%) translateY(-8px);
-}
-
-.vibe-tooltip.tooltip-bottom:hover::after,
-.vibe-tooltip.tooltip-bottom:hover::before {
-  transform: translateX(-50%) translateY(0);
-}
-
-@media (max-width: 768px) {
-  .vibe-tooltip::after {
-    font-size: 12px;
-    padding: 10px 14px;
-    max-width: 220px;
-    white-space: normal;
-    text-align: center;
-    line-height: 1.4;
-  }
-  .vibe-tooltip::before { border-width: 6px; }
-}
-
-/* Vibe labels are informational only: never show an explanation bubble. */
-.vibe-tooltip { cursor: default !important; }
 .vibe-tooltip::before,
 .vibe-tooltip::after,
 .vibe-tooltip:hover::before,
@@ -93,45 +12,24 @@
   visibility: hidden !important;
 }
 
-/* Restaurant cards: force overlays into the image top corners. */
-.card-wrapper .card-front > .relative > .absolute.top-3.left-3 {
-  position: absolute !important;
-  top: 12px !important;
-  left: 12px !important;
-  right: auto !important;
-  bottom: auto !important;
-  z-index: 20 !important;
-}
-.card-wrapper .card-front > .relative > .absolute.top-3.right-3 {
-  position: absolute !important;
-  top: 12px !important;
-  right: 12px !important;
-  left: auto !important;
-  bottom: auto !important;
-  z-index: 20 !important;
-}
-
-/* =========================================================
-   GURMAO unified restaurant card system
-   Feed / Restaurace / Můj výběr
-   ========================================================= */
 :root {
   --gurmao-card-bg: linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018));
   --gurmao-card-border: rgba(255,255,255,.13);
-  --gurmao-card-gold: #d4af37;
   --gurmao-card-radius: 24px;
+  --gurmao-card-gold: #d4af37;
 }
 
+/* One visual card language on Feed, Restaurace and Můj výběr. */
 #grid [data-restaurant-card],
 #restaurantsList .card-wrapper,
 #savedGrid > div,
 #recommendedGrid > div {
-  position: relative;
-  overflow: hidden;
+  position: relative !important;
+  overflow: hidden !important;
   border: 1px solid var(--gurmao-card-border) !important;
   border-radius: var(--gurmao-card-radius) !important;
   background: var(--gurmao-card-bg), #111214 !important;
-  box-shadow: 0 16px 38px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.035);
+  box-shadow: 0 16px 38px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.035) !important;
   transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease !important;
 }
 
@@ -141,28 +39,29 @@
 #recommendedGrid > div:hover {
   transform: translateY(-4px);
   border-color: rgba(212,175,55,.48) !important;
-  box-shadow: 0 22px 46px rgba(0,0,0,.36), 0 0 28px rgba(212,175,55,.08);
+  box-shadow: 0 22px 46px rgba(0,0,0,.36), 0 0 28px rgba(212,175,55,.08) !important;
 }
 
+/* Unified 3:4 restaurant photography. */
 #grid [data-restaurant-card] > a,
 #savedGrid > div > a,
 #recommendedGrid > div > a,
 #restaurantsList .card-front > .relative {
-  position: relative;
-  display: block;
-  overflow: hidden;
+  position: relative !important;
+  display: block !important;
+  overflow: hidden !important;
 }
 
 #grid [data-restaurant-card] > a > div,
 #savedGrid > div > a > div,
 #recommendedGrid > div > a > div,
 #restaurantsList .card-front img {
-  aspect-ratio: 3 / 4 !important;
   width: 100% !important;
+  aspect-ratio: 3 / 4 !important;
   object-fit: cover !important;
   background-size: cover !important;
   background-position: center !important;
-  transition: transform .45s ease, filter .45s ease;
+  transition: transform .45s ease, filter .45s ease !important;
 }
 
 #grid [data-restaurant-card]:hover > a > div,
@@ -173,101 +72,97 @@
   filter: brightness(.94);
 }
 
-/* Consistent card body */
+/* Unified lower content panel. Position stays static so image overlays anchor to the whole card. */
 #grid [data-restaurant-card] > .p-5,
 #savedGrid > div > .p-5,
 #recommendedGrid > div > .p-4,
 #restaurantsList .card-front > .p-6 {
-  position: relative;
+  position: static !important;
   padding: 20px !important;
-  background: linear-gradient(180deg, rgba(20,21,23,.98), rgba(13,14,16,.99));
+  background: linear-gradient(180deg, rgba(20,21,23,.98), rgba(13,14,16,.99)) !important;
 }
 
 #grid [data-restaurant-card] .text-xl.font-semibold,
 #savedGrid > div .text-xl.font-semibold,
 #recommendedGrid > div .text-lg.font-semibold,
 #restaurantsList .card-front h3 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Playfair Display', serif !important;
   font-size: 1.28rem !important;
-  line-height: 1.2;
-  color: #fff;
+  line-height: 1.2 !important;
+  color: #fff !important;
 }
 
-/* Feed: move vibe and actions from body onto image */
-#grid [data-restaurant-card] > .p-5 > .flex:first-child {
-  position: static !important;
-}
-#grid [data-restaurant-card] > .p-5 > .flex:first-child > .flex-1 > .text-gurmaogold:first-child {
-  position: absolute !important;
-  top: calc(-100% + 14px);
-  left: 14px;
-  z-index: 25;
-  margin: 0 !important;
-  min-height: 42px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 14px;
-  border: 1px solid rgba(212,175,55,.58);
-  border-radius: 999px;
-  background: rgba(8,8,8,.64);
-  backdrop-filter: blur(10px);
-  color: #e8c43f !important;
-  font-size: 12px !important;
-  font-weight: 750;
-  letter-spacing: .06em;
-}
-#grid [data-restaurant-card] > .p-5 > .flex:first-child > .flex:last-child {
-  position: absolute !important;
-  top: calc(-100% + 14px);
-  right: 14px;
-  z-index: 25;
-}
-
-/* Collections: same image overlays */
+/* Shared badge appearance. */
+#grid [data-restaurant-card] > .p-5 > .flex:first-child > .flex-1 > .text-gurmaogold:first-child,
 #savedGrid > div > .p-5 .vibe-tooltip,
-#recommendedGrid > div > .p-4 .vibe-tooltip {
+#recommendedGrid > div > .p-4 .vibe-tooltip,
+#restaurantsList .card-front > .relative > .absolute.top-3.left-3 {
   position: absolute !important;
-  top: calc(-100% + 14px);
-  left: 14px;
-  z-index: 25;
+  top: 14px !important;
+  left: 14px !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 25 !important;
   margin: 0 !important;
-  min-height: 42px;
-  display: inline-flex;
-  align-items: center;
-  padding: 0 14px;
-  border: 1px solid rgba(212,175,55,.58);
-  border-radius: 999px;
-  background: rgba(8,8,8,.64);
+  min-height: 42px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 0 14px !important;
+  border: 1px solid rgba(212,175,55,.58) !important;
+  border-radius: 999px !important;
+  background: rgba(8,8,8,.66) !important;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(0,0,0,.32) !important;
   color: #e8c43f !important;
   font-size: 12px !important;
-  font-weight: 750;
-  letter-spacing: .06em;
+  font-weight: 750 !important;
+  letter-spacing: .06em !important;
+  line-height: 1 !important;
 }
+
+/* Feed save/share and Collections remove action: same top-right position. */
+#grid [data-restaurant-card] > .p-5 > .flex:first-child > .flex:last-child,
+#restaurantsList .card-front > .relative > .absolute.top-3.right-3 {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  left: auto !important;
+  bottom: auto !important;
+  z-index: 25 !important;
+}
+
 #savedGrid > div > .p-5 > button[data-remove] {
   position: absolute !important;
-  top: calc(-100% + 14px);
-  right: 14px;
-  z-index: 25;
-  background: rgba(8,8,8,.64) !important;
+  top: 14px !important;
+  right: 14px !important;
+  left: auto !important;
+  bottom: auto !important;
+  z-index: 25 !important;
+  background: rgba(8,8,8,.66) !important;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 
-/* Restaurant page overlay badge and icon treatment */
-#restaurantsList .card-front > .relative > .absolute.top-3.left-3,
+#grid [data-restaurant-card] button,
+#grid [data-restaurant-card] .share-btn,
 #restaurantsList .card-front > .relative > .absolute.top-3.right-3 button,
-#grid [data-restaurant-card] > .p-5 > .flex:first-child > .flex:last-child button,
-#grid [data-restaurant-card] > .p-5 > .flex:first-child > .flex:last-child .share-btn,
 #savedGrid button[data-remove] {
-  box-shadow: 0 8px 20px rgba(0,0,0,.32);
+  box-shadow: 0 8px 20px rgba(0,0,0,.32) !important;
 }
 
-/* Normalize grids and spacing */
+/* Remove the old vibe/action space from card bodies. */
+#grid [data-restaurant-card] > .p-5 > .flex:first-child,
+#savedGrid > div > .p-5 {
+  position: static !important;
+}
+
+/* Equal rhythm across all card grids. */
 #grid,
 #restaurantsList,
 #savedGrid {
   gap: 24px !important;
-  align-items: stretch;
+  align-items: stretch !important;
 }
 
 @media (max-width: 767px) {
@@ -279,5 +174,7 @@
   }
   #grid,
   #restaurantsList,
-  #savedGrid { gap: 18px !important; }
+  #savedGrid {
+    gap: 18px !important;
+  }
 }
