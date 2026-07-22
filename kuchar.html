@@ -1,451 +1,89 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <title>Kuchaři a jejich restaurace | GURMAO</title>
-  <meta name="description" content="Poznejte kuchaře, jejich styl, oblíbené kuchyně a restaurace. Objevte osobnosti, které stojí za gastronomickými zážitky." />
-  <link rel="canonical" href="https://gurmao.cz/kuchar.html" />
-  <meta property="og:title" content="Kuchaři a jejich restaurace | GURMAO" />
-  <meta property="og:description" content="Poznejte kuchaře, jejich styl a restaurace, ve kterých tvoří." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://gurmao.cz/kuchar.html" />
-  <meta property="og:image" content="https://gurmao.cz/og-image.jpg" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="https://gurmao.cz/og-image.jpg" />
-
+  <meta name="description" content="Objevte šéfkuchaře, jejich styl, restaurace, města a gastronomické zaměření.">
+  <link rel="canonical" href="https://gurmao.cz/kuchar.html">
+  <meta property="og:title" content="Kuchaři a jejich restaurace | GURMAO">
+  <meta property="og:description" content="Poznejte osobnosti, které stojí za nejlepšími gastronomickými zážitky.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://gurmao.cz/kuchar.html">
+  <meta property="og:image" content="https://gurmao.cz/og-image.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="tailwind.min.css">
   <link rel="stylesheet" href="global.css">
-
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="nav-search.css">
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    h1,h2,h3 { font-family: 'Playfair Display', serif; }
-    
-    /* Desktop Hover Effect for Chef Cards */
-    @media (min-width: 769px) {
-      .chef-card {
-        position: relative;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        transform-style: preserve-3d;
-      }
-      
-      .chef-card::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        border-radius: 1.5rem;
-        background: radial-gradient(
-          circle at var(--mx, 50%) var(--my, 50%),
-          rgba(212, 175, 55, 0.15),
-          transparent 50%
-        );
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        pointer-events: none;
-        z-index: 1;
-      }
-      
-      .chef-card:hover::before {
-        opacity: 1;
-      }
-      
-      .chef-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 
-          0 20px 60px rgba(0, 0, 0, 0.5),
-          0 0 40px rgba(212, 175, 55, 0.2);
-      }
-      
-      .chef-card-content {
-        position: relative;
-        z-index: 2;
-      }
-    }
-    
-    /* Mobile Full-Screen Feed */
-    @media (max-width: 768px) {
-      header, #heroSection, footer {
-        display: none;
-      }
-      
-      #listSection {
-        padding: 0 !important;
-      }
-      
-      .chef-card {
-        min-height: 100vh;
-        min-height: 100dvh;
-        scroll-snap-align: start;
-        display: flex;
-        flex-direction: column;
-        border-radius: 0 !important;
-      }
-      
-      #chefsGrid {
-        scroll-snap-type: y mandatory;
-        overflow-y: scroll;
-        height: 100vh;
-        height: 100dvh;
-        display: block;
-        padding: 0;
-        margin: 0;
-        gap: 0;
-      }
-      
-      .chef-card-image {
-        flex: 1;
-        min-height: 70vh;
-      }
-      
-      .chef-card-content {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(to top, rgba(11,11,13,0.95), transparent);
-        padding: 2rem 1.5rem 2rem;
-      }
-    }
+    :root{--gold:#d8ad34;--gold2:#f3c94a;--bg:#050605;--panel:#151613;--line:rgba(255,255,255,.14);--muted:rgba(255,255,255,.62)}
+    *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;font-family:Inter,sans-serif;background:radial-gradient(circle at 50% 44%,rgba(36,28,8,.12),transparent 34%),var(--bg);color:#fff}a{text-decoration:none}button,select,input{font:inherit}h1,h2,h3{font-family:"Playfair Display",serif}
+    .page-shell{width:min(1528px,calc(100% - 96px));margin-inline:auto}
+    .site-header{height:82px;position:sticky;top:0;z-index:60;background:rgba(4,5,4,.96);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.1)}
+    .header-inner{height:100%;display:flex;align-items:center;justify-content:space-between;gap:38px}.brand{font-size:28px;font-weight:700;line-height:.95;letter-spacing:-.7px;color:#fff}.brand small{display:block;margin-top:7px;font-size:12px;font-weight:400;letter-spacing:0;color:rgba(255,255,255,.5)}
+    .desktop-nav{height:100%;display:flex;align-items:center;gap:30px;font-size:15px}.desktop-nav>a,.desktop-nav>button{position:relative;color:rgba(255,255,255,.88);background:none;border:0;cursor:pointer}.desktop-nav>a:hover,.desktop-nav>a.active{color:var(--gold2)}.desktop-nav>a.active:after{content:"";position:absolute;left:0;right:0;bottom:-30px;height:2px;background:var(--gold2)}.account{padding:10px 20px!important;border:1px solid rgba(255,255,255,.25)!important;border-radius:999px}
+    .hero{height:350px;position:relative;background-image:linear-gradient(90deg,rgba(4,5,4,.99) 0%,rgba(4,5,4,.94) 28%,rgba(4,5,4,.62) 45%,rgba(4,5,4,.12) 72%,rgba(4,5,4,.32) 100%),url('https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=1800&q=85');background-size:cover;background-position:center 44%;border-bottom:1px solid rgba(255,255,255,.08)}
+    .hero-inner{height:100%;position:relative;padding-top:44px}.hero-copy{max-width:690px}.hero h1{margin:0 0 14px;font-size:54px;line-height:1.04;font-weight:500;letter-spacing:-2px}.hero h1 .gold{color:var(--gold2)}.hero-lead{margin:0;font-size:16px;line-height:1.55;color:rgba(255,255,255,.68)}
+    .benefits{display:flex;gap:28px;margin-top:24px}.benefit{width:190px;display:flex;gap:11px;align-items:flex-start}.benefit-icon{width:40px;height:40px;flex:0 0 40px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(216,173,52,.3);background:rgba(216,173,52,.13);color:var(--gold2)}.benefit-icon.green{color:#8fd84e;background:rgba(83,150,28,.16);border-color:rgba(111,180,49,.28)}.benefit strong{display:block;margin:2px 0 3px;font-size:13px}.benefit span{display:block;font-size:11px;line-height:1.45;color:rgba(255,255,255,.55)}
+    .spotlight{position:absolute;right:0;top:53px;width:300px;padding:22px 23px;border:1px solid rgba(216,173,52,.72);border-radius:19px;background:linear-gradient(145deg,rgba(31,25,13,.95),rgba(9,10,8,.96));box-shadow:0 22px 70px rgba(0,0,0,.48)}.spotlight-label{color:var(--gold2);font-size:11px;font-weight:600;margin-bottom:12px}.spotlight h2{margin:0 0 7px;font-size:22px;font-weight:500}.spotlight p{margin:0;color:rgba(255,255,255,.58);font-size:13px}.spotlight-meta{margin-top:14px;color:rgba(255,255,255,.62);font-size:12px}.spotlight a{display:flex;justify-content:center;margin-top:16px;padding:11px;border:1px solid rgba(216,173,52,.55);border-radius:10px;color:#fff;font-size:14px}.spotlight a:hover{background:var(--gold);color:#080808}
+    .search-wrap{margin-top:-1px;position:relative;z-index:10}.search-panel{display:grid;grid-template-columns:1.45fr .9fr .9fr .75fr .55fr;gap:10px;padding:14px 16px;border:1px solid rgba(216,173,52,.34);border-radius:0 0 16px 16px;background:rgba(21,22,20,.98);box-shadow:0 16px 40px rgba(0,0,0,.34)}
+    .control{height:48px;border-radius:10px;border:1px solid var(--line);background:#181916;color:#fff;font-size:14px;transition:.2s}.control:hover{border-color:rgba(216,173,52,.5)}.control:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(216,173,52,.11)}.search-field{position:relative}.search-field svg{position:absolute;left:14px;top:15px;width:18px;color:var(--gold2)}.field{width:100%;padding:0 15px 0 43px}.field::placeholder{color:rgba(255,255,255,.38)}.select-control{appearance:none;padding:0 38px 0 15px;background-image:linear-gradient(45deg,transparent 50%,var(--gold2) 50%),linear-gradient(135deg,var(--gold2) 50%,transparent 50%);background-position:calc(100% - 18px) 21px,calc(100% - 13px) 21px;background-size:5px 5px;background-repeat:no-repeat}.select-control option,.sort-box option{background:#11120f;color:#fff}.gold-btn{border:0;background:linear-gradient(135deg,var(--gold2),#d6a62b);color:#111;font-weight:600;cursor:pointer}
+    .toolbar{padding:20px 0 15px;display:flex;justify-content:space-between;align-items:center;gap:18px}.toolbar-left,.toolbar-right{display:flex;align-items:center;gap:14px;color:rgba(255,255,255,.62);font-size:13px}.sort-box{height:38px;border:1px solid var(--line);border-radius:9px;background:#151614;color:#fff;padding:0 34px 0 13px}.view-btn{width:38px;height:38px;border-radius:9px;background:#151614;border:1px solid var(--line);color:#fff;cursor:pointer}.view-btn.active{background:var(--gold);color:#111;border-color:var(--gold)}
+    #chefsGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;padding-bottom:70px}.chef-card{min-width:0;border:1px solid rgba(255,255,255,.14);border-radius:17px;overflow:hidden;background:#0e0f0d;transition:.22s}.chef-card:hover{transform:translateY(-4px);border-color:rgba(216,173,52,.58);box-shadow:0 18px 45px rgba(0,0,0,.4)}.chef-image{position:relative;height:250px;overflow:hidden}.chef-image img{width:100%;height:100%;object-fit:cover;transition:transform .35s}.chef-card:hover .chef-image img{transform:scale(1.035)}.chef-badge{position:absolute;left:14px;top:12px;padding:7px 12px;border:1px solid rgba(216,173,52,.48);border-radius:999px;background:rgba(35,28,8,.78);backdrop-filter:blur(8px);color:var(--gold2);font-size:11px;font-weight:700}.chef-content{padding:15px 16px 16px}.chef-title{font-family:Inter,sans-serif;font-size:17px;font-weight:600;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chef-role{margin-top:5px;color:var(--gold2);font-size:12px}.chef-meta{margin-top:7px;color:rgba(255,255,255,.56);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chef-description{margin:10px 0 0;color:rgba(255,255,255,.68);font-size:12px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.chef-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}.chef-location{font-size:12px;color:rgba(255,255,255,.56)}.chef-detail{padding:9px 13px;border-radius:9px;background:var(--gold);color:#111;font-size:12px;font-weight:700}.empty{grid-column:1/-1;text-align:center;padding:80px 20px;color:rgba(255,255,255,.45)}
+    .chef-row{grid-column:1/-1;display:grid;grid-template-columns:140px 1fr auto;gap:18px;align-items:center;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#10110f}.chef-row img{width:140px;height:120px;object-fit:cover}.chef-row .chef-content{padding:14px 0}.chef-row .chef-bottom{padding-right:18px}
+    footer a:hover{color:var(--gold2)}
+    @media(max-width:1180px){.page-shell{width:min(100% - 48px,1200px)}.desktop-nav{gap:18px}.spotlight{display:none}.search-panel{grid-template-columns:1.4fr 1fr 1fr}.gold-btn{width:100%}#chefsGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:768px){.page-shell{width:calc(100% - 32px)}.site-header{height:68px}.desktop-nav{display:none}.brand{font-size:25px}.hero{height:auto;min-height:460px;background-position:62% center}.hero-inner{padding-top:36px}.hero h1{font-size:40px}.hero-lead{font-size:14px;max-width:350px}.benefits{display:grid;gap:12px}.benefit{width:290px}.search-wrap{width:calc(100% - 24px);margin-top:-42px}.search-panel{grid-template-columns:1fr;padding:12px;border-radius:15px}.control{height:46px}.toolbar{flex-direction:column;align-items:flex-start}.toolbar-right{width:100%;justify-content:flex-end}#chefsGrid{grid-template-columns:1fr}.chef-image{height:330px}.chef-row{grid-template-columns:105px 1fr}.chef-row img{width:105px;height:100%}.chef-row .chef-bottom{display:none}}
   </style>
 </head>
-<body class="bg-gurmaoblack text-white overflow-x-hidden">
-
-<!-- HEADER -->
-<header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
-  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-    <a href="index.html" class="modal-title text-2xl">GUR<span class="text-gurmaogold">M</span>AO</a>
-    
-    <nav class="hidden md:flex gap-6 text-sm items-center">
-      <!-- Search Box with Location -->
-      <div id="headerSearchBox" class="relative flex items-center justify-end w-9 h-9">
-        <div id="headerSearchPanel" class="absolute right-0 top-0 flex items-center gap-2 h-9 w-0 opacity-0 pointer-events-none bg-white/5 border border-white/15 rounded-full hover:border-gurmaogold transition-all duration-300 overflow-hidden">
-          <input id="headerSearchInput" type="text" placeholder="Vyhledat restauraci..." class="bg-transparent text-white text-sm outline-none opacity-0 w-0 transition-all duration-300 pl-3" />
-          <button id="headerLocationToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaogold transition opacity-0 pointer-events-none">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-          </button>
-          <button id="headerSearchClose" class="flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaored transition opacity-0 pointer-events-none">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
-        </div>
-        <button id="headerSearchToggle" class="relative z-20 flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaogold transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-        </button>
-        <!-- Search Results -->
-        <div id="headerSearchResults" class="hidden absolute top-full right-0 mt-2 w-96 max-h-96 overflow-y-auto bg-gurmaoblack border border-white/20 rounded-2xl shadow-2xl z-50"></div>
-      </div>
-      
-      <a href="feed.html" class="hover:text-gurmaogold">Feed</a>
-      <a href="restaurace.html" class="hover:text-gurmaogold">Restaurace</a>
-      <a href="kuchar.html" class="hover:text-gurmaogold">Kuchaři</a>
-      <!-- <a href="gear.html" class="hover:text-gurmaogold">Gear</a> -->
-      <a href="ai.html" class="hover:text-gurmaogold">AI</a>
-      <a href="mapa.html" class="hover:text-gurmaogold">Mapa</a>
-      <a href="collections.html" class="hover:text-gurmaogold">Můj výběr</a>
-      
-      <!-- User menu (desktop) -->
-      <div id="userMenuDesktop" class="hidden relative">
-        <button id="userDropdownBtn" class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold transition">
-          <span id="userNameDesktop" class="text-white/80"></span>
-          <span class="text-xs">▼</span>
-        </button>
-        
-        <!-- Dropdown Menu -->
-        <div id="userDropdownMenu" class="hidden absolute right-0 top-full mt-2 w-48 rounded-2xl bg-gurmaoblack border border-white/20 shadow-2xl overflow-hidden z-50">
-          <a href="collections.html" class="block px-4 py-3 hover:bg-white/10 transition border-b border-white/10">
-            <div class="font-semibold text-sm">Můj výběr</div>
-            <div class="text-xs text-white/60">Uložené restaurace</div>
-          </a>
-          <a href="profile.html" class="block px-4 py-3 hover:bg-white/10 transition border-b border-white/10">
-            <div class="font-semibold text-sm">Můj účet</div>
-            <div class="text-xs text-white/60">Nastavení profilu</div>
-          </a>
-          <a href="admin.html" data-admin-only class="hidden block px-4 py-3 hover:bg-white/10 transition border-b border-white/10">
-            <div class="font-semibold text-sm">🔒 Admin Panel</div>
-            <div class="text-xs text-white/60">Správa obsahu</div>
-          </a>
-          <button data-logout-btn class="w-full text-left px-4 py-3 hover:bg-gurmaored/20 hover:text-gurmaored transition">
-            <div class="font-semibold text-sm">Odhlásit se</div>
-            <div class="text-xs text-white/60">Ukončit relaci</div>
-          </button>
-        </div>
-      </div>
-      <a id="loginLinkDesktop" href="login.html" class="px-4 py-2 rounded-full border border-gurmaogold text-gurmaogold hover:bg-gurmaogold hover:text-black transition">Přihlásit se</a>
-    </nav>
-    
-    <!-- Mobile hamburger -->
-    <div class="md:hidden flex gap-2">
-      <button id="menuBtn" class="w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Otevřít menu">☰</button>
-    </div>
-  </div>
-</header>
-
-<!-- Mobile menu (outside header for proper z-index) -->
-<div id="menuBackdrop" class="hidden md:hidden fixed inset-0 bg-black/70 z-[100]"></div>
-<div id="mobileMenu" class="hidden md:hidden fixed inset-x-0 top-[65px] bottom-0 z-[110] overflow-y-auto">
-  <div class="mx-4 my-4 rounded-3xl border border-white/10 bg-gurmaoblack/95 backdrop-blur p-4">
-    <div class="flex items-center justify-between px-2 pb-3">
-      <div class="text-sm text-white/60">Navigace</div>
-      <button id="menuClose" class="w-10 h-10 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition" aria-label="Zavřít menu">✕</button>
-    </div>
-    <nav class="grid gap-2">
-      <a href="index.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Domů</a>
-      <a href="restaurace.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 flex items-center gap-2" title="Vyhledat restauraci">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        <span>Vyhledat</span>
-      </a>
-      <a href="feed.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Feed</a>
-      <a href="restaurace.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Restaurace</a>
-      <a href="kuchar.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Kuchaři</a>
-      <!-- <a href="gear.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Gear</a> -->
-      <a href="ai.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">AI</a>
-      <a href="mapa.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10">Mapa</a>
-      <!-- User menu (mobile) -->
-      <div id="userMenuMobile" class="hidden mt-2 pt-2 border-t border-white/10">
-        <div class="px-2 mb-2 text-sm text-white/60">
-          <span id="userNameMobile"></span>
-        </div>
-        <a href="collections.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
-          <div class="font-semibold text-sm">Můj výběr</div>
-          <div class="text-xs text-white/60">Uložené restaurace</div>
-        </a>
-          <a href="profile.html" class="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
-            <div class="font-semibold text-sm">Můj účet</div>
-            <div class="text-xs text-white/60">Nastavení profilu</div>
-          </a>
-          <a href="admin.html" data-admin-only class="hidden px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 block mb-2">
-          <div class="font-semibold text-sm">🔒 Admin Panel</div>
-          <div class="text-xs text-white/60">Správa obsahu</div>
-        </a>
-        <button data-logout-btn class="w-full px-4 py-3 rounded-2xl border border-gurmaored text-gurmaored hover:bg-gurmaored hover:text-white transition">
-          <div class="font-semibold text-sm">Odhlásit se</div>
-        </button>
-      </div>
-      <a id="loginLinkMobile" href="login.html" class="px-4 py-3 rounded-2xl border border-white/20 hover:border-gurmaogold hover:text-gurmaogold">Přihlásit se</a>
-    </nav>
-  </div>
-</div>
-
-<!-- HERO -->
-<section id="heroSection" class="py-20 border-b border-white/10">
-  <div class="max-w-6xl mx-auto px-6">
-    <h1 class="text-4xl sm:text-5xl md:text-6xl mb-6">Kuchaři</h1>
-    <p class="text-white/70 max-w-xl">
-      Ne celebrity. Autoři zážitků.
-    </p>
-  </div>
-</section>
-
-<!-- LIST -->
-<section id="listSection" class="py-20">
-  <div id="chefsGrid" class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-10">
-    <!-- Chefs will be loaded dynamically from Supabase -->
-    <div class="col-span-3 text-center text-white/40 py-10">Načítání kuchařů...</div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer class="py-6 border-t border-white/10">
-  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-    <div class="flex flex-wrap justify-center md:justify-start gap-4 md:gap-6 text-xs md:text-sm text-white/60">
-      <button id="legalToggle" class="hover:text-gurmaogold transition cursor-pointer">Informace ▼</button>
-      <div id="legalLinks" class="hidden flex-wrap gap-4 md:gap-6">
-          <a href="legal.html#gdpr" class="hover:text-gurmaogold transition">Právní</a>
-          <a href="legal.html#cookies" class="hover:text-gurmaogold transition">Cookies</a>
-          <a href="kontakt.html" class="hover:text-gurmaogold transition">Kontakt</a>
-        </div>
-      <span class="text-white/40">© 2025 GUR<span class="text-gurmaogold">M</span>AO.cz · Nejez. <span class="text-gurmaogold">Prožij.</span></span>
-    </div>
-    <div class="flex items-center gap-3 relative">
-      <div class="relative z-20">
-        <div id="footerSearchBox" class="flex flex-row-reverse items-center gap-2 transition-all duration-300 w-9 h-9 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold overflow-hidden">
-          <button id="footerSearchToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center z-10">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-          </button>
-          <button id="footerLocationToggle" class="flex-shrink-0 w-9 h-9 flex items-center justify-center hover:text-gurmaogold transition opacity-0 pointer-events-none">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-          </button>
-          <input 
-            type="text" 
-            id="footerSearchInput" 
-            placeholder="Vyhledej tu svou..." 
-            class="opacity-0 w-0 bg-transparent border-none outline-none text-white placeholder:text-white/40 text-sm transition-all duration-300 pl-3"
-          />
-        </div>
-        <div id="footerSearchResults" class="hidden absolute bottom-full mb-2 left-0 md:right-0 md:left-auto w-80 md:w-96 max-h-96 overflow-y-auto rounded-2xl bg-gurmaoblack border border-white/20 shadow-2xl z-50"></div>
-      </div>
-      <span class="text-sm text-gurmaogold hidden md:inline">Sledujte nás</span>
-      <a href="https://instagram.com/gurmao.cz" target="_blank" rel="noopener noreferrer" title="Instagram" class="footer-social w-9 h-9 rounded-full bg-white/5 border border-white/20 hover:border-gurmaogold hover:bg-gurmaogold/10 transition-all duration-300 flex items-center justify-center group" title="Instagram">
-        <svg class="w-4 h-4 text-white/60 group-hover:text-gurmaogold transition" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-      </a>
-      <a href="https://youtube.com/@gurmao" target="_blank" rel="noopener noreferrer" title="YouTube" class="footer-social w-9 h-9 rounded-full bg-white/5 border border-white/20 hover:border-gurmaogold hover:bg-gurmaogold/10 transition-all duration-300 flex items-center justify-center group" title="YouTube">
-        <svg class="w-5 h-5 text-white/60 group-hover:text-gurmaogold transition" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-      </a>
-      <a href="https://facebook.com/gurmao.cz" target="_blank" rel="noopener noreferrer" title="Facebook" class="footer-social w-9 h-9 rounded-full bg-white/5 border border-white/20 hover:border-gurmaogold hover:bg-gurmaogold/10 transition-all duration-300 flex items-center justify-center group" title="Facebook">
-        <svg class="w-4 h-4 text-white/60 group-hover:text-gurmaogold transition" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-      </a>
-    </div>
-  </div>
-</footer>
-
-<script src="footer-legal-toggle.js"></script>
-<script type="module" src="footer-search.js"></script>
-<script type="module" src="header-search.js"></script>
-
-<script src="app.js"></script>
-<script src="auth-ui.js"></script>
-<script src="social-share.js"></script>
-<script type="module" src="rating.js"></script>
-<script src="cookie-consent.js"></script>
-
+<body>
+<header class="site-header"><div class="page-shell header-inner">
+  <a href="index.html" class="brand">GUR<span style="color:var(--gold2)">M</span>AO<small>Najdi restauraci podle chuti</small></a>
+  <nav class="desktop-nav">
+    <a href="feed.html">Feed</a><a href="restaurace.html">Restaurace</a><a class="active" href="kuchar.html">Kuchaři</a><a href="ai.html">AI</a><a href="mapa.html">Mapa</a><a href="collections.html">Můj výběr</a>
+    <div id="userMenuDesktop" class="hidden relative"><button id="userDropdownBtn" class="account"><span id="userNameDesktop"></span> ▼</button><div id="userDropdownMenu" class="hidden absolute right-0 top-full mt-2 w-48 rounded-2xl bg-black border border-white/20 p-2"><a href="collections.html" class="block p-3">Můj výběr</a><a href="profile.html" class="block p-3">Můj účet</a><a href="admin.html" data-admin-only class="hidden block p-3">Admin Panel</a><button data-logout-btn class="block w-full text-left p-3">Odhlásit se</button></div></div>
+    <a id="loginLinkDesktop" href="login.html" class="account">Přihlásit se</a>
+  </nav>
+  <button id="menuBtn" class="md:hidden w-11 h-11 rounded-full border border-white/20" aria-label="Otevřít menu">☰</button>
+</div></header>
+<div id="menuBackdrop" class="hidden md:hidden fixed inset-0 bg-black/70 z-[100]"></div><div id="mobileMenu" class="hidden md:hidden fixed inset-x-0 top-[65px] bottom-0 z-[110] overflow-y-auto"><div class="m-4 rounded-3xl border border-white/10 bg-black p-4"><div class="flex justify-between pb-3"><span>Navigace</span><button id="menuClose">✕</button></div><nav class="grid gap-2"><a href="index.html" class="p-3">Domů</a><a href="feed.html" class="p-3">Feed</a><a href="restaurace.html" class="p-3">Restaurace</a><a href="kuchar.html" class="p-3" style="color:var(--gold2)">Kuchaři</a><a href="ai.html" class="p-3">AI</a><a href="mapa.html" class="p-3">Mapa</a><a href="collections.html" class="p-3">Můj výběr</a><div id="userMenuMobile" class="hidden"><span id="userNameMobile"></span><a href="profile.html" class="block p-3">Můj účet</a><button data-logout-btn class="p-3">Odhlásit se</button></div><a id="loginLinkMobile" href="login.html" class="p-3">Přihlásit se</a></nav></div></div>
+<section class="hero"><div class="page-shell hero-inner"><div class="hero-copy">
+  <h1>Osobnosti, které tvoří<br><span class="gold">gastronomické zážitky</span></h1>
+  <p class="hero-lead">Objevte šéfkuchaře, jejich rukopis, restaurace a příběhy.</p>
+  <div class="benefits"><div class="benefit"><div class="benefit-icon green">♨</div><div><strong>Podle stylu</strong><span>Fine dining, gril,<br>asie i cukrařina</span></div></div><div class="benefit"><div class="benefit-icon">⌖</div><div><strong>Podle lokality</strong><span>Najděte kuchaře<br>ve vašem městě</span></div></div><div class="benefit"><div class="benefit-icon green">☆</div><div><strong>Podle ocenění</strong><span>Talent, zkušenost<br>a uznání</span></div></div></div></div>
+  <aside class="spotlight"><div class="spotlight-label">★ OSOBNOST DNE</div><h2 id="spotlightName">Načítám kuchaře…</h2><p id="spotlightRole">Připravuji doporučení.</p><div id="spotlightMeta" class="spotlight-meta">Česká republika</div><a id="spotlightLink" href="#chefsGrid">Zobrazit profil →</a></aside>
+</div></section>
+<section class="page-shell search-wrap"><div class="search-panel">
+  <div class="search-field"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><input id="chefSearch" class="control field" maxlength="80" autocomplete="off" placeholder="Jméno kuchaře, restaurace nebo styl..."></div>
+  <select id="cityFilter" class="control select-control"><option value="">Všechna města</option></select>
+  <select id="styleFilter" class="control select-control"><option value="">Všechny styly</option></select>
+  <select id="sortSelect" class="control select-control"><option value="newest">Nejnovější</option><option value="name">Jméno A–Z</option><option value="city">Podle města</option></select>
+  <button id="searchBtn" class="control gold-btn" type="button">⌕ Hledat</button>
+</div></section>
+<section class="page-shell toolbar"><div class="toolbar-left"><span style="color:var(--gold2)">☷</span><span id="resultCount">Načítání kuchařů…</span></div><div class="toolbar-right"><span>Zobrazit:</span><button class="view-btn active" data-view="cards">▦</button><button class="view-btn" data-view="rows">☷</button></div></section>
+<main id="chefsGrid" class="page-shell"><div class="empty">Načítání kuchařů…</div></main>
+<footer class="py-8 border-t border-white/10"><div class="page-shell flex flex-wrap justify-between gap-4 text-sm text-white/50"><span>© 2026 GURMAO.cz • Nejez. Prožij. • Objevujte nejlepší restaurace v celé České republice.</span><div><a href="legal.html">Právní</a> · <a href="kontakt.html">Kontakt</a></div></div></footer>
+<script src="app.js"></script><script src="auth-ui.js"></script><script src="social-share.js"></script><script src="cookie-consent.js"></script>
 <script type="module">
-// Import Supabase client
 import { supabase } from './supabase-client.js';
-
-// Load chefs from Supabase
-async function loadChefs() {
-  const grid = document.getElementById('chefsGrid');
-  if (!grid) return;
-  
-  try {
-    // Fetch all chefs
-    const { data: chefs, error } = await supabase
-      .from('chefs')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    if (error) throw error;
-    
-    if (!chefs || chefs.length === 0) {
-      grid.innerHTML = '<div class="col-span-3 text-center text-white/40 py-10">Zatím žádní kuchaři</div>';
-      return;
-    }
-    
-    // Render chefs
-    grid.innerHTML = chefs.map(chef => `
-      <div class="chef-card rounded-3xl bg-white/5 overflow-hidden relative">
-        <a href="kuchar-detail.html?id=${chef.slug}" class="block">
-          <div class="chef-card-image aspect-[4/5] bg-cover bg-center" style="background-image: url('${chef.image_url || 'https://images.unsplash.com/photo-1600891965050-dc6c28c5a12b'}')"></div>
-        </a>
-        <div class="chef-card-content p-6">
-          <div class="flex items-start justify-between gap-3 mb-2">
-            <div class="flex-1">
-              <div class="text-sm text-gurmaogold mb-1">🧑‍🍳 ${chef.role || 'Chef'} · ${chef.vibe || '🍷 LUXE'}</div>
-              <h3 class="text-xl font-semibold">${chef.name}</h3>
-              <p class="text-white/60 text-sm mt-1">${chef.description || chef.specialty || 'Gurmánský zážitek'}</p>
-            </div>
-            <div class="flex gap-2 flex-shrink-0">
-              <button class="share-btn w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold hover:text-gurmaogold transition flex items-center justify-center" data-restaurant='${JSON.stringify({id: chef.slug, name: chef.name, vibe: chef.vibe, city: chef.city, tag: chef.specialty, img: chef.image_url, href: `kuchar-detail.html?id=${chef.slug}`})}' title="Sdílet">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="18" cy="5" r="3"></circle>
-                  <circle cx="6" cy="12" r="3"></circle>
-                  <circle cx="18" cy="19" r="3"></circle>
-                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                </svg>
-              </button>
-            </div>
-          </div>
-          
-          <!-- Rating Section -->
-          <div data-chef-rating="${chef.slug}"></div>
-        </div>
-      </div>
-    `).join('');
-    
-    // Initialize ratings
-    initRatings(chefs.map(c => c.slug));
-    
-    // Add hover effect for desktop cards
-    if (window.innerWidth > 768) {
-      document.querySelectorAll('.chef-card').forEach(card => {
-        card.addEventListener('mousemove', e => {
-          const r = card.getBoundingClientRect();
-          const mx = ((e.clientX - r.left) / r.width) * 100;
-          const my = ((e.clientY - r.top) / r.height) * 100;
-          card.style.setProperty('--mx', mx.toFixed(2) + '%');
-          card.style.setProperty('--my', my.toFixed(2) + '%');
-        });
-
-        card.addEventListener('mouseleave', () => {
-          card.style.removeProperty('--mx');
-          card.style.removeProperty('--my');
-        });
-      });
-    }
-    
-  } catch (error) {
-    console.error('Error loading chefs:', error);
-    grid.innerHTML = '<div class="col-span-3 text-center text-gurmaored py-10">❌ Nepodařilo se načíst kuchaře</div>';
-  }
-}
-
-// Initialize ratings for chefs
-async function initRatings(chefIds) {
-  if (!window.ratingManager) {
-    console.warn('Rating manager not available');
-    return;
-  }
-  
-  try {
-    await window.ratingManager.ensureReady();
-  } catch (error) {
-    console.warn('Failed to initialize rating system:', error);
-    return;
-  }
-  
-  for (const chefId of chefIds) {
-    const container = document.querySelector(`[data-chef-rating="${chefId}"]`);
-    if (!container) continue;
-    
-    try {
-      const average = await window.ratingManager.getAverage(chefId);
-      const count = await window.ratingManager.getCount(chefId);
-      const userRating = await window.ratingManager.getUserRating(chefId);
-      
-      let html = '<div class="border-t border-white/10 pt-3 mt-3">';
-      
-      if (average > 0) {
-        html += `
-          <div class="flex items-center gap-2 mb-2">
-            ${window.ratingManager.renderStars(average, 'sm')}
-            <span class="text-xs text-white/60">${average.toFixed(1)} (${count})</span>
-          </div>
-        `;
-      } else {
-        html += '<div class="text-xs text-white/40 mb-2">Zatím nehodnoceno</div>';
-      }
-      
-      html += '<div class="text-xs text-white/40 mb-1">Tvoje hodnocení:</div>';
-      html += await window.ratingManager.renderInteractiveStars(chefId, userRating || 0);
-      html += '</div>';
-      
-      container.innerHTML = html;
-    } catch (error) {
-      console.warn(`Error initializing rating for ${chefId}:`, error);
-      container.innerHTML = '<div class="border-t border-white/10 pt-3 mt-3"><div class="text-xs text-white/40">Hodnocení není dostupné</div></div>';
-    }
-  }
-}
-
-// Load chefs on page load
-document.addEventListener('DOMContentLoaded', loadChefs);
+const grid=document.getElementById('chefsGrid'),search=document.getElementById('chefSearch'),cityFilter=document.getElementById('cityFilter'),styleFilter=document.getElementById('styleFilter'),sortSelect=document.getElementById('sortSelect'),count=document.getElementById('resultCount');
+let chefs=[],view='cards';
+const text=v=>String(v??'').trim();
+const esc=v=>text(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const image=c=>text(c.image_url||c.image)||'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=900&q=80';
+const role=c=>text(c.role||c.position)||'Šéfkuchař';
+const style=c=>text(c.specialty||c.style||c.cuisine)||'Autorská kuchyně';
+const city=c=>text(c.city||c.location)||'Česká republika';
+const restaurant=c=>text(c.restaurant_name||c.restaurant||c.current_restaurant);
+const href=c=>`kuchar-detail.html?id=${encodeURIComponent(text(c.slug||c.id))}`;
+function fillFilters(){const cities=[...new Set(chefs.map(city).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'cs'));const styles=[...new Set(chefs.map(style).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'cs'));cityFilter.innerHTML='<option value="">Všechna města</option>'+cities.map(v=>`<option>${esc(v)}</option>`).join('');styleFilter.innerHTML='<option value="">Všechny styly</option>'+styles.map(v=>`<option>${esc(v)}</option>`).join('')}
+function filtered(){const q=text(search.value).toLocaleLowerCase('cs');let list=chefs.filter(c=>{const hay=[c.name,role(c),style(c),city(c),restaurant(c),c.description,c.bio].map(text).join(' ').toLocaleLowerCase('cs');return(!q||hay.includes(q))&&(!cityFilter.value||city(c)===cityFilter.value)&&(!styleFilter.value||style(c)===styleFilter.value)});if(sortSelect.value==='name')list.sort((a,b)=>text(a.name).localeCompare(text(b.name),'cs'));else if(sortSelect.value==='city')list.sort((a,b)=>city(a).localeCompare(city(b),'cs'));else list.sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));return list}
+function card(c){const row=view==='rows';return `<article class="${row?'chef-row':'chef-card'}"><a href="${href(c)}" class="chef-image"><img src="${esc(image(c))}" alt="${esc(c.name||'Kuchař')}" loading="lazy"><span class="chef-badge">${esc(role(c))}</span></a><div class="chef-content"><h3 class="chef-title">${esc(c.name||'Kuchař')}</h3><div class="chef-role">${esc(style(c))}</div><div class="chef-meta">${restaurant(c)?esc(restaurant(c))+' · ':''}${esc(city(c))}</div><p class="chef-description">${esc(c.description||c.bio||'Osobnost české gastronomie.')}</p><div class="chef-bottom"><span class="chef-location">⌖ ${esc(city(c))}</span><a class="chef-detail" href="${href(c)}">Profil kuchaře →</a></div></div></article>`}
+function render(){const list=filtered();count.textContent=`Nalezeno ${list.length} ${list.length===1?'kuchaře':'kuchařů'}`;grid.innerHTML=list.length?list.map(card).join(''):'<div class="empty">Žádní kuchaři neodpovídají vybraným filtrům.</div>'}
+function spotlight(){if(!chefs.length)return;const c=chefs[Math.floor(Math.random()*chefs.length)];document.getElementById('spotlightName').textContent=text(c.name)||'Vybraný kuchař';document.getElementById('spotlightRole').textContent=`${role(c)} · ${style(c)}`;document.getElementById('spotlightMeta').textContent=`${restaurant(c)||'Gastronomická osobnost'} · ${city(c)}`;document.getElementById('spotlightLink').href=href(c)}
+async function init(){try{const {data,error}=await supabase.from('chefs').select('*').order('created_at',{ascending:false});if(error)throw error;chefs=data||[];fillFilters();spotlight();render()}catch(e){console.error(e);grid.innerHTML='<div class="empty">Kuchaře se nepodařilo načíst.</div>';count.textContent='Načtení se nezdařilo'}}
+[search,cityFilter,styleFilter,sortSelect].forEach(el=>el.addEventListener(el===search?'input':'change',render));document.getElementById('searchBtn').addEventListener('click',render);document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>{view=btn.dataset.view;document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b===btn));render()}));init();
 </script>
-</body>
-</html>
+</body></html>
