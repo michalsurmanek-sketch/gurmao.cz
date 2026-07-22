@@ -1,3 +1,33 @@
+(function applyUnifiedFooterText() {
+  const footerText = '© 2026 GURMAO.cz • Nejez. Prožij. • Objevujte nejlepší restaurace v celé České republice.';
+
+  const updateFooter = () => {
+    document.querySelectorAll('footer').forEach(footer => {
+      const candidates = [...footer.querySelectorAll('span, p, small, div')]
+        .filter(element => /©|GURMAO\.cz/i.test(element.textContent || ''))
+        .sort((a, b) => (a.textContent || '').length - (b.textContent || '').length);
+
+      const copyright = candidates[0];
+      if (copyright) {
+        copyright.textContent = footerText;
+        copyright.setAttribute('data-gurmao-footer-copy', 'true');
+        return;
+      }
+
+      const copy = document.createElement('span');
+      copy.textContent = footerText;
+      copy.setAttribute('data-gurmao-footer-copy', 'true');
+      footer.prepend(copy);
+    });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateFooter, { once: true });
+  } else {
+    updateFooter();
+  }
+})();
+
 (async function initAuthUI() {
   const userMenuDesktop = document.getElementById('userMenuDesktop');
   const userMenuMobile = document.getElementById('userMenuMobile');
