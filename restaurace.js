@@ -1,4 +1,18 @@
 import { supabase } from './supabase-client.js';
+import './social-share.js?v=20260722-modern-2';
+
+document.addEventListener('click',event=>{
+  const button=event.target.closest('.share-btn');
+  if(!button)return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  try{
+    const restaurant=JSON.parse(button.dataset.restaurant||'{}');
+    window.socialShare?.shareRestaurant(restaurant);
+  }catch(error){
+    console.error('Share error:',error);
+  }
+},true);
 
 function applyRestaurantFilterStyles(){
   if(document.getElementById('restaurant-filter-style-fix')) return;
