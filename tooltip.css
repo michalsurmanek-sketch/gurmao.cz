@@ -11,7 +11,6 @@
   bottom: calc(100% + 12px);
   left: 50%;
   transform: translateX(-50%) translateY(8px);
-  
   background: rgba(11, 11, 13, 0.98);
   backdrop-filter: blur(12px);
   color: rgba(255, 255, 255, 0.95);
@@ -22,13 +21,8 @@
   letter-spacing: 0.01em;
   white-space: nowrap;
   font-family: 'Inter', sans-serif;
-  
   border: 1px solid rgba(212, 175, 55, 0.25);
-  box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.5),
-    0 0 30px rgba(212, 175, 55, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 30px rgba(212, 175, 55, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   opacity: 0;
   pointer-events: none;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -41,11 +35,9 @@
   bottom: calc(100% + 4px);
   left: 50%;
   transform: translateX(-50%) translateY(8px);
-  
   border: 8px solid transparent;
   border-top-color: rgba(11, 11, 13, 0.98);
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-  
   opacity: 0;
   pointer-events: none;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -58,7 +50,6 @@
   transform: translateX(-50%) translateY(0);
 }
 
-/* Alternative tooltip positions for edge cases */
 .vibe-tooltip.tooltip-bottom::after {
   bottom: auto;
   top: calc(100% + 12px);
@@ -78,7 +69,6 @@
   transform: translateX(-50%) translateY(0);
 }
 
-/* Mobile responsive */
 @media (max-width: 768px) {
   .vibe-tooltip::after {
     font-size: 12px;
@@ -88,17 +78,11 @@
     text-align: center;
     line-height: 1.4;
   }
-  
-  .vibe-tooltip::before {
-    border-width: 6px;
-  }
+  .vibe-tooltip::before { border-width: 6px; }
 }
 
 /* Vibe labels are informational only: never show an explanation bubble. */
-.vibe-tooltip {
-  cursor: default !important;
-}
-
+.vibe-tooltip { cursor: default !important; }
 .vibe-tooltip::before,
 .vibe-tooltip::after,
 .vibe-tooltip:hover::before,
@@ -109,7 +93,7 @@
   visibility: hidden !important;
 }
 
-/* Restaurant cards: force overlays into the image top corners even when Tailwind utility classes are not present in the compiled CSS. */
+/* Restaurant cards: force overlays into the image top corners. */
 .card-wrapper .card-front > .relative > .absolute.top-3.left-3 {
   position: absolute !important;
   top: 12px !important;
@@ -118,7 +102,6 @@
   bottom: auto !important;
   z-index: 20 !important;
 }
-
 .card-wrapper .card-front > .relative > .absolute.top-3.right-3 {
   position: absolute !important;
   top: 12px !important;
@@ -126,4 +109,175 @@
   left: auto !important;
   bottom: auto !important;
   z-index: 20 !important;
+}
+
+/* =========================================================
+   GURMAO unified restaurant card system
+   Feed / Restaurace / Můj výběr
+   ========================================================= */
+:root {
+  --gurmao-card-bg: linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018));
+  --gurmao-card-border: rgba(255,255,255,.13);
+  --gurmao-card-gold: #d4af37;
+  --gurmao-card-radius: 24px;
+}
+
+#grid [data-restaurant-card],
+#restaurantsList .card-wrapper,
+#savedGrid > div,
+#recommendedGrid > div {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--gurmao-card-border) !important;
+  border-radius: var(--gurmao-card-radius) !important;
+  background: var(--gurmao-card-bg), #111214 !important;
+  box-shadow: 0 16px 38px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.035);
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease !important;
+}
+
+#grid [data-restaurant-card]:hover,
+#restaurantsList .card-wrapper:hover,
+#savedGrid > div:hover,
+#recommendedGrid > div:hover {
+  transform: translateY(-4px);
+  border-color: rgba(212,175,55,.48) !important;
+  box-shadow: 0 22px 46px rgba(0,0,0,.36), 0 0 28px rgba(212,175,55,.08);
+}
+
+#grid [data-restaurant-card] > a,
+#savedGrid > div > a,
+#recommendedGrid > div > a,
+#restaurantsList .card-front > .relative {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+#grid [data-restaurant-card] > a > div,
+#savedGrid > div > a > div,
+#recommendedGrid > div > a > div,
+#restaurantsList .card-front img {
+  aspect-ratio: 3 / 4 !important;
+  width: 100% !important;
+  object-fit: cover !important;
+  background-size: cover !important;
+  background-position: center !important;
+  transition: transform .45s ease, filter .45s ease;
+}
+
+#grid [data-restaurant-card]:hover > a > div,
+#savedGrid > div:hover > a > div,
+#recommendedGrid > div:hover > a > div,
+#restaurantsList .card-wrapper:hover .card-front img {
+  transform: scale(1.025);
+  filter: brightness(.94);
+}
+
+/* Consistent card body */
+#grid [data-restaurant-card] > .p-5,
+#savedGrid > div > .p-5,
+#recommendedGrid > div > .p-4,
+#restaurantsList .card-front > .p-6 {
+  position: relative;
+  padding: 20px !important;
+  background: linear-gradient(180deg, rgba(20,21,23,.98), rgba(13,14,16,.99));
+}
+
+#grid [data-restaurant-card] .text-xl.font-semibold,
+#savedGrid > div .text-xl.font-semibold,
+#recommendedGrid > div .text-lg.font-semibold,
+#restaurantsList .card-front h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.28rem !important;
+  line-height: 1.2;
+  color: #fff;
+}
+
+/* Feed: move vibe and actions from body onto image */
+#grid [data-restaurant-card] > .p-5 > .flex:first-child {
+  position: static !important;
+}
+#grid [data-restaurant-card] > .p-5 > .flex:first-child > .flex-1 > .text-gurmaogold:first-child {
+  position: absolute !important;
+  top: calc(-100% + 14px);
+  left: 14px;
+  z-index: 25;
+  margin: 0 !important;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  border: 1px solid rgba(212,175,55,.58);
+  border-radius: 999px;
+  background: rgba(8,8,8,.64);
+  backdrop-filter: blur(10px);
+  color: #e8c43f !important;
+  font-size: 12px !important;
+  font-weight: 750;
+  letter-spacing: .06em;
+}
+#grid [data-restaurant-card] > .p-5 > .flex:first-child > .flex:last-child {
+  position: absolute !important;
+  top: calc(-100% + 14px);
+  right: 14px;
+  z-index: 25;
+}
+
+/* Collections: same image overlays */
+#savedGrid > div > .p-5 .vibe-tooltip,
+#recommendedGrid > div > .p-4 .vibe-tooltip {
+  position: absolute !important;
+  top: calc(-100% + 14px);
+  left: 14px;
+  z-index: 25;
+  margin: 0 !important;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  border: 1px solid rgba(212,175,55,.58);
+  border-radius: 999px;
+  background: rgba(8,8,8,.64);
+  backdrop-filter: blur(10px);
+  color: #e8c43f !important;
+  font-size: 12px !important;
+  font-weight: 750;
+  letter-spacing: .06em;
+}
+#savedGrid > div > .p-5 > button[data-remove] {
+  position: absolute !important;
+  top: calc(-100% + 14px);
+  right: 14px;
+  z-index: 25;
+  background: rgba(8,8,8,.64) !important;
+  backdrop-filter: blur(10px);
+}
+
+/* Restaurant page overlay badge and icon treatment */
+#restaurantsList .card-front > .relative > .absolute.top-3.left-3,
+#restaurantsList .card-front > .relative > .absolute.top-3.right-3 button,
+#grid [data-restaurant-card] > .p-5 > .flex:first-child > .flex:last-child button,
+#grid [data-restaurant-card] > .p-5 > .flex:first-child > .flex:last-child .share-btn,
+#savedGrid button[data-remove] {
+  box-shadow: 0 8px 20px rgba(0,0,0,.32);
+}
+
+/* Normalize grids and spacing */
+#grid,
+#restaurantsList,
+#savedGrid {
+  gap: 24px !important;
+  align-items: stretch;
+}
+
+@media (max-width: 767px) {
+  #grid [data-restaurant-card],
+  #restaurantsList .card-wrapper,
+  #savedGrid > div,
+  #recommendedGrid > div {
+    border-radius: 20px !important;
+  }
+  #grid,
+  #restaurantsList,
+  #savedGrid { gap: 18px !important; }
 }
