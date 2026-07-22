@@ -230,11 +230,26 @@ html body #restaurantsList .card-wrapper .card-back > div.flex.flex-col > div:fi
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
+  position: relative !important;
   width: 100% !important;
   margin: 0 0 13px !important;
-  padding: 3px 8px 12px !important;
+  padding: 3px 8px 21px !important;
   text-align: center !important;
-  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+  border-bottom: 0 !important;
+}
+
+html body #restaurantsList .card-wrapper .card-back > div.flex.flex-col > div:first-child::after {
+  content: '' !important;
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 6px !important;
+  width: min(74%, 220px) !important;
+  height: 2px !important;
+  transform: translateX(-50%) !important;
+  background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,.12) 12%, rgba(212,175,55,.72) 38%, #f1cf58 50%, rgba(212,175,55,.72) 62%, rgba(212,175,55,.12) 88%, transparent 100%) !important;
+  border-radius: 999px !important;
+  box-shadow: 0 0 8px rgba(212,175,55,.22) !important;
+  pointer-events: none !important;
 }
 
 html body #restaurantsList .card-wrapper .card-back > div.flex.flex-col > div:first-child > h3 {
