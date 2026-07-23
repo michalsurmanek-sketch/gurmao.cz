@@ -1,7 +1,7 @@
 // GURMAO.cz – síťový service worker bez offline cache.
 // Vynucuje aktuální soubory a přidává globální ochranu běhu do HTML stránek.
 
-const RUNTIME_VERSION = '20260723-4';
+const RUNTIME_VERSION = '20260723-5';
 
 self.addEventListener('install', () => {
   self.skipWaiting();
