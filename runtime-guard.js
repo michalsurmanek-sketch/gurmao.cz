@@ -2,7 +2,8 @@
 (() => {
   'use strict';
 
-  const VERSION = '20260723-1';
+  const VERSION = '20260723-2';
+  const FALLBACK_IMAGE = '/images/gurmao-hero-restaurant.jpg';
   const STORAGE_KEYS = {
     gurmao_user: null,
     gurmao_saved: [],
@@ -29,6 +30,30 @@
         else localStorage.setItem(key, JSON.stringify(fallback));
       }
     }
+  }
+
+  function applyImageFallback(image) {
+    if (!(image instanceof HTMLImageElement)) return;
+    if (image.dataset.gurmaoFallbackApplied === 'true') return;
+
+    image.dataset.gurmaoFallbackApplied = 'true';
+    image.removeAttribute('srcset');
+    image.removeAttribute('sizes');
+    image.src = FALLBACK_IMAGE;
+    image.style.objectFit = 'cover';
+    image.style.background = '#11120f';
+  }
+
+  function installImageFallbacks() {
+    document.addEventListener('error', event => {
+      if (event.target instanceof HTMLImageElement) {
+        applyImageFallback(event.target);
+      }
+    }, true);
+
+    document.querySelectorAll('img').forEach(image => {
+      if (image.complete && image.naturalWidth === 0) applyImageFallback(image);
+    });
   }
 
   function createRecoveryBanner(message) {
@@ -63,9 +88,11 @@
   }
 
   repairLocalStorage();
+  installImageFallbacks();
   document.documentElement.dataset.gurmaoRuntime = VERSION;
 
   window.addEventListener('error', event => {
+    if (event.target instanceof HTMLImageElement) return;
     console.error('GURMAO runtime error:', event.error || event.message);
     createRecoveryBanner('Na stránce nastala chyba. Obsah může být neúplný.');
   });
@@ -76,6 +103,10 @@
   });
 
   window.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('img').forEach(image => {
+      if (image.complete && image.naturalWidth === 0) applyImageFallback(image);
+    });
+
     setTimeout(() => {
       const loadingNodes = [...document.querySelectorAll('body *')].filter(element => {
         if (element.children.length) return false;
