@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Denní menu | GURMAO Admin</title>
+  <link rel="stylesheet" href="global.css">
+  <link rel="stylesheet" href="toast.css">
+  <style>
+    body{background:#0b0b0d;color:#fff;font-family:Inter,system-ui,sans-serif;margin:0}.wrap{max-width:1180px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:24px}.top a{color:#d4af37;text-decoration:none}.panel{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:18px}.toolbar{display:grid;grid-template-columns:1fr auto;gap:12px;margin-bottom:18px}.toolbar input{min-width:0;padding:13px 15px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:#141417;color:#fff}.btn{border:1px solid rgba(255,255,255,.18);background:#17171b;color:#fff;border-radius:13px;padding:11px 14px;cursor:pointer}.btn:hover{border-color:#d4af37}.btn-primary{background:#d4af37;color:#111;border-color:#d4af37;font-weight:700}.list{display:grid;gap:12px}.card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(255,255,255,.025)}.name{font-size:18px;font-weight:700}.meta,.url{color:rgba(255,255,255,.62);font-size:13px;margin-top:5px;overflow-wrap:anywhere}.url.ok{color:#86efac}.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.status{font-size:12px;color:#facc15}.empty{text-align:center;color:rgba(255,255,255,.55);padding:32px}@media(max-width:720px){.toolbar{grid-template-columns:1fr}.card{grid-template-columns:1fr}.actions{justify-content:flex-start}.top{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+  <script type="module" src="admin-guard.js"></script>
+  <script src="toast.js"></script>
+  <main class="wrap">
+    <div class="top"><div><a href="admin.html">← Admin panel</a><h1>🍽️ Automatické hledání menu</h1><p>Najde stránku s denním menu na oficiálním webu restaurace a uloží ji do Supabase.</p></div><a class="btn" href="admin-imports.html">Importy restaurací</a></div>
+    <section class="panel">
+      <div class="toolbar"><input id="search" type="search" placeholder="Hledat restauraci nebo město"><button id="refresh" class="btn">↻ Obnovit</button></div>
+      <div id="summary" class="meta"></div>
+      <div id="list" class="list"></div>
+      <div id="empty" class="empty" hidden>Žádné restaurace nebyly nalezeny.</div>
+    </section>
+  </main>
+  <script type="module" src="admin-menus.js"></script>
+</body>
+</html>
