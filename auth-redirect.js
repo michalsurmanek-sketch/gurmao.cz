@@ -99,23 +99,25 @@ async function countAdminItems(table, statuses = null) {
   return Number(count || 0);
 }
 
-function adminQuickActionCard({ href, icon, title, description, badgeId, accent = 'gold' }) {
+function adminQuickActionCard({ href, icon, title, description, badgeId, accent = 'gold', external = false }) {
   const accents = {
     gold: 'border:rgba(212,175,55,.32);background:linear-gradient(145deg,rgba(212,175,55,.13),rgba(255,255,255,.035));',
     green: 'border:rgba(34,197,94,.30);background:linear-gradient(145deg,rgba(34,197,94,.12),rgba(255,255,255,.035));',
     blue: 'border:rgba(59,130,246,.30);background:linear-gradient(145deg,rgba(59,130,246,.12),rgba(255,255,255,.035));',
-    red: 'border:rgba(239,68,68,.30);background:linear-gradient(145deg,rgba(239,68,68,.11),rgba(255,255,255,.035));'
+    red: 'border:rgba(239,68,68,.30);background:linear-gradient(145deg,rgba(239,68,68,.11),rgba(255,255,255,.035));',
+    purple: 'border:rgba(168,85,247,.30);background:linear-gradient(145deg,rgba(168,85,247,.12),rgba(255,255,255,.035));',
+    neutral: 'border:rgba(255,255,255,.16);background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.025));'
   };
 
   return `
-    <a href="${href}" class="admin-quick-action" style="${accents[accent] || accents.gold}">
+    <a href="${href}" class="admin-quick-action" style="${accents[accent] || accents.gold}"${external ? ' target="_blank" rel="noopener"' : ''}>
       <span class="admin-quick-action__icon">${icon}</span>
       <span class="admin-quick-action__content">
         <strong>${title}</strong>
         <small>${description}</small>
       </span>
       ${badgeId ? `<span class="admin-quick-action__badge" id="${badgeId}">–</span>` : ''}
-      <span class="admin-quick-action__arrow">→</span>
+      <span class="admin-quick-action__arrow">${external ? '↗' : '→'}</span>
     </a>
   `;
 }
@@ -135,9 +137,10 @@ async function initializeAdminQuickActions() {
     .admin-quick-actions-head{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:.9rem}
     .admin-quick-actions-head h2{font-size:1.25rem;margin:0;color:#fff}
     .admin-quick-actions-head p{margin:.2rem 0 0;color:rgba(255,255,255,.55);font-size:.82rem}
-    .admin-quick-actions-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem}
+    .admin-quick-actions-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem}
     .admin-quick-action{position:relative;display:flex;align-items:center;gap:.8rem;min-height:92px;padding:1rem;border:1px solid;border-radius:1rem;color:#fff;text-decoration:none;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;overflow:hidden}
     .admin-quick-action:hover{transform:translateY(-2px);border-color:rgba(212,175,55,.75)!important;box-shadow:0 14px 30px rgba(0,0,0,.28)}
+    .admin-quick-action:focus-visible{outline:3px solid rgba(212,175,55,.45);outline-offset:2px}
     .admin-quick-action__icon{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;border-radius:14px;background:rgba(0,0,0,.28);font-size:1.45rem}
     .admin-quick-action__content{display:flex;flex-direction:column;min-width:0;gap:.24rem}
     .admin-quick-action__content strong{font-size:.94rem;line-height:1.2}
@@ -156,19 +159,29 @@ async function initializeAdminQuickActions() {
   section.innerHTML = `
     <div class="admin-quick-actions-head">
       <div>
-        <h2>⚡ Rychlé schvalování a správa</h2>
-        <p>Nejdůležitější pracovní procesy na jednom místě.</p>
+        <h2>⚡ Rychlé akce</h2>
+        <p>Schvalování, publikace a nejčastější správa bez hledání v záložkách.</p>
       </div>
     </div>
     <div class="admin-quick-actions-grid">
       ${adminQuickActionCard({ href: 'admin-imports.html', icon: '📥', title: 'Schválit restaurace', description: 'Kontrola, úprava a publikování importovaných podniků', badgeId: 'quickRestaurantImports', accent: 'gold' })}
+      ${adminQuickActionCard({ href: 'admin-imports.html?status=approved', icon: '🚀', title: 'Publikovat restaurace', description: 'Otevře již schválené podniky čekající na zveřejnění', badgeId: 'quickApprovedImports', accent: 'red' })}
       ${adminQuickActionCard({ href: 'admin-chef-imports.html', icon: '👨‍🍳', title: 'Schválit kuchaře', description: 'Kontrola a zveřejnění importovaných profilů kuchařů', badgeId: 'quickChefImports', accent: 'green' })}
+      ${adminQuickActionCard({ href: '#', icon: '➕', title: 'Přidat restauraci ručně', description: 'Přejde přímo na formulář nové restaurace', accent: 'purple' }).replace('href="#"', 'href="#" data-admin-tab="add"')}
       ${adminQuickActionCard({ href: 'admin-contact.html', icon: '📬', title: 'Zprávy a žádosti', description: 'Dotazy uživatelů, restaurací a partnerů', accent: 'blue' })}
-      ${adminQuickActionCard({ href: 'admin-imports.html?status=approved', icon: '🚀', title: 'Čeká na publikaci', description: 'Rychlý vstup k již schváleným restauracím', badgeId: 'quickApprovedImports', accent: 'red' })}
+      ${adminQuickActionCard({ href: 'index.html', icon: '🌐', title: 'Zobrazit ostrý web', description: 'Otevře hlavní stránku Gurmao pro rychlou kontrolu', accent: 'neutral', external: true })}
     </div>
   `;
 
   tabs.insertAdjacentElement('beforebegin', section);
+
+  section.querySelector('[data-admin-tab="add"]')?.addEventListener('click', (event) => {
+    event.preventDefault();
+    if (typeof window.switchTab === 'function') {
+      window.switchTab('add');
+      document.getElementById('content-add')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
 
   try {
     const [restaurantReview, approved] = await Promise.all([
