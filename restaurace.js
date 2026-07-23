@@ -59,6 +59,17 @@ function distanceKm(a,b,c,d){const R=6371,x=(c-a)*Math.PI/180,y=(d-b)*Math.PI/18
 function formatDistance(km){return km<1?`${Math.round(km*1000)} m`:`${km.toFixed(1)} km`;}
 function updateUrl(){const p=new URLSearchParams();if(state.search)p.set('q',state.search);if(state.cuisine)p.set('cuisine',state.cuisine);if(state.city)p.set('city',state.city);const vk=Object.keys(VIBE_MAP).find(k=>VIBE_MAP[k]===state.vibe);if(vk)p.set('vibe',vk);if(state.sort!=='recommended')p.set('sort',state.sort);history.replaceState(null,'',`${location.pathname}${p.toString()?`?${p}`:''}`);}
 
+function scrollToNearbyResults(){
+  if(!window.matchMedia('(max-width: 768px)').matches)return;
+  const toolbar=document.querySelector('.toolbar');
+  const list=$('restaurantsList');
+  if(!toolbar||!list)return;
+  const headerHeight=document.querySelector('.site-header')?.getBoundingClientRect().height||0;
+  const toolbarTop=toolbar.getBoundingClientRect().top+window.scrollY;
+  const targetTop=Math.max(0,toolbarTop-headerHeight-4);
+  window.scrollTo({top:targetTop,behavior:'smooth'});
+}
+
 async function loadAll(){if(state.loading)return;state.loading=true;$('resultCount').textContent='Načítání restaurací…';try{let all=[],from=0,batchSize=500,total=Infinity;while(from<total){const {data,error,count}=await supabase.from('restaurants').select('*',{count:'exact'}).order('created_at',{ascending:false}).range(from,from+batchSize-1);if(error)throw error;all.push(...(data||[]));total=count??all.length;if(!data?.length||all.length>=total)break;from+=batchSize;}state.all=all;fillSelects();applyFilters();}catch(e){console.error(e);$('restaurantsList').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:70px 0;color:#e58b8b">Restaurace se nepodařilo načíst.</div>';$('resultCount').textContent='Chyba načítání';}finally{state.loading=false;}}
 
 function fillSelects(){const cuisines=[...new Set(state.all.map(r=>r.tag).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'cs'));const cities=[...new Set(state.all.map(r=>r.city).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'cs'));$('cuisineFilter').innerHTML='<option value="">Všechny kuchyně</option>'+cuisines.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');$('localityFilter').innerHTML='<option value="">Všechny lokality</option>'+cities.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');$('cuisineFilter').value=state.cuisine;$('localityFilter').value=state.city;}
@@ -195,7 +206,12 @@ function bind(){
       state.sort='distance';
       restaurantSort.value='distance';
       applyFilters(false);
-    },()=>alert('Polohu se nepodařilo zjistit.'));
+      requestAnimationFrame(()=>requestAnimationFrame(scrollToNearbyResults));
+    },()=>alert('Polohu se nepodařilo zjistit.'),{
+      enableHighAccuracy:true,
+      timeout:15000,
+      maximumAge:30000
+    });
   });
 }
 
