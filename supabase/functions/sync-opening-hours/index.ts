@@ -135,7 +135,6 @@ function compactUpdates(place: any, placeId: string, openingHours: Record<string
   if (Number.isFinite(place?.location?.longitude)) updates.longitude = Number(place.location.longitude);
   if (place?.priceLevel) updates.price_level = String(place.priceLevel);
   if (place?.primaryType) updates.google_primary_type = String(place.primaryType);
-  if (place?.primaryTypeDisplayName?.text) updates.cuisine_type = String(place.primaryTypeDisplayName.text);
   if (place?.photos?.[0]?.name) updates.google_photo_name = String(place.photos[0].name);
 
   return updates;
@@ -213,7 +212,7 @@ Deno.serve(async (req) => {
             website: Boolean(updates.website),
             location: Boolean(updates.latitude && updates.longitude),
             price_level: updates.price_level ?? null,
-            cuisine: updates.cuisine_type ?? null,
+            primary_type: updates.google_primary_type ?? null,
             photo: Boolean(updates.google_photo_name),
           },
         });
