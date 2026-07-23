@@ -1,0 +1,78 @@
+.bulk-actions {
+  display: grid;
+  gap: 14px;
+  margin: 18px 0;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.72);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+}
+
+.bulk-actions > div:first-child {
+  display: grid;
+  gap: 4px;
+}
+
+.bulk-actions strong {
+  font-size: 1rem;
+}
+
+.bulk-actions small {
+  opacity: 0.78;
+  line-height: 1.45;
+}
+
+.bulk-actions__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.bulk-actions__buttons .btn {
+  min-height: 44px;
+  flex: 1 1 190px;
+}
+
+.bulk-primary {
+  color: #111827;
+  border-color: #facc15;
+  background: linear-gradient(135deg, #facc15, #f59e0b);
+  font-weight: 800;
+}
+
+.bulk-primary:hover {
+  filter: brightness(1.04);
+}
+
+.bulk-progress {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  line-height: 1.45;
+}
+
+.bulk-progress.is-success {
+  background: rgba(34, 197, 94, 0.16);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.bulk-progress.is-error {
+  background: rgba(244, 63, 94, 0.16);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+}
+
+@media (max-width: 680px) {
+  .bulk-actions {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .bulk-actions__buttons {
+    display: grid;
+  }
+
+  .bulk-actions__buttons .btn {
+    width: 100%;
+  }
+}
