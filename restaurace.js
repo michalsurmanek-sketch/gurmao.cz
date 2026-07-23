@@ -182,6 +182,7 @@ function bind(){
   searchBtn.addEventListener('click',()=>{
     state.search=clean(searchInput.value);
     applyFilters();
+    scheduleNearbyResultsScroll();
   });
   cuisineFilter.addEventListener('change',event=>{
     state.cuisine=event.target.value;
