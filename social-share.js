@@ -153,6 +153,7 @@ import('./daily-menu-ui.js').catch(error => console.error('Daily menu module:', 
     .feed-card-action{height:44px;min-width:0;border:1px solid rgba(255,255,255,.18);border-radius:12px;background:rgba(12,13,11,.78);backdrop-filter:blur(12px);color:#fff;display:flex;align-items:center;justify-content:center;gap:7px;font:600 12px/1 Inter,sans-serif;text-decoration:none;cursor:pointer;transition:transform .18s,border-color .18s,background .18s,color .18s}
     .feed-card-action:hover,.feed-card-action:focus-visible{transform:translateY(-1px);border-color:rgba(243,201,74,.72);background:rgba(216,173,52,.13);color:#f3c94a;outline:none}
     .feed-card-action svg{width:17px;height:17px;flex:0 0 17px;pointer-events:none}
+    .feed-card-action.save-btn span{font-size:12px;line-height:1}
     #feed .feed-card-actions{position:absolute;left:24px;right:24px;bottom:24px}
     #feed article>a .absolute.left-6{bottom:86px!important}
     #feed .save-btn{position:static!important;width:auto!important;height:44px!important;border-radius:12px!important;font-size:0!important}
@@ -163,7 +164,7 @@ import('./daily-menu-ui.js').catch(error => console.error('Daily menu module:', 
     #grid [data-restaurant-card] .feed-card-actions .save-btn{font-size:0!important}
     #grid [data-restaurant-card] .feed-card-actions .save-btn:before{content:'♡';font-size:20px}
     #grid [data-restaurant-card] .feed-card-actions .save-btn[data-feed-saved='true']:before{content:'♥';color:#f3c94a}
-    @media(max-width:420px){.feed-card-action{font-size:11px;gap:5px}#feed .feed-card-actions{left:16px;right:16px;bottom:18px}#feed article>a .absolute.left-6{bottom:78px!important}}
+    @media(max-width:420px){.feed-card-action{font-size:11px;gap:5px}.feed-card-action.save-btn span{font-size:11px}#feed .feed-card-actions{left:16px;right:16px;bottom:18px}#feed article>a .absolute.left-6{bottom:78px!important}}
   `;
   document.head.appendChild(style);
 
@@ -173,19 +174,26 @@ import('./daily-menu-ui.js').catch(error => console.error('Daily menu module:', 
 
   function restaurantData(card,href){
     const title=card.querySelector('.text-3xl,.text-xl')?.textContent?.trim()||'Restaurace';
-    const meta=card.querySelector('.text-white\/70,.text-white\/60')?.textContent?.trim()||'';
+    const meta=card.querySelector('[class~="text-white/70"],[class~="text-white/60"]')?.textContent?.trim()||'';
     const [city='',tag='']=meta.split('·').map(v=>v.trim());
     const imageNode=card.querySelector('[style*="background-image"]');
     const image=(imageNode?.style.backgroundImage||'').replace(/^url\(["']?|["']?\)$/g,'');
     return {id:card.dataset.restaurant||card.dataset.restaurantCard||'',name:title,city,tag,img:image,href};
   }
 
-  function markSaved(button){
+  function syncSaveButton(button){
     const saved=(button.textContent||'').includes('❤️')||(button.textContent||'').includes('♥');
     button.dataset.feedSaved=String(saved);
     button.setAttribute('aria-label',saved?'Odebrat z výběru':'Uložit do výběru');
     button.title=saved?'Uloženo':'Uložit';
-    button.insertAdjacentHTML('beforeend',saveLabel);
+    button.innerHTML=saveLabel;
+  }
+
+  function prepareSaveButton(button){
+    syncSaveButton(button);
+    if(button.dataset.feedSaveSync==='true')return;
+    button.dataset.feedSaveSync='true';
+    button.addEventListener('click',()=>setTimeout(()=>syncSaveButton(button),300));
   }
 
   function enhanceMobile(card){
@@ -199,7 +207,7 @@ import('./daily-menu-ui.js').catch(error => console.error('Daily menu module:', 
     const bar=document.createElement('div');
     bar.className='feed-card-actions';
     save.classList.add('feed-card-action');
-    markSaved(save);
+    prepareSaveButton(save);
     const share=document.createElement('button');
     share.type='button';share.className='share-btn feed-card-action';share.innerHTML=shareSvg;share.dataset.restaurant=JSON.stringify(data);share.setAttribute('aria-label','Sdílet restauraci');
     const menu=document.createElement('button');
@@ -222,7 +230,7 @@ import('./daily-menu-ui.js').catch(error => console.error('Daily menu module:', 
     const bar=document.createElement('div');
     bar.className='feed-card-actions';
     save.className='save-btn feed-card-action';
-    markSaved(save);
+    prepareSaveButton(save);
     share.className='share-btn feed-card-action';
     share.innerHTML=shareSvg;
     const menu=document.createElement('a');
