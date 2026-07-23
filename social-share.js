@@ -188,7 +188,18 @@ import('./daily-menu-ui.js').catch(error => console.error('Daily menu module:', 
     return node;
   }
 
+  function removeLegacyDetailButton(card){
+    const footer=card.querySelector('.swipe-menu .sticky.bottom-0');
+    if(!footer) return;
+    [...footer.querySelectorAll('a')].forEach(link=>{
+      if(/zobrazit celý detail/i.test(link.textContent||'')) link.remove();
+    });
+    const actions=footer.querySelector('.max-w-2xl');
+    if(actions) actions.classList.remove('space-y-3');
+  }
+
   function buildBar(card,isMobile){
+    removeLegacyDetailButton(card);
     if(card.dataset.feedRestaurantActionsReady==='true') return;
     const {href,name,city,phone}=readCardData(card);
     const detailBase=href.split('#')[0];
