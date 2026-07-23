@@ -1,0 +1,25 @@
+name: Nasazení hledání denního menu
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'supabase/functions/discover-menu/**'
+      - '.github/workflows/deploy-discover-menu.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Nasadit Edge Function
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: supabase functions deploy discover-menu --project-ref "$SUPABASE_PROJECT_REF"
