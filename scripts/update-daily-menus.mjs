@@ -116,8 +116,14 @@ async function supabase(path, options = {}) {
     ...options,
     headers: { ...headers, ...(options.headers || {}) }
   });
-  if (!response.ok) throw new Error(`${response.status} ${await response.text()}`);
-  return response.status === 204 ? null : response.json();
+  const text = await response.text();
+  if (!response.ok) throw new Error(`${response.status} ${text}`);
+  if (!text.trim()) return null;
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    throw new Error(`Supabase vrátil neplatný JSON (${response.status}): ${error.message}`);
+  }
 }
 
 async function loadRestaurants() {
