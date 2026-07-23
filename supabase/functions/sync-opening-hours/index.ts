@@ -119,7 +119,13 @@ async function loadPlace(placeId: string, apiKey: string) {
   );
 }
 
-function compactUpdates(place: any, placeId: string, openingHours: Record<string, string>) {
+function compactUpdates(
+  place: any,
+  placeId: string,
+  openingHours: Record<string, string>,
+  restaurant: any,
+  supabaseUrl: string,
+) {
   const updates: Record<string, unknown> = {
     google_place_id: placeId,
     opening_hours: openingHours,
@@ -135,7 +141,14 @@ function compactUpdates(place: any, placeId: string, openingHours: Record<string
   if (Number.isFinite(place?.location?.longitude)) updates.longitude = Number(place.location.longitude);
   if (place?.priceLevel) updates.price_level = String(place.priceLevel);
   if (place?.primaryType) updates.google_primary_type = String(place.primaryType);
-  if (place?.photos?.[0]?.name) updates.google_photo_name = String(place.photos[0].name);
+
+  const photoName = place?.photos?.[0]?.name ? String(place.photos[0].name) : '';
+  if (photoName) {
+    updates.google_photo_name = photoName;
+    if (!String(restaurant?.image_url || '').trim()) {
+      updates.image_url = `${supabaseUrl}/functions/v1/google-place-photo?name=${encodeURIComponent(photoName)}&w=1400`;
+    }
+  }
 
   return updates;
 }
@@ -170,7 +183,7 @@ Deno.serve(async (req) => {
 
     let query = service
       .from('restaurants')
-      .select('id,name,address,city,google_place_id,opening_hours_verified_at')
+      .select('id,name,address,city,image_url,google_place_id,opening_hours_verified_at')
       .order('opening_hours_verified_at', { ascending: true, nullsFirst: true })
       .limit(limit);
 
@@ -192,7 +205,7 @@ Deno.serve(async (req) => {
         const place = await loadPlace(placeId, googleKey);
         const periods = place?.regularOpeningHours?.periods || place?.currentOpeningHours?.periods || [];
         const openingHours = normalizePeriods(periods);
-        const updates = compactUpdates(place, placeId, openingHours);
+        const updates = compactUpdates(place, placeId, openingHours, restaurant, supabaseUrl);
 
         const { error: updateError } = await service
           .from('restaurants')
@@ -212,8 +225,9 @@ Deno.serve(async (req) => {
             website: Boolean(updates.website),
             location: Boolean(updates.latitude && updates.longitude),
             price_level: updates.price_level ?? null,
-            primary_type: updates.google_primary_type ?? null,
+            type: updates.google_primary_type ?? null,
             photo: Boolean(updates.google_photo_name),
+            image_url: Boolean(updates.image_url || restaurant.image_url),
           },
         });
       } catch (itemError) {
