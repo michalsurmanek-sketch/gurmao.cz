@@ -138,5 +138,6 @@ window.socialShare = new SocialShareManager();
 document.addEventListener('DOMContentLoaded', () => window.socialShare.initializeShareButtons());
 window.shareRestaurant = restaurant => window.socialShare.shareRestaurant(restaurant);
 
-// Na stránkách restaurací doplní živý stav a týdenní otevírací dobu.
+// Na stránkách restaurací doplní živý stav, otevírací dobu a dnešní menu.
 import('./opening-hours-ui.js').catch(error => console.error('Opening hours module:', error));
+import('./daily-menu-ui.js').catch(error => console.error('Daily menu module:', error));
