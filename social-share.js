@@ -141,3 +141,103 @@ window.shareRestaurant = restaurant => window.socialShare.shareRestaurant(restau
 // Na stránkách restaurací doplní živý stav, otevírací dobu a dnešní menu.
 import('./opening-hours-ui.js').catch(error => console.error('Opening hours module:', error));
 import('./daily-menu-ui.js').catch(error => console.error('Daily menu module:', error));
+
+// Feed: sjednotí tři akce Uložit, Sdílet a Menu na spodní hranu karty.
+(function initFeedCardActions(){
+  if(!/\bfeed\.html$/.test(location.pathname) && !document.getElementById('feed') && !document.getElementById('grid')) return;
+
+  const style=document.createElement('style');
+  style.id='gurmao-feed-card-actions-style';
+  style.textContent=`
+    .feed-card-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;position:relative;z-index:20}
+    .feed-card-action{height:44px;min-width:0;border:1px solid rgba(255,255,255,.18);border-radius:12px;background:rgba(12,13,11,.78);backdrop-filter:blur(12px);color:#fff;display:flex;align-items:center;justify-content:center;gap:7px;font:600 12px/1 Inter,sans-serif;text-decoration:none;cursor:pointer;transition:transform .18s,border-color .18s,background .18s,color .18s}
+    .feed-card-action:hover,.feed-card-action:focus-visible{transform:translateY(-1px);border-color:rgba(243,201,74,.72);background:rgba(216,173,52,.13);color:#f3c94a;outline:none}
+    .feed-card-action svg{width:17px;height:17px;flex:0 0 17px;pointer-events:none}
+    #feed .feed-card-actions{position:absolute;left:24px;right:24px;bottom:24px}
+    #feed article>a .absolute.left-6{bottom:86px!important}
+    #feed .save-btn{position:static!important;width:auto!important;height:44px!important;border-radius:12px!important;font-size:0!important}
+    #feed .save-btn:before{content:'♡';font-size:21px;line-height:1}
+    #feed .save-btn[data-feed-saved='true']:before{content:'♥';color:#f3c94a}
+    #grid [data-restaurant-card] .feed-card-actions{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1)}
+    #grid [data-restaurant-card] .feed-card-actions .save-btn,#grid [data-restaurant-card] .feed-card-actions .share-btn{width:auto!important;height:44px!important;border-radius:12px!important}
+    #grid [data-restaurant-card] .feed-card-actions .save-btn{font-size:0!important}
+    #grid [data-restaurant-card] .feed-card-actions .save-btn:before{content:'♡';font-size:20px}
+    #grid [data-restaurant-card] .feed-card-actions .save-btn[data-feed-saved='true']:before{content:'♥';color:#f3c94a}
+    @media(max-width:420px){.feed-card-action{font-size:11px;gap:5px}#feed .feed-card-actions{left:16px;right:16px;bottom:18px}#feed article>a .absolute.left-6{bottom:78px!important}}
+  `;
+  document.head.appendChild(style);
+
+  const shareSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"></path></svg><span>Sdílet</span>';
+  const menuSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg><span>Menu</span>';
+  const saveLabel='<span>Uložit</span>';
+
+  function restaurantData(card,href){
+    const title=card.querySelector('.text-3xl,.text-xl')?.textContent?.trim()||'Restaurace';
+    const meta=card.querySelector('.text-white\/70,.text-white\/60')?.textContent?.trim()||'';
+    const [city='',tag='']=meta.split('·').map(v=>v.trim());
+    const imageNode=card.querySelector('[style*="background-image"]');
+    const image=(imageNode?.style.backgroundImage||'').replace(/^url\(["']?|["']?\)$/g,'');
+    return {id:card.dataset.restaurant||card.dataset.restaurantCard||'',name:title,city,tag,img:image,href};
+  }
+
+  function markSaved(button){
+    const saved=(button.textContent||'').includes('❤️')||(button.textContent||'').includes('♥');
+    button.dataset.feedSaved=String(saved);
+    button.setAttribute('aria-label',saved?'Odebrat z výběru':'Uložit do výběru');
+    button.title=saved?'Uloženo':'Uložit';
+    button.insertAdjacentHTML('beforeend',saveLabel);
+  }
+
+  function enhanceMobile(card){
+    if(card.dataset.feedActionsReady==='true')return;
+    const save=card.querySelector(':scope > .save-btn');
+    const detail=card.querySelector(':scope > a[href]');
+    if(!save||!detail)return;
+    card.dataset.feedActionsReady='true';
+    const href=detail.getAttribute('href')||'feed.html';
+    const data=restaurantData(card,href);
+    const bar=document.createElement('div');
+    bar.className='feed-card-actions';
+    save.classList.add('feed-card-action');
+    markSaved(save);
+    const share=document.createElement('button');
+    share.type='button';share.className='share-btn feed-card-action';share.innerHTML=shareSvg;share.dataset.restaurant=JSON.stringify(data);share.setAttribute('aria-label','Sdílet restauraci');
+    const menu=document.createElement('button');
+    menu.type='button';menu.className='feed-card-action feed-menu-btn';menu.innerHTML=menuSvg;menu.setAttribute('aria-label','Zobrazit menu');
+    menu.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();card.querySelector('.swipe-menu')?.classList.add('active');const feed=document.getElementById('feed');if(feed)feed.style.overflow='hidden';});
+    bar.append(save,share,menu);
+    card.appendChild(bar);
+  }
+
+  function enhanceDesktop(card){
+    if(card.dataset.feedActionsReady==='true')return;
+    const save=card.querySelector('button[data-save]');
+    const share=card.querySelector('.share-btn');
+    const detail=card.querySelector('a[href]');
+    const content=card.querySelector('.p-5');
+    if(!save||!share||!detail||!content)return;
+    card.dataset.feedActionsReady='true';
+    const href=detail.getAttribute('href')||'feed.html';
+    const oldWrap=save.parentElement;
+    const bar=document.createElement('div');
+    bar.className='feed-card-actions';
+    save.className='save-btn feed-card-action';
+    markSaved(save);
+    share.className='share-btn feed-card-action';
+    share.innerHTML=shareSvg;
+    const menu=document.createElement('a');
+    menu.className='feed-card-action';menu.href=`${href.split('#')[0]}#menu`;menu.innerHTML=menuSvg;menu.setAttribute('aria-label','Zobrazit menu');
+    bar.append(save,share,menu);
+    content.appendChild(bar);
+    if(oldWrap&&oldWrap.children.length===0)oldWrap.remove();
+  }
+
+  function enhance(){
+    document.querySelectorAll('#feed article[data-restaurant]').forEach(enhanceMobile);
+    document.querySelectorAll('#grid [data-restaurant-card]').forEach(enhanceDesktop);
+  }
+
+  const observer=new MutationObserver(enhance);
+  observer.observe(document.documentElement,{childList:true,subtree:true});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',enhance,{once:true});else enhance();
+})();
