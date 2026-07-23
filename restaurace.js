@@ -1,5 +1,4 @@
 import { supabase } from './supabase-client.js';
-import './social-share.js?v=20260722-modern-2';
 
 document.addEventListener('click',event=>{
   const button=event.target.closest('.share-btn');
@@ -200,4 +199,14 @@ function bind(){
   });
 }
 
-document.addEventListener('DOMContentLoaded',()=>{applyRestaurantFilterStyles();bind();loadAll();});
+function initRestaurantsPage(){
+  applyRestaurantFilterStyles();
+  bind();
+  loadAll();
+}
+
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',initRestaurantsPage,{once:true});
+}else{
+  initRestaurantsPage();
+}
