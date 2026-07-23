@@ -1,6 +1,64 @@
 import { supabase } from './supabase-client.js';
 import { escapeHtml, safeWebUrl } from './security-utils.js';
 
+function injectFeedMobileActionFix() {
+  if (!document.getElementById('feed') || document.getElementById('gurmao-feed-mobile-action-fix')) return;
+  const style = document.createElement('style');
+  style.id = 'gurmao-feed-mobile-action-fix';
+  style.textContent = `
+    @media (max-width: 767px) {
+      #feed article {
+        min-height: calc(100dvh - 65px) !important;
+        height: calc(100dvh - 65px) !important;
+        overflow: hidden !important;
+      }
+      #feed .feed-card-actions {
+        position: absolute !important;
+        left: 14px !important;
+        right: 14px !important;
+        bottom: max(18px, calc(env(safe-area-inset-bottom) + 12px)) !important;
+        width: auto !important;
+        height: 54px !important;
+        overflow: hidden !important;
+        border: 1px solid rgba(255,255,255,.17) !important;
+        border-radius: 17px !important;
+        background: rgba(12,13,11,.9) !important;
+        box-shadow: 0 12px 34px rgba(0,0,0,.5) !important;
+        backdrop-filter: blur(16px) saturate(125%) !important;
+        -webkit-backdrop-filter: blur(16px) saturate(125%) !important;
+        z-index: 35 !important;
+      }
+      #feed .feed-card-action {
+        height: 54px !important;
+        min-height: 54px !important;
+        font-size: 12px !important;
+        gap: 6px !important;
+      }
+      #feed .feed-card-action svg {
+        width: 17px !important;
+        height: 17px !important;
+        flex-basis: 17px !important;
+      }
+      #feed article > a .absolute.left-6 {
+        left: 20px !important;
+        right: 20px !important;
+        bottom: max(96px, calc(env(safe-area-inset-bottom) + 88px)) !important;
+      }
+    }
+    @media (max-width: 380px) {
+      #feed .feed-card-actions {
+        left: 10px !important;
+        right: 10px !important;
+      }
+      #feed .feed-card-action {
+        font-size: 11px !important;
+        gap: 4px !important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 function todayPrague() {
   return new Intl.DateTimeFormat('sv-SE', {
     timeZone: 'Europe/Prague', year: 'numeric', month: '2-digit', day: '2-digit'
@@ -103,5 +161,6 @@ async function loadDailyMenu() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  injectFeedMobileActionFix();
   loadDailyMenu().catch(error => console.error('Daily menu UI:', error));
 });
