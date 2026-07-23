@@ -142,35 +142,33 @@ window.shareRestaurant = restaurant => window.socialShare.shareRestaurant(restau
 import('./opening-hours-ui.js').catch(error => console.error('Opening hours module:', error));
 import('./daily-menu-ui.js').catch(error => console.error('Daily menu module:', error));
 
-// Feed: sjednotí tři akce Uložit, Sdílet a Menu na spodní hranu karty.
+// Feed: stejné kruhové akce jako na kartách restaurací.
 (function initFeedCardActions(){
   if(!/\bfeed\.html$/.test(location.pathname) && !document.getElementById('feed') && !document.getElementById('grid')) return;
 
   const style=document.createElement('style');
   style.id='gurmao-feed-card-actions-style';
   style.textContent=`
-    .feed-card-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;position:relative;z-index:20}
-    .feed-card-action{height:44px;min-width:0;border:1px solid rgba(255,255,255,.18);border-radius:12px;background:rgba(12,13,11,.78);backdrop-filter:blur(12px);color:#fff;display:flex;align-items:center;justify-content:center;gap:7px;font:600 12px/1 Inter,sans-serif;text-decoration:none;cursor:pointer;transition:transform .18s,border-color .18s,background .18s,color .18s}
-    .feed-card-action:hover,.feed-card-action:focus-visible{transform:translateY(-1px);border-color:rgba(243,201,74,.72);background:rgba(216,173,52,.13);color:#f3c94a;outline:none}
-    .feed-card-action svg{width:17px;height:17px;flex:0 0 17px;pointer-events:none}
-    .feed-card-action.save-btn span{font-size:12px;line-height:1}
-    #feed .feed-card-actions{position:absolute;left:24px;right:24px;bottom:24px}
-    #feed article>a .absolute.left-6{bottom:86px!important}
-    #feed .save-btn{position:static!important;width:auto!important;height:44px!important;border-radius:12px!important;font-size:0!important}
-    #feed .save-btn:before{content:'♡';font-size:21px;line-height:1}
-    #feed .save-btn[data-feed-saved='true']:before{content:'♥';color:#f3c94a}
+    .feed-card-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;position:relative;z-index:20}
+    .feed-card-action{width:38px;height:38px;flex:0 0 38px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.48);backdrop-filter:blur(8px);color:#fff;text-decoration:none;cursor:pointer;transition:transform .18s,border-color .18s,background .18s,color .18s}
+    .feed-card-action:hover,.feed-card-action:focus-visible{transform:translateY(-2px);border-color:rgba(216,173,52,.58);background:rgba(18,16,9,.82);color:#f3c94a;outline:none}
+    .feed-card-action svg{width:17px;height:17px;pointer-events:none}
+    .feed-card-action span{display:none!important}
+    .feed-card-action.save-btn{font-size:0!important}
+    .feed-card-action.save-btn:before{content:'♡';font-size:22px;line-height:1}
+    .feed-card-action.save-btn[data-feed-saved='true']:before{content:'♥';color:#f3c94a}
+    .feed-card-action.feed-menu-btn{color:#f3c94a}
+    #feed .feed-card-actions{position:absolute;right:24px;bottom:24px}
+    #feed article>a .absolute.left-6{right:88px!important;bottom:30px!important}
+    #feed .save-btn{position:static!important;top:auto!important;right:auto!important;width:38px!important;height:38px!important;border-radius:50%!important}
     #grid [data-restaurant-card] .feed-card-actions{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1)}
-    #grid [data-restaurant-card] .feed-card-actions .save-btn,#grid [data-restaurant-card] .feed-card-actions .share-btn{width:auto!important;height:44px!important;border-radius:12px!important}
-    #grid [data-restaurant-card] .feed-card-actions .save-btn{font-size:0!important}
-    #grid [data-restaurant-card] .feed-card-actions .save-btn:before{content:'♡';font-size:20px}
-    #grid [data-restaurant-card] .feed-card-actions .save-btn[data-feed-saved='true']:before{content:'♥';color:#f3c94a}
-    @media(max-width:420px){.feed-card-action{font-size:11px;gap:5px}.feed-card-action.save-btn span{font-size:11px}#feed .feed-card-actions{left:16px;right:16px;bottom:18px}#feed article>a .absolute.left-6{bottom:78px!important}}
+    #grid [data-restaurant-card] .feed-card-actions .save-btn,#grid [data-restaurant-card] .feed-card-actions .share-btn{width:38px!important;height:38px!important;border-radius:50%!important}
+    @media(max-width:420px){#feed .feed-card-actions{right:16px;bottom:18px}#feed article>a .absolute.left-6{right:78px!important;bottom:24px!important}}
   `;
   document.head.appendChild(style);
 
-  const shareSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"></path></svg><span>Sdílet</span>';
-  const menuSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg><span>Menu</span>';
-  const saveLabel='<span>Uložit</span>';
+  const shareSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"></path></svg>';
+  const menuSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg>';
 
   function restaurantData(card,href){
     const title=card.querySelector('.text-3xl,.text-xl')?.textContent?.trim()||'Restaurace';
@@ -182,11 +180,11 @@ import('./daily-menu-ui.js').catch(error => console.error('Daily menu module:', 
   }
 
   function syncSaveButton(button){
-    const saved=(button.textContent||'').includes('❤️')||(button.textContent||'').includes('♥');
+    const saved=(button.textContent||'').includes('❤️')||(button.textContent||'').includes('♥')||button.dataset.feedSaved==='true';
     button.dataset.feedSaved=String(saved);
     button.setAttribute('aria-label',saved?'Odebrat z výběru':'Uložit do výběru');
     button.title=saved?'Uloženo':'Uložit';
-    button.innerHTML=saveLabel;
+    button.textContent='';
   }
 
   function prepareSaveButton(button){
@@ -209,9 +207,9 @@ import('./daily-menu-ui.js').catch(error => console.error('Daily menu module:', 
     save.classList.add('feed-card-action');
     prepareSaveButton(save);
     const share=document.createElement('button');
-    share.type='button';share.className='share-btn feed-card-action';share.innerHTML=shareSvg;share.dataset.restaurant=JSON.stringify(data);share.setAttribute('aria-label','Sdílet restauraci');
+    share.type='button';share.className='share-btn feed-card-action';share.innerHTML=shareSvg;share.dataset.restaurant=JSON.stringify(data);share.setAttribute('aria-label','Sdílet restauraci');share.title='Sdílet';
     const menu=document.createElement('button');
-    menu.type='button';menu.className='feed-card-action feed-menu-btn';menu.innerHTML=menuSvg;menu.setAttribute('aria-label','Zobrazit menu');
+    menu.type='button';menu.className='feed-card-action feed-menu-btn';menu.innerHTML=menuSvg;menu.setAttribute('aria-label','Zobrazit menu');menu.title='Menu';
     menu.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();card.querySelector('.swipe-menu')?.classList.add('active');const feed=document.getElementById('feed');if(feed)feed.style.overflow='hidden';});
     bar.append(save,share,menu);
     card.appendChild(bar);
@@ -233,8 +231,9 @@ import('./daily-menu-ui.js').catch(error => console.error('Daily menu module:', 
     prepareSaveButton(save);
     share.className='share-btn feed-card-action';
     share.innerHTML=shareSvg;
+    share.title='Sdílet';
     const menu=document.createElement('a');
-    menu.className='feed-card-action';menu.href=`${href.split('#')[0]}#menu`;menu.innerHTML=menuSvg;menu.setAttribute('aria-label','Zobrazit menu');
+    menu.className='feed-card-action feed-menu-btn';menu.href=`${href.split('#')[0]}#menu`;menu.innerHTML=menuSvg;menu.setAttribute('aria-label','Zobrazit menu');menu.title='Menu';
     bar.append(save,share,menu);
     content.appendChild(bar);
     if(oldWrap&&oldWrap.children.length===0)oldWrap.remove();
