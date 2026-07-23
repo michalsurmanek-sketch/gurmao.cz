@@ -2,7 +2,7 @@
 (() => {
   'use strict';
 
-  const VERSION = '20260723-3';
+  const VERSION = '20260723-5';
   const FALLBACK_IMAGE = '/images/gurmao-hero-restaurant.jpg';
   const STORAGE_KEYS = {
     gurmao_user: null,
@@ -28,6 +28,19 @@
     }
   }
 
+  function installPresentationFixStyles() {
+    if (document.getElementById('gurmao-runtime-presentation-fixes')) return;
+    const style = document.createElement('style');
+    style.id = 'gurmao-runtime-presentation-fixes';
+    style.textContent = `
+      .card-image.gurmao-fallback-photo{background:linear-gradient(145deg,#171811,#090a08)!important}
+      .card-image.gurmao-fallback-photo img{filter:brightness(.32) saturate(.45)!important;transform:none!important}
+      .card-image.gurmao-fallback-photo::after{content:'Fotografie se připravuje';position:absolute;left:50%;top:50%;z-index:3;transform:translate(-50%,-50%);padding:9px 13px;border:1px solid rgba(243,201,74,.48);border-radius:999px;background:rgba(8,9,7,.82);color:#f3c94a;font:700 11px/1 Inter,system-ui,sans-serif;white-space:nowrap;letter-spacing:.03em;pointer-events:none}
+      .distance.gurmao-fake-distance{display:none!important}
+    `;
+    document.head.appendChild(style);
+  }
+
   function applyImageFallback(image) {
     if (!(image instanceof HTMLImageElement) || image.dataset.gurmaoFallbackApplied === 'true') return;
     image.dataset.gurmaoFallbackApplied = 'true';
@@ -36,6 +49,7 @@
     image.src = FALLBACK_IMAGE;
     image.style.objectFit = 'cover';
     image.style.background = '#11120f';
+    image.closest('.card-image')?.classList.add('gurmao-fallback-photo');
   }
 
   function installImageFallbacks() {
@@ -45,6 +59,35 @@
     document.querySelectorAll('img').forEach(image => {
       if (image.complete && image.naturalWidth === 0) applyImageFallback(image);
     });
+  }
+
+  function hideInventedDistances(root = document) {
+    root.querySelectorAll?.('.distance').forEach(element => {
+      const text = (element.textContent || '').replace(',', '.').trim();
+      if (/^(?:⌖|↕|✦)?\s*(?:0\.3|0\.6|0\.9|1\.2|1\.5)\s*km$/i.test(text)) {
+        element.classList.add('gurmao-fake-distance');
+        element.setAttribute('title', 'Vzdálenost se zobrazí po povolení polohy.');
+      }
+    });
+  }
+
+  function observeRestaurantCards() {
+    if (!location.pathname.endsWith('/restaurace.html')) return;
+    hideInventedDistances();
+    const list = document.getElementById('restaurantsList');
+    if (!list) return;
+    const observer = new MutationObserver(records => {
+      for (const record of records) {
+        for (const node of record.addedNodes) {
+          if (!(node instanceof Element)) continue;
+          hideInventedDistances(node);
+          node.querySelectorAll?.('img').forEach(image => {
+            if (image.complete && image.naturalWidth === 0) applyImageFallback(image);
+          });
+        }
+      }
+    });
+    observer.observe(list, {childList:true,subtree:true});
   }
 
   function createRecoveryBanner(message) {
@@ -154,8 +197,10 @@
   }
 
   repairLocalStorage();
+  installPresentationFixStyles();
   installImageFallbacks();
   installDailyMenuCards();
+  observeRestaurantCards();
   document.documentElement.dataset.gurmaoRuntime = VERSION;
 
   window.addEventListener('error', event => {
@@ -169,6 +214,7 @@
   });
   window.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('img').forEach(image => {if (image.complete && image.naturalWidth === 0) applyImageFallback(image);});
+    hideInventedDistances();
     setTimeout(() => {
       const loadingNodes = [...document.querySelectorAll('body *')].filter(element => !element.children.length && /načítání restaurací|načítám restaurace|načítám detail/i.test(element.textContent||''));
       if (loadingNodes.length) createRecoveryBanner('Načítání trvá neobvykle dlouho. Může být uložená stará verze stránky.');
