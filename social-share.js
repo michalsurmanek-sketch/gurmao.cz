@@ -142,33 +142,37 @@ window.shareRestaurant = restaurant => window.socialShare.shareRestaurant(restau
 import('./opening-hours-ui.js').catch(error => console.error('Opening hours module:', error));
 import('./daily-menu-ui.js').catch(error => console.error('Daily menu module:', error));
 
-// Feed: stejné kruhové akce jako na kartách restaurací.
+// Feed: stejný třísegmentový panel jako na kartách restaurací.
 (function initFeedCardActions(){
   if(!/\bfeed\.html$/.test(location.pathname) && !document.getElementById('feed') && !document.getElementById('grid')) return;
 
   const style=document.createElement('style');
   style.id='gurmao-feed-card-actions-style';
   style.textContent=`
-    .feed-card-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;position:relative;z-index:20}
-    .feed-card-action{width:38px;height:38px;flex:0 0 38px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.48);backdrop-filter:blur(8px);color:#fff;text-decoration:none;cursor:pointer;transition:transform .18s,border-color .18s,background .18s,color .18s}
-    .feed-card-action:hover,.feed-card-action:focus-visible{transform:translateY(-2px);border-color:rgba(216,173,52,.58);background:rgba(18,16,9,.82);color:#f3c94a;outline:none}
-    .feed-card-action svg{width:17px;height:17px;pointer-events:none}
-    .feed-card-action span{display:none!important}
+    .feed-card-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));position:relative;z-index:20;width:100%;height:56px;border-top:1px solid rgba(255,255,255,.13);background:#0d0e0c}
+    .feed-card-action{min-width:0;height:56px;border:0;border-radius:0;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;gap:9px;font:600 13px/1 Inter,sans-serif;text-decoration:none;cursor:pointer;transition:background .18s,color .18s}
+    .feed-card-action+.feed-card-action{border-left:1px solid rgba(255,255,255,.13)}
+    .feed-card-action:hover,.feed-card-action:focus-visible{background:rgba(216,173,52,.08);color:#f3c94a;outline:none}
+    .feed-card-action svg{width:18px;height:18px;flex:0 0 18px;pointer-events:none}
+    .feed-card-action span{display:inline!important;white-space:nowrap}
     .feed-card-action.save-btn{font-size:0!important}
     .feed-card-action.save-btn:before{content:'♡';font-size:22px;line-height:1}
+    .feed-card-action.save-btn:after{content:'Uložit';font:600 13px/1 Inter,sans-serif}
     .feed-card-action.save-btn[data-feed-saved='true']:before{content:'♥';color:#f3c94a}
-    .feed-card-action.feed-menu-btn{color:#f3c94a}
-    #feed .feed-card-actions{position:absolute;right:24px;bottom:24px}
-    #feed article>a .absolute.left-6{right:88px!important;bottom:30px!important}
-    #feed .save-btn{position:static!important;top:auto!important;right:auto!important;width:38px!important;height:38px!important;border-radius:50%!important}
-    #grid [data-restaurant-card] .feed-card-actions{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1)}
-    #grid [data-restaurant-card] .feed-card-actions .save-btn,#grid [data-restaurant-card] .feed-card-actions .share-btn{width:38px!important;height:38px!important;border-radius:50%!important}
-    @media(max-width:420px){#feed .feed-card-actions{right:16px;bottom:18px}#feed article>a .absolute.left-6{right:78px!important;bottom:24px!important}}
+    .feed-card-action.save-btn[data-feed-saved='true']:after{content:'Uloženo'}
+    #feed .feed-card-actions{position:absolute;left:0;right:0;bottom:0}
+    #feed article>a .absolute.left-6{right:24px!important;bottom:82px!important}
+    #feed .save-btn{position:static!important;top:auto!important;right:auto!important;width:auto!important;height:56px!important;border-radius:0!important}
+    #grid [data-restaurant-card]{display:flex;flex-direction:column}
+    #grid [data-restaurant-card]>.p-5{display:flex;flex:1;flex-direction:column;padding-bottom:0!important}
+    #grid [data-restaurant-card] .feed-card-actions{margin-top:auto;margin-left:-20px;width:calc(100% + 40px)}
+    #grid [data-restaurant-card] .feed-card-actions .save-btn,#grid [data-restaurant-card] .feed-card-actions .share-btn{width:auto!important;height:56px!important;border-radius:0!important}
+    @media(max-width:420px){.feed-card-action{gap:7px;font-size:12px}.feed-card-action.save-btn:after{font-size:12px}#feed article>a .absolute.left-6{left:18px!important;right:18px!important;bottom:78px!important}}
   `;
   document.head.appendChild(style);
 
-  const shareSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"></path></svg>';
-  const menuSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg>';
+  const shareSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"></path></svg><span>Sdílet</span>';
+  const menuSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg><span>Menu</span>';
 
   function restaurantData(card,href){
     const title=card.querySelector('.text-3xl,.text-xl')?.textContent?.trim()||'Restaurace';
