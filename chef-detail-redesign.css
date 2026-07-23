@@ -1,0 +1,58 @@
+/* GURMAO – prémiový detail kuchaře */
+:root{--chef-gold:#e3b934;--chef-gold-soft:#f6d66a;--chef-bg:#070807;--chef-panel:rgba(18,20,16,.88);--chef-line:rgba(255,255,255,.11)}
+
+#mainContent>section:first-child{min-height:min(820px,calc(100dvh - 72px))!important;isolation:isolate;overflow:hidden}
+#mainContent>section:first-child:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.24) 42%,#070807 100%),linear-gradient(90deg,rgba(0,0,0,.76) 0%,rgba(0,0,0,.2) 60%,rgba(0,0,0,.04) 100%)}
+#heroImage{transform:scale(1.015);filter:saturate(.9) contrast(1.04)}
+#mainContent>section:first-child>.relative{z-index:2;padding-bottom:64px!important}
+#chefRole{display:inline-flex;align-items:center;gap:8px;width:max-content;max-width:100%;padding:8px 13px;border:1px solid rgba(227,185,52,.42);border-radius:999px;background:rgba(16,14,7,.64);backdrop-filter:blur(12px);font-weight:700;letter-spacing:.04em}
+#chefName{max-width:900px;margin-top:16px;font-size:clamp(48px,8vw,92px)!important;line-height:.96!important;letter-spacing:-.045em;text-wrap:balance;text-shadow:0 12px 40px rgba(0,0,0,.46)}
+#chefBio{max-width:690px!important;font-size:clamp(15px,2vw,18px)!important;line-height:1.7!important;color:rgba(255,255,255,.76)!important}
+#mainContent>section:first-child .mt-8.grid{display:flex!important;flex-wrap:wrap;gap:10px!important}
+#followBtn,#cookbookBtn,#restaurantLink{min-height:50px;padding:0 20px!important;border:1px solid var(--chef-line);background:rgba(14,16,13,.72)!important;backdrop-filter:blur(14px);font-weight:700!important}
+#followBtn{background:linear-gradient(135deg,var(--chef-gold-soft),#d3a728)!important;color:#111!important;border:0!important}
+#followBtn:hover,#cookbookBtn:hover,#restaurantLink:hover{transform:translateY(-2px)}
+
+#mainContent>section.py-12{position:relative;padding-top:56px!important;padding-bottom:90px!important;background:radial-gradient(circle at 75% 10%,rgba(227,185,52,.08),transparent 35%),var(--chef-bg)}
+#mainContent>section.py-12>.max-w-6xl{gap:30px!important}
+#mainContent>section.py-12>.max-w-6xl>div{min-width:0}
+#mainContent>section.py-12 h2{font-size:clamp(29px,4vw,42px)!important;letter-spacing:-.025em}
+#chefDescription{font-size:16px!important;line-height:1.82!important;color:rgba(255,255,255,.7)!important}
+#chefSpecialties>div,#chefSignatureCard,#chefCuisinesCard,#chefRestaurantCard{border:1px solid var(--chef-line)!important;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018))!important;box-shadow:0 18px 55px rgba(0,0,0,.16)}
+#chefSpecialties>div{border-radius:16px!important;padding:15px!important;text-align:left!important}
+#chefSignatureCard,#chefCuisinesCard,#chefRestaurantCard{border-radius:20px!important;padding:22px!important}
+#relatedRestaurants>a{border:1px solid var(--chef-line);background:var(--chef-panel)!important;box-shadow:0 22px 70px rgba(0,0,0,.28);transition:transform .2s ease,border-color .2s ease}
+#relatedRestaurants>a:hover{transform:translateY(-4px);border-color:rgba(227,185,52,.4)}
+#relatedRestaurants .aspect-square{aspect-ratio:16/11!important}
+
+#followModal>div,#cookbookModal>div{max-height:calc(100dvh - 28px);overflow:auto;background:linear-gradient(155deg,#171914,#0c0d0b)!important;border-color:rgba(227,185,52,.24)!important}
+
+@media(max-width:767px){
+  body{background:var(--chef-bg)}
+  header>.max-w-6xl{padding-left:16px!important;padding-right:16px!important;padding-top:10px!important;padding-bottom:10px!important}
+  #mainContent>section:first-child{min-height:calc(100dvh - 65px)!important;align-items:flex-end}
+  #mainContent>section:first-child:after{background:linear-gradient(180deg,rgba(0,0,0,.04),rgba(0,0,0,.28) 38%,#070807 96%)}
+  #heroImage{background-position:center top!important}
+  #mainContent>section:first-child>.relative{padding-left:18px!important;padding-right:18px!important;padding-bottom:max(28px,calc(env(safe-area-inset-bottom) + 18px))!important}
+  #chefRole{font-size:11px!important;padding:7px 10px}
+  #chefName{font-size:clamp(43px,13vw,64px)!important;line-height:.98!important;margin-top:13px}
+  #chefBio{margin-top:12px!important;font-size:14px!important;line-height:1.58!important;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  #mainContent>section:first-child .mt-8.grid{display:grid!important;grid-template-columns:1fr 1fr!important;margin-top:20px!important;gap:8px!important}
+  #followBtn,#cookbookBtn,#restaurantLink{display:flex!important;width:100%;min-height:46px;padding:0 10px!important;font-size:12px!important}
+  #restaurantLink{grid-column:1/-1}
+  #mainContent>section.py-12{padding-top:34px!important;padding-bottom:60px!important}
+  #mainContent>section.py-12>.max-w-6xl{padding-left:16px!important;padding-right:16px!important;gap:20px!important}
+  #mainContent>section.py-12 h2{font-size:29px!important;margin-bottom:16px!important}
+  #chefDescription{font-size:14px!important;line-height:1.72!important;margin-bottom:24px!important}
+  #chefSpecialties{grid-template-columns:1fr 1fr!important;gap:9px!important;margin-bottom:26px!important}
+  #chefSpecialties>div{padding:12px!important}
+  #chefSignatureCard,#chefCuisinesCard,#chefRestaurantCard{padding:17px!important;margin-bottom:12px!important}
+  #relatedRestaurants .aspect-square{aspect-ratio:16/10!important}
+  #relatedRestaurants .p-6{padding:18px!important}
+}
+
+@media(max-width:380px){
+  #mainContent>section:first-child .mt-8.grid{grid-template-columns:1fr!important}
+  #restaurantLink{grid-column:auto}
+  #chefSpecialties{grid-template-columns:1fr!important}
+}
