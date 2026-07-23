@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="global.css">
   <link rel="stylesheet" href="toast.css">
   <link rel="stylesheet" href="admin-imports.css">
+  <link rel="stylesheet" href="admin-imports-bulk.css">
 </head>
 <body class="admin-imports-page">
   <script type="module" src="admin-guard.js"></script>
@@ -75,6 +76,19 @@
         </select>
       </div>
     </form>
+
+    <section class="bulk-actions" aria-label="Hromadné akce">
+      <div>
+        <strong>Hromadné akce</strong>
+        <small>Akce respektují vyhledávání a vybraný kraj. Možné duplicity se při hromadném zveřejnění přeskočí.</small>
+      </div>
+      <div class="bulk-actions__buttons">
+        <button class="btn btn-primary" id="bulkApproveBtn" type="button">✅ Schválit vše</button>
+        <button class="btn btn-success" id="bulkPublishBtn" type="button">🚀 Publikovat vše</button>
+        <button class="btn bulk-primary" id="bulkApprovePublishBtn" type="button">✅🚀 Schválit a publikovat vše</button>
+      </div>
+      <div class="bulk-progress hidden" id="bulkProgress" role="status" aria-live="polite"></div>
+    </section>
 
     <div class="info-banner" id="infoBanner">
       Bod 3 nic nezveřejňuje automaticky. Tlačítko „Zveřejnit“ se objeví až po schválení kandidáta.
@@ -183,5 +197,6 @@
   </dialog>
 
   <script type="module" src="admin-imports.js"></script>
+  <script type="module" src="admin-imports-bulk.js"></script>
 </body>
 </html>
