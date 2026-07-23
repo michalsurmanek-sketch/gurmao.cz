@@ -1,3 +1,51 @@
+// GURMAO browser recovery: remove legacy service workers/caches and repair malformed storage.
+(function recoverBrowserState() {
+  const safeJson = (key, fallback) => {
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw == null) return fallback;
+      return JSON.parse(raw);
+    } catch (error) {
+      console.warn(`Poškozená lokální data ${key} byla odstraněna.`, error);
+      localStorage.removeItem(key);
+      return fallback;
+    }
+  };
+
+  // app.js expects these values to contain valid JSON. Repair them before DOMContentLoaded.
+  const user = safeJson('gurmao_user', null);
+  const saved = safeJson('gurmao_saved', []);
+  if (user !== null && (typeof user !== 'object' || Array.isArray(user))) {
+    localStorage.removeItem('gurmao_user');
+  }
+  if (!Array.isArray(saved)) {
+    localStorage.setItem('gurmao_saved', '[]');
+  }
+
+  // Remove all legacy PWA registrations. The current website no longer needs cached app shells.
+  const removeLegacyPwa = async () => {
+    try {
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map(registration => registration.unregister()));
+      }
+      if ('caches' in window) {
+        const names = await caches.keys();
+        await Promise.all(names.map(name => caches.delete(name)));
+      }
+    } catch (error) {
+      console.warn('Vyčištění staré PWA cache se nezdařilo:', error);
+    }
+  };
+
+  removeLegacyPwa();
+  window.addEventListener('load', () => {
+    // app.js from an older cached version may try to register the worker again at load.
+    setTimeout(removeLegacyPwa, 250);
+    setTimeout(removeLegacyPwa, 1500);
+  }, { once: true });
+})();
+
 (function applyUnifiedFooterText() {
   const footerText = '© 2026 GURMAO.cz • Nejez. Prožij. • Objevujte nejlepší restaurace v celé České republice.';
 
