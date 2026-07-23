@@ -1,7 +1,7 @@
 // GURMAO.cz – síťový service worker bez offline cache.
 // Vynucuje aktuální soubory a přidává globální ochranu běhu do HTML stránek.
 
-const RUNTIME_VERSION = '20260723-5';
+const RUNTIME_VERSION = '20260723-6';
 
 self.addEventListener('install', () => {
   self.skipWaiting();
@@ -44,11 +44,16 @@ async function htmlWithRuntimeGuard(request) {
   if (!response.ok || !contentType.includes('text/html')) return response;
 
   let html = await response.text();
-  const guardTag = `<script src="/runtime-guard.js?v=${RUNTIME_VERSION}"></script>`;
+  const runtimeTags = [
+    `<script src="/runtime-guard.js?v=${RUNTIME_VERSION}"></script>`,
+    `<script src="/hide-price-level.js?v=${RUNTIME_VERSION}"></script>`
+  ].join('');
 
   if (!html.includes('/runtime-guard.js')) {
-    if (html.includes('</head>')) html = html.replace('</head>', `${guardTag}</head>`);
-    else html = `${guardTag}${html}`;
+    if (html.includes('</head>')) html = html.replace('</head>', `${runtimeTags}</head>`);
+    else html = `${runtimeTags}${html}`;
+  } else if (!html.includes('/hide-price-level.js')) {
+    if (html.includes('</head>')) html = html.replace('</head>', `<script src="/hide-price-level.js?v=${RUNTIME_VERSION}"></script></head>`);
   }
 
   const headers = new Headers(response.headers);
