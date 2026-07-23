@@ -138,105 +138,26 @@ window.socialShare = new SocialShareManager();
 document.addEventListener('DOMContentLoaded', () => window.socialShare.initializeShareButtons());
 window.shareRestaurant = restaurant => window.socialShare.shareRestaurant(restaurant);
 
-// Na stránkách restaurací doplní živý stav, otevírací dobu a dnešní menu.
-import('./opening-hours-ui.js').catch(error => console.error('Opening hours module:', error));
-import('./daily-menu-ui.js').catch(error => console.error('Daily menu module:', error));
+// Katalog kuchařů: ponechat na kartě pouze hlavní tlačítko „Profil kuchaře“.
+(function removeDuplicateChefDetailButtons(){
+  if(!/\bkuchar\.html$/.test(location.pathname)) return;
 
-// Feed: stejný spodní panel jako na kartách Restaurace — Zavolat, Trasa, Menu.
-(function initFeedRestaurantActions(){
-  if(!/\bfeed\.html$/.test(location.pathname) && !document.getElementById('feed') && !document.getElementById('grid')) return;
-
-  const style=document.createElement('style');
-  style.id='gurmao-feed-card-actions-style';
-  style.textContent=`
-    .feed-card-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;height:56px;border-top:1px solid rgba(255,255,255,.13);background:#0d0e0c;position:relative;z-index:20}
-    .feed-card-action{min-width:0;height:56px;border:0;border-radius:0;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;gap:9px;font:600 13px/1 Inter,sans-serif;text-decoration:none;cursor:pointer;transition:background .18s,color .18s}
-    .feed-card-action+.feed-card-action{border-left:1px solid rgba(255,255,255,.13)}
-    .feed-card-action:hover,.feed-card-action:focus-visible{background:rgba(216,173,52,.08);color:#f3c94a;outline:none}
-    .feed-card-action svg{width:18px;height:18px;flex:0 0 18px;pointer-events:none}
-    #feed .feed-card-actions{position:absolute;left:0;right:0;bottom:0}
-    #feed article>a .absolute.left-6{left:24px!important;right:24px!important;bottom:82px!important}
-    #feed article>.save-btn{display:none!important}
-    #grid [data-restaurant-card]{display:flex;flex-direction:column}
-    #grid [data-restaurant-card]>.p-5{display:flex;flex:1;flex-direction:column;padding-bottom:0!important}
-    #grid [data-restaurant-card] .feed-card-actions{margin-top:auto;margin-left:-20px;width:calc(100% + 40px)}
-    #grid [data-restaurant-card] .flex.gap-2.flex-shrink-0{display:none!important}
-    @media(max-width:420px){.feed-card-action{gap:7px;font-size:12px}#feed article>a .absolute.left-6{left:18px!important;right:18px!important;bottom:78px!important}}
-  `;
-  document.head.appendChild(style);
-
-  const phoneSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92z"></path></svg><span>Zavolat</span>';
-  const routeSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 12-9 12S3 17 3 10a9 9 0 1 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span>Trasa</span>';
-  const menuSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg><span>Menu</span>';
-
-  function readCardData(card){
-    const detail=card.querySelector(':scope > a[href], a[href]');
-    const href=detail?.getAttribute('href')||'feed.html';
-    const name=card.querySelector('.text-3xl,.text-xl')?.textContent?.trim()||'Restaurace';
-    const meta=card.querySelector('[class~="text-white/70"],[class~="text-white/60"]')?.textContent?.trim()||'';
-    const city=meta.split('·')[0]?.trim()||'';
-    const phone=card.dataset.phone||card.querySelector('[data-phone]')?.dataset.phone||'';
-    return {href,name,city,phone};
-  }
-
-  function makeAction(tag,className,html,href,label){
-    const node=document.createElement(tag);
-    node.className=`feed-card-action ${className}`;
-    node.innerHTML=html;
-    node.setAttribute('aria-label',label);
-    if(tag==='a') node.href=href;
-    return node;
-  }
-
-  function removeLegacyDetailButton(card){
-    const footer=card.querySelector('.swipe-menu .sticky.bottom-0');
-    if(!footer) return;
-    [...footer.querySelectorAll('a')].forEach(link=>{
-      if(/zobrazit celý detail/i.test(link.textContent||'')) link.remove();
-    });
-    const actions=footer.querySelector('.max-w-2xl');
-    if(actions) actions.classList.remove('space-y-3');
-  }
-
-  function buildBar(card,isMobile){
-    removeLegacyDetailButton(card);
-    if(card.dataset.feedRestaurantActionsReady==='true') return;
-    const {href,name,city,phone}=readCardData(card);
-    const detailBase=href.split('#')[0];
-    const bar=document.createElement('div');
-    bar.className='feed-card-actions';
-
-    const callHref=phone?`tel:${phone.replace(/[^+\d]/g,'')}`:`${detailBase}#kontakt`;
-    const routeHref=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${name} ${city}`.trim())}`;
-    const call=makeAction('a','feed-call-btn',phoneSvg,callHref,'Zavolat do restaurace');
-    const route=makeAction('a','feed-route-btn',routeSvg,routeHref,'Zobrazit trasu');
-    route.target='_blank';
-    route.rel='noopener';
-    const menu=makeAction(isMobile?'button':'a','feed-menu-btn',menuSvg,`${detailBase}#menu`,'Zobrazit menu');
-
-    if(isMobile){
-      menu.type='button';
-      menu.addEventListener('click',event=>{
-        event.preventDefault();
-        event.stopPropagation();
-        card.querySelector('.swipe-menu')?.classList.add('active');
-        const feed=document.getElementById('feed');
-        if(feed) feed.style.overflow='hidden';
+  const clean = () => {
+    document.querySelectorAll('.chef-card, .chef-row').forEach(card => {
+      card.querySelectorAll('a, button').forEach(control => {
+        if(control.classList.contains('chef-detail') || control.classList.contains('chef-image')) return;
+        const label = String(control.textContent || '').replace(/\s+/g, ' ').trim().toLocaleLowerCase('cs');
+        if(/^(detail|detail kuchaře|zobrazit detail)(\s*[→›»])?$/.test(label)) control.remove();
       });
-    }
+    });
+  };
 
-    bar.append(call,route,menu);
-    const content=card.querySelector('.p-5');
-    if(content) content.appendChild(bar); else card.appendChild(bar);
-    card.dataset.feedRestaurantActionsReady='true';
-  }
+  const start = () => {
+    clean();
+    const grid = document.getElementById('chefsGrid');
+    if(grid) new MutationObserver(clean).observe(grid,{childList:true,subtree:true});
+  };
 
-  function enhance(){
-    document.querySelectorAll('#feed article[data-restaurant]').forEach(card=>buildBar(card,true));
-    document.querySelectorAll('#grid [data-restaurant-card]').forEach(card=>buildBar(card,false));
-  }
-
-  const observer=new MutationObserver(enhance);
-  observer.observe(document.documentElement,{childList:true,subtree:true});
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',enhance,{once:true}); else enhance();
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
 })();
