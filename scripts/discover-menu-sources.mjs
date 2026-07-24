@@ -1,6 +1,7 @@
 const SUPABASE_URL = String(process.env.SUPABASE_URL || '').replace(/\/$/, '');
 const SERVICE_ROLE_KEY = String(process.env.SUPABASE_SERVICE_ROLE_KEY || '');
-const LIMIT = Math.max(1, Math.min(Number(process.env.MENU_DISCOVERY_LIMIT || 150), 500));
+const LIMIT = Math.max(1, Math.min(Number(process.env.MENU_DISCOVERY_LIMIT || 100), 500));
+const RETRY_DAYS = Math.max(1, Number(process.env.MENU_DISCOVERY_RETRY_DAYS || 30));
 
 if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
   console.error('Chybí SUPABASE_URL nebo SUPABASE_SERVICE_ROLE_KEY.');
@@ -93,15 +94,17 @@ async function probeCommonPaths(website) {
 }
 
 async function loadRestaurants() {
-  const select = 'id,name,website,menu_url,menu_auto_enabled';
-  return supabase(`restaurants?select=${select}&website=not.is.null&or=(menu_url.is.null,menu_url.eq.)&order=id.asc&limit=${LIMIT}`);
+  const cutoff = new Date(Date.now() - RETRY_DAYS * 86400000).toISOString();
+  const select = 'id,name,website,menu_url,menu_auto_enabled,menu_last_checked';
+  const retryFilter = `or=(menu_last_checked.is.null,menu_last_checked.lt.${encodeURIComponent(cutoff)})`;
+  return supabase(`restaurants?select=${select}&website=not.is.null&or=(menu_url.is.null,menu_url.eq.)&${retryFilter}&order=menu_last_checked.asc.nullsfirst&limit=${LIMIT}`);
 }
 
-async function save(row, menuUrl) {
+async function patch(row, values) {
   await supabase(`restaurants?id=eq.${encodeURIComponent(row.id)}`, {
     method: 'PATCH',
     headers: { Prefer: 'return=minimal' },
-    body: JSON.stringify({ menu_url: menuUrl, menu_auto_enabled: true, menu_last_checked: null })
+    body: JSON.stringify(values)
   });
 }
 
@@ -110,7 +113,12 @@ let found = 0, missing = 0, failed = 0;
 
 for (const row of rows || []) {
   const website = String(row.website || '').trim();
-  if (!/^https?:\/\//i.test(website)) { missing++; continue; }
+  const checkedAt = new Date().toISOString();
+  if (!/^https?:\/\//i.test(website)) {
+    await patch(row, { menu_last_checked: checkedAt }).catch(() => {});
+    missing++;
+    continue;
+  }
   try {
     const { html, finalUrl } = await fetchPage(website);
     let candidate = '';
@@ -120,18 +128,20 @@ for (const row of rows || []) {
     }
     if (!candidate) candidate = await probeCommonPaths(finalUrl || website);
     if (!candidate || /menicka\.cz/i.test(candidate)) {
+      await patch(row, { menu_last_checked: checkedAt });
       missing++;
       console.log(`– ${row.name}: menu nenalezeno`);
       continue;
     }
-    await save(row, candidate);
+    await patch(row, { menu_url: candidate, menu_auto_enabled: true, menu_last_checked: null });
     found++;
     console.log(`✓ ${row.name}: ${candidate}`);
   } catch (error) {
+    await patch(row, { menu_last_checked: checkedAt }).catch(() => {});
     failed++;
     console.warn(`✗ ${row.name}: ${error.message}`);
   }
 }
 
 console.log(JSON.stringify({ processed: rows?.length || 0, found, missing, failed }, null, 2));
-if (failed > 0 && found === 0) process.exitCode = 2;
+if (failed > 0 && found === 0 && missing === 0) process.exitCode = 2;
