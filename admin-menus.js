@@ -8,7 +8,7 @@ const refresh=document.getElementById('refresh');
 let restaurants=[];
 
 function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function websiteOf(r){return r.website||r.website_url||r.web_url||r.url||'';}
+function websiteOf(r){return r.website||r.website_url||r.web_url||r.url||r.homepage||r.site_url||'';}
 function sourceLabel(r){if(r.menu_source==='pdf'||/\.pdf(?:$|[?#])/i.test(r.menu_url||''))return 'PDF';if(r.menu_source==='website')return 'WEB';return r.menu_url?'URL':'—';}
 
 function render(){
@@ -34,7 +34,7 @@ function render(){
 
 async function load(){
   refresh.disabled=true;
-  const {data,error}=await supabase.from('restaurants').select('id,name,city,website,website_url,web_url,url,menu_url,menu_source,menu_last_checked').order('name').limit(2000);
+  const {data,error}=await supabase.from('restaurants').select('*').order('name').limit(2000);
   refresh.disabled=false;
   if(error){window.toast?.show(`Načtení selhalo: ${error.message}`,'error');return;}
   restaurants=data||[];render();
