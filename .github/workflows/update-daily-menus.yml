@@ -7,6 +7,7 @@ on:
   push:
     paths:
       - 'scripts/update-daily-menus-v2.mjs'
+      - 'scripts/clean-daily-menus.mjs'
       - '.github/workflows/update-daily-menus.yml'
 
 permissions:
@@ -36,3 +37,10 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           MENU_UPDATE_LIMIT: '500'
         run: node scripts/update-daily-menus-v2.mjs
+
+      - name: Vyčistit uložená menu
+        if: always()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/clean-daily-menus.mjs
