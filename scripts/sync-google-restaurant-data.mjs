@@ -103,8 +103,13 @@ let updated = 0, notFound = 0, noHours = 0, failed = 0;
 
 for (const row of rows || []) {
   try {
+    const checkedAt = new Date().toISOString();
     const placeId = await findPlace(row);
     if (!placeId) {
+      await patchRestaurant(row.id, {
+        opening_hours_verified_at: checkedAt,
+        opening_hours_source: 'google_not_found'
+      });
       notFound++;
       console.warn(`Nenalezeno: ${row.name}`);
       continue;
@@ -114,8 +119,8 @@ for (const row of rows || []) {
     const openingHours = normalizePeriods(periods);
     const updates = {
       google_place_id: placeId,
-      opening_hours_verified_at: new Date().toISOString(),
-      opening_hours_source: 'google'
+      opening_hours_verified_at: checkedAt,
+      opening_hours_source: openingHours ? 'google' : 'google_no_hours'
     };
     if (openingHours) updates.opening_hours = openingHours;
     if (Number.isFinite(place?.rating)) updates.google_rating = Number(place.rating);
@@ -144,4 +149,4 @@ for (const row of rows || []) {
 }
 
 console.log(JSON.stringify({ processed: rows?.length || 0, updated, notFound, noHours, failed }, null, 2));
-if (failed > 0 && updated === 0) process.exitCode = 2;
+if (failed > 0 && updated === 0 && notFound === 0) process.exitCode = 2;
