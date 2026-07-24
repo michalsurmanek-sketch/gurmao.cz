@@ -30,6 +30,21 @@ const DAYS = [
   { name: 'sobota', re: /sobota/i }
 ];
 
+const NOISE_PATTERNS = [
+  /^(?:alergeny?|allergens?|seznam\s+alergenů|list\s+of\s+allergens?)\b/i,
+  /^(?:obiloviny|korýši|vejce|ryby|podzemnice|sójov[eé]\s+boby|ml[eé]ko|skoř[aá]pkov[eé]\s+plody|celer|hořčice|sezamov[aá]\s+semena|oxid\s+siřičit[yý]|vlčí\s+bob|měkk[yý]ši)\b/i,
+  /^(?:cereals?\s+containing\s+gluten|crustaceans?|eggs?|fish|peanuts?|soybeans?|milk|nuts?|celery|mustard|sesame\s+seeds?|sulphur\s+dioxide|sulf(?:ur|ite)|lupines?|molluscs?)\b/i,
+  /hmotnost\s+masa\s+v\s+syrov[eé]m\s+stavu/i,
+  /gram[aá]ž\s+masa\s+je\s+uvedena/i,
+  /zm[eě]na\s+j[ií]deln[ií]ho\s+l[ií]stku\s+vyhrazena/i,
+  /telefon|rezervace|www\.|https?:|facebook|instagram|otev[ií]rac|kontakt|adresa|provozn[ií]\s+doba/i,
+  /dobrou\s+chuť|přejeme\s+v[aá]m/i,
+  /^(?:česk[eé]\s+speciality|czech\s+specialties|hlavn[ií]\s+j[ií]dla|main\s+courses?|hotov[aá]\s+j[ií]dla|speciality|nab[ií]dka)\s*$/i
+];
+
+const ENGLISH_TRANSLATION = /\b(?:sirloin|beef|pork|chicken|turkey|duck|goose|lamb|veal|fish|salmon|trout|tuna|goulash|soup|broth|dumplings?|potato|rice|pasta|noodles|salad|cheese|cream|sauce|grilled|fried|roasted|baked|bread|vegetables?|dessert|cake|pancake)\b/i;
+const FOOD_WORDS = /\b(?:hov[eě]z[ií]|vepřov|kuřec|krůt|kachn|hus|jehn[eě][cč]|telec|ryb|losos|pstruh|tuň[aá]k|gul[aá]š|sv[ií][cč]kov|řízek|r[ií]zek|steak|burger|těstovin|špaget|rizoto|knedl[ií]k|brambor|r[yý]ž|om[aá][cč]k|sal[aá]t|smažen|pečen|grilovan|dušen|plněn|vývar|pol[eé]vk|kr[eé]m|dezert|kol[aá][cč]|buch|pala[cč]ink)\b/i;
+
 function pragueDate() {
   return new Intl.DateTimeFormat('sv-SE', {
     timeZone: 'Europe/Prague', year: 'numeric', month: '2-digit', day: '2-digit'
@@ -81,36 +96,59 @@ function selectTodaySection(value) {
   const todayStart = dayStarts.find(entry => entry.day === pragueWeekday());
   if (todayStart) {
     const next = dayStarts.find(entry => entry.index > todayStart.index);
-    return lines.slice(todayStart.index, next?.index ?? Math.min(lines.length, todayStart.index + 45)).join('\n').slice(0, 12000);
+    return lines.slice(todayStart.index, next?.index ?? Math.min(lines.length, todayStart.index + 60)).join('\n').slice(0, 14000);
   }
 
   const menuPatterns = [/denn[ií]\s+menu/i, /poledn[ií]\s+menu/i, /ob[eě]dov[eé]\s+menu/i, /menu\s+dne/i, /dne[sš]n[ií]\s+nab[ií]dka/i];
   const start = lines.findIndex(line => menuPatterns.some(pattern => pattern.test(line)));
-  const selected = start >= 0 ? lines.slice(start, start + 70) : lines.slice(0, 70);
-  const result = selected.join('\n').slice(0, 12000);
-  return `${today.name}\n${result}`;
+  const selected = start >= 0 ? lines.slice(start, start + 100) : lines.slice(0, 100);
+  return `${today.name}\n${selected.join('\n').slice(0, 14000)}`;
+}
+
+function stripAllergenCodes(value) {
+  return String(value || '')
+    .replace(/\s*[\/|]\s*\d{1,2}(?:\s*[,.;]\s*\d{1,2})*\s*[\/]?\s*$/g, '')
+    .replace(/\s*\(\s*\d{1,2}(?:\s*[,.;]\s*\d{1,2})*\s*\)\s*$/g, '')
+    .replace(/\s*[·•|]\s*$/g, '')
+    .trim();
 }
 
 function parsePrice(line) {
-  const match = line.match(/(?:^|\s)(\d{2,4}(?:[,.]\d{1,2})?)\s*(?:Kč|,-|CZK)\s*$/i);
-  if (!match) return { name: line.trim(), price: '' };
+  const match = line.match(/(?:^|\s|[·•|])(?:od\s*)?(\d{2,4}(?:[,.]\d{1,2})?)\s*(?:Kč|,-|CZK)\s*$/i);
+  if (!match) return { name: stripAllergenCodes(line.trim()), price: '' };
   return {
-    name: line.slice(0, match.index).replace(/[.\-–—\s]+$/, '').trim(),
+    name: stripAllergenCodes(line.slice(0, match.index).replace(/[.\-–—·•|\s]+$/, '').trim()),
     price: `${match[1].replace('.', ',')} Kč`
   };
 }
 
 function normalizeItemName(value) {
-  return String(value || '')
+  return stripAllergenCodes(String(value || '')
     .replace(/^\s*(?:menu|jídlo|jidlo|hlavní jídlo|hlavni jidlo)?\s*\d+\s*[.)\-:]\s*/i, '')
     .replace(/^[-•●▪*]+\s*/, '')
+    .replace(/^\d{2,4}\s*g\s+/i, '')
     .replace(/\s+/g, ' ')
-    .trim();
+    .trim());
+}
+
+function isNoise(line) {
+  if (NOISE_PATTERNS.some(pattern => pattern.test(line))) return true;
+  if (/^\d{1,2}(?:\s*[,.;]\s*\d{1,2}){1,12}$/.test(line)) return true;
+  if (/^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ\s/]{3,80}$/.test(line) && !FOOD_WORDS.test(line)) return true;
+  return false;
+}
+
+function looksEnglishTranslation(line) {
+  if (!ENGLISH_TRANSLATION.test(line)) return false;
+  if (/Kč|CZK|,-|\d{2,4}\s*g\b/i.test(line)) return false;
+  const czechChars = (line.match(/[áčďéěíňóřšťúůýž]/gi) || []).length;
+  return czechChars === 0;
 }
 
 function parseMenu(text) {
   const lines = text.split('\n').map(value => value.trim()).filter(Boolean);
   let soup = '';
+  let expectSoup = false;
   const mains = [];
   const desserts = [];
   const drinks = [];
@@ -121,35 +159,60 @@ function parseMenu(text) {
     if (!line || line.length < 4 || line.length > 350) continue;
     if (/denn[ií]\s+menu|poledn[ií]\s+menu|menu\s+dne|ob[eě]dov[eé]\s+menu/i.test(line)) continue;
     if (DAYS.some(day => day.re.test(line)) && line.length < 90) continue;
-    if (/telefon|rezervace|www\.|https?:|facebook|instagram|otev[ií]rac/i.test(line)) continue;
+    if (isNoise(line) || looksEnglishTranslation(line)) continue;
+
+    if (/^(?:pol[eé]vka|soup)\s*[:\-–—]?\s*$/i.test(line)) {
+      expectSoup = true;
+      continue;
+    }
 
     const item = parsePrice(line);
     item.name = normalizeItemName(item.name);
-    if (!item.name || seen.has(item.name.toLocaleLowerCase('cs'))) continue;
+    if (!item.name) continue;
+    const key = item.name.toLocaleLowerCase('cs');
+    if (seen.has(key)) continue;
 
-    if (/^pol[eé]vka\b/i.test(line) || (/pol[eé]vka/i.test(line) && !soup)) {
-      soup = item.name.replace(/^pol[eé]vka\s*[:\-–—]?\s*/i, '').trim() || item.name;
-      if (item.price) soup += ` · ${item.price}`;
-      seen.add(item.name.toLocaleLowerCase('cs'));
+    if (/^pol[eé]vka\b/i.test(line) || expectSoup) {
+      const candidate = item.name.replace(/^pol[eé]vka\s*[:\-–—]?\s*/i, '').trim() || item.name;
+      if (candidate.length >= 4 && !isNoise(candidate)) {
+        soup = candidate + (item.price ? ` · ${item.price}` : '');
+        seen.add(key);
+      }
+      expectSoup = false;
       continue;
     }
-    if (/dezert|mou[cč]n[ií]k|z[aá]kusek|sladk[aá]/i.test(line)) desserts.push(item);
-    else if (/n[aá]poj|limon[aá]da|k[aá]va|pivo|v[ií]no/i.test(line) && item.price) drinks.push(item);
-    else if (item.price || /^\d+\s*[.)]/.test(original) || /\d{2,4}\s*g\b/i.test(line) || line.length > 18) mains.push(item);
+
+    const hasPrice = Boolean(item.price);
+    const hasWeight = /\b\d{2,4}\s*g\b/i.test(line);
+    const isNumbered = /^\s*(?:menu|j[ií]dlo)?\s*\d+\s*[.)\-:]/i.test(original);
+    const looksLikeFood = FOOD_WORDS.test(item.name);
+
+    if (/dezert|mou[cč]n[ií]k|z[aá]kusek|sladk[aá]|pala[cč]ink|dort/i.test(line)) desserts.push(item);
+    else if (/n[aá]poj|limon[aá]da|k[aá]va|pivo|v[ií]no/i.test(line) && hasPrice) drinks.push(item);
+    else if (hasPrice || hasWeight || isNumbered || looksLikeFood) mains.push(item);
     else continue;
-    seen.add(item.name.toLocaleLowerCase('cs'));
+
+    seen.add(key);
   }
 
-  return { soup: soup.slice(0, 500), mains: mains.slice(0, 20), desserts: desserts.slice(0, 8), drinks: drinks.slice(0, 8) };
+  return {
+    soup: soup.slice(0, 500),
+    mains: mains.slice(0, 20),
+    desserts: desserts.slice(0, 8),
+    drinks: drinks.slice(0, 8)
+  };
 }
 
 function menuQuality(parsed, rawText) {
   let score = 0;
+  const pricedMains = parsed.mains.filter(item => item.price).length;
   if (parsed.soup) score += 2;
   score += Math.min(parsed.mains.length, 5) * 2;
+  score += Math.min(pricedMains, 4);
   score += Math.min(parsed.desserts.length, 2);
   if (/Kč|CZK|,-/.test(rawText)) score += 2;
   if (/pol[eé]vka|menu|j[ií]dlo/i.test(rawText)) score += 1;
+  if (parsed.mains.some(item => isNoise(item.name) || looksEnglishTranslation(item.name))) score -= 8;
   return score;
 }
 
@@ -184,7 +247,7 @@ async function fetchWithTimeout(url) {
   try {
     const response = await fetch(url, {
       redirect: 'follow', signal: controller.signal,
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; GURMAO-menu-bot/2.0; +https://gurmao.cz)', Accept: 'text/html,application/pdf,image/*,text/plain;q=0.9,*/*;q=0.2' }
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; GURMAO-menu-bot/2.1; +https://gurmao.cz)', Accept: 'text/html,application/pdf,image/*,text/plain;q=0.9,*/*;q=0.2' }
     });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return response;
@@ -280,7 +343,7 @@ for (const restaurant of restaurants) {
     const result = await fetchMenu(url);
     const parsed = parseMenu(result.text);
     const quality = menuQuality(parsed, result.text);
-    if (quality < 4 || parsed.mains.length === 0) throw new Error(`Menu nebylo dostatečně spolehlivě rozpoznáno (skóre ${quality})`);
+    if (quality < 5 || parsed.mains.length === 0) throw new Error(`Menu nebylo dostatečně spolehlivě rozpoznáno (skóre ${quality})`);
     await saveMenu(restaurant, result, parsed);
     await updateQueue(restaurant.id, 'done');
     stats.updated++;
