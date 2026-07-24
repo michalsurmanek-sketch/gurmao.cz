@@ -1,0 +1,29 @@
+/* Zlatá posuvná lišta v rozbaleném menu karty restaurace */
+.card-menu-panel {
+  overflow-y: auto !important;
+  scrollbar-width: thin;
+  scrollbar-color: #d8ad34 #151613;
+}
+
+.card-menu-panel::-webkit-scrollbar {
+  width: 10px;
+}
+
+.card-menu-panel::-webkit-scrollbar-track {
+  background: #151613;
+  border-radius: 10px;
+}
+
+.card-menu-panel::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #f3c94a 0%, #d8ad34 100%);
+  border: 2px solid #151613;
+  border-radius: 10px;
+}
+
+.card-menu-panel::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ffd85c 0%, #e0b437 100%);
+}
+
+.card-menu-panel::-webkit-scrollbar-corner {
+  background: #151613;
+}
