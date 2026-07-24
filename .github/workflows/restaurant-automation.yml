@@ -1,0 +1,54 @@
+name: Restaurant automation
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 4 * * *'
+    - cron: '15 8 * * 1-5'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: restaurant-automation
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+      GOOGLE_SYNC_LIMIT: 150
+      GOOGLE_REFRESH_DAYS: 7
+      MENU_DISCOVERY_LIMIT: 200
+      MENU_UPDATE_LIMIT: 200
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate required secrets
+        shell: bash
+        run: |
+          test -n "$SUPABASE_URL" || (echo "Missing SUPABASE_URL" && exit 1)
+          test -n "$SUPABASE_SERVICE_ROLE_KEY" || (echo "Missing SUPABASE_SERVICE_ROLE_KEY" && exit 1)
+          test -n "$GOOGLE_PLACES_API_KEY" || (echo "Missing GOOGLE_PLACES_API_KEY" && exit 1)
+
+      - name: Refresh Google restaurant data
+        run: node scripts/sync-google-restaurant-data.mjs
+
+      - name: Discover official menu pages
+        if: always()
+        run: node scripts/discover-menu-sources.mjs
+
+      - name: Update daily menus
+        if: always()
+        run: node scripts/update-daily-menus.mjs
