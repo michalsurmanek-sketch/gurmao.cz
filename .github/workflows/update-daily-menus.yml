@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: '15 4 * * 1-5'
   workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/update-daily-menus.mjs'
+      - '.github/workflows/update-daily-menus.yml'
 
 permissions:
   contents: read
@@ -20,6 +24,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - name: Nainstalovat čtení PDF
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
 
       - name: Aktualizovat denní menu
         env:
