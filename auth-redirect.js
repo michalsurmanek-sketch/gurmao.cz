@@ -167,6 +167,7 @@ async function initializeAdminQuickActions() {
       ${adminQuickActionCard({ href: 'admin-imports.html', icon: '📥', title: 'Schválit restaurace', description: 'Kontrola, úprava a publikování importovaných podniků', badgeId: 'quickRestaurantImports', accent: 'gold' })}
       ${adminQuickActionCard({ href: 'admin-imports.html?status=approved', icon: '🚀', title: 'Publikovat restaurace', description: 'Otevře již schválené podniky čekající na zveřejnění', badgeId: 'quickApprovedImports', accent: 'red' })}
       ${adminQuickActionCard({ href: 'admin-chef-imports.html', icon: '👨‍🍳', title: 'Schválit kuchaře', description: 'Kontrola a zveřejnění importovaných profilů kuchařů', badgeId: 'quickChefImports', accent: 'green' })}
+      ${adminQuickActionCard({ href: 'admin-menus.html', icon: '🍽️', title: 'Denní menu', description: 'Najít, ověřit a uložit webové nebo PDF menu restaurací', accent: 'blue' })}
       ${adminQuickActionCard({ href: '#', icon: '➕', title: 'Přidat restauraci ručně', description: 'Přejde přímo na formulář nové restaurace', accent: 'purple' }).replace('href="#"', 'href="#" data-admin-tab="add"')}
       ${adminQuickActionCard({ href: 'admin-contact.html', icon: '📬', title: 'Zprávy a žádosti', description: 'Dotazy uživatelů, restaurací a partnerů', accent: 'blue' })}
       ${adminQuickActionCard({ href: 'index.html', icon: '🌐', title: 'Zobrazit ostrý web', description: 'Otevře hlavní stránku Gurmao pro rychlou kontrolu', accent: 'neutral', external: true })}
