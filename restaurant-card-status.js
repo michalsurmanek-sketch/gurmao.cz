@@ -7,7 +7,7 @@
   const style = document.createElement('style');
   style.id = 'gurmao-card-status-style';
   style.textContent = `
-    .card-title-line{display:flex!important;align-items:center!important;gap:8px!important;min-width:0}
+    .card-title-line{display:flex!important;align-items:center!important;gap:8px!important;min-width:0;flex-wrap:nowrap!important}
     .card-title-line .card-title{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .card-title-line .verified{display:none!important}
     .card-title-line .opening-status{flex:0 0 auto;display:inline-flex!important;align-items:center;min-height:22px;padding:3px 8px;border-radius:999px;font-size:10px!important;font-weight:700!important;line-height:1.1;white-space:nowrap}
@@ -17,8 +17,9 @@
     .card-title-line .opening-status.unknown{color:rgba(255,255,255,.58)!important;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14)}
     .card-bottom .opening-status{display:none!important}
     @media(max-width:520px){
-      .card-title-line{align-items:flex-start!important;flex-wrap:wrap}
-      .card-title-line .card-title{flex-basis:100%;white-space:normal}
+      .card-title-line{align-items:center!important;flex-wrap:nowrap!important;gap:6px!important}
+      .card-title-line .card-title{flex:1 1 auto!important;min-width:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+      .card-title-line .opening-status{flex:0 0 auto!important;padding:3px 7px!important;font-size:9px!important;max-width:46%;overflow:hidden;text-overflow:ellipsis}
     }
   `;
   document.head.appendChild(style);
