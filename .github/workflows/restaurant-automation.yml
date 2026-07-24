@@ -3,8 +3,7 @@ name: Restaurant automation
 on:
   workflow_dispatch:
   schedule:
-    - cron: '15 4 * * *'
-    - cron: '15 8 * * 1-5'
+    - cron: '*/15 4-18 * * *'
 
 permissions:
   contents: read
@@ -16,15 +15,16 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 35
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
-      GOOGLE_SYNC_LIMIT: 150
+      GOOGLE_SYNC_LIMIT: 100
       GOOGLE_REFRESH_DAYS: 7
-      MENU_DISCOVERY_LIMIT: 200
-      MENU_UPDATE_LIMIT: 200
+      MENU_DISCOVERY_LIMIT: 100
+      MENU_DISCOVERY_RETRY_DAYS: 30
+      MENU_UPDATE_LIMIT: 100
 
     steps:
       - name: Checkout
