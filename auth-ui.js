@@ -153,18 +153,12 @@
     document.body.appendChild(script);
   };
 
-  const loadScript = (js, version) => {
-    const script = document.createElement('script');
-    script.src = `${js}?v=${version}`;
-    document.body.appendChild(script);
-  };
-
   if (path.endsWith('/kuchar.html')) {
     loadEnhancement('chef-redesign.css', 'chef-redesign.js', '4');
   }
 
   if (path.endsWith('/restaurace.html')) {
-    loadScript('restaurant-card-status.js', '20260724-1');
+    loadEnhancement('restaurant-gold-scrollbar.css', 'restaurant-card-status.js', '20260724-2');
   }
 
   // restaurace.html má nyní vlastní kompletní rozvržení a ovládání.
