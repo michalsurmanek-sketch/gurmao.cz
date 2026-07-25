@@ -106,16 +106,26 @@
     loginLinkMobile?.classList.add('hidden');
 
     const userName = user.user_metadata?.name || user.email?.split('@')[0] || 'Uživatel';
-    const userNameDesktop = document.getElementById('userNameDesktop');
     const userNameMobile = document.getElementById('userNameMobile');
-    if (userNameDesktop) userNameDesktop.textContent = userName;
     if (userNameMobile) userNameMobile.textContent = `Přihlášen: ${userName}`;
+
+    const userDropdownBtn = document.getElementById('userDropdownBtn');
+    if (userDropdownBtn) {
+      userDropdownBtn.innerHTML = '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path></svg>';
+      userDropdownBtn.setAttribute('aria-label', `Uživatelský účet: ${userName}`);
+      userDropdownBtn.setAttribute('title', 'Můj účet');
+      userDropdownBtn.style.width = '44px';
+      userDropdownBtn.style.height = '44px';
+      userDropdownBtn.style.padding = '0';
+      userDropdownBtn.style.display = 'grid';
+      userDropdownBtn.style.placeItems = 'center';
+      userDropdownBtn.style.borderRadius = '50%';
+    }
 
     if (user.app_metadata?.role === 'admin') {
       document.querySelectorAll('[data-admin-only]').forEach(link => link.classList.remove('hidden'));
     }
 
-    const userDropdownBtn = document.getElementById('userDropdownBtn');
     const userDropdownMenu = document.getElementById('userDropdownMenu');
     if (userDropdownBtn && userDropdownMenu) {
       userDropdownBtn.addEventListener('click', event => {
