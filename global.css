@@ -252,3 +252,209 @@ header a.brand:hover { opacity: 1; transform: translateY(-1px); }
     font-size: 10px !important;
   }
 }
+
+
+/* How Gurmao works — coherent journey 2026-07-25 */
+.how-section {
+  position: relative !important;
+  overflow: hidden !important;
+  padding: 88px 0 82px !important;
+  border-top: 1px solid rgba(255,255,255,.1);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(212,175,55,.11), transparent 34%),
+    linear-gradient(180deg,#090a09 0%,#060706 100%) !important;
+}
+.how-section::after { content: none !important; display: none !important; }
+.how-section .how-shell {
+  width: min(1160px, calc(100% - 48px)) !important;
+  max-width: none !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+}
+.how-section .how-head {
+  max-width: 760px !important;
+  margin: 0 auto 48px !important;
+  text-align: center;
+}
+.how-section .how-eyebrow {
+  margin-bottom: 14px;
+  color: #e2bd3d;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+.how-section h2 {
+  margin: 0 !important;
+  color: #fff !important;
+  font-size: clamp(2.55rem,5vw,4.7rem) !important;
+  font-weight: 500 !important;
+  line-height: 1.02 !important;
+  letter-spacing: -.035em !important;
+}
+.how-section .how-intro {
+  max-width: 620px;
+  margin: 18px auto 0 !important;
+  color: rgba(255,255,255,.62) !important;
+  font-size: 1.05rem !important;
+  line-height: 1.65 !important;
+}
+.how-section .how-steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 18px;
+}
+.how-section .how-steps::before {
+  content: "";
+  position: absolute;
+  top: 48px;
+  left: 16%;
+  right: 16%;
+  height: 1px;
+  background: linear-gradient(90deg,transparent,rgba(212,175,55,.55) 14%,rgba(212,175,55,.55) 86%,transparent);
+}
+.how-section .how-card {
+  position: relative;
+  min-height: 310px !important;
+  overflow: hidden;
+  display: flex !important;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 28px !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  border-radius: 22px !important;
+  background: linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.03),0 20px 50px rgba(0,0,0,.18);
+  transition: transform .25s ease,border-color .25s ease,background .25s ease;
+}
+.how-section .how-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(212,175,55,.42) !important;
+  background: linear-gradient(145deg,rgba(212,175,55,.075),rgba(255,255,255,.02)) !important;
+}
+.how-section .how-card::before,
+.how-section .how-card::after { content: none !important; display: none !important; }
+.how-section .how-card-top {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 44px;
+}
+.how-section .how-number {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  margin: 0 !important;
+  display: grid !important;
+  place-items: center;
+  border: 1px solid rgba(212,175,55,.48) !important;
+  border-radius: 50%;
+  background: #11120f !important;
+  color: #e6c13c !important;
+  font: 700 13px/1 Inter,sans-serif !important;
+  letter-spacing: .05em;
+}
+.how-section .how-icon {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(212,175,55,.32);
+  border-radius: 17px;
+  background: rgba(212,175,55,.07);
+  color: #e6c13c;
+}
+.how-section .how-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.how-section .how-card h3 {
+  margin: 0 !important;
+  color: #fff !important;
+  font-size: clamp(1.65rem,2vw,2rem) !important;
+  font-weight: 500 !important;
+  line-height: 1.12 !important;
+}
+.how-section .how-card p {
+  margin: 13px 0 0 !important;
+  color: rgba(255,255,255,.62) !important;
+  font-size: .98rem !important;
+  line-height: 1.62 !important;
+}
+.how-section .how-example {
+  margin-top: auto;
+  padding-top: 22px;
+  color: rgba(230,193,60,.84);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+.how-section .how-action {
+  margin-top: 34px !important;
+  text-align: center;
+}
+.how-section .how-action a {
+  min-width: 230px;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 28px !important;
+  border: 1px solid #d4af37;
+  border-radius: 999px;
+  background: linear-gradient(135deg,#f0cd4a,#d6aa24) !important;
+  color: #090a09 !important;
+  font: 700 15px/1 Inter,sans-serif !important;
+  box-shadow: 0 12px 30px rgba(212,175,55,.2);
+  transition: transform .2s ease,filter .2s ease;
+}
+.how-section .how-action a:hover { transform: translateY(-2px); filter: brightness(1.06); }
+.how-section .how-action span {
+  display: block;
+  margin-top: 13px;
+  color: rgba(255,255,255,.42);
+  font-size: 12px;
+}
+@media (max-width: 767px) {
+  .how-section { padding: 60px 0 56px !important; }
+  .how-section .how-shell { width: min(100% - 32px,560px) !important; }
+  .how-section .how-head { margin-bottom: 32px !important; text-align: left; }
+  .how-section h2 { font-size: 2.65rem !important; }
+  .how-section .how-intro { margin-top: 14px !important; font-size: .98rem !important; }
+  .how-section .how-steps { grid-template-columns: 1fr; gap: 14px; }
+  .how-section .how-steps::before {
+    top: 52px;
+    bottom: 52px;
+    left: 48px;
+    right: auto;
+    width: 1px;
+    height: auto;
+    background: linear-gradient(180deg,transparent,rgba(212,175,55,.42) 10%,rgba(212,175,55,.42) 90%,transparent);
+  }
+  .how-section .how-card {
+    min-height: 0 !important;
+    padding: 22px 22px 22px 88px !important;
+  }
+  .how-section .how-card-top {
+    position: absolute;
+    top: 22px;
+    left: 22px;
+    width: 46px;
+    margin: 0;
+  }
+  .how-section .how-icon { display: none; }
+  .how-section .how-card h3 { font-size: 1.55rem !important; }
+  .how-section .how-card p { font-size: .93rem !important; }
+  .how-section .how-example { padding-top: 15px; }
+  .how-section .how-action { margin-top: 26px !important; }
+  .how-section .how-action a { width: 100%; min-width: 0; }
+}
