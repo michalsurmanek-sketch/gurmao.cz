@@ -1,4 +1,4 @@
-import './home-city-header.js';
+void import('./home-city-header.js').catch(error => console.error('Home city header failed:', error));
 
 // Moderní sdílení pro GURMAO.cz
 class SocialShareManager {
