@@ -27,3 +27,8 @@
 .card-menu-panel::-webkit-scrollbar-corner {
   background: #151613;
 }
+
+/* Cenová relace na hlavní kartě se nezobrazuje. */
+.restaurant-card .price {
+  display: none !important;
+}
