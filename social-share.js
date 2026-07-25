@@ -1,4 +1,5 @@
 void import('./home-city-header.js').catch(error => console.error('Home city header failed:', error));
+void import('./performance-fix.js').catch(error => console.error('Performance fix failed:', error));
 
 // Moderní sdílení pro GURMAO.cz
 class SocialShareManager {
