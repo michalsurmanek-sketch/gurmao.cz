@@ -1,3 +1,5 @@
+import './home-city-header.js';
+
 // Moderní sdílení pro GURMAO.cz
 class SocialShareManager {
   constructor() {
