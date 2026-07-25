@@ -33,11 +33,10 @@ function injectStyles() {
   style.id = 'gurmao-home-city-header-style';
   style.textContent = `
     .gurmao-city-wrap{position:relative;display:flex;align-items:center;flex:0 0 auto}
-    .gurmao-city-btn{display:flex;align-items:center;gap:7px;padding:0;border:0;border-radius:0;background:transparent;color:rgba(255,255,255,.88);font:500 14px/1 Inter,sans-serif;cursor:pointer;white-space:nowrap;transition:color .18s}
+    .gurmao-city-btn{height:auto;max-width:230px;display:flex;align-items:center;gap:8px;padding:0;border:0;border-radius:0;background:transparent;color:rgba(255,255,255,.9);font:600 13px/1 Inter,sans-serif;cursor:pointer;white-space:nowrap;transition:color .18s}
     .gurmao-city-btn:hover,.gurmao-city-btn[aria-expanded="true"]{color:#f3c94a;background:transparent}
-    .gurmao-city-btn .gurmao-city-pin{color:#f3c94a}
-    .gurmao-city-btn .gurmao-city-name{max-width:170px;overflow:hidden;text-overflow:ellipsis}
-    .gurmao-city-menu{position:absolute;right:0;top:calc(100% + 14px);z-index:500;width:min(320px,calc(100vw - 28px));padding:10px;border:1px solid rgba(216,173,52,.28);border-radius:18px;background:rgba(10,11,9,.98);box-shadow:0 24px 70px rgba(0,0,0,.58);backdrop-filter:blur(18px)}
+    .gurmao-city-btn .gurmao-city-name{max-width:180px;overflow:hidden;text-overflow:ellipsis}
+    .gurmao-city-menu{position:absolute;right:0;top:calc(100% + 18px);z-index:500;width:min(320px,calc(100vw - 28px));padding:10px;border:1px solid rgba(216,173,52,.28);border-radius:18px;background:rgba(10,11,9,.98);box-shadow:0 24px 70px rgba(0,0,0,.58);backdrop-filter:blur(18px)}
     .gurmao-city-menu[hidden]{display:none!important}
     .gurmao-city-title{padding:8px 10px 10px;color:rgba(255,255,255,.54);font-size:11px;text-transform:uppercase;letter-spacing:.11em}
     .gurmao-city-option{width:100%;min-height:43px;display:flex;align-items:center;gap:10px;padding:0 11px;border:0;border-radius:11px;background:transparent;color:#fff;text-align:left;cursor:pointer;font:500 13px Inter,sans-serif}
@@ -45,8 +44,8 @@ function injectStyles() {
     .gurmao-city-custom{display:flex;gap:7px;margin-top:8px;padding-top:9px;border-top:1px solid rgba(255,255,255,.1)}
     .gurmao-city-custom input{min-width:0;flex:1;height:40px;padding:0 11px;border:1px solid rgba(255,255,255,.15);border-radius:10px;background:#151613;color:#fff;outline:none}
     .gurmao-city-custom button{height:40px;padding:0 13px;border:0;border-radius:10px;background:#d8ad34;color:#111;font-weight:700;cursor:pointer}
-    @media(max-width:1000px){.gurmao-city-btn .gurmao-city-name{max-width:110px}}
-    @media(max-width:767px){.gurmao-city-wrap{margin-left:auto;margin-right:8px}.gurmao-city-btn{font-size:0}.gurmao-city-btn .gurmao-city-pin{font-size:18px}.gurmao-city-btn .gurmao-city-name{display:none}.gurmao-city-menu{right:-52px}}
+    @media(max-width:1000px){.gurmao-city-btn{max-width:180px}.gurmao-city-btn .gurmao-city-name{max-width:125px}}
+    @media(max-width:767px){.gurmao-city-wrap{margin-left:auto;margin-right:8px}.gurmao-city-btn{width:42px;justify-content:center}.gurmao-city-btn .gurmao-city-name{display:none}.gurmao-city-menu{right:-52px}}
   `;
   document.head.appendChild(style);
 }
@@ -70,13 +69,22 @@ function init() {
   const anchor = desktopNav || mobileControls || header.firstElementChild;
   if (!anchor) return;
 
+  const city = readCity();
+  if (/restaurace\.html$/i.test(location.pathname) && city) {
+    const url = new URL(location.href);
+    if (!url.searchParams.get('city')) {
+      url.searchParams.set('city', city);
+      location.replace(url.href);
+      return;
+    }
+  }
+
   const wrap = document.createElement('div');
   wrap.id = 'gurmaoCityHeader';
   wrap.className = 'gurmao-city-wrap';
-  const city = readCity();
   wrap.innerHTML = `
     <button class="gurmao-city-btn" type="button" aria-expanded="false" aria-haspopup="menu">
-      <span class="gurmao-city-pin" aria-hidden="true">📍</span><span class="gurmao-city-name">${escapeHtml(city || 'Vybrat město')}</span>
+      <span aria-hidden="true">📍</span><span class="gurmao-city-name">${escapeHtml(city || 'Vybrat město')}</span>
     </button>
     <div class="gurmao-city-menu" role="menu" hidden>
       <div class="gurmao-city-title">Domovské město</div>
