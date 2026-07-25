@@ -951,3 +951,39 @@ header a.brand:hover { opacity: 1; transform: translateY(-1px); }
     padding-bottom:20px!important;
   }
 }
+
+
+/* Premium footer legal metadata — 2026-07-25 */
+.footer-brand-meta {
+  margin-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  color: #747474;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.footer-brand-meta a {
+  color: #8b8b8b;
+  transition: color 0.2s ease;
+}
+
+.footer-brand-meta a:hover {
+  color: #e5bf3f;
+}
+
+.footer-bottom-original {
+  justify-content: flex-end !important;
+}
+
+@media (max-width: 640px) {
+  .footer-brand-meta {
+    gap: 10px 14px;
+  }
+
+  .footer-bottom-original {
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
