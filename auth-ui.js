@@ -111,6 +111,7 @@
     loginLinkMobile?.classList.add('hidden');
 
     const userName = user.user_metadata?.name || user.email?.split('@')[0] || 'Uživatel';
+    const userEmail = user.email || '';
     const userNameMobile = document.getElementById('userNameMobile');
     if (userNameMobile) userNameMobile.textContent = `Přihlášen: ${userName}`;
 
@@ -124,9 +125,31 @@
       if (icon) icon.style.cssText = 'display:block;width:22px;height:22px;flex:0 0 22px;margin:0;transform:none;position:static';
     }
 
+    const userDropdownMenu = document.getElementById('userDropdownMenu');
+    if (userDropdownMenu) {
+      const adminItem = user.app_metadata?.role === 'admin'
+        ? '<a href="admin.html" class="block px-5 py-3 hover:bg-white/10 transition"><div class="font-semibold text-sm">🛠 Admin panel</div></a>'
+        : '';
+
+      userDropdownMenu.innerHTML = `
+        <div class="px-5 py-4 border-b border-white/10">
+          <div class="font-semibold text-white">👤 ${userName}</div>
+          <div class="mt-1 text-xs text-white/55 break-all">${userEmail}</div>
+        </div>
+        <div class="py-1 border-b border-white/10">
+          <a href="collections.html" class="block px-5 py-3 hover:bg-white/10 transition"><div class="font-semibold text-sm">⭐ Můj výběr</div></a>
+          <a href="profile.html" class="block px-5 py-3 hover:bg-white/10 transition"><div class="font-semibold text-sm">👤 Profil</div></a>
+          <a href="profile.html#settings" class="block px-5 py-3 hover:bg-white/10 transition"><div class="font-semibold text-sm">⚙️ Nastavení</div></a>
+          ${adminItem}
+        </div>
+        <button data-logout-btn class="w-full text-left px-5 py-4 hover:bg-gurmaored/20 hover:text-gurmaored transition">
+          <div class="font-semibold text-sm">🚪 Odhlásit se</div>
+        </button>
+      `;
+    }
+
     if (user.app_metadata?.role === 'admin') document.querySelectorAll('[data-admin-only]').forEach(link => link.classList.remove('hidden'));
 
-    const userDropdownMenu = document.getElementById('userDropdownMenu');
     if (userDropdownBtn && userDropdownMenu) {
       userDropdownBtn.addEventListener('click', event => {
         event.stopPropagation();
