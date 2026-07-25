@@ -1,0 +1,231 @@
+/* GURMAO admin — unified premium interface */
+body.admin-page{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 88% 0%,rgba(212,175,55,.10),transparent 26%),
+    linear-gradient(180deg,#090a09 0%,#060706 100%);
+  color:#fff;
+}
+body.admin-page .admin-site-header{
+  height:74px;
+  background:rgba(7,8,7,.92)!important;
+  border-color:rgba(255,255,255,.09)!important;
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  box-shadow:0 12px 40px rgba(0,0,0,.22);
+}
+body.admin-page .admin-header-inner{
+  height:100%;
+  padding-top:0!important;
+  padding-bottom:0!important;
+}
+body.admin-page .admin-header-actions{
+  gap:10px!important;
+}
+body.admin-page .admin-lock-label{
+  display:inline-flex;
+  align-items:center;
+  min-height:36px;
+  padding:0 12px;
+  border:1px solid rgba(239,68,68,.26);
+  border-radius:999px;
+  background:rgba(239,68,68,.07);
+  letter-spacing:.08em;
+}
+body.admin-page #notificationBtn,
+body.admin-page #logoutBtn{
+  min-height:40px;
+  border-color:rgba(255,255,255,.16)!important;
+  background:rgba(255,255,255,.035);
+}
+body.admin-page #notificationBtn:hover,
+body.admin-page #logoutBtn:hover{
+  border-color:rgba(212,175,55,.5)!important;
+  color:#e4bd3d!important;
+}
+body.admin-page .admin-main{
+  width:min(1320px,calc(100% - 48px));
+  max-width:none!important;
+  padding-left:0!important;
+  padding-right:0!important;
+  padding-top:34px!important;
+}
+body.admin-page .admin-overview{
+  position:relative;
+  overflow:hidden;
+  margin-bottom:24px!important;
+  padding:28px;
+  border:1px solid rgba(212,175,55,.22);
+  border-radius:24px;
+  background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+  box-shadow:0 20px 55px rgba(0,0,0,.22);
+}
+body.admin-page .admin-overview::after{
+  content:"";
+  position:absolute;
+  width:220px;
+  height:220px;
+  top:-110px;
+  right:-70px;
+  border-radius:50%;
+  background:rgba(212,175,55,.1);
+  filter:blur(35px);
+  pointer-events:none;
+}
+body.admin-page .admin-overview h1{
+  margin:0 0 8px!important;
+  font-size:clamp(2.35rem,4vw,3.6rem)!important;
+  line-height:1!important;
+  letter-spacing:-.035em;
+}
+body.admin-page .admin-overview p{
+  color:rgba(255,255,255,.56)!important;
+}
+body.admin-page .admin-stats{
+  position:relative;
+  z-index:1;
+  gap:8px!important;
+  scrollbar-width:thin;
+  scrollbar-color:#d4af37 transparent;
+}
+body.admin-page .admin-stats>div{
+  min-width:104px;
+  padding:11px 14px!important;
+  border-color:rgba(255,255,255,.1)!important;
+  border-radius:14px!important;
+  background:rgba(0,0,0,.24)!important;
+}
+body.admin-page .admin-stats>div>div:first-child{
+  font-family:Inter,sans-serif;
+  font-size:1.25rem!important;
+}
+body.admin-page .admin-tabs{
+  position:sticky;
+  top:74px;
+  z-index:35;
+  gap:6px!important;
+  margin:0 0 26px!important;
+  padding:10px;
+  border:1px solid rgba(255,255,255,.1)!important;
+  border-radius:18px;
+  background:rgba(10,11,10,.94);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  box-shadow:0 16px 36px rgba(0,0,0,.24);
+  scrollbar-width:thin;
+  scrollbar-color:#d4af37 transparent;
+}
+body.admin-page .admin-tabs .tab-btn{
+  min-height:42px;
+  padding:0 14px!important;
+  border:1px solid transparent!important;
+  border-radius:11px;
+  color:rgba(255,255,255,.64);
+  background:transparent;
+  font-weight:600!important;
+  transition:.2s ease;
+}
+body.admin-page .admin-tabs .tab-btn:hover{
+  border-color:rgba(255,255,255,.12)!important;
+  color:#fff;
+  background:rgba(255,255,255,.045);
+}
+body.admin-page .admin-tabs .tab-btn.active{
+  border-color:rgba(212,175,55,.5)!important;
+  color:#f0cb45!important;
+  background:rgba(212,175,55,.11);
+}
+body.admin-page .tab-content{
+  min-height:280px;
+}
+body.admin-page input:not([type="checkbox"]):not([type="radio"]),
+body.admin-page textarea,
+body.admin-page select,
+body.admin-page .custom-select-trigger{
+  min-height:48px;
+  border-color:rgba(255,255,255,.12)!important;
+  border-radius:13px!important;
+  background:rgba(255,255,255,.04)!important;
+  color:#fff!important;
+  transition:border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+body.admin-page input:not([type="checkbox"]):not([type="radio"]):focus,
+body.admin-page textarea:focus,
+body.admin-page select:focus,
+body.admin-page .custom-select-trigger:hover{
+  outline:none!important;
+  border-color:rgba(212,175,55,.7)!important;
+  background:rgba(255,255,255,.055)!important;
+  box-shadow:0 0 0 3px rgba(212,175,55,.08);
+}
+body.admin-page textarea{
+  line-height:1.6;
+}
+body.admin-page .tab-content>div[class*="max-w-3xl"],
+body.admin-page .tab-content>div[class*="max-w-4xl"]{
+  max-width:920px!important;
+}
+body.admin-page .tab-content form{
+  color:#fff;
+}
+body.admin-page .tab-content form label{
+  color:rgba(255,255,255,.72);
+}
+body.admin-page .tab-content form>div,
+body.admin-page .tab-content form>fieldset{
+  scroll-margin-top:155px;
+}
+body.admin-page #restaurantsList>div,
+body.admin-page #chefsList>div,
+body.admin-page #postsList>div,
+body.admin-page #collectionsList>div,
+body.admin-page #gearList>div,
+body.admin-page #reviewsList>div{
+  border-color:rgba(255,255,255,.11)!important;
+  border-radius:18px!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.015))!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.16);
+  transition:transform .2s ease,border-color .2s ease;
+}
+body.admin-page #restaurantsList>div:hover,
+body.admin-page #chefsList>div:hover,
+body.admin-page #postsList>div:hover,
+body.admin-page #collectionsList>div:hover,
+body.admin-page #gearList>div:hover,
+body.admin-page #reviewsList>div:hover{
+  transform:translateY(-2px);
+  border-color:rgba(212,175,55,.35)!important;
+}
+body.admin-page .custom-options{
+  overflow:hidden;
+  border-color:rgba(212,175,55,.34)!important;
+  background:#10110f!important;
+  box-shadow:0 22px 60px rgba(0,0,0,.55)!important;
+}
+body.admin-page button[type="submit"]{
+  min-height:48px;
+  box-shadow:0 10px 26px rgba(212,175,55,.14);
+}
+body.admin-page footer{
+  margin-top:70px;
+  background:#070807;
+}
+@media(max-width:767px){
+  body.admin-page .admin-site-header{height:66px}
+  body.admin-page .admin-header-inner{padding-left:16px!important;padding-right:16px!important}
+  body.admin-page .admin-header-actions{gap:6px!important}
+  body.admin-page .admin-lock-label{display:none}
+  body.admin-page #logoutBtn{width:40px;min-width:40px;padding:0!important;font-size:0}
+  body.admin-page #logoutBtn::before{content:"↪";font-size:18px}
+  body.admin-page .admin-main{width:calc(100% - 28px);padding-top:18px!important}
+  body.admin-page .admin-overview{padding:22px 18px;border-radius:20px}
+  body.admin-page .admin-overview h1{font-size:2.25rem!important}
+  body.admin-page .admin-overview{display:block!important}
+  body.admin-page .admin-stats{margin-top:20px;width:100%!important;overflow-x:auto;padding-bottom:5px!important}
+  body.admin-page .admin-tabs{top:66px;margin-bottom:20px!important;padding:8px;border-radius:15px}
+  body.admin-page .admin-tabs .tab-btn{min-height:40px;padding:0 12px!important;font-size:12px!important}
+  body.admin-page .tab-content [class*="p-8"]{padding:20px!important}
+  body.admin-page .tab-content [class*="rounded-3xl"]{border-radius:20px!important}
+  body.admin-page #searchReviews{min-width:190px}
+  body.admin-page footer{margin-top:45px}
+}
