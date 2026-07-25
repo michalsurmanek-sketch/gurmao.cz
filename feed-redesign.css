@@ -1,45 +1,40 @@
-/* GURMAO – redesign feedu */
-body.feed-directory-redesign{background:#08090a;background-image:radial-gradient(circle at 82% 7%,rgba(212,175,55,.08),transparent 28%)}
-body.feed-directory-redesign header{background:rgba(8,9,10,.92)!important;border-color:rgba(255,255,255,.08)!important}
+/* GURMAO – unified premium feed redesign */
+body.feed-directory-redesign{background:#08090a;color:#fff;background-image:radial-gradient(circle at 88% 8%,rgba(243,201,74,.10),transparent 25%)}
+body.feed-directory-redesign header{background:rgba(8,9,10,.9)!important;border-color:rgba(255,255,255,.08)!important;backdrop-filter:blur(18px)}
 body.feed-directory-redesign header>div{max-width:1280px!important}
-body.feed-directory-redesign header nav>a[href="feed.html"]{color:#e8c43a;position:relative}
-body.feed-directory-redesign header nav>a[href="feed.html"]:after{content:"";position:absolute;left:0;right:0;bottom:-22px;height:2px;background:#d4af37;border-radius:2px}
-
-@media(min-width:768px){
-  body.feed-directory-redesign main.hidden.md\:block>div{max-width:1280px!important;padding-top:0!important}
-  body.feed-directory-redesign .feed-hero{margin:0 -24px;padding:58px 32px 88px;position:relative;overflow:hidden;background:#08090a;border-bottom:0}
-  body.feed-directory-redesign .feed-hero:before{content:"";position:absolute;inset:0;background:url("images/gurmao-hero.webp") center right/cover no-repeat;z-index:0}
-  body.feed-directory-redesign .feed-hero:after{content:"";position:absolute;inset:-2px;z-index:1;pointer-events:none;background:linear-gradient(90deg,#08090a 0%,rgba(8,9,10,.97) 36%,rgba(8,9,10,.62) 67%,rgba(8,9,10,.18) 100%),linear-gradient(180deg,#08090a 0%,transparent 15%,transparent 76%,#08090a 100%);box-shadow:inset 28px 0 34px #08090a,inset -18px 0 28px rgba(8,9,10,.72)}
-  body.feed-directory-redesign .feed-hero>*{position:relative;z-index:2}
-  body.feed-directory-redesign .feed-hero h1{font-size:clamp(3rem,5vw,5rem)!important;line-height:1.02;letter-spacing:-.04em}
-  body.feed-directory-redesign .feed-hero p{font-size:1.08rem!important;color:rgba(255,255,255,.78)!important;max-width:640px;margin-top:12px!important}
-  body.feed-directory-redesign .feed-hero-actions{gap:10px!important}
-  body.feed-directory-redesign .feed-hero-actions a{border-radius:14px!important;padding:14px 20px!important;font-weight:700;background:rgba(5,6,7,.72)!important;border:1px solid rgba(255,255,255,.22)!important;backdrop-filter:blur(10px);box-shadow:0 10px 28px rgba(0,0,0,.32);text-shadow:0 1px 2px rgba(0,0,0,.8)}
-  body.feed-directory-redesign .feed-hero-actions a:hover{background:rgba(212,175,55,.18)!important;border-color:rgba(212,175,55,.65)!important;color:#f1cc4b!important}
-  body.feed-directory-redesign .feed-filter-panel{position:relative;margin-top:-48px;padding:18px;border:1px solid rgba(212,175,55,.32);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012)),rgba(10,11,12,.96);box-shadow:0 24px 70px rgba(0,0,0,.38);z-index:3}
-  body.feed-directory-redesign .feed-filter-row{margin-top:0!important;display:grid!important;grid-template-columns:minmax(280px,1fr) 150px 150px 118px;gap:12px!important;align-items:stretch}
-  body.feed-directory-redesign #searchInput,body.feed-directory-redesign #cityFilterBtn,body.feed-directory-redesign #vibeFilterBtn,body.feed-directory-redesign #clearFilters{height:54px;border-radius:15px!important;background:rgba(255,255,255,.045)!important;border-color:rgba(255,255,255,.12)!important}
-  body.feed-directory-redesign #searchInput{padding-left:48px!important}
-  body.feed-directory-redesign #cityFilterBtn,body.feed-directory-redesign #vibeFilterBtn{min-width:0!important;width:100%!important;padding-left:16px!important;padding-right:30px!important;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  body.feed-directory-redesign #clearFilters{padding:0 14px!important;white-space:nowrap}
-  body.feed-directory-redesign #clearFilters:hover{border-color:rgba(210,70,70,.7)!important;background:rgba(210,70,70,.08)!important}
-  body.feed-directory-redesign .feed-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)}
-  body.feed-directory-redesign #resultsCount{margin:0!important;padding:9px 13px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.025);color:rgba(255,255,255,.82)!important}
-  body.feed-directory-redesign .feed-toolbar-note{font-size:.88rem;color:rgba(255,255,255,.45)}
-  body.feed-directory-redesign #grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:18px!important;margin-top:28px!important}
-  body.feed-directory-redesign #grid>article,body.feed-directory-redesign #grid>div{border:1px solid rgba(255,255,255,.11);border-radius:20px!important;overflow:hidden;background:linear-gradient(160deg,rgba(255,255,255,.045),rgba(255,255,255,.012)),#101112!important;box-shadow:0 16px 38px rgba(0,0,0,.23);transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
-  body.feed-directory-redesign #grid>article:hover,body.feed-directory-redesign #grid>div:hover{transform:translateY(-4px);border-color:rgba(212,175,55,.45);box-shadow:0 24px 50px rgba(0,0,0,.36)}
-  body.feed-directory-redesign #grid img{transition:transform .45s ease}
-  body.feed-directory-redesign #grid>article:hover img,body.feed-directory-redesign #grid>div:hover img{transform:scale(1.035)}
-  body.feed-directory-redesign #loadMoreBtn button{min-width:280px;border-radius:14px!important;padding:15px 26px!important;background:transparent!important;color:#e8c43a!important;border:1px solid rgba(212,175,55,.48);box-shadow:none!important}
-  body.feed-directory-redesign #loadMoreBtn button:hover{background:rgba(212,175,55,.09)!important}
-}
-
-@media(min-width:768px) and (max-width:1120px){body.feed-directory-redesign #grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}body.feed-directory-redesign .feed-filter-row{grid-template-columns:minmax(240px,1fr) 140px 140px 108px}}
-
-@media(max-width:767px){
-  body.feed-directory-redesign #feed article{background:#08090a}
-  body.feed-directory-redesign #feed article>a:after{content:"Otevřít detail";position:absolute;left:24px;bottom:26px;padding:11px 16px;border-radius:999px;background:#d9b332;color:#08090a;font-size:13px;font-weight:800;z-index:3}
-  body.feed-directory-redesign #feed article>a>div:nth-child(4){bottom:88px!important}
-  body.feed-directory-redesign .save-btn{top:18px!important;right:18px!important;width:46px!important;height:46px!important;background:rgba(5,5,5,.68)!important;border-color:rgba(255,255,255,.28)!important}
-}
+body.feed-directory-redesign header nav>a[href="feed.html"]{color:#f3c94a!important;position:relative}
+body.feed-directory-redesign header nav>a[href="feed.html"]:after{content:"";position:absolute;left:0;right:0;bottom:-22px;height:2px;background:#f3c94a;border-radius:2px}
+body.feed-directory-redesign .feed-shell{max-width:1280px!important}
+body.feed-directory-redesign .feed-hero{position:relative;overflow:hidden;border:1px solid rgba(243,201,74,.23);border-radius:32px;padding:58px 52px 64px!important;margin-top:18px!important;background:#0b0c0d;box-shadow:0 26px 80px rgba(0,0,0,.38)}
+body.feed-directory-redesign .feed-hero:before{content:"";position:absolute;inset:0;background:url("images/gurmao-hero.webp") center right/cover no-repeat;opacity:.72}
+body.feed-directory-redesign .feed-hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#08090a 0%,rgba(8,9,10,.94) 40%,rgba(8,9,10,.58) 72%,rgba(8,9,10,.20) 100%),linear-gradient(180deg,transparent 60%,rgba(8,9,10,.35));pointer-events:none}
+body.feed-directory-redesign .feed-hero>*{position:relative;z-index:2}
+body.feed-directory-redesign .feed-kicker{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid rgba(243,201,74,.32);border-radius:999px;background:rgba(8,9,10,.58);color:#f3c94a;font-size:.76rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+body.feed-directory-redesign .feed-hero h1{font-size:clamp(2.9rem,5.6vw,5.6rem)!important;line-height:.96!important;letter-spacing:-.045em!important;max-width:760px;margin:18px 0 16px!important}
+body.feed-directory-redesign .feed-hero p{font-size:1.08rem!important;line-height:1.7!important;color:rgba(255,255,255,.72)!important;max-width:650px;margin:0!important}
+body.feed-directory-redesign .feed-hero-actions{display:flex!important;flex-wrap:wrap;gap:10px!important;margin-top:28px}
+body.feed-directory-redesign .feed-hero-actions a{border-radius:14px!important;padding:14px 20px!important;font-weight:800!important;background:rgba(8,9,10,.72)!important;border:1px solid rgba(255,255,255,.18)!important;backdrop-filter:blur(12px);box-shadow:0 12px 30px rgba(0,0,0,.26)}
+body.feed-directory-redesign .feed-hero-actions a:first-child{background:#f3c94a!important;color:#090909!important;border-color:#f3c94a!important}
+body.feed-directory-redesign .feed-hero-actions a:hover{transform:translateY(-2px);border-color:#f3c94a!important;color:#f3c94a!important}
+body.feed-directory-redesign .feed-hero-actions a:first-child:hover{color:#090909!important;filter:brightness(1.05)}
+body.feed-directory-redesign .feed-category-strip{display:flex;gap:10px;overflow-x:auto;padding:6px 2px 10px;margin:24px 0 0;scrollbar-width:thin;scrollbar-color:#f3c94a transparent}
+body.feed-directory-redesign .feed-category-chip{flex:0 0 auto;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.045);color:#fff;border-radius:999px;padding:11px 16px;font-weight:700;font-size:.9rem;transition:.2s}
+body.feed-directory-redesign .feed-category-chip:hover,body.feed-directory-redesign .feed-category-chip.is-active{background:rgba(243,201,74,.12);border-color:#f3c94a;color:#f3c94a}
+body.feed-directory-redesign .feed-filter-panel{position:relative;margin-top:24px;padding:18px;border:1px solid rgba(243,201,74,.24);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.018)),rgba(10,11,12,.96);box-shadow:0 22px 60px rgba(0,0,0,.30)}
+body.feed-directory-redesign .feed-filter-row{margin-top:0!important;display:grid!important;grid-template-columns:minmax(280px,1fr) 170px 170px 120px;gap:12px!important;align-items:stretch}
+body.feed-directory-redesign #searchInput,body.feed-directory-redesign #cityFilterBtn,body.feed-directory-redesign #vibeFilterBtn,body.feed-directory-redesign #clearFilters{height:54px;border-radius:15px!important;background:rgba(255,255,255,.045)!important;border-color:rgba(255,255,255,.12)!important}
+body.feed-directory-redesign #searchInput:focus,body.feed-directory-redesign #cityFilterBtn:hover,body.feed-directory-redesign #vibeFilterBtn:hover{border-color:#f3c94a!important}
+body.feed-directory-redesign #searchInput{padding-left:48px!important}
+body.feed-directory-redesign #cityFilterBtn,body.feed-directory-redesign #vibeFilterBtn{min-width:0!important;width:100%!important;padding-left:16px!important;padding-right:30px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.feed-directory-redesign .feed-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)}
+body.feed-directory-redesign #resultsCount{margin:0!important;padding:9px 13px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.025);color:rgba(255,255,255,.82)!important}
+body.feed-directory-redesign .feed-toolbar-note{font-size:.88rem;color:rgba(255,255,255,.45)}
+body.feed-directory-redesign #grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:20px!important;margin-top:30px!important}
+body.feed-directory-redesign #grid>article,body.feed-directory-redesign #grid>div{border:1px solid rgba(255,255,255,.11);border-radius:24px!important;overflow:hidden;background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.014)),#101112!important;box-shadow:0 16px 38px rgba(0,0,0,.24);transition:transform .24s ease,border-color .24s ease,box-shadow .24s ease}
+body.feed-directory-redesign #grid>article:hover,body.feed-directory-redesign #grid>div:hover{transform:translateY(-5px);border-color:rgba(243,201,74,.52);box-shadow:0 26px 56px rgba(0,0,0,.38)}
+body.feed-directory-redesign #grid img{transition:transform .5s ease}
+body.feed-directory-redesign #grid>article:hover img,body.feed-directory-redesign #grid>div:hover img{transform:scale(1.04)}
+body.feed-directory-redesign #loadMoreBtn button{min-width:280px;border-radius:14px!important;padding:15px 26px!important;background:transparent!important;color:#f3c94a!important;border:1px solid rgba(243,201,74,.5)!important;box-shadow:none!important}
+body.feed-directory-redesign #loadMoreBtn button:hover{background:rgba(243,201,74,.09)!important}
+@media(min-width:768px) and (max-width:1120px){body.feed-directory-redesign #grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}body.feed-directory-redesign .feed-filter-row{grid-template-columns:minmax(240px,1fr) 145px 145px 110px}}
+@media(max-width:767px){body.feed-directory-redesign .feed-hero{margin:14px!important;padding:34px 22px 38px!important;border-radius:26px}body.feed-directory-redesign .feed-hero:before{background-position:65% center;opacity:.48}body.feed-directory-redesign .feed-hero h1{font-size:clamp(2.35rem,12vw,3.4rem)!important}body.feed-directory-redesign .feed-category-strip{margin:18px 14px 0;padding-bottom:8px}body.feed-directory-redesign .feed-filter-panel{margin:18px 14px 0;padding:14px;border-radius:20px}body.feed-directory-redesign .feed-filter-row{display:grid!important;grid-template-columns:1fr!important}body.feed-directory-redesign .feed-toolbar{align-items:flex-start;flex-direction:column}body.feed-directory-redesign #feed article{background:#08090a}body.feed-directory-redesign #feed article>a:after{content:"Otevřít detail";position:absolute;left:24px;bottom:26px;padding:11px 16px;border-radius:999px;background:#f3c94a;color:#08090a;font-size:13px;font-weight:800;z-index:3}body.feed-directory-redesign #feed article>a>div:nth-child(4){bottom:88px!important}body.feed-directory-redesign .save-btn{top:18px!important;right:18px!important;width:46px!important;height:46px!important;background:rgba(5,5,5,.68)!important;border-color:rgba(255,255,255,.28)!important}}
