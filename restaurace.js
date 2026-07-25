@@ -65,29 +65,20 @@ function scrollToNearbyResults(){
   const toolbar=document.querySelector('.toolbar');
   const firstCard=$('restaurantsList')?.firstElementChild;
   if(!header||!toolbar||!firstCard)return;
-
   const headerHeight=Math.ceil(header.getBoundingClientRect().height);
   const toolbarTop=toolbar.getBoundingClientRect().top+window.scrollY;
   const targetTop=Math.max(0,Math.round(toolbarTop-headerHeight));
-
   window.scrollTo({top:targetTop,left:0,behavior:'smooth'});
-
   window.setTimeout(()=>{
     const correctedToolbarTop=toolbar.getBoundingClientRect().top+window.scrollY;
     const correctedTarget=Math.max(0,Math.round(correctedToolbarTop-headerHeight));
-    if(Math.abs(window.scrollY-correctedTarget)>3){
-      window.scrollTo({top:correctedTarget,left:0,behavior:'smooth'});
-    }
+    if(Math.abs(window.scrollY-correctedTarget)>3)window.scrollTo({top:correctedTarget,left:0,behavior:'smooth'});
   },420);
 }
 
 function scheduleNearbyResultsScroll(){
   const run=()=>requestAnimationFrame(()=>requestAnimationFrame(scrollToNearbyResults));
-  if(document.fonts?.ready){
-    document.fonts.ready.then(run).catch(run);
-  }else{
-    run();
-  }
+  if(document.fonts?.ready)document.fonts.ready.then(run).catch(run);else run();
 }
 
 async function loadAll(){if(state.loading)return;state.loading=true;$('resultCount').textContent='Načítání restaurací…';try{let all=[],from=0,batchSize=500,total=Infinity;while(from<total){const {data,error,count}=await supabase.from('restaurants').select('*',{count:'exact'}).order('created_at',{ascending:false}).range(from,from+batchSize-1);if(error)throw error;all.push(...(data||[]));total=count??all.length;if(!data?.length||all.length>=total)break;from+=batchSize;}state.all=all;fillSelects();applyFilters();}catch(e){console.error(e);$('restaurantsList').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:70px 0;color:#e58b8b">Restaurace se nepodařilo načíst.</div>';$('resultCount').textContent='Chyba načítání';}finally{state.loading=false;}}
@@ -168,60 +159,49 @@ function bind(){
   searchInput.value=state.search;
   searchInput.addEventListener('input',event=>{
     clearTimeout(timer);
-    timer=setTimeout(()=>{
-      state.search=clean(event.target.value);
-      applyFilters();
-    },250);
+    timer=setTimeout(()=>{state.search=clean(event.target.value);applyFilters();},250);
   });
   searchInput.addEventListener('keydown',event=>{
-    if(event.key==='Enter'){
-      state.search=clean(event.target.value);
-      applyFilters();
-    }
+    if(event.key==='Enter'){state.search=clean(event.target.value);applyFilters();}
   });
   searchBtn.addEventListener('click',()=>{
     state.search=clean(searchInput.value);
     applyFilters();
     scheduleNearbyResultsScroll();
   });
-  cuisineFilter.addEventListener('change',event=>{
-    state.cuisine=event.target.value;
-    applyFilters();
-  });
-  localityFilter.addEventListener('change',event=>{
-    state.city=event.target.value;
-    applyFilters();
-  });
-  restaurantSort.addEventListener('change',event=>{
-    state.sort=event.target.value;
-    applyFilters(false);
-  });
+  cuisineFilter.addEventListener('change',event=>{state.cuisine=event.target.value;applyFilters();});
+  localityFilter.addEventListener('change',event=>{state.city=event.target.value;state.userLocation=null;if(state.sort==='distance'){state.sort='recommended';restaurantSort.value='recommended';}applyFilters();});
+  restaurantSort.addEventListener('change',event=>{state.sort=event.target.value;applyFilters(false);});
   moreFiltersBtn.addEventListener('click',()=>filters.classList.toggle('open'));
   document.querySelectorAll('#filters [data-vibe]').forEach(button=>{
-    button.addEventListener('click',()=>{
-      state.vibe=VIBE_MAP[button.dataset.vibe]||'all';
-      applyFilters();
-    });
+    button.addEventListener('click',()=>{state.vibe=VIBE_MAP[button.dataset.vibe]||'all';applyFilters();});
   });
   document.querySelectorAll('.per-page-btn').forEach(button=>{
-    button.addEventListener('click',()=>{
-      state.perPage=Number(button.dataset.count);
-      state.shown=state.perPage;
-      render();
-    });
+    button.addEventListener('click',()=>{state.perPage=Number(button.dataset.count);state.shown=state.perPage;render();});
   });
   document.querySelectorAll('[data-restaurant-view]').forEach(button=>{
-    button.addEventListener('click',()=>{
-      state.view=button.dataset.restaurantView;
-      localStorage.setItem('gurmaoRestaurantView',state.view);
-      render();
-    });
+    button.addEventListener('click',()=>{state.view=button.dataset.restaurantView;localStorage.setItem('gurmaoRestaurantView',state.view);render();});
   });
   locationBtn.addEventListener('click',()=>{
-    if(!navigator.geolocation){
-      alert('Prohlížeč nepodporuje polohu.');
-      return;
-    }
+    if(!navigator.geolocation){alert('Prohlížeč nepodporuje polohu.');return;}
+
+    clearTimeout(timer);
+    state.search='';
+    state.cuisine='';
+    state.city='';
+    state.vibe='all';
+    state.sort='distance';
+    state.userLocation=null;
+    state.shown=state.perPage;
+
+    searchInput.value='';
+    cuisineFilter.value='';
+    localityFilter.value='';
+    restaurantSort.value='distance';
+    filters.classList.remove('open');
+    document.querySelectorAll('#filters [data-vibe]').forEach(button=>button.classList.toggle('is-active',button.dataset.vibe==='all'));
+    updateUrl();
+
     const originalLabel=locationBtn.textContent;
     locationBtn.disabled=true;
     locationBtn.setAttribute('aria-busy','true');
@@ -231,14 +211,17 @@ function bind(){
       locationBtn.removeAttribute('aria-busy');
       locationBtn.textContent=originalLabel;
     };
+
     navigator.geolocation.getCurrentPosition(position=>{
       state.userLocation={lat:position.coords.latitude,lng:position.coords.longitude};
-      state.sort='distance';
-      restaurantSort.value='distance';
-      applyFilters(false);
+      applyFilters();
       finish();
       scheduleNearbyResultsScroll();
     },()=>{
+      state.sort='recommended';
+      restaurantSort.value='recommended';
+      updateUrl();
+      applyFilters();
       finish();
       alert('Polohu se nepodařilo zjistit.');
     },{
@@ -255,8 +238,5 @@ function initRestaurantsPage(){
   loadAll();
 }
 
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',initRestaurantsPage,{once:true});
-}else{
-  initRestaurantsPage();
-}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initRestaurantsPage,{once:true});
+else initRestaurantsPage();
