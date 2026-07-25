@@ -184,15 +184,16 @@
     if (js) {
       const script = document.createElement('script');
       script.src = `${js}?v=${version}`;
+      script.defer = true;
       document.body.appendChild(script);
     }
   };
 
   if (path.endsWith('/kuchar.html')) loadEnhancement('chef-redesign.css', 'chef-redesign.js', '4');
   if (path.endsWith('/restaurace.html')) {
-    loadEnhancement('restaurant-gold-scrollbar.css', 'restaurant-card-status.js', '20260724-2');
-    loadEnhancement(null, 'restaurant-locality-select-fix.js', '20260725-1');
-    loadEnhancement('restaurant-recommendation-card.css', 'restaurant-recommendation-card.js', '20260725-1');
+    loadEnhancement('restaurant-gold-scrollbar.css', null, '20260725-2');
+    loadEnhancement(null, 'restaurant-locality-select-fix.js', '20260725-2');
+    loadEnhancement('restaurant-recommendation-card.css', 'restaurant-recommendation-card.js', '20260725-3');
   }
   if (path.endsWith('/feed.html')) loadEnhancement('feed-redesign.css', 'feed-redesign.js', '7');
   if (path.endsWith('/ai.html')) loadEnhancement('ai-redesign.css', 'ai-redesign.js', '4');
