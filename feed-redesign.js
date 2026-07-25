@@ -27,8 +27,8 @@ function applyFeedRedesign() {
     if (!headingRow.querySelector('.feed-kicker')) {
       headingRow.firstElementChild?.insertAdjacentHTML('afterbegin', '<div class="feed-kicker">✦ GURMAO FEED</div>');
     }
-    if (heading) heading.innerHTML = 'Objevujte gastronomii<br><span class="text-gurmaogold">každý den</span>';
-    if (subtitle) subtitle.textContent = 'Restaurace, kuchaři, atmosféra a nové chutě na jednom místě. Najděte podnik, který odpovídá právě dnešní náladě.';
+    if (heading) heading.innerHTML = 'Restaurace pro<br><span class="text-gurmaogold">dnešní náladu</span>';
+    if (subtitle) subtitle.textContent = 'Procházejte aktuální podniky z celé ČR a filtrujte je podle města nebo atmosféry, kterou chcete zažít.';
     if (actions) actions.classList.add('feed-hero-actions');
   }
 
@@ -38,13 +38,13 @@ function applyFeedRedesign() {
     categoryStrip.className = 'feed-category-strip';
     categoryStrip.setAttribute('aria-label', 'Kategorie feedu');
     categoryStrip.innerHTML = `
-      <button type="button" class="feed-category-chip is-active" data-feed-term="">✨ Vše</button>
-      <button type="button" class="feed-category-chip" data-feed-term="restaurace">🍽 Restaurace</button>
-      <button type="button" class="feed-category-chip" data-feed-term="kuchař">👨‍🍳 Kuchaři</button>
-      <button type="button" class="feed-category-chip" data-feed-term="novinka">🔥 Novinky</button>
-      <button type="button" class="feed-category-chip" data-feed-term="akce">🎉 Akce</button>
-      <button type="button" class="feed-category-chip" data-feed-term="recept">📖 Recepty</button>
-      <button type="button" class="feed-category-chip" data-feed-term="osobnost">⭐ Osobnosti</button>`;
+      <button type="button" class="feed-category-chip is-active" data-feed-vibe="">✨ Vše</button>
+      <button type="button" class="feed-category-chip" data-feed-vibe="LUXE">🍷 LUXE</button>
+      <button type="button" class="feed-category-chip" data-feed-vibe="DRAMA">🔥 DRAMA</button>
+      <button type="button" class="feed-category-chip" data-feed-vibe="CHAOS">🌮 CHAOS</button>
+      <button type="button" class="feed-category-chip" data-feed-vibe="PURE">🌿 PURE</button>
+      <button type="button" class="feed-category-chip" data-feed-vibe="DARK">🌙 DARK</button>
+      <button type="button" class="feed-category-chip" data-feed-vibe="CALM">🌊 CALM</button>`;
     headingRow.insertAdjacentElement('afterend', categoryStrip);
   }
 
@@ -62,15 +62,13 @@ function applyFeedRedesign() {
     if (resultCount) toolbar.insertBefore(resultCount, toolbar.firstChild);
   }
 
-  categoryStrip?.querySelectorAll('[data-feed-term]').forEach(chip => {
+  categoryStrip?.querySelectorAll('[data-feed-vibe]').forEach(chip => {
     chip.addEventListener('click', () => {
+      const vibe = chip.dataset.feedVibe || '';
+      const option = document.querySelector(`#vibeOptions .custom-option[data-value="${vibe}"]`);
+      if (option) option.click();
       categoryStrip.querySelectorAll('.feed-category-chip').forEach(item => item.classList.remove('is-active'));
       chip.classList.add('is-active');
-      if (searchInput) {
-        searchInput.value = chip.dataset.feedTerm || '';
-        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-        searchInput.dispatchEvent(new Event('change', { bubbles: true }));
-      }
       document.querySelector('.feed-filter-panel')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
   });
