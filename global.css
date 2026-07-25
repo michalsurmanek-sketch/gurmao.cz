@@ -180,38 +180,75 @@ body .hero-bg form[role="search"] + div.hero-discovery::before {
 
 
 /* Header wordmark refresh — 2026-07-25 */
-header a.modal-title {
-  display: inline-flex;
-  align-items: center;
-  gap: 0;
-  margin: 0;
-  font-family: Inter, system-ui, sans-serif;
-  font-size: clamp(1.45rem, 2vw, 1.8rem);
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: .065em;
-  color: #fff;
-  text-shadow: 0 2px 18px rgba(0, 0, 0, .48);
+header a.modal-title,
+header a.brand .gurmao-wordmark {
+  display: inline-flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  flex: 0 0 auto !important;
+  gap: 0 !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  font-family: Inter, system-ui, sans-serif !important;
+  font-size: clamp(1.45rem, 2vw, 1.8rem) !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  letter-spacing: .065em !important;
+  color: #fff !important;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, .48) !important;
+}
+header a.modal-title,
+header a.brand {
+  flex-shrink: 0 !important;
+}
+header a.brand {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
   transition: opacity .25s ease, transform .25s ease;
 }
 header a.modal-title::after { display: none; }
-header a.modal-title > .text-gurmaogold {
-  width: .98em;
-  height: .98em;
-  margin: 0 .055em;
-  display: inline-grid;
-  place-items: center;
-  flex: 0 0 auto;
+header a.modal-title > .text-gurmaogold,
+header a.brand .gurmao-medallion {
+  width: .98em !important;
+  height: .98em !important;
+  margin: 0 .055em !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 auto !important;
   color: #0b0b0d !important;
-  background: linear-gradient(145deg, #f4d566 0%, #d4af37 56%, #a87913 100%);
-  border: 1px solid rgba(255, 232, 145, .72);
-  border-radius: 50%;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.42), 0 0 18px rgba(212,175,55,.2);
-  letter-spacing: 0;
-  text-shadow: none;
+  background: linear-gradient(145deg, #f4d566 0%, #d4af37 56%, #a87913 100%) !important;
+  border: 1px solid rgba(255, 232, 145, .72) !important;
+  border-radius: 50% !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.42), 0 0 18px rgba(212,175,55,.2) !important;
+  letter-spacing: 0 !important;
+  text-shadow: none !important;
   transform: translateY(-.02em);
 }
-header a.modal-title:hover { opacity: 1; transform: translateY(-1px); }
+header a.brand small {
+  display: block !important;
+  width: 100% !important;
+  margin-top: 7px !important;
+  white-space: nowrap !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  letter-spacing: 0 !important;
+  color: rgba(255,255,255,.5) !important;
+}
+header a.modal-title:hover,
+header a.brand:hover { opacity: 1; transform: translateY(-1px); }
 @media (max-width: 768px) {
-  header a.modal-title { font-size: 1.45rem; letter-spacing: .055em; }
+  header a.modal-title,
+  header a.brand .gurmao-wordmark {
+    font-size: 1.35rem !important;
+    letter-spacing: .045em !important;
+  }
+  header a.brand small {
+    margin-top: 5px !important;
+    font-size: 10px !important;
+  }
 }
