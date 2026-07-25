@@ -1,0 +1,15 @@
+.recommend{width:330px!important;padding:0!important;border-radius:20px!important;background:#0e0f0d!important}
+.recommend-content{display:flex;flex-direction:column;height:100%}
+.recommend-image-wrap{position:relative;height:132px;overflow:hidden;background:#151613}
+.recommend-image{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
+.recommend:hover .recommend-image{transform:scale(1.035)}
+.recommend-image-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(5,6,5,.92) 100%)}
+.recommend-label{position:absolute;left:14px;top:13px;z-index:2;margin:0!important;padding:7px 11px;border:1px solid rgba(243,201,74,.5);border-radius:999px;background:rgba(8,9,7,.78);backdrop-filter:blur(8px);font-size:10px!important;letter-spacing:.04em}
+.recommend-body{padding:15px 17px 16px}
+.recommend h2{font-family:Inter,sans-serif!important;font-size:17px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recommend p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recommend-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+.recommend-rating,.recommend-location{margin-top:0!important}
+.recommend-btn{margin-top:13px!important}
+.recommend-dots{margin-top:10px!important}
+@media(max-width:1180px){.recommend{display:none!important}}
