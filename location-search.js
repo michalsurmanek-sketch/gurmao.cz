@@ -1,3 +1,5 @@
+import './home-city-header.js';
+
 // GURMAO location + preferred city
 const CITY_KEY = 'gurmao_preferred_city';
 const LOCATION_KEY = 'gurmao_location_state';
@@ -27,9 +29,14 @@ function getPreferredCity() {
   try { return JSON.parse(localStorage.getItem(CITY_KEY) || 'null'); } catch { return null; }
 }
 
+const storedPreferredCity = getPreferredCity();
+if (storedPreferredCity?.name) localStorage.setItem('gurmao_home_city', storedPreferredCity.name);
+
 function savePreferredCity(city) {
   if (!city?.name) return;
   localStorage.setItem(CITY_KEY, JSON.stringify({ name: city.name, key: slugifyCity(city.name), savedAt: Date.now() }));
+  localStorage.setItem('gurmao_home_city', city.name);
+  localStorage.setItem('gurmaoHomeCity', city.name);
   window.dispatchEvent(new CustomEvent('gurmao:city-changed', { detail: city }));
 }
 
@@ -44,11 +51,9 @@ function addCityToUrl(url, cityName) {
 
 function applyPreferredCityToPage(city) {
   if (!city?.name) return;
-
   document.querySelectorAll('a[href*="restaurace.html"]').forEach(link => {
     link.href = addCityToUrl(link.getAttribute('href') || 'restaurace.html', city.name);
   });
-
   document.querySelectorAll('form[action*="restaurace.html"]').forEach(form => {
     let input = form.querySelector('input[name="city"]');
     if (!input) {
@@ -59,16 +64,7 @@ function applyPreferredCityToPage(city) {
     }
     input.value = city.name;
   });
-
-  const hero = document.querySelector('.hero-bg');
-  if (hero && !document.getElementById('preferredCityBar')) {
-    const bar = document.createElement('div');
-    bar.id = 'preferredCityBar';
-    bar.className = 'relative z-10 mt-5 flex items-center gap-3 rounded-full border border-gurmaogold/35 bg-black/55 px-4 py-2 text-sm backdrop-blur';
-    bar.innerHTML = `<span class="text-white/65">Zobrazuji podniky pro</span><strong class="text-gurmaogold">📍 ${city.name}</strong><button type="button" id="changePreferredCity" class="text-white/55 underline hover:text-white">Změnit</button>`;
-    const form = hero.querySelector('form');
-    if (form) form.insertAdjacentElement('afterend', bar);
-  }
+  document.getElementById('preferredCityBar')?.remove();
 }
 
 function cityPicker() {
@@ -84,7 +80,12 @@ function cityPicker() {
     const button = event.target.closest('[data-city]');
     if (!button) return;
     const name = button.dataset.city;
-    if (name) savePreferredCity({ name }); else localStorage.removeItem(CITY_KEY);
+    if (name) savePreferredCity({ name });
+    else {
+      localStorage.removeItem(CITY_KEY);
+      localStorage.removeItem('gurmao_home_city');
+      localStorage.removeItem('gurmaoHomeCity');
+    }
     overlay.remove();
     location.reload();
   });
@@ -94,10 +95,6 @@ function initPreferredCity() {
   const city = getPreferredCity();
   if (city) applyPreferredCityToPage(city);
   else if (location.pathname.endsWith('/') || location.pathname.endsWith('/index.html')) setTimeout(cityPicker, 500);
-
-  document.addEventListener('click', event => {
-    if (event.target.closest('#changePreferredCity')) cityPicker();
-  });
 }
 
 export class LocationSearch {
