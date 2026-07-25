@@ -47,7 +47,7 @@
   <link rel="stylesheet" href="tooltip.css">
   
   <!-- Global Styles -->
-  <link rel="stylesheet" href="global.css?v=20260725-how-section">
+  <link rel="stylesheet" href="global.css?v=20260725-ai-home">
 
   <style>
     body { font-family: 'Inter', sans-serif; }
@@ -542,13 +542,43 @@
 </section> -->
 
 <!-- AI GURMAO -->
-<section class="relative overflow-hidden border-t border-white/10 px-6 py-20 md:py-24">
-  <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.12),transparent_70%)]"></div>
-  <div class="relative mx-auto max-w-4xl rounded-[2rem] border border-gurmaogold/25 bg-white/[0.04] px-6 py-12 text-center shadow-2xl md:px-12 md:py-16">
-    <div class="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-gurmaogold">AI GURMAO</div>
-    <h2 class="text-3xl md:text-5xl">Nevíš přesně? Nech si doporučit.</h2>
-    <p class="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-white/65">Vyber náladu a Gurmao ti nabídne jedno místo. Bez nekonečného scrollování a rozhodovací únavy.</p>
-    <a href="ai.html" class="mt-9 inline-block rounded-full border border-gurmaogold bg-gurmaogold px-9 py-4 font-semibold text-black shadow-glow transition hover:scale-[1.02]">Doporuč mi místo</a>
+<section class="ai-home-section" aria-labelledby="ai-home-title">
+  <div class="ai-home-shell">
+    <div class="ai-home-copy">
+      <div class="ai-home-eyebrow">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z"/></svg>
+        AI doporučení Gurmao
+      </div>
+      <h2 id="ai-home-title">Nevíš kam?<br>Nech Gurmao vybrat.</h2>
+      <p class="ai-home-lead">Vyber náladu, kterou chceš zažít. Gurmao zohlední tvůj výběr a nabídne jedno konkrétní místo místo nekonečného seznamu.</p>
+      <ul class="ai-home-benefits" aria-label="Výhody AI doporučení">
+        <li>Jedno jasné doporučení</li>
+        <li>Podle nálady</li>
+        <li>Bez dlouhého hledání</li>
+      </ul>
+      <a href="ai.html" class="ai-home-cta">Doporučit místo <span aria-hidden="true">→</span></a>
+    </div>
+
+    <aside class="ai-home-preview" aria-label="Ukázka AI doporučení">
+      <div class="ai-preview-label">Ukázka výběru</div>
+      <div class="ai-preview-question">Jak se chceš dnes cítit?</div>
+      <div class="ai-preview-moods" aria-hidden="true">
+        <span>🍷 LUXE</span>
+        <span>🔥 DRAMA</span>
+        <span class="is-selected">🌊 CALM</span>
+        <span>🌿 PURE</span>
+      </div>
+      <div class="ai-preview-result">
+        <div class="ai-preview-pin" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 21s7-5.4 7-12a7 7 0 1 0-14 0c0 6.6 7 12 7 12Z"/><circle cx="12" cy="9" r="2.4"/></svg>
+        </div>
+        <div>
+          <small>Výsledek</small>
+          <strong>Jedno místo odpovídající tvé náladě</strong>
+        </div>
+      </div>
+      <div class="ai-preview-note">Výběr můžeš kdykoliv zkusit znovu</div>
+    </aside>
   </div>
 </section>
 
