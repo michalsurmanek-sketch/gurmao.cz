@@ -84,6 +84,17 @@
     .custom-option:last-child {
       border-radius: 0 0 1rem 1rem;
     }
+    
+    .option-icon {
+      width: 1.15rem;
+      height: 1.15rem;
+      flex: 0 0 auto;
+      color: #d4af37;
+    }
+
+    .custom-option .option-icon + .option-icon {
+      margin-left: -0.3rem;
+    }
   </style>
 </head>
 <body class="bg-gurmaoblack text-white overflow-x-hidden">
@@ -248,12 +259,12 @@
             </button>
             <div id="moodOptions" class="custom-options hidden">
               <div class="custom-option" data-value="">-- Vyber náladu --</div>
-              <div class="custom-option" data-value="romantika">💕 Romantika</div>
-              <div class="custom-option" data-value="oslava">🎉 Oslava</div>
-              <div class="custom-option" data-value="business">💼 Business</div>
-              <div class="custom-option" data-value="kamarádi">👥 S kamarády</div>
-              <div class="custom-option" data-value="rychle">⚡ Rychle</div>
-              <div class="custom-option" data-value="klid">🧘 Klid a pohoda</div>
+              <div class="custom-option" data-value="romantika"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg><span>Romantika</span></div>
+              <div class="custom-option" data-value="oslava"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 20l4.5-13.5L20 18 4 20zM9 7c2-3 5-4 8-3M13 11c3-1 5 0 7 2M16 4l1-2M20 8l2-1"/></svg><span>Oslava</span></div>
+              <div class="custom-option" data-value="business"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M4 7h16a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2zm-2 5h20M10 12v2h4v-2"/></svg><span>Business</span></div>
+              <div class="custom-option" data-value="kamarádi"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zm13 10v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><span>S kamarády</span></div>
+              <div class="custom-option" data-value="rychle"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><span>Rychle</span></div>
+              <div class="custom-option" data-value="klid"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v18M5 8c4 0 7 3 7 7-4 0-7-3-7-7zm14 0c-4 0-7 3-7 7 4 0 7-3 7-7z"/></svg><span>Klid a pohoda</span></div>
             </div>
           </div>
         </div>
@@ -272,13 +283,13 @@
             </button>
             <div id="occasionOptions" class="custom-options hidden">
               <div class="custom-option" data-value="">-- Vyber příležitost --</div>
-              <div class="custom-option" data-value="rande">💑 Rande</div>
-              <div class="custom-option" data-value="výročí">💍 Výročí</div>
-              <div class="custom-option" data-value="narozeniny">🎂 Narozeniny</div>
-              <div class="custom-option" data-value="business dinner">🍽️ Business dinner</div>
-              <div class="custom-option" data-value="oběd">🥗 Oběd</div>
-              <div class="custom-option" data-value="páteční večer">🍻 Páteční večer</div>
-              <div class="custom-option" data-value="party">🎊 Party</div>
+              <div class="custom-option" data-value="rande"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 11a4 4 0 100-8 4 4 0 000 8zm8 0a4 4 0 100-8 4 4 0 000 8zM1 21a7 7 0 0114 0m-6 0a7 7 0 0114 0"/></svg><span>Rande</span></div>
+              <div class="custom-option" data-value="výročí"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="14" r="7" stroke-width="1.8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 7l3-4 3 4M10 3h4"/></svg><span>Výročí</span></div>
+              <div class="custom-option" data-value="narozeniny"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 13h16v8H4v-8zm2 0V9h12v4M8 9V6m4 3V6m4 3V6M7 17c1 1 2 1 3 0s2-1 3 0 2 1 4 0"/></svg><span>Narozeniny</span></div>
+              <div class="custom-option" data-value="business dinner"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 3v8M4 3v5a3 3 0 006 0V3M7 11v10M17 3v18M17 3c3 2 3 7 0 9"/></svg><span>Business dinner</span></div>
+              <div class="custom-option" data-value="oběd"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 11h16a8 8 0 01-16 0zm8 8v2m-4 0h8M7 8c1-3 3-4 5-4m5 4c-1-2-3-3-5-3"/></svg><span>Oběd</span></div>
+              <div class="custom-option" data-value="páteční večer"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 6h11v14H5V6zm11 3h2a3 3 0 010 6h-2M8 9v7m4-7v7"/></svg><span>Páteční večer</span></div>
+              <div class="custom-option" data-value="party"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 20l4.5-13.5L20 18 4 20zM9 7c2-3 5-4 8-3M13 11c3-1 5 0 7 2M16 4l1-2M20 8l2-1"/></svg><span>Party</span></div>
             </div>
           </div>
         </div>
@@ -321,9 +332,9 @@
             </button>
             <div id="cityOptions" class="custom-options hidden">
               <div class="custom-option" data-value="">-- Kde hledáš? --</div>
-              <div class="custom-option" data-value="Praha">📍 Praha</div>
-              <div class="custom-option" data-value="Brno">📍 Brno</div>
-              <div class="custom-option" data-value="Ostrava">📍 Ostrava</div>
+              <div class="custom-option" data-value="Praha"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1116 0z"/><circle cx="12" cy="10" r="2.5" stroke-width="1.8"/></svg><span>Praha</span></div>
+              <div class="custom-option" data-value="Brno"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1116 0z"/><circle cx="12" cy="10" r="2.5" stroke-width="1.8"/></svg><span>Brno</span></div>
+              <div class="custom-option" data-value="Ostrava"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1116 0z"/><circle cx="12" cy="10" r="2.5" stroke-width="1.8"/></svg><span>Ostrava</span></div>
             </div>
           </div>
         </div>
@@ -342,10 +353,10 @@
             </button>
             <div id="priceLevelOptions" class="custom-options hidden">
               <div class="custom-option" data-value="">-- Rozpočet --</div>
-              <div class="custom-option" data-value="1">💵 Nízká (do 300 Kč)</div>
-              <div class="custom-option" data-value="2">💵💵 Střední (300-600 Kč)</div>
-              <div class="custom-option" data-value="3">💵💵💵 Vyšší (600-1000 Kč)</div>
-              <div class="custom-option" data-value="4">💵💵💵💵 Premium (1000+ Kč)</div>
+              <div class="custom-option" data-value="1"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 8.5c-.7-.5-1.7-.8-3-.8-1.7 0-3 .8-3 2s1.3 1.8 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.4-.3-3.2-.9M12 6v12"/></svg><span>Nízká (do 300 Kč)</span></div>
+              <div class="custom-option" data-value="2"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 8.5c-.7-.5-1.7-.8-3-.8-1.7 0-3 .8-3 2s1.3 1.8 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.4-.3-3.2-.9M12 6v12"/></svg><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 8.5c-.7-.5-1.7-.8-3-.8-1.7 0-3 .8-3 2s1.3 1.8 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.4-.3-3.2-.9M12 6v12"/></svg><span>Střední (300–600 Kč)</span></div>
+              <div class="custom-option" data-value="3"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 8.5c-.7-.5-1.7-.8-3-.8-1.7 0-3 .8-3 2s1.3 1.8 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.4-.3-3.2-.9M12 6v12"/></svg><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 8.5c-.7-.5-1.7-.8-3-.8-1.7 0-3 .8-3 2s1.3 1.8 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.4-.3-3.2-.9M12 6v12"/></svg><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 8.5c-.7-.5-1.7-.8-3-.8-1.7 0-3 .8-3 2s1.3 1.8 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.4-.3-3.2-.9M12 6v12"/></svg><span>Vyšší (600–1 000 Kč)</span></div>
+              <div class="custom-option" data-value="4"><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 8.5c-.7-.5-1.7-.8-3-.8-1.7 0-3 .8-3 2s1.3 1.8 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.4-.3-3.2-.9M12 6v12"/></svg><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 8.5c-.7-.5-1.7-.8-3-.8-1.7 0-3 .8-3 2s1.3 1.8 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.4-.3-3.2-.9M12 6v12"/></svg><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 8.5c-.7-.5-1.7-.8-3-.8-1.7 0-3 .8-3 2s1.3 1.8 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.4-.3-3.2-.9M12 6v12"/></svg><svg class="option-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 8.5c-.7-.5-1.7-.8-3-.8-1.7 0-3 .8-3 2s1.3 1.8 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.4-.3-3.2-.9M12 6v12"/></svg><span>Premium (1 000+ Kč)</span></div>
             </div>
           </div>
         </div>
@@ -486,7 +497,7 @@ function initCustomDropdown(btnId, optionsId, key) {
   options.querySelectorAll('.custom-option').forEach(opt => {
     opt.addEventListener('click', () => {
       const value = opt.dataset.value;
-      btn.textContent = opt.textContent;
+      btn.innerHTML = opt.innerHTML;
       options.classList.add('hidden');
       formValues[key] = value;
     });
