@@ -38,3 +38,25 @@ body.feed-directory-redesign #loadMoreBtn button{min-width:280px;border-radius:1
 body.feed-directory-redesign #loadMoreBtn button:hover{background:rgba(243,201,74,.09)!important}
 @media(min-width:768px) and (max-width:1120px){body.feed-directory-redesign #grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}body.feed-directory-redesign .feed-filter-row{grid-template-columns:minmax(240px,1fr) 145px 145px 110px}}
 @media(max-width:767px){body.feed-directory-redesign .feed-hero{margin:14px!important;padding:34px 22px 38px!important;border-radius:26px}body.feed-directory-redesign .feed-hero:before{background-position:65% center;opacity:.48}body.feed-directory-redesign .feed-hero h1{font-size:clamp(2.35rem,12vw,3.4rem)!important}body.feed-directory-redesign .feed-category-strip{margin:18px 14px 0;padding-bottom:8px}body.feed-directory-redesign .feed-filter-panel{margin:18px 14px 0;padding:14px;border-radius:20px}body.feed-directory-redesign .feed-filter-row{display:grid!important;grid-template-columns:1fr!important}body.feed-directory-redesign .feed-toolbar{align-items:flex-start;flex-direction:column}body.feed-directory-redesign #feed article{background:#08090a}body.feed-directory-redesign #feed article>a:after{content:"Otevřít detail";position:absolute;left:24px;bottom:26px;padding:11px 16px;border-radius:999px;background:#f3c94a;color:#08090a;font-size:13px;font-weight:800;z-index:3}body.feed-directory-redesign #feed article>a>div:nth-child(4){bottom:88px!important}body.feed-directory-redesign .save-btn{top:18px!important;right:18px!important;width:46px!important;height:46px!important;background:rgba(5,5,5,.68)!important;border-color:rgba(255,255,255,.28)!important}}
+
+
+/* Feed clarity and compact cards — 2026-07-25 */
+body.feed-directory-redesign .feed-hero{padding:48px 46px 52px!important}
+body.feed-directory-redesign .feed-hero h1{font-size:clamp(2.8rem,4.8vw,4.8rem)!important;max-width:680px}
+body.feed-directory-redesign .feed-hero p{max-width:610px}
+body.feed-directory-redesign .feed-category-strip{margin-top:20px}
+body.feed-directory-redesign .feed-card-image{
+  width:100%;
+  aspect-ratio:4/3;
+  min-height:180px;
+  background-size:cover;
+  background-position:center;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  transition:transform .45s ease,filter .3s ease;
+}
+body.feed-directory-redesign #grid>article:hover .feed-card-image,
+body.feed-directory-redesign #grid>div:hover .feed-card-image{transform:scale(1.025);filter:brightness(1.06)}
+@media(max-width:767px){
+  body.feed-directory-redesign .feed-hero{padding:32px 22px 35px!important}
+  body.feed-directory-redesign .feed-card-image{min-height:165px}
+}
