@@ -5,7 +5,7 @@
 
   box.innerHTML=`<div class="recommend-content">
     <div class="recommend-image-wrap">
-      <img id="recommendImage" class="recommend-image" alt="Doporučená restaurace" loading="eager">
+      <img id="recommendImage" class="recommend-image" alt="Doporučená restaurace" loading="eager" decoding="async">
       <div class="recommend-image-overlay"></div>
       <div class="recommend-label">★ <span>Doporučeno dnes</span></div>
     </div>
@@ -38,9 +38,9 @@
   function preload(src){
     return new Promise(resolve=>{
       const img=new Image();
-      const done=ok=>resolve(ok?src:fallback);
-      img.onload=()=>done(true);
-      img.onerror=()=>done(false);
+      const timeout=setTimeout(()=>resolve(fallback),2500);
+      img.onload=()=>{clearTimeout(timeout);resolve(src);};
+      img.onerror=()=>{clearTimeout(timeout);resolve(fallback);};
       img.src=src||fallback;
     });
   }
@@ -67,17 +67,23 @@
       linkEl.href=r.slug?`restaurace-${encodeURIComponent(r.slug)}.html`:'#restaurantsList';
       [...dotsEl.children].forEach((dot,n)=>dot.classList.toggle('active',n===index));
       box.classList.remove('is-changing');
-    },180);
+    },120);
   }
 
   const restart=()=>{clearInterval(timer);timer=setInterval(()=>show(index+1),30000);};
 
   try{
     const {supabase}=await import('./supabase-client.js');
-    const {data,error}=await supabase.from('restaurants').select('*').not('slug','is',null).limit(100);
+    const fields='name,slug,city,tag,description,image_url,image,photo_url,google_rating,rating,average_rating';
+    const {data,error}=await supabase
+      .from('restaurants')
+      .select(fields)
+      .not('slug','is',null)
+      .limit(24);
     if(error)throw error;
+
     const valid=(data||[]).filter(r=>text(r.name)&&text(r.slug));
-    items=shuffle(valid).slice(0,Math.min(8,valid.length));
+    items=shuffle(valid).slice(0,Math.min(6,valid.length));
     if(!items.length)throw new Error('Nebyla nalezena žádná restaurace pro doporučení.');
 
     dotsEl.innerHTML=items.map((_,i)=>`<button class="recommend-dot${i===0?' active':''}" aria-label="Zobrazit doporučení ${i+1}" data-index="${i}"></button>`).join('');
