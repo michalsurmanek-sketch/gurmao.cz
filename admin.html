@@ -196,6 +196,48 @@
     .notification-item:last-child {
       border-bottom: none;
     }
+    /* Unified GURMAO wordmark */
+    .admin-brand {
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      white-space: nowrap;
+      text-decoration: none;
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    .admin-wordmark {
+      display: inline-flex;
+      flex: 0 0 auto;
+      flex-wrap: nowrap;
+      align-items: center;
+      gap: 0;
+      white-space: nowrap;
+      font: 800 clamp(1.45rem, 2vw, 1.8rem)/1 Inter, system-ui, sans-serif;
+      letter-spacing: .065em;
+      color: #fff;
+      text-shadow: 0 2px 18px rgba(0,0,0,.48);
+    }
+    .admin-medallion {
+      width: .98em;
+      height: .98em;
+      margin: 0 .055em;
+      display: inline-grid;
+      flex: 0 0 auto;
+      place-items: center;
+      color: #0b0b0d;
+      background: linear-gradient(145deg,#f4d566 0%,#d4af37 56%,#a87913 100%);
+      border: 1px solid rgba(255,232,145,.72);
+      border-radius: 50%;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.42),0 0 18px rgba(212,175,55,.2);
+      letter-spacing: 0;
+      text-shadow: none;
+      transform: translateY(-.02em);
+    }
+    .admin-brand:hover { opacity: 1; transform: translateY(-1px); }
+    @media (max-width: 768px) {
+      .admin-wordmark { font-size: 1.35rem; letter-spacing: .045em; }
+    }
+
     html:not(.admin-authorized) body { visibility: hidden; }
   </style>
 </head>
@@ -209,7 +251,7 @@
 <!-- HEADER -->
 <header class="sticky top-0 z-50 bg-gurmaoblack/80 backdrop-blur border-b border-white/10">
   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <a href="index.html" class="modal-title text-2xl">GUR<span class="text-gurmaogold">M</span>AO</a>
+    <a href="index.html" class="admin-brand" aria-label="GURMAO – domů"><span class="admin-wordmark">GUR<span class="admin-medallion">M</span>AO</span></a>
     
     <div class="flex items-center gap-4">
       <!-- Notification Bell -->
