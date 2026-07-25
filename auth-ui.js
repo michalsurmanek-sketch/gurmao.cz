@@ -12,17 +12,11 @@
     }
   };
 
-  // app.js expects these values to contain valid JSON. Repair them before DOMContentLoaded.
   const user = safeJson('gurmao_user', null);
   const saved = safeJson('gurmao_saved', []);
-  if (user !== null && (typeof user !== 'object' || Array.isArray(user))) {
-    localStorage.removeItem('gurmao_user');
-  }
-  if (!Array.isArray(saved)) {
-    localStorage.setItem('gurmao_saved', '[]');
-  }
+  if (user !== null && (typeof user !== 'object' || Array.isArray(user))) localStorage.removeItem('gurmao_user');
+  if (!Array.isArray(saved)) localStorage.setItem('gurmao_saved', '[]');
 
-  // Remove all legacy PWA registrations. The current website no longer needs cached app shells.
   const removeLegacyPwa = async () => {
     try {
       if ('serviceWorker' in navigator) {
@@ -40,7 +34,6 @@
 
   removeLegacyPwa();
   window.addEventListener('load', () => {
-    // app.js from an older cached version may try to register the worker again at load.
     setTimeout(removeLegacyPwa, 250);
     setTimeout(removeLegacyPwa, 1500);
   }, { once: true });
@@ -48,32 +41,25 @@
 
 (function applyUnifiedFooterText() {
   const footerText = '© 2026 GURMAO.cz • Nejez. Prožij. • Objevujte nejlepší restaurace v celé České republice.';
-
   const updateFooter = () => {
     document.querySelectorAll('footer').forEach(footer => {
       const candidates = [...footer.querySelectorAll('span, p, small, div')]
         .filter(element => /©|GURMAO\.cz/i.test(element.textContent || ''))
         .sort((a, b) => (a.textContent || '').length - (b.textContent || '').length);
-
       const copyright = candidates[0];
       if (copyright) {
         copyright.textContent = footerText;
         copyright.setAttribute('data-gurmao-footer-copy', 'true');
         return;
       }
-
       const copy = document.createElement('span');
       copy.textContent = footerText;
       copy.setAttribute('data-gurmao-footer-copy', 'true');
       footer.prepend(copy);
     });
   };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', updateFooter, { once: true });
-  } else {
-    updateFooter();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', updateFooter, { once: true });
+  else updateFooter();
 })();
 
 (async function initAuthUI() {
@@ -93,7 +79,6 @@
   try {
     const { supabase } = await import('./supabase-client.js');
     const { data: { user }, error } = await supabase.auth.getUser();
-
     if (error || !user) {
       localStorage.removeItem('gurmao_user');
       setLoggedOutUI();
@@ -111,15 +96,16 @@
 
     const userDropdownBtn = document.getElementById('userDropdownBtn');
     if (userDropdownBtn) {
-      userDropdownBtn.innerHTML = '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 21a7.5 7.5 0 0 1 15 0"></path></svg>';
+      userDropdownBtn.replaceChildren();
+      const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      icon.setAttribute('viewBox', '0 0 24 24');
+      icon.setAttribute('aria-hidden', 'true');
+      icon.style.cssText = 'display:block;width:22px;height:22px;min-width:22px;min-height:22px;fill:currentColor;pointer-events:none';
+      icon.innerHTML = '<path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-5.05 0-9 2.58-9 5.88C3 21.05 3.95 22 5.12 22h13.76A2.12 2.12 0 0 0 21 19.88C21 16.58 17.05 14 12 14Z"/>';
+      userDropdownBtn.appendChild(icon);
       userDropdownBtn.setAttribute('aria-label', `Uživatelský účet: ${userName}`);
       userDropdownBtn.setAttribute('title', 'Můj účet');
-      userDropdownBtn.style.width = '44px';
-      userDropdownBtn.style.height = '44px';
-      userDropdownBtn.style.padding = '0';
-      userDropdownBtn.style.display = 'grid';
-      userDropdownBtn.style.placeItems = 'center';
-      userDropdownBtn.style.borderRadius = '50%';
+      userDropdownBtn.style.cssText += ';width:44px;height:44px;min-width:44px;padding:0;display:grid;place-items:center;border-radius:50%;color:#fff;line-height:1;overflow:visible';
     }
 
     if (user.app_metadata?.role === 'admin') {
@@ -151,35 +137,17 @@
 
 (function loadPageSpecificEnhancements() {
   const path = window.location.pathname.replace(/\/+$/, '');
-
   const loadEnhancement = (css, js, version) => {
     const stylesheet = document.createElement('link');
     stylesheet.rel = 'stylesheet';
     stylesheet.href = `${css}?v=${version}`;
     document.head.appendChild(stylesheet);
-
     const script = document.createElement('script');
     script.src = `${js}?v=${version}`;
     document.body.appendChild(script);
   };
-
-  if (path.endsWith('/kuchar.html')) {
-    loadEnhancement('chef-redesign.css', 'chef-redesign.js', '4');
-  }
-
-  if (path.endsWith('/restaurace.html')) {
-    loadEnhancement('restaurant-gold-scrollbar.css', 'restaurant-card-status.js', '20260724-2');
-  }
-
-  // restaurace.html má nyní vlastní kompletní rozvržení a ovládání.
-  // Starý restaurace-redesign.js vytvářel druhou sadu filtrů a duplicitní ID,
-  // proto se na této stránce už nesmí dynamicky načítat.
-
-  if (path.endsWith('/feed.html')) {
-    loadEnhancement('feed-redesign.css', 'feed-redesign.js', '7');
-  }
-
-  if (path.endsWith('/ai.html')) {
-    loadEnhancement('ai-redesign.css', 'ai-redesign.js', '4');
-  }
+  if (path.endsWith('/kuchar.html')) loadEnhancement('chef-redesign.css', 'chef-redesign.js', '4');
+  if (path.endsWith('/restaurace.html')) loadEnhancement('restaurant-gold-scrollbar.css', 'restaurant-card-status.js', '20260724-2');
+  if (path.endsWith('/feed.html')) loadEnhancement('feed-redesign.css', 'feed-redesign.js', '7');
+  if (path.endsWith('/ai.html')) loadEnhancement('ai-redesign.css', 'ai-redesign.js', '4');
 })();
