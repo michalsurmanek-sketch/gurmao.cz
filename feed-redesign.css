@@ -60,3 +60,45 @@ body.feed-directory-redesign #grid>div:hover .feed-card-image{transform:scale(1.
   body.feed-directory-redesign .feed-hero{padding:32px 22px 35px!important}
   body.feed-directory-redesign .feed-card-image{min-height:165px}
 }
+
+
+/* Keep mobile search from pushing hamburger off-screen — 2026-07-25 */
+@media(max-width:767px){
+  body.feed-directory-redesign header>div{
+    position:relative;
+    min-width:0;
+  }
+  body.feed-directory-redesign header .md\:hidden.flex.gap-2{
+    position:relative;
+    flex:0 0 44px;
+    width:44px;
+    min-width:44px;
+    gap:0!important;
+  }
+  body.feed-directory-redesign #menuBtn{
+    position:relative;
+    z-index:32;
+    flex:0 0 44px;
+    width:44px;
+    min-width:44px;
+  }
+  body.feed-directory-redesign #mobileSearchBox{
+    position:absolute!important;
+    z-index:31;
+    top:50%;
+    right:52px;
+    width:36px!important;
+    min-width:36px;
+    max-width:calc(100vw - 84px);
+    transform:translateY(-50%);
+    background:#10110f!important;
+    box-shadow:0 10px 30px rgba(0,0,0,.42);
+  }
+  body.feed-directory-redesign #mobileSearchBox.w-64{
+    width:min(256px,calc(100vw - 84px))!important;
+  }
+  body.feed-directory-redesign #mobileSearchResults{
+    right:0;
+    max-width:min(320px,calc(100vw - 32px))!important;
+  }
+}
