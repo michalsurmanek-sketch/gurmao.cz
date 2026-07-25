@@ -5,10 +5,6 @@
 
   document.querySelectorAll('a[href="ai.html"]').forEach(link=>{
     link.classList.add('text-gurmaogold');
-    link.style.textDecoration='underline';
-    link.style.textDecorationColor='#d4af37';
-    link.style.textDecorationThickness='2px';
-    link.style.textUnderlineOffset='8px';
     link.setAttribute('aria-current','page');
   });
 
@@ -27,23 +23,32 @@
   if(heroText){
     heroText.className='ai-hero';
     heroText.innerHTML=`
-      <div class="ai-kicker">GURMAO AI ASISTENT</div>
-      <h1>AI doporučí váš<br><span>další zážitek</span></h1>
-      <p>Popište náladu, příležitost, kraj nebo chuť. Gurmao projde skutečné restaurace v databázi a vybere podniky, které vám dávají největší smysl.</p>
+      <div class="ai-kicker">✨ GURMAO AI</div>
+      <h1>Najděte podnik pro<br><span>správný okamžik</span></h1>
+      <p>Stačí popsat chuť, náladu, příležitost nebo rozpočet. GURMAO vybere restaurace z databáze a ukáže je ve stejném přehledném stylu jako katalog restaurací.</p>
       <div class="ai-quick" aria-label="Rychlé volby">
-        <button type="button" class="ai-chip" data-ai-query="romantika|rande|2||3|klidné místo na rande">❤️ Rande</button>
-        <button type="button" class="ai-chip" data-ai-query="kamarádi|páteční večer|4||2|pivo a dobré jídlo">🍺 S přáteli</button>
-        <button type="button" class="ai-chip" data-ai-query="klid|oběd|2||2|rodinná restaurace">👨‍👩‍👧 Rodina</button>
-        <button type="button" class="ai-chip" data-ai-query="oslava|narozeniny|6||3|oslava narozenin">🎉 Oslava</button>
-        <button type="button" class="ai-chip" data-ai-query="rychle|oběd|1||1|rychlý oběd">⚡ Rychlý oběd</button>
-        <button type="button" class="ai-chip" data-ai-query="romantika|výročí|2||4|výjimečný večer">🍷 Výročí</button>
+        <button type="button" class="ai-chip" data-ai-query="romantika|rande|2||3|romantická restaurace na rande">❤️ Restaurace na rande</button>
+        <button type="button" class="ai-chip" data-ai-query="kamarádi|večer|4||2|dobré jídlo a posezení s přáteli">🍺 Večer s přáteli</button>
+        <button type="button" class="ai-chip" data-ai-query="klid|rodinný oběd|4||2|rodinná restaurace">👨‍👩‍👧 Rodinný oběd</button>
+        <button type="button" class="ai-chip" data-ai-query="oslava|narozeniny|6||3|oslava narozenin">🎉 Oslava narozenin</button>
+        <button type="button" class="ai-chip" data-ai-query="rychle|oběd|1||1|rychlý oběd do 300 Kč">⚡ Rychlý oběd</button>
+        <button type="button" class="ai-chip" data-ai-query="romantika|výročí|2||4|fine dining a výjimečný večer">🍷 Výjimečný večer</button>
       </div>`;
     heroText.insertAdjacentElement('afterend',form);
   }
 
+  const capabilities=document.createElement('div');
+  capabilities.className='ai-capabilities';
+  capabilities.innerHTML=`
+    <article class="ai-capability"><div class="ai-capability-icon">🍽</div><strong>Najde restauraci</strong><span>Podle chuti, kuchyně, kraje nebo atmosféry.</span></article>
+    <article class="ai-capability"><div class="ai-capability-icon">📍</div><strong>Vybere místo</strong><span>Zohlední kraj, město a příležitost návštěvy.</span></article>
+    <article class="ai-capability"><div class="ai-capability-icon">💰</div><strong>Hlídá rozpočet</strong><span>Pomůže vybrat podnik odpovídající cenové úrovni.</span></article>
+    <article class="ai-capability"><div class="ai-capability-icon">⭐</div><strong>Seřadí shody</strong><span>Nejvhodnější restaurace ukáže jako první.</span></article>`;
+  form.insertAdjacentElement('afterend',capabilities);
+
   const title=document.createElement('div');
   title.className='ai-section-title';
-  title.innerHTML='<h2>Doporučení na míru</h2><p>Výsledky se řadí podle shody s vaším zadáním, krajem, kuchyní a atmosférou.</p>';
+  title.innerHTML='<div><h2>Doporučení na míru</h2><p>Výsledky se řadí podle shody s vaším zadáním, lokalitou, kuchyní a hodnocením.</p></div>';
   results.parentNode.insertBefore(title,results);
 
   function text(v){return v==null?'':String(v).trim();}
@@ -81,7 +86,8 @@
   let restaurants=[];
   try{
     const {supabase}=await import('./supabase-client.js');
-    const {data,error}=await supabase.from('restaurants').select('*').limit(1000);
+    const fields='id,slug,name,city,region,kraj,county,state,cuisine,cuisine_type,category,vibe,atmosphere,description,short_description,tags,address,rating,average_rating,google_rating,price_level,image_url,image,photo_url,cover_image,thumbnail_url';
+    const {data,error}=await supabase.from('restaurants').select(fields).not('name','is',null).limit(300);
     if(error)throw error;
     restaurants=Array.isArray(data)?data:[];
   }catch(error){console.warn('AI databáze není dostupná:',error);}
@@ -104,21 +110,10 @@
   }));
 
   const submitButton=form.querySelector('button[type="submit"]');
-  const handleSubmit=event=>{
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-    render();
-  };
+  const handleSubmit=event=>{event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();render();};
   form.addEventListener('submit',handleSubmit,true);
   submitButton?.addEventListener('click',handleSubmit,true);
-  if(submitButton){
-    submitButton.disabled=false;
-    submitButton.style.pointerEvents='auto';
-    submitButton.style.cursor='pointer';
-    submitButton.style.position='relative';
-    submitButton.style.zIndex='10';
-  }
+  if(submitButton){submitButton.disabled=false;submitButton.style.pointerEvents='auto';submitButton.style.cursor='pointer';submitButton.style.position='relative';submitButton.style.zIndex='10';}
 
   document.getElementById('resetForm')?.addEventListener('click',()=>{
     ['moodBtn','occasionBtn','groupSizeBtn','cityBtn','priceLevelBtn'].forEach(id=>{const b=document.getElementById(id);if(b)delete b.dataset.value;});
@@ -127,27 +122,24 @@
 
   function render(){
     const q={mood:valueFromButton('moodBtn'),occasion:valueFromButton('occasionBtn'),group:valueFromButton('groupSizeBtn'),region:valueFromButton('cityBtn'),price:valueFromButton('priceLevelBtn'),free:text(form.querySelector('[name="freeText"]')?.value).toLowerCase()};
-    results.innerHTML='<div class="ai-loading">✨ Gurmao prochází restaurace a hledá nejlepší shodu…</div>';
+    results.innerHTML='<div class="ai-loading">✨ GURMAO právě vybírá nejlepší restaurace…</div>';
     results.scrollIntoView({behavior:'smooth',block:'start'});
     setTimeout(()=>{
       if(!restaurants.length){results.innerHTML='<div class="ai-empty">Restaurace se nyní nepodařilo načíst. Zkuste stránku obnovit.</div>';return;}
       const regionalRestaurants=q.region?restaurants.filter(r=>matchesRegion(r,q.region)):restaurants;
-      if(q.region&&!regionalRestaurants.length){
-        results.innerHTML=`<div class="ai-empty">V kraji <strong>${escapeHtml(q.region)}</strong> zatím nemáme žádné restaurace.</div>`;
-        return;
-      }
+      if(q.region&&!regionalRestaurants.length){results.innerHTML=`<div class="ai-empty">V kraji <strong>${escapeHtml(q.region)}</strong> zatím nemáme žádné restaurace.</div>`;return;}
       const tokens=[q.mood,q.occasion,q.free].filter(Boolean).join(' ').split(/\s+/).filter(w=>w.length>2);
       const ranked=regionalRestaurants.map(r=>{
-        const hay=allText(r);let score=20;const reasons=[];
+        const hay=normalize(allText(r));let score=20;const reasons=[];
         if(q.region)reasons.push(`V kraji ${q.region}`);
-        tokens.forEach(t=>{if(hay.includes(t)){score+=12;if(reasons.length<3)reasons.push(`Odpovídá: ${t}`);}});
+        tokens.forEach(t=>{const token=normalize(t);if(hay.includes(token)){score+=12;if(reasons.length<3)reasons.push(`Odpovídá: ${t}`);}});
         const rating=Number(r.rating||r.average_rating||r.google_rating||0);if(rating){score+=Math.min(15,rating*3);reasons.push(`Hodnocení ${rating.toFixed(1)}`);}
-        if(q.price&&Number(r.price_level||r.priceLevel||0)===Number(q.price)){score+=10;reasons.push('Sedí rozpočet');}
+        if(q.price&&Number(r.price_level||0)===Number(q.price)){score+=10;reasons.push('Sedí rozpočet');}
         return {r,score:Math.max(1,Math.round(score)),reasons:[...new Set(reasons)].slice(0,3)};
       }).sort((a,b)=>b.score-a.score).slice(0,6);
       const prompt=[q.free,q.region,q.mood,q.occasion].filter(Boolean).join(' · ')||'univerzální výběr';
-      results.innerHTML=`<div class="ai-summary"><strong>Gurmao doporučuje:</strong> Nejlepší shody pro „${escapeHtml(prompt)}“. ${q.region?`Zobrazeny jsou pouze restaurace z kraje ${escapeHtml(q.region)}.`:'Výběr vychází z údajů restaurací uložených na Gurmao.'}</div><div class="ai-grid">${ranked.map(card).join('')}</div>`;
-    },350);
+      results.innerHTML=`<div class="ai-summary"><strong>GURMAO doporučuje:</strong> nejlepší shody pro „${escapeHtml(prompt)}“. ${q.region?`Zobrazeny jsou restaurace z kraje ${escapeHtml(q.region)}.`:'Výběr vychází z údajů restaurací uložených na GURMAO.'}</div><div class="ai-grid">${ranked.map(card).join('')}</div>`;
+    },280);
   }
 
   function card(item,index){
@@ -155,7 +147,7 @@
     const cuisine=text(r.cuisine||r.cuisine_type||r.category)||'Restaurace';const desc=text(r.short_description||r.description)||'Podnik vybraný podle vašeho zadání.';
     const image=text(r.image_url||r.image||r.photo_url||r.cover_image||r.thumbnail_url);const id=encodeURIComponent(r.id||r.slug||name);
     const href=r.slug?`restaurace-detail.html?slug=${encodeURIComponent(r.slug)}`:`restaurace-detail.html?id=${id}`;const match=Math.min(99,Math.max(55,item.score));
-    return `<article class="ai-card"><div class="ai-card-image"${image?` style="background-image:url('${escapeAttr(image)}')"`:''}><span class="ai-match">${index===0?'Nejlepší shoda · ':''}${match}%</span></div><div class="ai-card-body"><h3>${escapeHtml(name)}</h3><div class="ai-meta">${escapeHtml(city)} · ${escapeHtml(cuisine)}</div><div class="ai-desc">${escapeHtml(desc.slice(0,150))}</div><div class="ai-reasons">${(item.reasons.length?item.reasons:['Doporučeno podle vašeho zadání']).map(x=>`<span>✓ ${escapeHtml(x)}</span>`).join('')}</div><div class="ai-card-actions"><a href="${href}">Zobrazit detail</a><a class="secondary" href="collections.html">Můj výběr</a></div></div></article>`;
+    return `<article class="ai-card"><div class="ai-card-image"${image?` style="background-image:url('${escapeAttr(image)}')"`:''}><span class="ai-match">${index===0?'Nejlepší shoda · ':''}${match}%</span></div><div class="ai-card-body"><h3>${escapeHtml(name)}</h3><div class="ai-meta">${escapeHtml(city)} · ${escapeHtml(cuisine)}</div><div class="ai-desc">${escapeHtml(desc.slice(0,150))}</div><div class="ai-reasons">${(item.reasons.length?item.reasons:['Doporučeno podle vašeho zadání']).map(x=>`<span>✓ ${escapeHtml(x)}</span>`).join('')}</div><div class="ai-card-actions"><a href="${href}">Zobrazit restauraci</a><a class="secondary" href="collections.html">Moje kniha</a></div></div></article>`;
   }
   function escapeHtml(v){return text(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
   function escapeAttr(v){return text(v).replace(/['"()]/g,'');}
