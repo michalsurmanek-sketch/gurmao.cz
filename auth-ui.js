@@ -62,6 +62,25 @@
   else updateFooter();
 })();
 
+(function applyActiveNavigation() {
+  const run = () => {
+    const page = location.pathname.split('/').pop() || 'index.html';
+    const style = document.createElement('style');
+    style.id = 'gurmao-active-navigation-style';
+    style.textContent = `
+      header nav a[data-gurmao-active-nav="true"]{position:relative;color:#f3c94a!important}
+      header nav a[data-gurmao-active-nav="true"]:after{content:"";position:absolute;left:0;right:0;bottom:-27px;height:2px;background:#f3c94a}
+    `;
+    if (!document.getElementById(style.id)) document.head.appendChild(style);
+    document.querySelectorAll('header nav a[href]').forEach(link => {
+      const href = (link.getAttribute('href') || '').split('?')[0].split('#')[0];
+      if (href === page) link.setAttribute('data-gurmao-active-nav', 'true');
+    });
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run, { once: true });
+  else run();
+})();
+
 (async function initAuthUI() {
   const userMenuDesktop = document.getElementById('userMenuDesktop');
   const userMenuMobile = document.getElementById('userMenuMobile');
@@ -79,6 +98,7 @@
   try {
     const { supabase } = await import('./supabase-client.js');
     const { data: { user }, error } = await supabase.auth.getUser();
+
     if (error || !user) {
       localStorage.removeItem('gurmao_user');
       setLoggedOutUI();
@@ -96,21 +116,15 @@
 
     const userDropdownBtn = document.getElementById('userDropdownBtn');
     if (userDropdownBtn) {
-      userDropdownBtn.replaceChildren();
-      const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      icon.setAttribute('viewBox', '0 0 24 24');
-      icon.setAttribute('aria-hidden', 'true');
-      icon.style.cssText = 'display:block;width:22px;height:22px;min-width:22px;min-height:22px;fill:currentColor;pointer-events:none';
-      icon.innerHTML = '<path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-5.05 0-9 2.58-9 5.88C3 21.05 3.95 22 5.12 22h13.76A2.12 2.12 0 0 0 21 19.88C21 16.58 17.05 14 12 14Z"/>';
-      userDropdownBtn.appendChild(icon);
+      userDropdownBtn.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="7.5" r="4.25"></circle><path d="M4.25 21c.35-5.05 3.1-7.6 7.75-7.6s7.4 2.55 7.75 7.6H4.25z"></path></svg>';
       userDropdownBtn.setAttribute('aria-label', `Uživatelský účet: ${userName}`);
       userDropdownBtn.setAttribute('title', 'Můj účet');
-      userDropdownBtn.style.cssText += ';width:44px;height:44px;min-width:44px;padding:0;display:grid;place-items:center;border-radius:50%;color:#fff;line-height:1;overflow:visible';
+      userDropdownBtn.style.cssText += ';width:44px!important;height:44px!important;min-width:44px!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:50%!important;line-height:0!important;overflow:hidden!important';
+      const icon = userDropdownBtn.querySelector('svg');
+      if (icon) icon.style.cssText = 'display:block;width:22px;height:22px;flex:0 0 22px;margin:0;transform:none;position:static';
     }
 
-    if (user.app_metadata?.role === 'admin') {
-      document.querySelectorAll('[data-admin-only]').forEach(link => link.classList.remove('hidden'));
-    }
+    if (user.app_metadata?.role === 'admin') document.querySelectorAll('[data-admin-only]').forEach(link => link.classList.remove('hidden'));
 
     const userDropdownMenu = document.getElementById('userDropdownMenu');
     if (userDropdownBtn && userDropdownMenu) {
@@ -138,16 +152,24 @@
 (function loadPageSpecificEnhancements() {
   const path = window.location.pathname.replace(/\/+$/, '');
   const loadEnhancement = (css, js, version) => {
-    const stylesheet = document.createElement('link');
-    stylesheet.rel = 'stylesheet';
-    stylesheet.href = `${css}?v=${version}`;
-    document.head.appendChild(stylesheet);
-    const script = document.createElement('script');
-    script.src = `${js}?v=${version}`;
-    document.body.appendChild(script);
+    if (css) {
+      const stylesheet = document.createElement('link');
+      stylesheet.rel = 'stylesheet';
+      stylesheet.href = `${css}?v=${version}`;
+      document.head.appendChild(stylesheet);
+    }
+    if (js) {
+      const script = document.createElement('script');
+      script.src = `${js}?v=${version}`;
+      document.body.appendChild(script);
+    }
   };
+
   if (path.endsWith('/kuchar.html')) loadEnhancement('chef-redesign.css', 'chef-redesign.js', '4');
-  if (path.endsWith('/restaurace.html')) loadEnhancement('restaurant-gold-scrollbar.css', 'restaurant-card-status.js', '20260724-2');
+  if (path.endsWith('/restaurace.html')) {
+    loadEnhancement('restaurant-gold-scrollbar.css', 'restaurant-card-status.js', '20260724-2');
+    loadEnhancement(null, 'restaurant-locality-select-fix.js', '20260725-1');
+  }
   if (path.endsWith('/feed.html')) loadEnhancement('feed-redesign.css', 'feed-redesign.js', '7');
   if (path.endsWith('/ai.html')) loadEnhancement('ai-redesign.css', 'ai-redesign.js', '4');
 })();
