@@ -47,7 +47,7 @@
   <link rel="stylesheet" href="tooltip.css">
   
   <!-- Global Styles -->
-  <link rel="stylesheet" href="global.css?v=20260725-value-section">
+  <link rel="stylesheet" href="global.css?v=20260725-premium-footer">
 
   <style>
     body { font-family: 'Inter', sans-serif; }
@@ -627,8 +627,47 @@
 </section>
 
 <!-- FOOTER -->
-<footer class="py-6 border-t border-white/10">
-  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+<footer class="premium-footer py-6 border-t border-white/10">
+  <div class="footer-premium-main">
+    <div class="footer-brand-column">
+      <a href="index.html" class="footer-brand-logo" aria-label="GURMAO – domů">GUR<span>M</span>AO</a>
+      <p class="footer-brand-copy">Restaurace podle chuti a nálady. Najděte místo, které odpovídá tomu, co chcete právě zažít.</p>
+      <div class="footer-brand-tagline">Nejez. Prožij.</div>
+    </div>
+
+    <nav aria-label="Objevujte">
+      <h2 class="footer-column-title">Objevujte</h2>
+      <div class="footer-link-list">
+        <a href="restaurace.html">Restaurace</a>
+        <a href="feed.html">Feed</a>
+        <a href="ai.html">AI doporučení</a>
+        <a href="mapa.html">Mapa</a>
+      </div>
+    </nav>
+
+    <nav aria-label="Gurmao">
+      <h2 class="footer-column-title">Gurmao</h2>
+      <div class="footer-link-list">
+        <a href="kuchar.html">Kuchaři</a>
+        <a href="collections.html">Můj výběr</a>
+        <a href="kontakt.html">Kontakt</a>
+      </div>
+    </nav>
+
+    <div class="footer-search-column">
+      <h2 class="footer-column-title">Najděte své místo</h2>
+      <p class="footer-search-copy">Začněte jídlem, kuchyní nebo městem.</p>
+      <form class="footer-premium-search" action="restaurace.html" method="get" role="search">
+        <label class="sr-only" for="footerPremiumSearch">Na co máte chuť?</label>
+        <input id="footerPremiumSearch" name="q" type="search" maxlength="80" autocomplete="off" placeholder="Na co máte chuť?">
+        <button type="submit" aria-label="Hledat restauraci">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M14 7l5 5-5 5"/></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer-bottom-original max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
     <div class="flex flex-wrap justify-center md:justify-start gap-4 md:gap-6 text-xs md:text-sm text-white/60">
       <button id="legalToggle" class="hover:text-gurmaogold transition cursor-pointer">Informace ▼</button>
       <div id="legalLinks" class="hidden flex-wrap gap-4 md:gap-6">
