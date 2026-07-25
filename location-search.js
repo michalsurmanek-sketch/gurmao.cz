@@ -18,7 +18,8 @@ const CITY_DATA = {
   'kladno': { lat: 50.1476, lng: 14.1028, name: 'Kladno' },
   'karlovy-vary': { lat: 50.2329, lng: 12.8711, name: 'Karlovy Vary' },
   'uherske-hradiste': { lat: 49.0697, lng: 17.4594, name: 'Uherské Hradiště' },
-  'jihlava': { lat: 49.3961, lng: 15.5910, name: 'Jihlava' }
+  'jihlava': { lat: 49.3961, lng: 15.5910, name: 'Jihlava' },
+  'usti-nad-labem': { lat: 50.6611, lng: 14.0531, name: 'Ústí nad Labem' }
 };
 
 function slugifyCity(value) {
