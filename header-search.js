@@ -412,6 +412,11 @@ async function initMobileSearch() {
   const mobileSearchResults = document.getElementById('mobileSearchResults');
   const mobileLocationToggle = document.getElementById('mobileLocationToggle');
   const mobileSearchRow = mobileSearchBox ? mobileSearchBox.querySelector('div.relative') : null;
+
+  // Feed uses this input to filter its own cards, not the global restaurant search.
+  if (mobileSearchBox?.dataset.feedFilter === 'true') {
+    return;
+  }
   
   if (!mobileSearchInput || !mobileSearchResults) {
     return;
