@@ -34,8 +34,8 @@ function injectStyles() {
   style.textContent = `
     .gurmao-city-wrap{position:relative;display:flex;align-items:center;flex:0 0 auto}
     .gurmao-city-wrap--mobile{display:none}
-    .gurmao-city-btn{box-sizing:border-box;height:44px;max-width:230px;display:flex;align-items:center;gap:8px;padding:0 14px;border:1px solid rgba(255,255,255,.15);border-radius:999px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.9);font:600 13px/1 Inter,sans-serif;cursor:pointer;white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,.025);transition:color .18s,border-color .18s,background .18s,box-shadow .18s}
-    .gurmao-city-btn:hover,.gurmao-city-btn:focus-visible,.gurmao-city-btn[aria-expanded="true"]{color:#f3c94a;border-color:rgba(216,173,52,.65);background:rgba(216,173,52,.1);box-shadow:0 0 0 3px rgba(216,173,52,.06);outline:none}
+    .gurmao-city-btn{box-sizing:border-box;height:44px;max-width:230px;display:flex;align-items:center;gap:8px;padding:0 14px;border:1px solid rgba(255,255,255,.15);border-radius:999px;background:rgba(5,5,5,.96);color:rgba(255,255,255,.9);font:600 13px/1 Inter,sans-serif;cursor:pointer;white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,.025);transition:color .18s,border-color .18s,background .18s,box-shadow .18s}
+    .gurmao-city-btn:hover,.gurmao-city-btn:focus-visible,.gurmao-city-btn[aria-expanded="true"]{color:#f3c94a;border-color:rgba(216,173,52,.72);background:#050505;box-shadow:0 0 0 3px rgba(216,173,52,.06);outline:none}
     .gurmao-city-btn .gurmao-city-name{max-width:180px;overflow:hidden;text-overflow:ellipsis}
     .gurmao-city-menu{position:absolute;right:0;top:calc(100% + 18px);z-index:500;width:min(320px,calc(100vw - 28px));padding:10px;border:1px solid rgba(216,173,52,.28);border-radius:18px;background:rgba(10,11,9,.98);box-shadow:0 24px 70px rgba(0,0,0,.58);backdrop-filter:blur(18px)}
     .gurmao-city-menu[hidden]{display:none!important}
@@ -49,8 +49,8 @@ function injectStyles() {
     @media(max-width:767px){
       .gurmao-city-wrap:not(.gurmao-city-wrap--mobile){display:none!important}
       .gurmao-city-wrap--mobile{display:flex;min-width:0}
-      .gurmao-city-wrap--mobile .gurmao-city-btn{height:44px;max-width:min(48vw,190px);padding:0 12px;border:1px solid rgba(255,255,255,.15);border-radius:999px;background:rgba(255,255,255,.05);gap:6px;font-size:12px}
-      .gurmao-city-wrap--mobile .gurmao-city-btn:hover,.gurmao-city-wrap--mobile .gurmao-city-btn[aria-expanded="true"]{border-color:rgba(216,173,52,.65);background:rgba(216,173,52,.1)}
+      .gurmao-city-wrap--mobile .gurmao-city-btn{height:44px;max-width:min(48vw,190px);padding:0 12px;border:1px solid rgba(255,255,255,.15);border-radius:999px;background:#050505;gap:6px;font-size:12px}
+      .gurmao-city-wrap--mobile .gurmao-city-btn:hover,.gurmao-city-wrap--mobile .gurmao-city-btn[aria-expanded="true"]{border-color:rgba(216,173,52,.72);background:#050505}
       .gurmao-city-wrap--mobile .gurmao-city-name{display:block;max-width:min(34vw,135px);overflow:hidden;text-overflow:ellipsis}
       .gurmao-city-wrap--mobile .gurmao-city-menu{right:-52px;top:calc(100% + 10px)}
       #mobileHeaderControls{align-items:center;gap:8px!important}
