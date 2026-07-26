@@ -52,6 +52,9 @@ function injectStyles() {
   style.textContent = `
     .gurmao-header-search-panel{position:fixed;z-index:650;width:min(420px,calc(100vw - 24px));border:1px solid rgba(216,173,52,.3);border-radius:20px;background:rgba(5,5,5,.98);box-shadow:0 24px 70px rgba(0,0,0,.62);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);overflow:hidden;color:#fff}
     .gurmao-header-search-panel[hidden]{display:none!important}
+    .gurmao-header-search-trigger{width:36px;height:36px;display:grid;place-items:center;flex:0 0 36px;padding:0;border:1px solid rgba(255,255,255,.15);border-radius:999px;background:#050505;color:rgba(255,255,255,.9);cursor:pointer}
+    .gurmao-header-search-trigger:hover,.gurmao-header-search-trigger:focus-visible,.gurmao-header-search-trigger[aria-expanded="true"]{border-color:rgba(216,173,52,.72);color:#f3c94a;outline:none}
+    .gurmao-header-search-trigger svg{width:17px;height:17px}
     .gurmao-header-search-form{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;min-height:48px;border-bottom:1px solid rgba(255,255,255,.1)}
     .gurmao-header-search-icon,.gurmao-header-search-close{width:44px;height:44px;display:grid;place-items:center;border:0;background:transparent;color:rgba(255,255,255,.72)}
     .gurmao-header-search-close{cursor:pointer;font-size:21px}
@@ -464,15 +467,38 @@ function setupLegacyMobileSearch() {
   }, { capture: true });
 }
 
+function createMissingDesktopTrigger() {
+  const header = document.querySelector('header');
+  const navigation = header?.querySelector('.desktop-nav') || header?.querySelector('nav');
+  if (!navigation || getComputedStyle(navigation).display === 'none' && window.matchMedia('(max-width:767px)').matches) return null;
+
+  const button = document.createElement('button');
+  button.id = 'headerSearchToggle';
+  button.className = 'gurmao-header-search-trigger';
+  button.type = 'button';
+  button.setAttribute('aria-label', 'Vyhledat');
+  button.appendChild(createIcon([
+    { tag: 'circle', attrs: { cx: '11', cy: '11', r: '7' } },
+    { attrs: { d: 'm20 20-3.5-3.5' } }
+  ]));
+
+  const cityWidget = navigation.querySelector('.gurmao-city-wrap');
+  if (cityWidget?.nextSibling) navigation.insertBefore(button, cityWidget.nextSibling);
+  else navigation.insertBefore(button, navigation.firstChild);
+  return button;
+}
+
 function init() {
   if (document.documentElement.dataset.gurmaoHeaderSearchReady === 'true') return;
-  const anchor = document.getElementById('headerSearchToggle') || document.getElementById('searchToggle');
+  injectStyles();
+  const anchor = document.getElementById('headerSearchToggle')
+    || document.getElementById('searchToggle')
+    || createMissingDesktopTrigger();
   const mobileButton = document.getElementById('mobileSearchBtn');
   if (!anchor && !mobileButton) return;
 
   document.documentElement.dataset.gurmaoHeaderSearchReady = 'true';
   locationSearch = new LocationSearch();
-  injectStyles();
 
   if (anchor) {
     const legacyPanel = document.getElementById('headerSearchPanel');
