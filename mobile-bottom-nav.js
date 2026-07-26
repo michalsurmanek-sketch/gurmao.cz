@@ -48,16 +48,16 @@
       .gurmao-bottom-nav{
         position:fixed;
         left:50%;
-        bottom:calc(10px + env(safe-area-inset-bottom,0px));
+        bottom:0;
         z-index:90;
         width:min(calc(100% - 20px),480px);
-        min-height:68px;
-        padding:7px 8px;
+        min-height:calc(68px + env(safe-area-inset-bottom,0px));
+        padding:7px 8px calc(7px + env(safe-area-inset-bottom,0px));
         display:grid;
         grid-template-columns:repeat(5,minmax(0,1fr));
         align-items:end;
-        border:1px solid rgba(212,175,55,.26);
-        border-radius:22px;
+        border:1px solid rgba(212,175,55,.26);\n        border-bottom:0;
+        border-radius:22px 22px 0 0;
         background:linear-gradient(180deg,rgba(24,24,22,.96),rgba(8,9,8,.97));
         box-shadow:0 16px 46px rgba(0,0,0,.52),0 0 24px rgba(212,175,55,.07);
         -webkit-backdrop-filter:blur(18px);

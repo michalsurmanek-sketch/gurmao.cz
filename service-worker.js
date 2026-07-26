@@ -1,7 +1,7 @@
 // GURMAO.cz – lehký service worker pro společné runtime skripty.
 // HTML se ověřuje v síti, ostatní soubory používají běžnou cache prohlížeče.
 
-const RUNTIME_VERSION = '20260726-2';
+const RUNTIME_VERSION = '20260726-3';
 
 self.addEventListener('install', () => {
   self.skipWaiting();
