@@ -430,7 +430,10 @@
             <div class="text-white/70 mt-1">${x.city} · ${x.tag}</div>
           </div>
         </a>
-        <button data-save="${x.id}" class="save-btn absolute top-6 right-6 w-12 h-12 rounded-full bg-black/30 backdrop-blur border border-white/20 hover:border-gurmaogold text-2xl transition z-10" aria-label="Uložit">${saveIcon}</button>
+        <div class="feed-card-actions absolute top-6 right-6 flex items-center gap-2 z-10">
+          <button data-save="${x.id}" class="save-btn w-12 h-12 rounded-full bg-black/30 backdrop-blur border border-white/20 hover:border-gurmaogold text-2xl transition" aria-label="Uložit">${saveIcon}</button>
+          ${window.socialShare.renderShareButton(x, 'lg')}
+        </div>
         
         <!-- Swipe indicator -->
         <div class="swipe-indicator pointer-events-none"></div>
