@@ -64,6 +64,27 @@
       max-height: calc(100dvh - var(--map-header-height) - var(--map-footer-height) - 16px);
       overflow-y: auto;
     }
+    #legendBox {
+      width: 13rem;
+      padding: 12px;
+      border-radius: 0 18px 18px 0;
+      cursor: default;
+    }
+    #legendHeader {
+      width: 100%;
+      cursor: pointer;
+    }
+    .vibe-filter {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 10px;
+      text-align: left;
+    }
+    .vibe-filter:hover,
+    .vibe-filter:focus-visible {
+      background: rgba(255, 255, 255, 0.08);
+      outline: none;
+    }
     @media (max-width: 767px) {
       :root {
         --map-header-height: 76px;
@@ -251,58 +272,55 @@
 <!-- Map container -->
 <div id="map"></div>
 
-<!-- Floating legend -->
-<div id="legendBox" class="md:hidden fixed bottom-0 left-0 bg-gurmaoblack/90 backdrop-blur border border-white/20 rounded-tr-2xl p-4 shadow-2xl max-w-xs z-40 cursor-pointer transition-all">
-  <h3 class="font-bold mb-2 flex items-center gap-2">
-    <span class="text-xl">🗺️</span>
-    Legenda
-    <span id="legendToggle" class="ml-auto text-xs text-white/60">▼</span>
-  </h3>
-  <div id="legendContent" class="space-y-2 text-sm">
-    <div class="flex items-center gap-2 cursor-pointer hover:opacity-70 transition vibe-filter" data-vibe="DRAMA">
-      <span class="text-xl">🔴</span>
+<!-- Floating vibe filter -->
+<div id="legendBox" class="fixed left-0 bg-gurmaoblack/90 backdrop-blur border border-white/20 shadow-2xl z-40 transition-all" aria-label="Filtr podle atmosféry">
+  <button id="legendHeader" type="button" class="font-bold flex items-center gap-2" aria-expanded="true" aria-controls="legendContent">
+    <span class="text-xl" aria-hidden="true">🎭</span>
+    <span>Filtrovat podle vibe</span>
+    <span id="legendToggle" class="ml-auto text-xs text-white/60" aria-hidden="true">▼</span>
+  </button>
+  <div id="legendContent" class="mt-2 space-y-1 text-sm">
+    <button type="button" class="flex items-center gap-2 hover:opacity-90 transition vibe-filter" data-vibe="DRAMA" aria-pressed="false">
+      <span class="text-xl" aria-hidden="true">🔴</span>
       <span class="vibe-filter-label">Drama</span>
-    </div>
-    <div class="flex items-center gap-2 cursor-pointer hover:opacity-70 transition vibe-filter" data-vibe="LUXE">
-      <span class="text-xl">🟡</span>
+    </button>
+    <button type="button" class="flex items-center gap-2 hover:opacity-90 transition vibe-filter" data-vibe="LUXE" aria-pressed="false">
+      <span class="text-xl" aria-hidden="true">🟡</span>
       <span class="vibe-filter-label">Luxe</span>
-    </div>
-    <div class="flex items-center gap-2 cursor-pointer hover:opacity-70 transition vibe-filter" data-vibe="PURE">
-      <span class="text-xl">🟢</span>
+    </button>
+    <button type="button" class="flex items-center gap-2 hover:opacity-90 transition vibe-filter" data-vibe="PURE" aria-pressed="false">
+      <span class="text-xl" aria-hidden="true">🟢</span>
       <span class="vibe-filter-label">Pure</span>
-    </div>
-    <div class="flex items-center gap-2 cursor-pointer hover:opacity-70 transition vibe-filter" data-vibe="DARK">
-      <span class="text-xl">⚫</span>
+    </button>
+    <button type="button" class="flex items-center gap-2 hover:opacity-90 transition vibe-filter" data-vibe="DARK" aria-pressed="false">
+      <span class="text-xl" aria-hidden="true">⚫</span>
       <span class="vibe-filter-label">Dark</span>
-    </div>
-    <div class="flex items-center gap-2 cursor-pointer hover:opacity-70 transition vibe-filter" data-vibe="CHAOS">
-      <span class="text-xl">🟠</span>
+    </button>
+    <button type="button" class="flex items-center gap-2 hover:opacity-90 transition vibe-filter" data-vibe="CHAOS" aria-pressed="false">
+      <span class="text-xl" aria-hidden="true">🟠</span>
       <span class="vibe-filter-label">Chaos</span>
-    </div>
-    <div class="flex items-center gap-2 cursor-pointer hover:opacity-70 transition vibe-filter" data-vibe="CALM">
-      <span class="text-xl">🔵</span>
+    </button>
+    <button type="button" class="flex items-center gap-2 hover:opacity-90 transition vibe-filter" data-vibe="CALM" aria-pressed="false">
+      <span class="text-xl" aria-hidden="true">🔵</span>
       <span class="vibe-filter-label">Calm</span>
-    </div>
-    <div class="text-white/60 text-xs mt-2 hidden md:block">
-      Klikni na marker pro detail
+    </button>
+    <div class="text-white/50 text-xs mt-2">
+      Bez výběru se zobrazí všechna místa.
     </div>
   </div>
 </div>
 
 <script>
-  // Toggle legend
-  const legendBox = document.getElementById('legendBox');
+  // Toggle filter panel without interfering with vibe buttons
+  const legendHeader = document.getElementById('legendHeader');
   const legendContent = document.getElementById('legendContent');
   const legendToggle = document.getElementById('legendToggle');
-  
-  legendBox.addEventListener('click', () => {
-    if (legendContent.style.display === 'none') {
-      legendContent.style.display = 'block';
-      legendToggle.textContent = '▼';
-    } else {
-      legendContent.style.display = 'none';
-      legendToggle.textContent = '▶';
-    }
+
+  legendHeader.addEventListener('click', () => {
+    const isCollapsed = legendContent.hidden;
+    legendContent.hidden = !isCollapsed;
+    legendHeader.setAttribute('aria-expanded', String(isCollapsed));
+    legendToggle.textContent = isCollapsed ? '▼' : '▶';
   });
 </script>
 
