@@ -1,330 +1,298 @@
-// Footer Search Component
-let supabase;
-let LocationSearch;
-let locationSearch;
+import { supabase } from './supabase-client.js';
+import { LocationSearch } from './location-search.js';
 
-// Load modules asynchronously
-async function loadModules() {
-  try {
-    const supabaseModule = await import('./supabase-client.js');
-    supabase = supabaseModule.supabase;
-    const locationModule = await import('./location-search.js');
-    LocationSearch = locationModule.LocationSearch;
-    locationSearch = new LocationSearch();
-    return true;
-  } catch (error) {
-    console.error('Failed to load modules:', error);
-    return false;
-  }
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4';
+const MAX_DISTANCE_KM = 20;
+
+function addStyles() {
+  if (document.getElementById('gurmao-footer-search-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'gurmao-footer-search-styles';
+  style.textContent = `
+    #footerSearchResults {
+      background: #080808;
+      border-color: rgba(229, 184, 47, .38);
+      scrollbar-color: #e5b82f #080808;
+    }
+    .gurmao-footer-result {
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      color: #fff;
+      border-bottom: 1px solid rgba(255, 255, 255, .1);
+      transition: background-color .2s ease;
+    }
+    .gurmao-footer-result:last-child { border-bottom: 0; }
+    .gurmao-footer-result:hover,
+    .gurmao-footer-result:focus-visible {
+      background: rgba(229, 184, 47, .12);
+      outline: none;
+    }
+    .gurmao-footer-result__photo {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: #171717;
+    }
+    .gurmao-footer-result__copy { min-width: 0; }
+    .gurmao-footer-result__name,
+    .gurmao-footer-result__city {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .gurmao-footer-result__name {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 650;
+    }
+    .gurmao-footer-result__city {
+      margin-top: 6px;
+      color: rgba(255, 255, 255, .58);
+      font-size: 12px;
+    }
+    .gurmao-footer-result__distance {
+      color: #e5b82f;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .gurmao-footer-result-message {
+      padding: 16px;
+      color: rgba(255, 255, 255, .6);
+      font-size: 14px;
+      text-align: center;
+    }
+    @media (max-width: 767px) {
+      #footerSearchBox.w-80 { width: min(20rem, calc(100vw - 32px)); }
+      #footerSearchResults { width: min(20rem, calc(100vw - 32px)); }
+    }
+  `;
+  document.head.appendChild(style);
 }
 
-async function initFooterSearch() {
-  // Počkat na načtení modulů
-  await loadModules();
-  
-  const footerSearchBox = document.getElementById('footerSearchBox');
-  const footerSearchToggle = document.getElementById('footerSearchToggle');
-  const footerSearchInput = document.getElementById('footerSearchInput');
-  const footerSearchResults = document.getElementById('footerSearchResults');
-  const footerLocationToggle = document.getElementById('footerLocationToggle');
-  
-  if (!footerSearchBox || !footerSearchToggle || !footerSearchInput || !footerSearchResults) return;
-  
-  let isExpanded = false;
-  let isLocationActive = false;
-  
-  // Načíst uložený stav polohy
-  if (locationSearch && locationSearch.isLocationEnabled && footerLocationToggle) {
-    isLocationActive = true;
-    footerLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>';
-    footerLocationToggle.classList.add('text-gurmaogold');
+function setLocationIcon(button, active, loading = false) {
+  if (!button) return;
+  button.replaceChildren();
+  if (loading) {
+    const spinner = document.createElement('span');
+    spinner.className = 'w-4 h-4 border-2 border-gurmaogold border-t-transparent rounded-full animate-spin';
+    button.appendChild(spinner);
+    return;
   }
-  
-  // Location toggle
-  if (footerLocationToggle) {
-    footerLocationToggle.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      
-      if (!isLocationActive) {
-        try {
-          footerLocationToggle.innerHTML = '<div class="w-4 h-4 border-2 border-gurmaogold border-t-transparent rounded-full animate-spin"></div>';
-          // VŽDY získej novou pozici (forceRefresh = true)
-          await locationSearch.getUserLocation(true);
-          footerLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>';
-          footerLocationToggle.classList.add('text-gurmaogold');
-          isLocationActive = true;
-          
-          if (footerSearchInput.value.trim()) {
-            footerSearchInput.dispatchEvent(new Event('input'));
-          }
-        } catch (error) {
-          console.error('Chyba při získávání pozice:', error);
-          footerLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
-        }
-      } else {
-        locationSearch.disable();
-        footerLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
-        footerLocationToggle.classList.remove('text-gurmaogold');
-        isLocationActive = false;
-        
-        if (footerSearchInput.value.trim()) {
-          footerSearchInput.dispatchEvent(new Event('input'));
-        }
-      }
+  button.innerHTML = active
+    ? '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>'
+    : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
+  button.classList.toggle('text-gurmaogold', active);
+  button.setAttribute('aria-pressed', String(active));
+}
+
+function normalizedTerms(query) {
+  return query
+    .normalize('NFKC')
+    .split(/\s+/)
+    .map(term => term.replace(/[%_,().:*'"\\]/g, '').trim())
+    .filter(Boolean)
+    .slice(0, 4);
+}
+
+function createResult(restaurant, locationSearch, showDistance) {
+  const identifier = restaurant.slug || restaurant.id;
+  const link = document.createElement('a');
+  link.className = 'gurmao-footer-result';
+  link.href = `restaurace-detail.html?id=${encodeURIComponent(identifier)}`;
+
+  const image = document.createElement('img');
+  image.className = 'gurmao-footer-result__photo';
+  image.src = restaurant.image_url || FALLBACK_IMAGE;
+  image.alt = '';
+  image.loading = 'lazy';
+  image.addEventListener('error', () => {
+    if (image.src !== FALLBACK_IMAGE) image.src = FALLBACK_IMAGE;
+  }, { once: true });
+
+  const copy = document.createElement('span');
+  copy.className = 'gurmao-footer-result__copy';
+  const name = document.createElement('span');
+  name.className = 'gurmao-footer-result__name';
+  name.textContent = restaurant.name || 'Restaurace';
+  const city = document.createElement('span');
+  city.className = 'gurmao-footer-result__city';
+  city.textContent = restaurant.city || '';
+  copy.append(name, city);
+
+  link.append(image, copy);
+  if (showDistance && Number.isFinite(restaurant.distance)) {
+    const distance = document.createElement('span');
+    distance.className = 'gurmao-footer-result__distance';
+    distance.textContent = locationSearch.formatDistance(restaurant.distance);
+    link.appendChild(distance);
+  }
+  return link;
+}
+
+function initFooterSearch() {
+  const box = document.getElementById('footerSearchBox');
+  const toggle = document.getElementById('footerSearchToggle');
+  const input = document.getElementById('footerSearchInput');
+  const results = document.getElementById('footerSearchResults');
+  const locationToggle = document.getElementById('footerLocationToggle');
+  if (!box || !toggle || !input || !results) return;
+
+  addStyles();
+  const locationSearch = new LocationSearch();
+  let expanded = false;
+  let locationActive = Boolean(locationSearch.isLocationEnabled && locationSearch.userLocation);
+  let timeout;
+  let requestId = 0;
+
+  const socials = () => document.querySelectorAll('.footer-social');
+  const hideResults = () => {
+    results.classList.add('hidden');
+    results.replaceChildren();
+  };
+  const showMessage = message => {
+    const item = document.createElement('div');
+    item.className = 'gurmao-footer-result-message';
+    item.textContent = message;
+    results.replaceChildren(item);
+    results.classList.remove('hidden');
+  };
+  const collapse = () => {
+    box.classList.add('w-9');
+    box.classList.remove('w-80');
+    input.classList.add('opacity-0', 'w-0');
+    input.classList.remove('opacity-100', 'w-full', 'pr-3');
+    input.value = '';
+    hideResults();
+    locationToggle?.classList.add('opacity-0', 'pointer-events-none');
+    locationToggle?.classList.remove('opacity-100', 'pointer-events-auto');
+    socials().forEach(icon => {
+      icon.style.opacity = '1';
+      icon.style.visibility = 'visible';
     });
-  }
-  
-  footerSearchToggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (!isExpanded) {
-      footerSearchBox.classList.remove('w-9');
-      footerSearchBox.classList.add('w-80');
-      footerSearchInput.classList.remove('opacity-0', 'w-0');
-      footerSearchInput.classList.add('opacity-100', 'w-full', 'pr-3');
-      
-      if (footerLocationToggle) {
-        footerLocationToggle.classList.remove('opacity-0', 'pointer-events-none');
-        footerLocationToggle.classList.add('opacity-100', 'pointer-events-auto');
-      }
-      
-      // Skrýt sociální sítě
-      const socialIcons = document.querySelectorAll('.footer-social');
-      socialIcons.forEach(icon => {
-        icon.style.transition = 'opacity 0.3s ease, visibility 0.3s ease';
-        icon.style.opacity = '0';
-        icon.style.visibility = 'hidden';
-      });
-      
-      setTimeout(() => footerSearchInput.focus(), 300);
-      isExpanded = true;
-    }
-  });
-  
-  document.addEventListener('click', (e) => {
-    // Handle menu icon clicks
-    if (e.target.closest('.menu-icon-link')) {
-      e.preventDefault();
-      e.stopPropagation();
-      const menuIcon = e.target.closest('.menu-icon-link');
-      const url = menuIcon.getAttribute('data-url');
-      if (url && url !== '#') {
-        window.open(url, '_blank');
-      }
-      return;
-    }
+    expanded = false;
+  };
+  const expand = () => {
+    if (expanded) return;
+    box.classList.remove('w-9');
+    box.classList.add('w-80');
+    input.classList.remove('opacity-0', 'w-0');
+    input.classList.add('opacity-100', 'w-full', 'pr-3');
+    locationToggle?.classList.remove('opacity-0', 'pointer-events-none');
+    locationToggle?.classList.add('opacity-100', 'pointer-events-auto');
+    socials().forEach(icon => {
+      icon.style.transition = 'opacity .3s ease, visibility .3s ease';
+      icon.style.opacity = '0';
+      icon.style.visibility = 'hidden';
+    });
+    expanded = true;
+    window.setTimeout(() => input.focus(), 250);
+  };
 
-    // Handle lunch menu clicks
-    if (e.target.closest('.lunch-menu-link')) {
-      e.preventDefault();
-      e.stopPropagation();
-      const menuLink = e.target.closest('.lunch-menu-link');
-      const url = menuLink.getAttribute('data-url');
-      if (url) {
-        window.open(url, '_blank');
-      }
-      return;
-    }
-    
-    if (isExpanded && !footerSearchBox.contains(e.target) && !footerSearchResults.contains(e.target)) {
-      footerSearchBox.classList.add('w-9');
-      footerSearchBox.classList.remove('w-80');
-      footerSearchInput.classList.add('opacity-0', 'w-0');
-      footerSearchInput.classList.remove('opacity-100', 'w-full', 'pr-3');
-      footerSearchInput.value = '';
-      footerSearchResults.classList.add('hidden');
-      footerSearchResults.innerHTML = '';
-      
-      if (footerLocationToggle) {
-        footerLocationToggle.classList.add('opacity-0', 'pointer-events-none');
-        footerLocationToggle.classList.remove('opacity-100', 'pointer-events-auto');
-      }
-      
-      // Zobrazit sociální sítě zpět
-      const socialIcons = document.querySelectorAll('.footer-social');
-      socialIcons.forEach(icon => {
-        icon.style.opacity = '1';
-        icon.style.visibility = 'visible';
-      });
-      
-      isExpanded = false;
-    }
+  setLocationIcon(locationToggle, locationActive);
+  toggle.addEventListener('click', event => {
+    event.stopPropagation();
+    expand();
   });
-  
-  let searchTimeout;
-  footerSearchInput.addEventListener('input', async (e) => {
-    const query = e.target.value.trim().toLowerCase();
-    clearTimeout(searchTimeout);
-    
-    if (!query) {
-      footerSearchResults.classList.add('hidden');
-      footerSearchResults.innerHTML = '';
-      return;
-    }
-    
-    searchTimeout = setTimeout(async () => {
+
+  locationToggle?.addEventListener('click', async event => {
+    event.stopPropagation();
+    if (locationActive) {
+      locationSearch.disable();
+      locationActive = false;
+      setLocationIcon(locationToggle, false);
+    } else {
       try {
-        // Vyhledávání restaurací
-        let { data: restaurants, error: restaurantsError } = await supabase
-          .from('restaurants')
-          .select('id, slug, name, city, vibe, tag, image_url, latitude, longitude')
-          .or(`name.ilike.%${query}%,city.ilike.%${query}%,tag.ilike.%${query}%,vibe.ilike.%${query}%`)
-          .limit(20);
-        
-        if (restaurantsError) throw restaurantsError;
-        
-        // Vyhledávání kuchařů
-        let { data: chefs, error: chefsError } = await supabase
-          .from('chefs')
-          .select('id, slug, name, image_url')
-          .ilike('name', `%${query}%`)
-          .limit(10);
-        
-        console.log('👨‍🍳 Footer Chefs dotaz:', { query, chefs, chefsError });
-        
-        if (chefsError) {
-          console.error('Chyba při vyhledávání kuchařů:', chefsError);
-          chefs = [];
-        }
-        
-        let results = restaurants || [];
-        let chefResults = chefs || [];
-        
-        console.log('🔍 Footer Vyhledávání:', { 
-          query, 
-          restaurants: results.length, 
-          chefs: chefResults.length 
-        });
-        
-        if (isLocationActive && locationSearch && locationSearch.isLocationEnabled && locationSearch.userLocation) {
-          results = results.map(restaurant => {
-            if (restaurant.latitude && restaurant.longitude) {
-              const distance = locationSearch.calculateDistance(
-                locationSearch.userLocation.lat,
-                locationSearch.userLocation.lng,
-                restaurant.latitude,
-                restaurant.longitude
-              );
-              return { ...restaurant, distance };
-            }
-            return restaurant;
-          });
-          results.sort((a, b) => (a.distance || 999) - (b.distance || 999));
-        }
-        
-        if (results.length > 0 || chefResults.length > 0) {
-          footerSearchResults.classList.remove('hidden');
-          
-          let html = '';
-          
-          // Restaurace
-          if (results.length > 0) {
-            html += results.map(r => {
-            const identifier = r.slug || r.id;
-            let distanceHTML = '';
-            if (isLocationActive && r.distance !== undefined) {
-              distanceHTML = `<span class="text-gurmaogold text-xs ml-2">${locationSearch.formatDistance(r.distance)}</span>`;
-            }
-            // Extract website URL from image_url
-            let websiteUrl = '#';
-            if (r.image_url) {
-              const match = r.image_url.match(/https?:\/\/([^/]+)/);
-              if (match) {
-                websiteUrl = 'https://' + match[1];
-              }
-            }
-            return `
-            <a href="restaurace-detail.html?id=${identifier}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
-              <div class="flex gap-3 items-center">
-                <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
-                <div class="flex-1 min-w-0">
-                  <div class="text-sm font-medium truncate">${r.name}${distanceHTML}</div>
-                  <div class="text-xs text-white/60 flex items-center gap-2">
-                    <span class="flex-1 truncate">${r.city}</span>
-                    <span data-url="${websiteUrl}" class="menu-icon-link cursor-pointer">
-                      <svg class="w-6 h-6 text-gurmaogold hover:text-yellow-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Menu restaurace">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                      </svg>
-                    </span>
-                  </div>
-                  <div class="text-xs text-white/50 truncate">${r.vibe}</div>
-                </div>
-              </div>
-            </a>
-            `;
-          }).join('');
-          }
-          
-          // Kuchaři
-          if (chefResults.length > 0) {
-            html += chefResults.map(c => {
-              const identifier = c.slug || c.id;
-              return `
-              <a href="kuchar-detail.html?id=${identifier}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
-                <div class="flex gap-3 items-center">
-                  <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${c.image_url || 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c'}')"></div>
-                  <div class="flex-1 min-w-0">
-                    <div class="text-sm font-medium truncate">${c.name}</div>
-                    <div class="text-xs text-gurmaogold truncate">👨‍🍳 Kuchař</div>
-                  </div>
-                </div>
-              </a>
-              `;
-            }).join('');
-          }
+        setLocationIcon(locationToggle, false, true);
+        await locationSearch.getUserLocation(true);
+        locationActive = true;
+        setLocationIcon(locationToggle, true);
+      } catch (error) {
+        console.error('Footer location error:', error);
+        locationActive = false;
+        setLocationIcon(locationToggle, false);
+      }
+    }
+    if (input.value.trim()) input.dispatchEvent(new Event('input'));
+  });
 
-          // Polední menu (spodní kontejner)
-          if (results.length > 0) {
-            const topRestaurant = results[0];
-            html += `
-            <div class="p-3 border-t border-white/10 bg-white/5">
-              <div class="text-xs uppercase tracking-wide text-white/50">Polední menu</div>
-              <div class="mt-3 rounded-2xl border border-white/20 bg-white/5 shadow-lg overflow-hidden">
-                <div class="px-3 py-2 border-b border-white/10 flex items-center justify-between">
-                  <div class="text-sm font-semibold truncate">${topRestaurant.name}</div>
-                  <div class="text-[11px] text-white/50">Dnes</div>
-                </div>
-                <div class="p-3 space-y-2 text-xs text-white/80">
-                  <div class="flex items-start gap-2">
-                    <span class="text-white/40">1.</span>
-                    <span class="flex-1">Polévka dne</span>
-                    <span class="text-gurmaogold whitespace-nowrap">59 Kč</span>
-                  </div>
-                  <div class="flex items-start gap-2">
-                    <span class="text-white/40">2.</span>
-                    <span class="flex-1">Hlavní chod dne</span>
-                    <span class="text-gurmaogold whitespace-nowrap">149 Kč</span>
-                  </div>
-                  <div class="flex items-start gap-2">
-                    <span class="text-white/40">3.</span>
-                    <span class="flex-1">Vegetariánské</span>
-                    <span class="text-gurmaogold whitespace-nowrap">139 Kč</span>
-                  </div>
-                </div>
-                <div class="px-3 py-2 border-t border-white/10 text-[11px] text-white/50">
-                  Obsah karty brzy napojíme na Supabase.
-                </div>
-              </div>
-            </div>
-            `;
-          }
-          
-          footerSearchResults.innerHTML = html;
-        } else {
-          const noResultsMsg = isLocationActive && locationSearch && locationSearch.userLocation 
-            ? 'Žádné restaurace v okruhu 20 km' 
-            : 'Žádné výsledky';
-          footerSearchResults.classList.remove('hidden');
-          footerSearchResults.innerHTML = `<div class="p-4 text-sm text-white/60 text-center">${noResultsMsg}</div>`;
+  input.addEventListener('input', () => {
+    clearTimeout(timeout);
+    const terms = normalizedTerms(input.value);
+    const ownRequest = ++requestId;
+    if (terms.join('').length < 2) {
+      hideResults();
+      return;
+    }
+
+    timeout = window.setTimeout(async () => {
+      try {
+        const filters = terms.flatMap(term => [
+          `name.ilike.%${term}%`,
+          `city.ilike.%${term}%`,
+          `tag.ilike.%${term}%`
+        ]);
+        const { data, error } = await supabase
+          .from('restaurants')
+          .select('id, slug, name, city, image_url, latitude, longitude')
+          .or(filters.join(','))
+          .limit(20);
+        if (error) throw error;
+        if (ownRequest !== requestId) return;
+
+        let matches = data || [];
+        if (locationActive && locationSearch.userLocation) {
+          matches = matches
+            .map(restaurant => {
+              const lat = Number(restaurant.latitude);
+              const lng = Number(restaurant.longitude);
+              if (!Number.isFinite(lat) || !Number.isFinite(lng)) return { ...restaurant, distance: Infinity };
+              return {
+                ...restaurant,
+                distance: locationSearch.calculateDistance(
+                  locationSearch.userLocation.lat,
+                  locationSearch.userLocation.lng,
+                  lat,
+                  lng
+                )
+              };
+            })
+            .filter(restaurant => restaurant.distance <= MAX_DISTANCE_KM)
+            .sort((a, b) => a.distance - b.distance);
         }
+
+        if (!matches.length) {
+          showMessage(locationActive ? 'Žádné restaurace v okruhu 20 km' : 'Žádné výsledky');
+          return;
+        }
+        const fragment = document.createDocumentFragment();
+        matches.forEach(restaurant => fragment.appendChild(
+          createResult(restaurant, locationSearch, locationActive)
+        ));
+        results.replaceChildren(fragment);
+        results.classList.remove('hidden');
       } catch (error) {
         console.error('Footer search error:', error);
+        if (ownRequest === requestId) showMessage('Vyhledávání se nepodařilo načíst');
       }
-    }, 300);
+    }, 250);
+  });
+
+  input.addEventListener('keydown', event => {
+    if (event.key === 'Escape') collapse();
+    if (event.key === 'Enter') results.querySelector('a')?.click();
+  });
+  document.addEventListener('click', event => {
+    if (expanded && !box.contains(event.target) && !results.contains(event.target)) collapse();
   });
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initFooterSearch);
+  document.addEventListener('DOMContentLoaded', initFooterSearch, { once: true });
 } else {
   initFooterSearch();
 }
