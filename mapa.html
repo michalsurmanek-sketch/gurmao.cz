@@ -33,9 +33,68 @@
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
   
   <style>
-    body { font-family: 'Inter', sans-serif; margin: 0; }
+    :root {
+      --map-header-height: 76px;
+      --map-footer-height: 64px;
+    }
+    body { font-family: 'Inter', sans-serif; margin: 0; overflow: hidden; }
     h1,h2,h3 { font-family: 'Playfair Display', serif; }
-    #map { position: fixed; top: 65px; left: 0; right: 0; bottom: 0; width: 100%; }
+    #map {
+      position: fixed;
+      top: var(--map-header-height);
+      left: 0;
+      right: 0;
+      bottom: var(--map-footer-height);
+      width: 100%;
+    }
+    .map-page-footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 45;
+      padding: 10px 0;
+      background: rgba(11, 11, 13, 0.94);
+      backdrop-filter: blur(14px);
+    }
+    .map-page-footer .footer-bottom-original { gap: 8px; }
+    #legendBox {
+      bottom: calc(var(--map-footer-height) + 8px) !important;
+      max-width: min(18rem, calc(100vw - 1rem));
+      max-height: calc(100dvh - var(--map-header-height) - var(--map-footer-height) - 16px);
+      overflow-y: auto;
+    }
+    @media (max-width: 767px) {
+      :root {
+        --map-header-height: 76px;
+        --map-footer-height: 104px;
+      }
+      #headerActions {
+        flex: 1;
+        min-width: 0;
+        justify-content: flex-end;
+      }
+      .mobile-map-search {
+        display: flex;
+        flex: 1;
+        min-width: 0;
+        justify-content: flex-end;
+      }
+      #mobileSearchBox.w-full { max-width: calc(100vw - 2rem); }
+      .map-page-footer { padding: 8px 0; }
+      .map-page-footer .footer-bottom-original {
+        width: 100%;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .map-page-footer #footerSearchBox.w-80 {
+        width: calc(100vw - 2rem) !important;
+        max-width: 20rem;
+      }
+      .map-page-footer .footer-bottom-original > div:last-child:has(#footerSearchBox.w-80) .footer-social {
+        display: none !important;
+      }
+    }
     
     /* Mapbox popup styling */
     .mapboxgl-popup-content {
@@ -66,8 +125,8 @@
   <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
     <a href="index.html" class="modal-title text-2xl">GUR<span class="text-gurmaogold">M</span>AO</a>
     
-    <div class="flex items-center gap-3">
-      <div class="relative md:hidden">
+    <div id="headerActions" class="flex items-center gap-3">
+      <div class="mobile-map-search relative md:hidden">
         <div id="mobileSearchBox" class="flex items-center gap-2 transition-all duration-300 w-11 h-11 rounded-full bg-white/5 border border-white/15 hover:border-gurmaogold overflow-hidden">
           <button id="mobileSearchToggle" class="flex-shrink-0 w-11 h-11 flex items-center justify-center">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -257,7 +316,7 @@
 <script src="vibe-tooltips.js"></script>
 <script src="cookie-consent.js"></script>
 
-<footer class="py-6 border-t border-white/10">
+<footer class="map-page-footer border-t border-white/10">
   <div class="footer-bottom-original max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
     <div class="flex flex-wrap justify-center md:justify-start gap-4 md:gap-6 text-xs md:text-sm text-white/60">
       <a href="legal.html" class="hover:text-gurmaogold transition">Informace</a>
