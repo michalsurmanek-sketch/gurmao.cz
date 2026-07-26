@@ -1,659 +1,497 @@
-// Header Search with Location Integration
 import { supabase } from './supabase-client.js';
+import { LocationSearch } from './location-search.js';
 
-let LocationSearch;
+const SEARCH_PANEL_ID = 'gurmaoGlobalHeaderSearch';
+const SEARCH_STYLE_ID = 'gurmaoGlobalHeaderSearchStyles';
+const MAX_DISTANCE_KM = 20;
+const MIN_QUERY_LENGTH = 2;
+
 let locationSearch;
+let requestSequence = 0;
 
-// Load location-search module
-async function loadLocationModule() {
+function escapeSelectorValue(value) {
+  return String(value ?? '').replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
+function normalizeQuery(value) {
+  return String(value ?? '')
+    .normalize('NFKC')
+    .toLocaleLowerCase('cs-CZ')
+    .replace(/[^\p{L}\p{N}\s-]+/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 80);
+}
+
+function queryTerms(value) {
+  return [...new Set(normalizeQuery(value).split(' ').filter(term => term.length >= 2))].slice(0, 4);
+}
+
+function validImageUrl(value) {
   try {
-    const module = await import('./location-search.js');
-    LocationSearch = module.LocationSearch;
-    locationSearch = new LocationSearch(supabase);
-  } catch (error) {
-    console.error('Failed to load location module:', error);
+    const url = new URL(String(value || ''), location.href);
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+  } catch {
+    return '';
   }
 }
 
-loadLocationModule();
+function resultIdentifier(item) {
+  return String(item?.slug || item?.id || '');
+}
 
-function initHeaderSearch() {
-  console.log('🔍 Header search initializing...');
-  const headerSearchBox = document.getElementById('headerSearchBox');
-  const headerSearchPanel = document.getElementById('headerSearchPanel');
-  const headerSearchToggle = document.getElementById('headerSearchToggle');
-  const headerSearchInput = document.getElementById('headerSearchInput');
-  const headerSearchResults = document.getElementById('headerSearchResults');
-  const headerLocationToggle = document.getElementById('headerLocationToggle');
-  
-  console.log('Elements found:', {
-    headerSearchBox: !!headerSearchBox,
-    headerSearchToggle: !!headerSearchToggle,
-    headerSearchInput: !!headerSearchInput,
-    headerSearchResults: !!headerSearchResults,
-    headerLocationToggle: !!headerLocationToggle
+function detailUrl(type, item) {
+  const page = type === 'chef' ? 'kuchar-detail.html' : 'restaurace-detail.html';
+  return `${page}?id=${encodeURIComponent(resultIdentifier(item))}`;
+}
+
+function injectStyles() {
+  if (document.getElementById(SEARCH_STYLE_ID)) return;
+  const style = document.createElement('style');
+  style.id = SEARCH_STYLE_ID;
+  style.textContent = `
+    .gurmao-header-search-panel{position:fixed;z-index:650;width:min(420px,calc(100vw - 24px));border:1px solid rgba(216,173,52,.3);border-radius:20px;background:rgba(5,5,5,.98);box-shadow:0 24px 70px rgba(0,0,0,.62);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);overflow:hidden;color:#fff}
+    .gurmao-header-search-panel[hidden]{display:none!important}
+    .gurmao-header-search-form{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;min-height:48px;border-bottom:1px solid rgba(255,255,255,.1)}
+    .gurmao-header-search-icon,.gurmao-header-search-close{width:44px;height:44px;display:grid;place-items:center;border:0;background:transparent;color:rgba(255,255,255,.72)}
+    .gurmao-header-search-close{cursor:pointer;font-size:21px}
+    .gurmao-header-search-close:hover,.gurmao-header-search-close:focus-visible{color:#f3c94a;outline:none}
+    .gurmao-header-search-input{min-width:0;width:100%;height:46px;border:0;background:transparent;color:#fff;outline:none;font:500 16px/1.2 Inter,system-ui,sans-serif}
+    .gurmao-header-search-input::placeholder{color:rgba(255,255,255,.42)}
+    .gurmao-header-search-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.56);font:500 11px/1.3 Inter,system-ui,sans-serif}
+    .gurmao-header-location{min-height:34px;display:inline-flex;align-items:center;gap:7px;padding:0 11px;border:1px solid rgba(255,255,255,.14);border-radius:999px;background:#050505;color:rgba(255,255,255,.78);cursor:pointer;font:600 11px/1 Inter,system-ui,sans-serif}
+    .gurmao-header-location:hover,.gurmao-header-location:focus-visible,.gurmao-header-location[aria-pressed="true"]{border-color:rgba(216,173,52,.65);color:#f3c94a;outline:none}
+    .gurmao-header-search-results{max-height:min(58vh,520px);overflow:auto;overscroll-behavior:contain}
+    .gurmao-header-search-status{padding:22px 16px;color:rgba(255,255,255,.58);text-align:center;font:500 13px/1.45 Inter,system-ui,sans-serif}
+    .gurmao-header-search-section{padding:9px 13px 7px;color:#d8ad34;font:700 10px/1.2 Inter,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase}
+    .gurmao-header-search-result{min-height:68px;display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:11px;padding:10px 13px;border-top:1px solid rgba(255,255,255,.075);color:#fff;text-decoration:none}
+    .gurmao-header-search-result:hover,.gurmao-header-search-result:focus-visible{background:rgba(216,173,52,.09);outline:none}
+    .gurmao-header-search-image{width:48px;height:48px;border-radius:12px;background:#151515 center/cover no-repeat}
+    .gurmao-header-search-copy{min-width:0}
+    .gurmao-header-search-name{overflow:hidden;color:#fff;font:650 13px/1.3 Inter,system-ui,sans-serif;text-overflow:ellipsis;white-space:nowrap}
+    .gurmao-header-search-meta{margin-top:4px;overflow:hidden;color:rgba(255,255,255,.55);font:500 11px/1.3 Inter,system-ui,sans-serif;text-overflow:ellipsis;white-space:nowrap}
+    .gurmao-header-search-distance{color:#f3c94a;font:650 11px/1 Inter,system-ui,sans-serif;white-space:nowrap}
+    .gurmao-header-search-spinner{width:15px;height:15px;border:2px solid rgba(216,173,52,.3);border-top-color:#f3c94a;border-radius:50%;animation:gurmao-search-spin .7s linear infinite}
+    @keyframes gurmao-search-spin{to{transform:rotate(360deg)}}
+    @media(max-width:767px){
+      .gurmao-header-search-panel{left:10px!important;right:10px!important;top:calc(var(--gurmao-header-height,68px) + 7px)!important;width:auto;max-height:calc(100dvh - var(--gurmao-header-height,68px) - 20px)}
+      .gurmao-header-search-results{max-height:calc(100dvh - var(--gurmao-header-height,68px) - 125px)}
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function createIcon(path) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('width', '17');
+  svg.setAttribute('height', '17');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '2');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+  path.forEach(data => {
+    const node = document.createElementNS('http://www.w3.org/2000/svg', data.tag || 'path');
+    Object.entries(data.attrs).forEach(([name, value]) => node.setAttribute(name, value));
+    svg.appendChild(node);
   });
-  
-  if (!headerSearchBox || !headerSearchPanel || !headerSearchToggle || !headerSearchInput || !headerSearchResults) {
-    console.error('❌ Header search elements not found!');
+  return svg;
+}
+
+function createPanel() {
+  const panel = document.createElement('section');
+  panel.id = SEARCH_PANEL_ID;
+  panel.className = 'gurmao-header-search-panel';
+  panel.setAttribute('aria-label', 'Vyhledávání restaurací a kuchařů');
+  panel.hidden = true;
+
+  const form = document.createElement('div');
+  form.className = 'gurmao-header-search-form';
+
+  const icon = document.createElement('span');
+  icon.className = 'gurmao-header-search-icon';
+  icon.setAttribute('aria-hidden', 'true');
+  icon.appendChild(createIcon([
+    { tag: 'circle', attrs: { cx: '11', cy: '11', r: '7' } },
+    { attrs: { d: 'm20 20-3.5-3.5' } }
+  ]));
+
+  const input = document.createElement('input');
+  input.className = 'gurmao-header-search-input';
+  input.type = 'search';
+  input.maxLength = 80;
+  input.autocomplete = 'off';
+  input.placeholder = 'Restaurace, kuchyně, město nebo vibe…';
+  input.setAttribute('aria-label', 'Vyhledat restauraci nebo kuchaře');
+  input.setAttribute('aria-controls', 'gurmaoGlobalHeaderSearchResults');
+
+  const close = document.createElement('button');
+  close.className = 'gurmao-header-search-close';
+  close.type = 'button';
+  close.setAttribute('aria-label', 'Zavřít vyhledávání');
+  close.textContent = '×';
+
+  form.append(icon, input, close);
+
+  const tools = document.createElement('div');
+  tools.className = 'gurmao-header-search-tools';
+  const hint = document.createElement('span');
+  hint.textContent = `Zadejte alespoň ${MIN_QUERY_LENGTH} znaky`;
+  const locationButton = document.createElement('button');
+  locationButton.className = 'gurmao-header-location';
+  locationButton.type = 'button';
+  locationButton.setAttribute('aria-pressed', 'false');
+  locationButton.textContent = `⌖ Do ${MAX_DISTANCE_KM} km`;
+  tools.append(hint, locationButton);
+
+  const results = document.createElement('div');
+  results.id = 'gurmaoGlobalHeaderSearchResults';
+  results.className = 'gurmao-header-search-results';
+  results.setAttribute('aria-live', 'polite');
+
+  panel.append(form, tools, results);
+  document.body.appendChild(panel);
+  return { panel, input, close, results, locationButton };
+}
+
+function setStatus(results, message, loading = false) {
+  results.replaceChildren();
+  const status = document.createElement('div');
+  status.className = 'gurmao-header-search-status';
+  if (loading) {
+    const spinner = document.createElement('span');
+    spinner.className = 'gurmao-header-search-spinner';
+    spinner.style.display = 'inline-block';
+    spinner.style.marginRight = '8px';
+    spinner.style.verticalAlign = '-3px';
+    status.append(spinner);
+  }
+  status.append(document.createTextNode(message));
+  results.appendChild(status);
+}
+
+function addSection(results, title) {
+  const heading = document.createElement('div');
+  heading.className = 'gurmao-header-search-section';
+  heading.textContent = title;
+  results.appendChild(heading);
+}
+
+function addResult(results, type, item) {
+  const link = document.createElement('a');
+  link.className = 'gurmao-header-search-result';
+  link.href = detailUrl(type, item);
+
+  const image = document.createElement('span');
+  image.className = 'gurmao-header-search-image';
+  const imageUrl = validImageUrl(item.image_url);
+  if (imageUrl) image.style.backgroundImage = `url("${escapeSelectorValue(imageUrl)}")`;
+
+  const copy = document.createElement('span');
+  copy.className = 'gurmao-header-search-copy';
+  const name = document.createElement('span');
+  name.className = 'gurmao-header-search-name';
+  name.textContent = String(item.name || (type === 'chef' ? 'Kuchař' : 'Restaurace'));
+  const meta = document.createElement('span');
+  meta.className = 'gurmao-header-search-meta';
+  meta.textContent = type === 'chef'
+    ? 'Kuchař'
+    : [item.city, item.tag || item.vibe].filter(Boolean).join(' · ');
+  copy.append(name, meta);
+
+  const distance = document.createElement('span');
+  distance.className = 'gurmao-header-search-distance';
+  if (Number.isFinite(item.distance)) distance.textContent = locationSearch.formatDistance(item.distance);
+
+  link.append(image, copy, distance);
+  results.appendChild(link);
+}
+
+async function searchDatabase(rawQuery, useLocation) {
+  const terms = queryTerms(rawQuery);
+  if (!terms.length) return { restaurants: [], chefs: [] };
+
+  const fields = ['name', 'city', 'tag', 'vibe'];
+  const restaurantFilter = terms.flatMap(term =>
+    fields.map(field => `${field}.ilike.%${term}%`)
+  ).join(',');
+  const chefFilter = terms.map(term => `name.ilike.%${term}%`).join(',');
+
+  const [restaurantResponse, chefResponse] = await Promise.all([
+    supabase
+      .from('restaurants')
+      .select('id, slug, name, city, vibe, tag, image_url, latitude, longitude')
+      .or(restaurantFilter)
+      .limit(20),
+    supabase
+      .from('chefs')
+      .select('id, slug, name, image_url')
+      .or(chefFilter)
+      .limit(8)
+  ]);
+
+  if (restaurantResponse.error) throw restaurantResponse.error;
+  const chefs = chefResponse.error ? [] : (chefResponse.data || []);
+  let restaurants = restaurantResponse.data || [];
+
+  if (useLocation && locationSearch?.isLocationEnabled && locationSearch.userLocation) {
+    restaurants = restaurants
+      .map(restaurant => {
+        const latitude = Number(restaurant.latitude);
+        const longitude = Number(restaurant.longitude);
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+        const distance = locationSearch.calculateDistance(
+          locationSearch.userLocation.lat,
+          locationSearch.userLocation.lng,
+          latitude,
+          longitude
+        );
+        return { ...restaurant, distance };
+      })
+      .filter(restaurant => restaurant && restaurant.distance <= MAX_DISTANCE_KM)
+      .sort((a, b) => a.distance - b.distance);
+  }
+
+  return { restaurants: restaurants.slice(0, 12), chefs: chefs.slice(0, 5) };
+}
+
+function renderResults(results, payload, useLocation) {
+  results.replaceChildren();
+  if (!payload.restaurants.length && !payload.chefs.length) {
+    setStatus(results, useLocation ? `V okruhu ${MAX_DISTANCE_KM} km nebyly nalezeny žádné výsledky.` : 'Nebyly nalezeny žádné výsledky.');
     return;
   }
-  
-  console.log('✅ Header search initialized successfully');
-  
-  let isExpanded = false;
-  let isLocationActive = false;
-
-  const originalToggleParent = headerSearchToggle.parentElement;
-  const originalToggleNextSibling = headerSearchToggle.nextSibling;
-
-  const isDesktop = () => window.matchMedia('(min-width: 768px)').matches;
-
-  const moveToggleIntoPanel = () => {
-    if (!isDesktop()) return;
-    if (!headerSearchPanel.contains(headerSearchToggle)) {
-      headerSearchPanel.insertBefore(headerSearchToggle, headerSearchPanel.firstChild);
-    }
-  };
-
-  const hideToggle = () => {
-    if (!isDesktop()) return;
-    headerSearchToggle.classList.add('opacity-0', 'pointer-events-none');
-  };
-
-  const showToggle = () => {
-    headerSearchToggle.classList.remove('opacity-0', 'pointer-events-none');
-  };
-
-  const restoreTogglePosition = () => {
-    if (!originalToggleParent) return;
-    if (originalToggleParent.contains(headerSearchToggle)) return;
-
-    if (originalToggleNextSibling && originalToggleNextSibling.parentNode === originalToggleParent) {
-      originalToggleParent.insertBefore(headerSearchToggle, originalToggleNextSibling);
-    } else {
-      originalToggleParent.appendChild(headerSearchToggle);
-    }
-  };
-  
-  // Načíst uložený stav polohy
-  if (locationSearch && locationSearch.isLocationEnabled) {
-    isLocationActive = true;
-    headerLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>';
-    headerLocationToggle.classList.add('text-gurmaogold');
+  if (payload.restaurants.length) {
+    addSection(results, 'Restaurace');
+    payload.restaurants.forEach(item => addResult(results, 'restaurant', item));
   }
-  
-  // Location toggle
-  if (headerLocationToggle) {
-    headerLocationToggle.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      
-      if (!isLocationActive) {
-        try {
-          headerLocationToggle.innerHTML = '<div class="w-4 h-4 border-2 border-gurmaogold border-t-transparent rounded-full animate-spin"></div>';
-          // VŽDY získej novou pozici (forceRefresh = true)
-          await locationSearch.getUserLocation(true);
-          headerLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>';
-          headerLocationToggle.classList.add('text-gurmaogold');
-          isLocationActive = true;
-          
-          if (headerSearchInput.value.trim()) {
-            headerSearchInput.dispatchEvent(new Event('input'));
-          }
-        } catch (error) {
-          console.error('Chyba při získávání pozice:', error);
-          headerLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
-        }
-      } else {
-        locationSearch.disable();
-        headerLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
-        headerLocationToggle.classList.remove('text-gurmaogold');
-        isLocationActive = false;
-        
-        if (headerSearchInput.value.trim()) {
-          headerSearchInput.dispatchEvent(new Event('input'));
-        }
-      }
-    });
+  if (payload.chefs.length) {
+    addSection(results, 'Kuchaři');
+    payload.chefs.forEach(item => addResult(results, 'chef', item));
   }
-  
-  headerSearchToggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (!isExpanded) {
-      moveToggleIntoPanel();
-      hideToggle();
-      headerSearchPanel.classList.remove('w-0', 'opacity-0', 'pointer-events-none');
-      headerSearchPanel.classList.add('w-80', 'opacity-100', 'pointer-events-auto');
-      headerSearchInput.classList.remove('opacity-0', 'w-0');
-      headerSearchInput.classList.add('opacity-100', 'w-full', 'pr-3');
-      
-      if (headerLocationToggle) {
-        headerLocationToggle.classList.remove('opacity-0', 'pointer-events-none');
-        headerLocationToggle.classList.add('opacity-100', 'pointer-events-auto');
-      }
-      
-      const headerSearchClose = document.getElementById('headerSearchClose');
-      if (headerSearchClose) {
-        headerSearchClose.classList.remove('opacity-0', 'pointer-events-none');
-        headerSearchClose.classList.add('opacity-100', 'pointer-events-auto');
-      }
-      
-      setTimeout(() => headerSearchInput.focus(), 300);
-      isExpanded = true;
-    }
-  });
-  
-  document.addEventListener('click', (e) => {
-    // Handle phone icon clicks
-    if (e.target.closest('.phone-icon-link')) {
-      e.preventDefault();
-      e.stopPropagation();
-      const phoneIcon = e.target.closest('.phone-icon-link');
-      const phone = phoneIcon.getAttribute('data-phone');
-      if (phone && window.innerWidth < 768) {
-        window.location.href = `tel:${phone}`;
-      }
-      return;
-    }
+}
 
-    // Handle lunch menu clicks
-    if (e.target.closest('.lunch-menu-link')) {
-      e.preventDefault();
-      e.stopPropagation();
-      const menuLink = e.target.closest('.lunch-menu-link');
-      const url = menuLink.getAttribute('data-url');
-      if (url) {
-        window.open(url, '_blank');
-      }
-      return;
-    }
-    
-    // Handle menu icon clicks
-    if (e.target.closest('.menu-icon-link')) {
-      e.preventDefault();
-      e.stopPropagation();
-      const menuIcon = e.target.closest('.menu-icon-link');
-      const url = menuIcon.getAttribute('data-url');
-      if (url && url !== '#') {
-        window.open(url, '_blank');
-      }
-      return;
-    }
-    
-    if (isExpanded && !headerSearchBox.contains(e.target) && !headerSearchResults.contains(e.target)) {
-      headerSearchPanel.classList.add('w-0', 'opacity-0', 'pointer-events-none');
-      headerSearchPanel.classList.remove('w-80', 'opacity-100', 'pointer-events-auto');
-      headerSearchInput.classList.add('opacity-0', 'w-0');
-      headerSearchInput.classList.remove('opacity-100', 'w-full', 'pr-3');
-      headerSearchInput.value = '';
-      headerSearchResults.classList.add('hidden');
-      headerSearchResults.innerHTML = '';
+function positionPanel(panel, anchor) {
+  if (window.matchMedia('(max-width:767px)').matches) {
+    panel.style.removeProperty('left');
+    panel.style.removeProperty('right');
+    panel.style.removeProperty('top');
+    return;
+  }
+  const rect = anchor.getBoundingClientRect();
+  panel.style.top = `${Math.ceil(rect.bottom + 10)}px`;
+  panel.style.right = `${Math.max(12, Math.ceil(innerWidth - rect.right))}px`;
+  panel.style.removeProperty('left');
+}
 
-      showToggle();
-      restoreTogglePosition();
-      
-      if (headerLocationToggle) {
-        headerLocationToggle.classList.add('opacity-0', 'pointer-events-none');
-        headerLocationToggle.classList.remove('opacity-100', 'pointer-events-auto');
-      }
-      
-      const headerSearchClose = document.getElementById('headerSearchClose');
-      if (headerSearchClose) {
-        headerSearchClose.classList.add('opacity-0', 'pointer-events-none');
-        headerSearchClose.classList.remove('opacity-100', 'pointer-events-auto');
-      }
-      
-      isExpanded = false;
-    }
-  });
-  
-  let searchTimeout;
-  headerSearchInput.addEventListener('input', async (e) => {
-    const query = e.target.value.trim().toLowerCase();
-    clearTimeout(searchTimeout);
-    
-    if (!query) {
-      headerSearchResults.classList.add('hidden');
-      headerSearchResults.innerHTML = '';
+function setupPanelSearch(anchor, ui) {
+  let expanded = false;
+  let locationActive = Boolean(locationSearch?.isLocationEnabled && locationSearch.userLocation);
+  let debounceTimer;
+
+  const syncLocationButton = () => {
+    ui.locationButton.setAttribute('aria-pressed', String(locationActive));
+    ui.locationButton.textContent = locationActive ? `⌖ Zapnuto · ${MAX_DISTANCE_KM} km` : `⌖ Do ${MAX_DISTANCE_KM} km`;
+  };
+
+  const closePanel = () => {
+    if (!expanded) return;
+    expanded = false;
+    ui.panel.hidden = true;
+    ui.input.value = '';
+    ui.results.replaceChildren();
+    anchor.setAttribute('aria-expanded', 'false');
+  };
+
+  const openPanel = () => {
+    positionPanel(ui.panel, anchor);
+    ui.panel.hidden = false;
+    expanded = true;
+    anchor.setAttribute('aria-expanded', 'true');
+    setStatus(ui.results, `Začněte psát. Hledáme v názvu, městě, kuchyni i vibe.`);
+    window.setTimeout(() => ui.input.focus(), 30);
+  };
+
+  const runSearch = () => {
+    const query = normalizeQuery(ui.input.value);
+    window.clearTimeout(debounceTimer);
+    if (query.length < MIN_QUERY_LENGTH) {
+      requestSequence += 1;
+      setStatus(ui.results, `Zadejte alespoň ${MIN_QUERY_LENGTH} znaky.`);
       return;
     }
-    
-    searchTimeout = setTimeout(async () => {
+    const currentRequest = ++requestSequence;
+    setStatus(ui.results, 'Hledám…', true);
+    debounceTimer = window.setTimeout(async () => {
       try {
-        // Vyhledávání restaurací
-        let { data: restaurants, error: restaurantsError } = await supabase
-          .from('restaurants')
-          .select('id, slug, name, city, vibe, tag, image_url, latitude, longitude')
-          .or(`name.ilike.%${query}%,city.ilike.%${query}%,tag.ilike.%${query}%,vibe.ilike.%${query}%`)
-          .limit(20);
-        
-        if (restaurantsError) throw restaurantsError;
-        
-        // Vyhledávání kuchařů
-        let { data: chefs, error: chefsError } = await supabase
-          .from('chefs')
-          .select('id, slug, name, image_url')
-          .ilike('name', `%${query}%`)
-          .limit(10);
-        
-        console.log('👨‍🍳 Chefs dotaz:', { query, chefs, chefsError });
-        
-        if (chefsError) {
-          console.error('Chyba při vyhledávání kuchařů:', chefsError);
-          chefs = [];
-        }
-        
-        let results = restaurants || [];
-        let chefResults = chefs || [];
-        
-        console.log('🔍 Vyhledávání:', { 
-          query, 
-          restaurants: results.length, 
-          chefs: chefResults.length 
-        });
-        
-        if (isLocationActive && locationSearch && locationSearch.isLocationEnabled && locationSearch.userLocation) {
-          results = results.map(restaurant => {
-            if (restaurant.latitude && restaurant.longitude) {
-              const distance = locationSearch.calculateDistance(
-                locationSearch.userLocation.lat,
-                locationSearch.userLocation.lng,
-                restaurant.latitude,
-                restaurant.longitude
-              );
-              return { ...restaurant, distance };
-            }
-            return restaurant;
-          });
-          results.sort((a, b) => (a.distance || 999) - (b.distance || 999));
-        }
-        
-        if (results.length > 0 || chefResults.length > 0) {
-          headerSearchResults.classList.remove('hidden');
-          
-          let html = '';
-          
-          // Restaurace
-          if (results.length > 0) {
-            // Get saved restaurants
-            const savedRestaurants = window.GurmaoCollections ? await window.GurmaoCollections.getSaved() : new Set();
-            
-            html += results.map(r => {
-            const identifier = r.slug || r.id;
-            const isSaved = savedRestaurants.has(identifier);
-            let distanceHTML = '';
-            if (isLocationActive && r.distance !== undefined) {
-              distanceHTML = `<span class="text-gurmaogold text-xs ml-2">${locationSearch.formatDistance(r.distance)}</span>`;
-            }
-            // Extract website URL from image_url
-            let websiteUrl = '#';
-            if (r.image_url) {
-              const match = r.image_url.match(/https?:\/\/([^/]+)/);
-              if (match) {
-                websiteUrl = 'https://' + match[1];
-              }
-            }
-            return `
-            <a href="restaurace-detail.html?id=${identifier}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
-              <div class="flex gap-3 items-center">
-                <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
-                <div class="flex-1 min-w-0">
-                  <div class="text-sm font-medium truncate">${r.name}${distanceHTML}</div>
-                  <div class="text-xs text-white/60 flex items-center gap-2">
-                    <span class="flex-1 truncate">${r.city}</span>
-                    <button type="button" data-restaurant-id="${identifier}" class="save-restaurant-btn opacity-80 hover:opacity-100 transition" onclick="event.preventDefault(); event.stopPropagation(); window.GurmaoCollections?.toggle('${identifier}').then((nowSaved) => { this.innerHTML = nowSaved ? '<svg class=\\'w-6 h-6 text-red-500\\' fill=\\'currentColor\\' viewBox=\\'0 0 24 24\\'><path d=\\'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z\\'/></svg>' : '<svg class=\\'w-6 h-6 text-red-500\\' fill=\\'none\\' stroke=\\'currentColor\\' viewBox=\\'0 0 24 24\\'><path stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\' stroke-width=\\'2\\' d=\\'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z\\'/></svg>'; });" title="${isSaved ? 'Odebrat z oblíbených' : 'Přidat do oblíbených'}">
-                      ${isSaved ? '<svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>' : '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>'}
-                    </button>
-                    <button type="button" data-phone="${r.phone || ''}" data-name="${r.name}" data-city="${r.city}" class="phone-btn opacity-80 hover:opacity-100 transition" onclick="event.preventDefault(); event.stopPropagation(); const phone=this.getAttribute('data-phone'); const name=this.getAttribute('data-name'); const city=this.getAttribute('data-city'); if(phone) { window.location.href='tel:' + phone.replace(/\\s/g,''); } else { window.open('https://www.google.com/search?q=' + encodeURIComponent(name + ' ' + city + ' telefon kontakt'), '_blank'); }" title="${r.phone ? 'Zavolat: ' + r.phone : 'Najít telefon'}">
-                      <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                      </svg>
-                    </button>
-                    <button type="button" data-url="${websiteUrl}" class="menu-icon-link" onclick="event.preventDefault(); event.stopPropagation(); const url=this.getAttribute('data-url'); if(url && url!=='#') window.open(url,'_blank')">
-                      <svg class="w-6 h-6 text-gurmaogold hover:text-yellow-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Menu restaurace">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                      </svg>
-                    </button>
-                  </div>
-                  <div class="text-xs text-white/50 truncate">${r.vibe}</div>
-                </div>
-              </div>
-            </a>
-            `;
-          }).join('');
-          }
-          
-          // Kuchaři
-          if (chefResults.length > 0) {
-            html += chefResults.map(c => {
-              const identifier = c.slug || c.id;
-              return `
-              <a href="kuchar-detail.html?id=${identifier}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
-                <div class="flex gap-3 items-center">
-                  <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${c.image_url || 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c'}')"></div>
-                  <div class="flex-1 min-w-0">
-                    <div class="text-sm font-medium truncate">${c.name}</div>
-                    <div class="text-xs text-gurmaogold truncate">👨‍🍳 Kuchař</div>
-                  </div>
-                </div>
-              </a>
-              `;
-            }).join('');
-          }
-
-          // Polední menu (spodní kontejner)
-          if (results.length > 0) {
-            const topRestaurant = results[0];
-            html += `
-            <div class="p-3 border-t border-white/10 bg-white/5">
-              <div class="text-xs uppercase tracking-wide text-white/50">Polední menu</div>
-              <div class="mt-3 rounded-2xl border border-white/20 bg-white/5 shadow-lg overflow-hidden">
-                <div class="px-3 py-2 border-b border-white/10 flex items-center justify-between">
-                  <div class="text-sm font-semibold truncate">${topRestaurant.name}</div>
-                  <div class="text-[11px] text-white/50">Dnes</div>
-                </div>
-                <div class="p-3 space-y-2 text-xs text-white/80">
-                  <div class="flex items-start gap-2">
-                    <span class="text-white/40">1.</span>
-                    <span class="flex-1">Polévka dne</span>
-                    <span class="text-gurmaogold whitespace-nowrap">59 Kč</span>
-                  </div>
-                  <div class="flex items-start gap-2">
-                    <span class="text-white/40">2.</span>
-                    <span class="flex-1">Hlavní chod dne</span>
-                    <span class="text-gurmaogold whitespace-nowrap">149 Kč</span>
-                  </div>
-                  <div class="flex items-start gap-2">
-                    <span class="text-white/40">3.</span>
-                    <span class="flex-1">Vegetariánské</span>
-                    <span class="text-gurmaogold whitespace-nowrap">139 Kč</span>
-                  </div>
-                </div>
-                <div class="px-3 py-2 border-t border-white/10 text-[11px] text-white/50">
-                  Obsah karty brzy napojíme na Supabase.
-                </div>
-              </div>
-            </div>
-            `;
-          }
-          
-          headerSearchResults.innerHTML = html;
-        } else {
-          const noResultsMsg = isLocationActive && locationSearch && locationSearch.userLocation 
-            ? 'Žádné restaurace v okruhu 20 km' 
-            : 'Žádné výsledky';
-          headerSearchResults.classList.remove('hidden');
-          headerSearchResults.innerHTML = `<div class="p-4 text-sm text-white/60 text-center">${noResultsMsg}</div>`;
-        }
+        const payload = await searchDatabase(query, locationActive);
+        if (currentRequest !== requestSequence) return;
+        renderResults(ui.results, payload, locationActive);
       } catch (error) {
-        console.error('Header search error:', error);
+        if (currentRequest !== requestSequence) return;
+        console.error('GURMAO header search failed:', error);
+        setStatus(ui.results, 'Vyhledávání se nepodařilo. Zkuste dotaz upravit nebo opakovat.');
       }
-    }, 300);
+    }, 280);
+  };
+
+  anchor.type = 'button';
+  anchor.setAttribute('aria-haspopup', 'dialog');
+  anchor.setAttribute('aria-controls', SEARCH_PANEL_ID);
+  anchor.setAttribute('aria-expanded', 'false');
+  anchor.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    expanded ? closePanel() : openPanel();
   });
+
+  ui.close.addEventListener('click', closePanel);
+  ui.input.addEventListener('input', runSearch);
+  ui.input.addEventListener('keydown', event => {
+    if (event.key === 'Escape') closePanel();
+    if (event.key === 'Enter') {
+      const firstResult = ui.results.querySelector('a[href]');
+      if (firstResult) location.href = firstResult.href;
+    }
+  });
+  ui.locationButton.addEventListener('click', async () => {
+    if (locationActive) {
+      locationSearch.disable();
+      locationActive = false;
+      syncLocationButton();
+      runSearch();
+      return;
+    }
+    ui.locationButton.disabled = true;
+    ui.locationButton.textContent = 'Zjišťuji polohu…';
+    try {
+      await locationSearch.getUserLocation(true);
+      locationActive = true;
+      syncLocationButton();
+      runSearch();
+    } catch (error) {
+      console.error('GURMAO location search failed:', error);
+      locationActive = false;
+      syncLocationButton();
+      setStatus(ui.results, 'Polohu se nepodařilo získat. Povolte přístup k poloze nebo hledejte bez ní.');
+    } finally {
+      ui.locationButton.disabled = false;
+    }
+  });
+
+  document.addEventListener('click', event => {
+    if (expanded && !ui.panel.contains(event.target) && !anchor.contains(event.target)) closePanel();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') closePanel();
+  });
+  window.addEventListener('resize', () => {
+    if (expanded) positionPanel(ui.panel, anchor);
+  });
+  syncLocationButton();
+}
+
+function setupLegacyMobileSearch() {
+  const button = document.getElementById('mobileSearchBtn');
+  const box = document.getElementById('mobileSearchBox');
+  const input = document.getElementById('mobileSearchInput');
+  const results = document.getElementById('mobileSearchResults');
+  const close = document.getElementById('mobileSearchClose');
+  const locationButton = document.getElementById('mobileLocationToggle');
+  if (!button || !box || !input || !results) return;
+
+  let debounceTimer;
+  let sequence = 0;
+  let locationActive = Boolean(locationSearch?.isLocationEnabled && locationSearch.userLocation);
+
+  const runSearch = () => {
+    const query = normalizeQuery(input.value);
+    window.clearTimeout(debounceTimer);
+    if (query.length < MIN_QUERY_LENGTH) {
+      sequence += 1;
+      results.classList.remove('hidden');
+      setStatus(results, `Zadejte alespoň ${MIN_QUERY_LENGTH} znaky.`);
+      return;
+    }
+    const current = ++sequence;
+    results.classList.remove('hidden');
+    setStatus(results, 'Hledám…', true);
+    debounceTimer = window.setTimeout(async () => {
+      try {
+        const payload = await searchDatabase(query, locationActive);
+        if (current !== sequence) return;
+        renderResults(results, payload, locationActive);
+      } catch (error) {
+        if (current !== sequence) return;
+        console.error('GURMAO mobile header search failed:', error);
+        setStatus(results, 'Vyhledávání se nepodařilo. Zkuste to znovu.');
+      }
+    }, 280);
+  };
+
+  input.addEventListener('input', runSearch);
+  input.addEventListener('keydown', event => {
+    if (event.key === 'Enter') {
+      const firstResult = results.querySelector('a[href]');
+      if (firstResult) location.href = firstResult.href;
+    }
+  });
+  close?.addEventListener('click', () => {
+    sequence += 1;
+    results.replaceChildren();
+    results.classList.add('hidden');
+  });
+  locationButton?.addEventListener('click', async event => {
+    event.stopPropagation();
+    if (locationActive) {
+      locationSearch.disable();
+      locationActive = false;
+      locationButton.setAttribute('aria-pressed', 'false');
+      runSearch();
+      return;
+    }
+    try {
+      await locationSearch.getUserLocation(true);
+      locationActive = true;
+      locationButton.setAttribute('aria-pressed', 'true');
+      runSearch();
+    } catch (error) {
+      console.error('GURMAO mobile location search failed:', error);
+      setStatus(results, 'Polohu se nepodařilo získat. Hledejte bez ní nebo povolte přístup k poloze.');
+      results.classList.remove('hidden');
+    }
+  }, { capture: true });
+}
+
+function init() {
+  if (document.documentElement.dataset.gurmaoHeaderSearchReady === 'true') return;
+  const anchor = document.getElementById('headerSearchToggle') || document.getElementById('searchToggle');
+  const mobileButton = document.getElementById('mobileSearchBtn');
+  if (!anchor && !mobileButton) return;
+
+  document.documentElement.dataset.gurmaoHeaderSearchReady = 'true';
+  locationSearch = new LocationSearch();
+  injectStyles();
+
+  if (anchor) {
+    const legacyPanel = document.getElementById('headerSearchPanel');
+    if (legacyPanel) {
+      legacyPanel.hidden = true;
+      legacyPanel.setAttribute('aria-hidden', 'true');
+    }
+    ['navSearchInput', 'navSearchResults'].forEach(id => {
+      const legacyElement = document.getElementById(id);
+      if (legacyElement) legacyElement.hidden = true;
+    });
+    const ui = createPanel();
+    setupPanelSearch(anchor, ui);
+  }
+  setupLegacyMobileSearch();
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initHeaderSearch);
+  document.addEventListener('DOMContentLoaded', init, { once: true });
 } else {
-  initHeaderSearch();
-}
-
-// Initialize Mobile Search
-async function initMobileSearch() {
-  console.log('Mobile search initializing...');
-  
-  // Wait for LocationSearch to be loaded
-  if (!LocationSearch) {
-    await loadLocationModule();
-  }
-  
-  const mobileSearchBox = document.getElementById('mobileSearchBox');
-  const mobileSearchInput = document.getElementById('mobileSearchInput');
-  const mobileSearchResults = document.getElementById('mobileSearchResults');
-  const mobileLocationToggle = document.getElementById('mobileLocationToggle');
-  const mobileSearchRow = mobileSearchBox ? mobileSearchBox.querySelector('div.relative') : null;
-
-  // Feed uses this input to filter its own cards, not the global restaurant search.
-  if (mobileSearchBox?.dataset.feedFilter === 'true') {
-    return;
-  }
-  
-  if (!mobileSearchInput || !mobileSearchResults) {
-    return;
-  }
-  
-  let isMobileLocationActive = false;
-  
-  // Načíst uložený stav polohy
-  if (locationSearch && locationSearch.isLocationEnabled && mobileLocationToggle) {
-    isMobileLocationActive = true;
-    mobileLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>';
-    mobileLocationToggle.classList.add('text-gurmaogold');
-  }
-  
-  // Mobile location toggle
-  if (mobileLocationToggle) {
-    mobileLocationToggle.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      
-      if (!isMobileLocationActive) {
-        try {
-          if (!locationSearch) {
-            locationSearch = new LocationSearch(supabase);
-          }
-          mobileLocationToggle.innerHTML = '<div class="w-4 h-4 border-2 border-gurmaogold border-t-transparent rounded-full animate-spin"></div>';
-          await locationSearch.getUserLocation(true);
-          mobileLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>';
-          mobileLocationToggle.classList.add('text-gurmaogold');
-          isMobileLocationActive = true;
-          
-          if (mobileSearchInput.value.trim()) {
-            mobileSearchInput.dispatchEvent(new Event('input'));
-          }
-        } catch (error) {
-          console.error('Chyba při získávání pozice:', error);
-          mobileLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
-        }
-      } else {
-        if (locationSearch) locationSearch.disable();
-        mobileLocationToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>';
-        mobileLocationToggle.classList.remove('text-gurmaogold');
-        isMobileLocationActive = false;
-        
-        if (mobileSearchInput.value.trim()) {
-          mobileSearchInput.dispatchEvent(new Event('input'));
-        }
-      }
-    });
-  }
-  
-  // Mobile search input
-  let searchTimeout;
-  mobileSearchInput.addEventListener('input', (e) => {
-    clearTimeout(searchTimeout);
-    const query = e.target.value.toLowerCase().trim();
-    
-    if (!query) {
-      mobileSearchResults.classList.add('hidden');
-      if (mobileSearchRow) {
-        mobileSearchRow.classList.remove('hidden');
-      }
-      mobileSearchInput.classList.remove('opacity-0', 'w-0', 'pointer-events-none');
-      return;
-    }
-    
-    searchTimeout = setTimeout(async () => {
-      try {
-        let restaurantQuery = supabase
-          .from('restaurants')
-          .select('id, name, slug, city, vibe, image_url, latitude, longitude, phone')
-          .or(`name.ilike.%${query}%,city.ilike.%${query}%,vibe.ilike.%${query}%`)
-          .limit(20);
-        
-        let chefQuery = supabase
-          .from('chefs')
-          .select('id, name, slug, image_url')
-          .ilike('name', `%${query}%`)
-          .limit(10);
-        
-        const [restaurantData, chefData] = await Promise.all([
-          restaurantQuery,
-          chefQuery
-        ]);
-        
-        let restaurantResults = restaurantData.data || [];
-        let chefResults = chefData.data || [];
-        
-        // Apply location filtering if active (same as desktop - 20km limit)
-        if (isMobileLocationActive && locationSearch && locationSearch.isLocationEnabled && locationSearch.userLocation) {
-          restaurantResults = restaurantResults.map(restaurant => {
-            if (restaurant.latitude && restaurant.longitude) {
-              const distance = locationSearch.calculateDistance(
-                locationSearch.userLocation.lat,
-                locationSearch.userLocation.lng,
-                restaurant.latitude,
-                restaurant.longitude
-              );
-              return { ...restaurant, distance };
-            }
-            return restaurant;
-          });
-          restaurantResults.sort((a, b) => (a.distance || 999) - (b.distance || 999));
-        }
-        
-        if (restaurantResults.length > 0 || chefResults.length > 0) {
-          mobileSearchResults.classList.remove('hidden');
-          if (mobileSearchRow) {
-            mobileSearchRow.classList.add('hidden');
-          }
-          mobileSearchInput.classList.add('opacity-0', 'w-0', 'pointer-events-none');
-          
-          let html = '';
-          
-          // Restaurace
-          if (restaurantResults.length > 0) {
-            // Get saved restaurants
-            const savedRestaurants = window.GurmaoCollections ? await window.GurmaoCollections.getSaved() : new Set();
-            
-            html += restaurantResults.map(r => {
-              const identifier = r.slug || r.id;
-              const isSaved = savedRestaurants.has(identifier);
-              let distanceHTML = '';
-              if (isMobileLocationActive && r.distance !== undefined) {
-                distanceHTML = `<span class="text-gurmaogold text-xs ml-2">${locationSearch.formatDistance(r.distance)}</span>`;
-              }
-              let websiteUrl = '#';
-              if (r.image_url) {
-                const match = r.image_url.match(/https?:\/\/([^/]+)/);
-                if (match) {
-                  websiteUrl = 'https://' + match[1];
-                }
-              }
-              return `
-              <a href="restaurace-detail.html?id=${identifier}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
-                <div class="flex gap-3 items-center">
-                  <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${r.image_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4'}')"></div>
-                  <div class="flex-1 min-w-0">
-                    <div class="text-sm font-medium truncate">${r.name}${distanceHTML}</div>
-                    <div class="text-xs text-white/60 flex items-center gap-2">
-                      <span class="flex-1 truncate">${r.city}</span>
-                      <button type="button" data-restaurant-id="${identifier}" class="save-restaurant-btn opacity-80 hover:opacity-100 transition" onclick="event.preventDefault(); event.stopPropagation(); window.GurmaoCollections?.toggle('${identifier}').then((nowSaved) => { this.innerHTML = nowSaved ? '<svg class=\\'w-6 h-6 text-red-500\\' fill=\\'currentColor\\' viewBox=\\'0 0 24 24\\'><path d=\\'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z\\'/></svg>' : '<svg class=\\'w-6 h-6 text-red-500\\' fill=\\'none\\' stroke=\\'currentColor\\' viewBox=\\'0 0 24 24\\'><path stroke-linecap=\\'round\\' stroke-linejoin=\\'round\\' stroke-width=\\'2\\' d=\\'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z\\'/></svg>'; });" title="${isSaved ? 'Odebrat z oblíbených' : 'Přidat do oblíbených'}">
-                        ${isSaved ? '<svg class="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>' : '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>'}
-                      </button>
-                      <button type="button" data-phone="${r.phone || ''}" data-name="${r.name}" data-city="${r.city}" class="phone-btn opacity-80 hover:opacity-100 transition" onclick="event.preventDefault(); event.stopPropagation(); const phone=this.getAttribute('data-phone'); const name=this.getAttribute('data-name'); const city=this.getAttribute('data-city'); if(phone) { window.location.href='tel:' + phone.replace(/\\s/g,''); } else { window.open('https://www.google.com/search?q=' + encodeURIComponent(name + ' ' + city + ' telefon kontakt'), '_blank'); }" title="${r.phone ? 'Zavolat: ' + r.phone : 'Najít telefon'}">
-                        <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                        </svg>
-                      </button>
-                      <button type="button" data-url="${websiteUrl}" class="menu-icon-link" onclick="event.preventDefault(); event.stopPropagation(); const url=this.getAttribute('data-url'); if(url && url!=='#') window.open(url,'_blank')">
-                        <svg class="w-6 h-6 text-gurmaogold hover:text-yellow-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Menu restaurace">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                      </button>
-                    </div>
-                    <div class="text-xs text-white/50 truncate">${r.vibe}</div>
-                  </div>
-                </div>
-              </a>
-              `;
-            }).join('');
-          }
-          
-          // Kuchaři
-          if (chefResults.length > 0) {
-            html += chefResults.map(c => {
-              const identifier = c.slug || c.id;
-              return `
-              <a href="kuchar-detail.html?id=${identifier}" class="block p-3 hover:bg-white/10 transition border-b border-white/10 last:border-b-0">
-                <div class="flex gap-3 items-center">
-                  <div class="w-12 h-12 rounded-lg bg-cover bg-center flex-shrink-0" style="background-image: url('${c.image_url || 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c'}')"></div>
-                  <div class="flex-1 min-w-0">
-                    <div class="text-sm font-medium truncate">${c.name}</div>
-                    <div class="text-xs text-gurmaogold truncate">👨‍🍳 Kuchař</div>
-                  </div>
-                </div>
-              </a>
-              `;
-            }).join('');
-          }
-
-          // Polední menu (spodní kontejner)
-          if (restaurantResults.length > 0) {
-            const topRestaurant = restaurantResults[0];
-            html += `
-            <div class="p-3 border-t border-white/10 bg-white/5">
-              <div class="text-xs uppercase tracking-wide text-white/50">Polední menu</div>
-              <div class="mt-3 rounded-2xl border border-white/20 bg-white/5 shadow-lg overflow-hidden">
-                <div class="px-3 py-2 border-b border-white/10 flex items-center justify-between">
-                  <div class="text-sm font-semibold truncate">${topRestaurant.name}</div>
-                  <div class="text-[11px] text-white/50">Dnes</div>
-                </div>
-                <div class="p-3 space-y-2 text-xs text-white/80">
-                  <div class="flex items-start gap-2">
-                    <span class="text-white/40">1.</span>
-                    <span class="flex-1">Polévka dne</span>
-                    <span class="text-gurmaogold whitespace-nowrap">59 Kč</span>
-                  </div>
-                  <div class="flex items-start gap-2">
-                    <span class="text-white/40">2.</span>
-                    <span class="flex-1">Hlavní chod dne</span>
-                    <span class="text-gurmaogold whitespace-nowrap">149 Kč</span>
-                  </div>
-                  <div class="flex items-start gap-2">
-                    <span class="text-white/40">3.</span>
-                    <span class="flex-1">Vegetariánské</span>
-                    <span class="text-gurmaogold whitespace-nowrap">139 Kč</span>
-                  </div>
-                </div>
-                <div class="px-3 py-2 border-t border-white/10 text-[11px] text-white/50">
-                  Obsah karty brzy napojíme na Supabase.
-                </div>
-              </div>
-            </div>
-            `;
-          }
-          
-          mobileSearchResults.innerHTML = html;
-        } else {
-          const noResultsMsg = isMobileLocationActive && locationSearch && locationSearch.userLocation 
-            ? 'Žádné restaurace v okruhu 20 km' 
-            : 'Žádné výsledky';
-          mobileSearchResults.classList.remove('hidden');
-          mobileSearchResults.innerHTML = `<div class="p-4 text-sm text-white/60 text-center">${noResultsMsg}</div>`;
-          if (mobileSearchRow) {
-            mobileSearchRow.classList.remove('hidden');
-          }
-          mobileSearchInput.classList.remove('opacity-0', 'w-0', 'pointer-events-none');
-        }
-      } catch (error) {
-        console.error('Mobile search error:', error);
-      }
-    }, 300);
-  });
-}
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initMobileSearch);
-} else {
-  initMobileSearch();
+  init();
 }
