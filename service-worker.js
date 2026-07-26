@@ -1,7 +1,7 @@
 // GURMAO.cz – lehký service worker pro společné runtime skripty.
 // HTML se ověřuje v síti, ostatní soubory používají běžnou cache prohlížeče.
 
-const RUNTIME_VERSION = '20260726-1';
+const RUNTIME_VERSION = '20260726-2';
 
 self.addEventListener('install', () => {
   self.skipWaiting();
@@ -26,7 +26,8 @@ async function htmlWithRuntimeGuard(request) {
     { marker: '/runtime-guard.js', tag: `<script src="/runtime-guard.js?v=${RUNTIME_VERSION}"></script>` },
     { marker: '/hide-price-level.js', tag: `<script src="/hide-price-level.js?v=${RUNTIME_VERSION}"></script>` },
     { marker: '/restaurant-card-status.js', tag: `<script src="/restaurant-card-status.js?v=${RUNTIME_VERSION}"></script>` },
-    { marker: '/restaurant-card-actions.js', tag: `<script src="/restaurant-card-actions.js?v=${RUNTIME_VERSION}"></script>` }
+    { marker: '/restaurant-card-actions.js', tag: `<script src="/restaurant-card-actions.js?v=${RUNTIME_VERSION}"></script>` },
+    { marker: '/mobile-bottom-nav.js', tag: `<script src="/mobile-bottom-nav.js?v=${RUNTIME_VERSION}"></script>` }
   ];
 
   const missingTags = scripts
