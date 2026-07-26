@@ -3,7 +3,7 @@
 
   const currentFile = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
   const excludedPages = /^(admin(?:-|\.)|login\.|register\.|forgot-|reset-|404\.)/;
-  if (excludedPages.test(currentFile) || document.getElementById('gurmaoBottomNav')) return;
+  if (currentFile === 'mapa.html' || excludedPages.test(currentFile) || document.getElementById('gurmaoBottomNav')) return;
 
   const items = [
     {

@@ -27,7 +27,7 @@ if ('serviceWorker' in navigator) {
 // Load the shared mobile bottom navigation on the first visit.
 if (!document.querySelector('script[data-gurmao-bottom-nav]')) {
   const bottomNavScript = document.createElement('script');
-  bottomNavScript.src = '/mobile-bottom-nav.js?v=20260726-2';
+  bottomNavScript.src = '/mobile-bottom-nav.js?v=20260726-3';
   bottomNavScript.defer = true;
   bottomNavScript.dataset.gurmaoBottomNav = 'true';
   document.head.appendChild(bottomNavScript);
