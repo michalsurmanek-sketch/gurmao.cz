@@ -36,9 +36,24 @@ if (!document.querySelector('script[data-gurmao-bottom-nav]')) {
 // Load one shared, safe header search implementation on every public page.
 const currentPublicPage = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
 if (!/^(admin(?:-|\.)|login\.|register\.|forgot-|reset-|404\.)/.test(currentPublicPage)) {
-  void import('/header-search.js?v=20260726-unified-3').catch(error => {
+  void import('/header-search.js?v=20260726-unified-4').catch(error => {
     console.error('Shared header search failed to load:', error);
   });
+}
+
+// Keep scrollbars consistent even on legacy pages without global.css.
+if (!document.getElementById('gurmao-global-scrollbar-style')) {
+  const scrollbarStyle = document.createElement('style');
+  scrollbarStyle.id = 'gurmao-global-scrollbar-style';
+  scrollbarStyle.textContent = `
+    html,*{scrollbar-color:#d8ad34 #050505;scrollbar-width:thin}
+    *::-webkit-scrollbar{width:10px;height:10px}
+    *::-webkit-scrollbar-track{background:#050505}
+    *::-webkit-scrollbar-thumb{min-height:36px;border:2px solid #050505;border-radius:999px;background:linear-gradient(180deg,#f3c94a 0%,#d8ad34 55%,#9f7615 100%)}
+    *::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#ffe27a 0%,#e4bd3d 58%,#ad8118 100%)}
+    *::-webkit-scrollbar-corner{background:#050505}
+  `;
+  document.head.appendChild(scrollbarStyle);
 }
 
 // ======================

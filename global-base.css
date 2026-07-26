@@ -17,6 +17,37 @@ svg {
   max-width: 100%;
 }
 
+/* Shared GURMAO scrollbars */
+html,
+* {
+  scrollbar-color: #d8ad34 #050505;
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+*::-webkit-scrollbar-thumb {
+  min-height: 36px;
+  border: 2px solid #050505;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #f3c94a 0%, #d8ad34 55%, #9f7615 100%);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ffe27a 0%, #e4bd3d 58%, #ad8118 100%);
+}
+
+*::-webkit-scrollbar-corner {
+  background: #050505;
+}
+
 /* Shared mobile navigation */
 @media (max-width: 767px) {
   #menuBtn,

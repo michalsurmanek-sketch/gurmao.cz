@@ -61,12 +61,13 @@ function injectStyles() {
     .gurmao-header-location:hover,.gurmao-header-location:focus-visible,.gurmao-header-location[aria-pressed="true"]{border-color:rgba(216,173,52,.65);color:#f3c94a;outline:none}
     .gurmao-header-search-results{max-height:min(58vh,520px);overflow:auto;overscroll-behavior:contain}
     .gurmao-header-search-status{padding:22px 16px;color:rgba(255,255,255,.58);text-align:center;font:500 13px/1.45 Inter,system-ui,sans-serif}
-    .gurmao-header-search-result{min-height:68px;display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:11px;padding:10px 13px;border-top:1px solid rgba(255,255,255,.075);color:#fff;text-decoration:none}
+    .gurmao-header-search-result{min-height:68px;display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:11px;padding:10px 13px;border-top:1px solid rgba(255,255,255,.075);color:#fff;text-decoration:none}
     .gurmao-header-search-result:hover,.gurmao-header-search-result:focus-visible{background:rgba(216,173,52,.09);outline:none}
     .gurmao-header-search-image{width:48px;height:48px;border-radius:12px;background:#151515 center/cover no-repeat}
     .gurmao-header-search-copy{min-width:0}
-    .gurmao-header-search-name{overflow:hidden;color:#fff;font:650 13px/1.3 Inter,system-ui,sans-serif;text-overflow:ellipsis;white-space:nowrap}
-    .gurmao-header-search-meta{margin-top:4px;overflow:hidden;color:rgba(255,255,255,.55);font:500 11px/1.3 Inter,system-ui,sans-serif;text-overflow:ellipsis;white-space:nowrap}
+    .gurmao-header-search-name{display:block;overflow:hidden;color:#fff;font:650 13px/1.3 Inter,system-ui,sans-serif;text-overflow:ellipsis;white-space:nowrap}
+    .gurmao-header-search-meta{display:block;margin-top:6px;overflow:hidden;color:rgba(255,255,255,.55);font:500 11px/1.3 Inter,system-ui,sans-serif;text-overflow:ellipsis;white-space:nowrap}
+    .gurmao-header-search-distance{color:#f3c94a;font:650 11px/1 Inter,system-ui,sans-serif;white-space:nowrap}
     .gurmao-header-search-spinner{width:15px;height:15px;border:2px solid rgba(216,173,52,.3);border-top-color:#f3c94a;border-radius:50%;animation:gurmao-search-spin .7s linear infinite}
     @keyframes gurmao-search-spin{to{transform:rotate(360deg)}}
     @media(max-width:767px){
@@ -187,7 +188,11 @@ function addResult(results, item) {
   meta.textContent = String(item.city || 'Město neuvedeno');
   copy.append(name, meta);
 
-  link.append(image, copy);
+  const distance = document.createElement('span');
+  distance.className = 'gurmao-header-search-distance';
+  if (Number.isFinite(item.distance)) distance.textContent = locationSearch.formatDistance(item.distance);
+
+  link.append(image, copy, distance);
   results.appendChild(link);
 }
 
