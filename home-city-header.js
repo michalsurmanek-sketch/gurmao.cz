@@ -34,8 +34,8 @@ function injectStyles() {
   style.textContent = `
     .gurmao-city-wrap{position:relative;display:flex;align-items:center;flex:0 0 auto}
     .gurmao-city-wrap--mobile{display:none}
-    .gurmao-city-btn{height:auto;max-width:230px;display:flex;align-items:center;gap:8px;padding:0;border:0;border-radius:0;background:transparent;color:rgba(255,255,255,.9);font:600 13px/1 Inter,sans-serif;cursor:pointer;white-space:nowrap;transition:color .18s}
-    .gurmao-city-btn:hover,.gurmao-city-btn[aria-expanded="true"]{color:#f3c94a;background:transparent}
+    .gurmao-city-btn{box-sizing:border-box;height:44px;max-width:230px;display:flex;align-items:center;gap:8px;padding:0 14px;border:1px solid rgba(255,255,255,.15);border-radius:999px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.9);font:600 13px/1 Inter,sans-serif;cursor:pointer;white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,.025);transition:color .18s,border-color .18s,background .18s,box-shadow .18s}
+    .gurmao-city-btn:hover,.gurmao-city-btn:focus-visible,.gurmao-city-btn[aria-expanded="true"]{color:#f3c94a;border-color:rgba(216,173,52,.65);background:rgba(216,173,52,.1);box-shadow:0 0 0 3px rgba(216,173,52,.06);outline:none}
     .gurmao-city-btn .gurmao-city-name{max-width:180px;overflow:hidden;text-overflow:ellipsis}
     .gurmao-city-menu{position:absolute;right:0;top:calc(100% + 18px);z-index:500;width:min(320px,calc(100vw - 28px));padding:10px;border:1px solid rgba(216,173,52,.28);border-radius:18px;background:rgba(10,11,9,.98);box-shadow:0 24px 70px rgba(0,0,0,.58);backdrop-filter:blur(18px)}
     .gurmao-city-menu[hidden]{display:none!important}
