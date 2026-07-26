@@ -1,4 +1,4 @@
-@import url("global-base.css");
+@import url("global-base.css?v=20260726-hamburger-black");
 
 /* Homepage discovery */
 .hero-bg > * { transform: none !important; }
