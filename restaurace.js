@@ -49,7 +49,7 @@ function applyRestaurantFilterStyles(){
 
 const VIBE_MAP={luxe:'🍷 LUXE',drama:'🔥 DRAMA',chaos:'🌮 CHAOS',pure:'🌿 PURE',dark:'🖤 DARK',calm:'🌊 CALM'};
 const params=new URLSearchParams(location.search);
-const state={search:params.get('q')||'',cuisine:params.get('cuisine')||'',city:params.get('city')||'',vibe:VIBE_MAP[params.get('vibe')]||'all',sort:params.get('sort')||'recommended',view:localStorage.getItem('gurmaoRestaurantView')==='rows'?'rows':'cards',perPage:12,shown:12,userLocation:null,all:[],filtered:[],loading:false};
+const state={search:params.get('q')||'',cuisine:params.get('cuisine')||'',city:params.get('city')||'',vibe:VIBE_MAP[params.get('vibe')]||'all',sort:params.get('sort')||'recommended',view:localStorage.getItem('gurmaoRestaurantView')==='rows'?'rows':'cards',perPage:15,shown:15,userLocation:null,all:[],filtered:[],loading:false};
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const clean=v=>String(v||'').normalize('NFKC').replace(/[^\p{L}\p{N}\s-]/gu,' ').replace(/\s+/g,' ').trim().slice(0,80);
