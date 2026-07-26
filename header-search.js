@@ -9,10 +9,6 @@ const MIN_QUERY_LENGTH = 2;
 let locationSearch;
 let requestSequence = 0;
 
-function escapeSelectorValue(value) {
-  return String(value ?? '').replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-}
-
 function normalizeQuery(value) {
   return String(value ?? '')
     .normalize('NFKC')
@@ -40,9 +36,8 @@ function resultIdentifier(item) {
   return String(item?.slug || item?.id || '');
 }
 
-function detailUrl(type, item) {
-  const page = type === 'chef' ? 'kuchar-detail.html' : 'restaurace-detail.html';
-  return `${page}?id=${encodeURIComponent(resultIdentifier(item))}`;
+function detailUrl(item) {
+  return `restaurace-detail.html?id=${encodeURIComponent(resultIdentifier(item))}`;
 }
 
 function injectStyles() {
@@ -66,14 +61,12 @@ function injectStyles() {
     .gurmao-header-location:hover,.gurmao-header-location:focus-visible,.gurmao-header-location[aria-pressed="true"]{border-color:rgba(216,173,52,.65);color:#f3c94a;outline:none}
     .gurmao-header-search-results{max-height:min(58vh,520px);overflow:auto;overscroll-behavior:contain}
     .gurmao-header-search-status{padding:22px 16px;color:rgba(255,255,255,.58);text-align:center;font:500 13px/1.45 Inter,system-ui,sans-serif}
-    .gurmao-header-search-section{padding:9px 13px 7px;color:#d8ad34;font:700 10px/1.2 Inter,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase}
-    .gurmao-header-search-result{min-height:68px;display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:11px;padding:10px 13px;border-top:1px solid rgba(255,255,255,.075);color:#fff;text-decoration:none}
+    .gurmao-header-search-result{min-height:68px;display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:11px;padding:10px 13px;border-top:1px solid rgba(255,255,255,.075);color:#fff;text-decoration:none}
     .gurmao-header-search-result:hover,.gurmao-header-search-result:focus-visible{background:rgba(216,173,52,.09);outline:none}
     .gurmao-header-search-image{width:48px;height:48px;border-radius:12px;background:#151515 center/cover no-repeat}
     .gurmao-header-search-copy{min-width:0}
     .gurmao-header-search-name{overflow:hidden;color:#fff;font:650 13px/1.3 Inter,system-ui,sans-serif;text-overflow:ellipsis;white-space:nowrap}
     .gurmao-header-search-meta{margin-top:4px;overflow:hidden;color:rgba(255,255,255,.55);font:500 11px/1.3 Inter,system-ui,sans-serif;text-overflow:ellipsis;white-space:nowrap}
-    .gurmao-header-search-distance{color:#f3c94a;font:650 11px/1 Inter,system-ui,sans-serif;white-space:nowrap}
     .gurmao-header-search-spinner{width:15px;height:15px;border:2px solid rgba(216,173,52,.3);border-top-color:#f3c94a;border-radius:50%;animation:gurmao-search-spin .7s linear infinite}
     @keyframes gurmao-search-spin{to{transform:rotate(360deg)}}
     @media(max-width:767px){
@@ -106,7 +99,7 @@ function createPanel() {
   const panel = document.createElement('section');
   panel.id = SEARCH_PANEL_ID;
   panel.className = 'gurmao-header-search-panel';
-  panel.setAttribute('aria-label', 'Vyhledávání restaurací a kuchařů');
+  panel.setAttribute('aria-label', 'Vyhledávání restaurací');
   panel.hidden = true;
 
   const form = document.createElement('div');
@@ -126,7 +119,7 @@ function createPanel() {
   input.maxLength = 80;
   input.autocomplete = 'off';
   input.placeholder = 'Restaurace, kuchyně, město nebo vibe…';
-  input.setAttribute('aria-label', 'Vyhledat restauraci nebo kuchaře');
+  input.setAttribute('aria-label', 'Vyhledat restauraci');
   input.setAttribute('aria-controls', 'gurmaoGlobalHeaderSearchResults');
 
   const close = document.createElement('button');
@@ -174,68 +167,45 @@ function setStatus(results, message, loading = false) {
   results.appendChild(status);
 }
 
-function addSection(results, title) {
-  const heading = document.createElement('div');
-  heading.className = 'gurmao-header-search-section';
-  heading.textContent = title;
-  results.appendChild(heading);
-}
-
-function addResult(results, type, item) {
+function addResult(results, item) {
   const link = document.createElement('a');
   link.className = 'gurmao-header-search-result';
-  link.href = detailUrl(type, item);
+  link.href = detailUrl(item);
 
   const image = document.createElement('span');
   image.className = 'gurmao-header-search-image';
   const imageUrl = validImageUrl(item.image_url);
-  if (imageUrl) image.style.backgroundImage = `url("${escapeSelectorValue(imageUrl)}")`;
+  if (imageUrl) image.style.backgroundImage = `url("${imageUrl.replace(/["\\]/g, '\\$&')}")`;
 
   const copy = document.createElement('span');
   copy.className = 'gurmao-header-search-copy';
   const name = document.createElement('span');
   name.className = 'gurmao-header-search-name';
-  name.textContent = String(item.name || (type === 'chef' ? 'Kuchař' : 'Restaurace'));
+  name.textContent = String(item.name || 'Restaurace');
   const meta = document.createElement('span');
   meta.className = 'gurmao-header-search-meta';
-  meta.textContent = type === 'chef'
-    ? 'Kuchař'
-    : [item.city, item.tag || item.vibe].filter(Boolean).join(' · ');
+  meta.textContent = String(item.city || 'Město neuvedeno');
   copy.append(name, meta);
 
-  const distance = document.createElement('span');
-  distance.className = 'gurmao-header-search-distance';
-  if (Number.isFinite(item.distance)) distance.textContent = locationSearch.formatDistance(item.distance);
-
-  link.append(image, copy, distance);
+  link.append(image, copy);
   results.appendChild(link);
 }
 
 async function searchDatabase(rawQuery, useLocation) {
   const terms = queryTerms(rawQuery);
-  if (!terms.length) return { restaurants: [], chefs: [] };
+  if (!terms.length) return { restaurants: [] };
 
   const fields = ['name', 'city', 'tag', 'vibe'];
   const restaurantFilter = terms.flatMap(term =>
     fields.map(field => `${field}.ilike.%${term}%`)
   ).join(',');
-  const chefFilter = terms.map(term => `name.ilike.%${term}%`).join(',');
-
-  const [restaurantResponse, chefResponse] = await Promise.all([
-    supabase
-      .from('restaurants')
-      .select('id, slug, name, city, vibe, tag, image_url, latitude, longitude')
-      .or(restaurantFilter)
-      .limit(20),
-    supabase
-      .from('chefs')
-      .select('id, slug, name, image_url')
-      .or(chefFilter)
-      .limit(8)
-  ]);
+  const restaurantResponse = await supabase
+    .from('restaurants')
+    .select('id, slug, name, city, vibe, tag, image_url, latitude, longitude')
+    .or(restaurantFilter)
+    .limit(20);
 
   if (restaurantResponse.error) throw restaurantResponse.error;
-  const chefs = chefResponse.error ? [] : (chefResponse.data || []);
   let restaurants = restaurantResponse.data || [];
 
   if (useLocation && locationSearch?.isLocationEnabled && locationSearch.userLocation) {
@@ -256,23 +226,16 @@ async function searchDatabase(rawQuery, useLocation) {
       .sort((a, b) => a.distance - b.distance);
   }
 
-  return { restaurants: restaurants.slice(0, 12), chefs: chefs.slice(0, 5) };
+  return { restaurants: restaurants.slice(0, 12) };
 }
 
 function renderResults(results, payload, useLocation) {
   results.replaceChildren();
-  if (!payload.restaurants.length && !payload.chefs.length) {
+  if (!payload.restaurants.length) {
     setStatus(results, useLocation ? `V okruhu ${MAX_DISTANCE_KM} km nebyly nalezeny žádné výsledky.` : 'Nebyly nalezeny žádné výsledky.');
     return;
   }
-  if (payload.restaurants.length) {
-    addSection(results, 'Restaurace');
-    payload.restaurants.forEach(item => addResult(results, 'restaurant', item));
-  }
-  if (payload.chefs.length) {
-    addSection(results, 'Kuchaři');
-    payload.chefs.forEach(item => addResult(results, 'chef', item));
-  }
+  payload.restaurants.forEach(item => addResult(results, item));
 }
 
 function positionPanel(panel, anchor) {

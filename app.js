@@ -36,7 +36,7 @@ if (!document.querySelector('script[data-gurmao-bottom-nav]')) {
 // Load one shared, safe header search implementation on every public page.
 const currentPublicPage = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
 if (!/^(admin(?:-|\.)|login\.|register\.|forgot-|reset-|404\.)/.test(currentPublicPage)) {
-  void import('/header-search.js?v=20260726-unified-2').catch(error => {
+  void import('/header-search.js?v=20260726-unified-3').catch(error => {
     console.error('Shared header search failed to load:', error);
   });
 }
