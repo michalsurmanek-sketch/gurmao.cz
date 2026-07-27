@@ -86,8 +86,10 @@
   let restaurants=[];
   try{
     const {supabase}=await import('./supabase-client.js');
-    const fields='id,slug,name,city,region,kraj,county,state,cuisine,cuisine_type,category,vibe,atmosphere,description,short_description,tags,address,rating,average_rating,google_rating,price_level,image_url,image,photo_url,cover_image,thumbnail_url';
-    const {data,error}=await supabase.from('restaurants').select(fields).not('name','is',null).limit(300);
+    // Databáze se průběžně rozšiřuje a starší záznamy nemají všechny stejné
+    // sloupce. Výčet neexistujícího sloupce shodí celý Supabase dotaz, proto
+    // načteme skutečnou strukturu záznamů a níže bezpečně používáme fallbacky.
+    const {data,error}=await supabase.from('restaurants').select('*').not('name','is',null).limit(1000);
     if(error)throw error;
     restaurants=Array.isArray(data)?data:[];
   }catch(error){console.warn('AI databáze není dostupná:',error);}
