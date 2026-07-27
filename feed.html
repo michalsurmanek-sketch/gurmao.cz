@@ -833,11 +833,16 @@
   // filteredItems already declared globally at line 402
 
   // Desktop grid render
-  async function renderGrid(nearbyFilter = null) {
+  async function renderGrid(nearbyFilter = null, preparedItems = null) {
     if (!grid || items.length === 0) return;
     
-    // Filter items if location filter is active
-    filteredItems = nearbyFilter ? items.filter(x => nearbyFilter.has(x.id)) : [...items];
+    // Použij již vyfiltrované položky, nebo aplikuj filtr podle polohy.
+    // Původní verze zde vždy obnovila celý seznam a rušila textové filtry.
+    filteredItems = Array.isArray(preparedItems)
+      ? preparedItems
+      : nearbyFilter
+        ? items.filter(x => nearbyFilter.has(x.id))
+        : [...items];
     
     const saved = await GurmaoCollections.getSaved();
     
@@ -1022,7 +1027,7 @@
       return matchesSearch && matchesCity && matchesVibe;
     });
     
-    renderGrid();
+    renderGrid(null, filteredItems);
   }
 
   // Custom dropdown logic
