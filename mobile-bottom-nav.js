@@ -1,20 +1,49 @@
 (() => {
   'use strict';
 
+  const HEART_SVG = '<svg class="gurmao-heart-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg>';
+
+  const installFavoriteStyles = () => {
+    if (document.getElementById('gurmao-favorite-icon-style')) return;
+    const style = document.createElement('style');
+    style.id = 'gurmao-favorite-icon-style';
+    style.textContent = `
+      [data-save]{display:inline-flex!important;align-items:center!important;justify-content:center!important;line-height:0!important;font-size:0!important;color:#fff!important}
+      [data-save]::before,[data-save]::after{content:none!important;display:none!important}
+      [data-save] .gurmao-heart-icon{display:block!important;width:20px!important;height:20px!important;max-width:none!important;overflow:visible!important;pointer-events:none!important;fill:transparent!important;stroke:#fff!important;stroke-width:2!important;stroke-linecap:round!important;stroke-linejoin:round!important;filter:drop-shadow(0 1px 3px rgba(0,0,0,.45));transition:fill .18s ease,stroke .18s ease,transform .18s ease!important}
+      [data-save].saved .gurmao-heart-icon,[data-save][aria-pressed="true"] .gurmao-heart-icon{fill:#e63946!important;stroke:#e63946!important;filter:drop-shadow(0 0 7px rgba(230,57,70,.42))!important}
+      [data-save]:active .gurmao-heart-icon{transform:scale(.9)!important}
+      [data-save]:disabled{opacity:.7!important;cursor:wait!important}
+    `;
+    document.head.appendChild(style);
+  };
+
+  const renderFavoriteButton = (button, saved) => {
+    button.innerHTML = HEART_SVG;
+    button.classList.toggle('saved', saved);
+    button.setAttribute('aria-pressed', String(saved));
+    button.setAttribute('aria-label', saved ? 'Odebrat z výběru' : 'Přidat do výběru');
+    button.title = saved ? 'Odebrat z výběru' : 'Přidat do výběru';
+  };
+
+  const normalizeFavoriteButtons = root => {
+    root.querySelectorAll?.('[data-save]').forEach(button => {
+      const saved = button.classList.contains('saved') || button.getAttribute('aria-pressed') === 'true' || /❤️|❤/.test(button.textContent || '');
+      renderFavoriteButton(button, saved);
+    });
+  };
+
   // Global favorite toggle fix. Runs in the capture phase so legacy handlers
   // cannot process the same click twice.
   const installFavoriteToggle = () => {
     if (window.__gurmaoFavoriteToggleInstalled) return;
     window.__gurmaoFavoriteToggleInstalled = true;
+    installFavoriteStyles();
 
     const syncButtons = (restaurantId, saved) => {
       document.querySelectorAll('[data-save]').forEach(button => {
         if (button.getAttribute('data-save') !== restaurantId) return;
-        button.textContent = saved ? '❤️' : '♡';
-        button.classList.toggle('saved', saved);
-        button.setAttribute('aria-pressed', String(saved));
-        button.setAttribute('aria-label', saved ? 'Odebrat z výběru' : 'Přidat do výběru');
-        button.title = saved ? 'Odebrat z výběru' : 'Přidat do výběru';
+        renderFavoriteButton(button, saved);
       });
     };
 
@@ -30,6 +59,23 @@
         window.setTimeout(() => toast.remove(), 260);
       }, 1700);
     };
+
+    const observer = new MutationObserver(mutations => {
+      for (const mutation of mutations) {
+        mutation.addedNodes.forEach(node => {
+          if (!(node instanceof Element)) return;
+          if (node.matches?.('[data-save]')) normalizeFavoriteButtons(node.parentElement || document);
+          else normalizeFavoriteButtons(node);
+        });
+      }
+    });
+
+    const startObserver = () => {
+      normalizeFavoriteButtons(document);
+      observer.observe(document.body, { childList: true, subtree: true });
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', startObserver, { once: true });
+    else startObserver();
 
     document.addEventListener('click', async event => {
       const button = event.target.closest?.('[data-save]');
@@ -75,7 +121,7 @@
         }
 
         syncButtons(restaurantId, saved);
-        showFavoriteToast(saved ? '❤️ Přidáno do výběru' : '♡ Odebráno z výběru');
+        showFavoriteToast(saved ? 'Přidáno do výběru' : 'Odebráno z výběru');
         window.dispatchEvent(new CustomEvent('gurmao:favorites-changed', {
           detail: { restaurantId, saved }
         }));
@@ -135,43 +181,8 @@
     .gurmao-bottom-nav{display:none}
     @media (max-width:767px){
       body.has-gurmao-bottom-nav{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))!important}
-      .gurmao-bottom-nav{
-        position:fixed;
-        left:50%;
-        bottom:0;
-        z-index:90;
-        width:min(calc(100% - 20px),480px);
-        min-height:calc(68px + env(safe-area-inset-bottom,0px));
-        padding:7px 8px calc(7px + env(safe-area-inset-bottom,0px));
-        display:grid;
-        grid-template-columns:repeat(5,minmax(0,1fr));
-        align-items:end;
-        border:1px solid rgba(212,175,55,.26);
-        border-bottom:0;
-        border-radius:22px 22px 0 0;
-        background:linear-gradient(180deg,rgba(24,24,22,.96),rgba(8,9,8,.97));
-        box-shadow:0 16px 46px rgba(0,0,0,.52),0 0 24px rgba(212,175,55,.07);
-        -webkit-backdrop-filter:blur(18px);
-        backdrop-filter:blur(18px);
-        transform:translateX(-50%);
-        transition:transform .22s ease,opacity .22s ease;
-      }
-      .gurmao-bottom-nav__item{
-        position:relative;
-        min-width:0;
-        min-height:54px;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:flex-end;
-        gap:4px;
-        padding:5px 2px 4px;
-        border-radius:15px;
-        color:rgba(255,255,255,.56);
-        text-decoration:none;
-        -webkit-tap-highlight-color:transparent;
-        transition:color .18s ease,background .18s ease,transform .18s ease;
-      }
+      .gurmao-bottom-nav{position:fixed;left:50%;bottom:0;z-index:90;width:min(calc(100% - 20px),480px);min-height:calc(68px + env(safe-area-inset-bottom,0px));padding:7px 8px calc(7px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;border:1px solid rgba(212,175,55,.26);border-bottom:0;border-radius:22px 22px 0 0;background:linear-gradient(180deg,rgba(24,24,22,.96),rgba(8,9,8,.97));box-shadow:0 16px 46px rgba(0,0,0,.52),0 0 24px rgba(212,175,55,.07);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);transform:translateX(-50%);transition:transform .22s ease,opacity .22s ease}
+      .gurmao-bottom-nav__item{position:relative;min-width:0;min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;padding:5px 2px 4px;border-radius:15px;color:rgba(255,255,255,.56);text-decoration:none;-webkit-tap-highlight-color:transparent;transition:color .18s ease,background .18s ease,transform .18s ease}
       .gurmao-bottom-nav__item:active{transform:scale(.94)}
       .gurmao-bottom-nav__icon{width:23px;height:23px;display:grid;place-items:center}
       .gurmao-bottom-nav__icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -184,10 +195,7 @@
       .gurmao-bottom-nav__item.is-primary.is-active .gurmao-bottom-nav__icon{box-shadow:0 7px 25px rgba(226,185,54,.48),0 0 0 4px rgba(212,175,55,.1)}
       body.gurmao-mobile-keyboard .gurmao-bottom-nav{opacity:0;pointer-events:none;transform:translate(-50%,calc(100% + 30px))}
     }
-    @media (max-width:350px){
-      .gurmao-bottom-nav{width:calc(100% - 12px);padding-inline:4px}
-      .gurmao-bottom-nav__label{font-size:8px}
-    }
+    @media (max-width:350px){.gurmao-bottom-nav{width:calc(100% - 12px);padding-inline:4px}.gurmao-bottom-nav__label{font-size:8px}}
   `;
 
   const nav = document.createElement('nav');
@@ -196,10 +204,7 @@
   nav.setAttribute('aria-label', 'Hlavní mobilní navigace');
   nav.innerHTML = items.map(item => {
     const active = item.matches(currentFile);
-    return `<a class="gurmao-bottom-nav__item${item.primary ? ' is-primary' : ''}${active ? ' is-active' : ''}" href="${item.href}"${active ? ' aria-current="page"' : ''}>
-      <span class="gurmao-bottom-nav__icon" aria-hidden="true"><svg viewBox="0 0 24 24">${item.icon}</svg></span>
-      <span class="gurmao-bottom-nav__label">${item.label}</span>
-    </a>`;
+    return `<a class="gurmao-bottom-nav__item${item.primary ? ' is-primary' : ''}${active ? ' is-active' : ''}" href="${item.href}"${active ? ' aria-current="page"' : ''}><span class="gurmao-bottom-nav__icon" aria-hidden="true"><svg viewBox="0 0 24 24">${item.icon}</svg></span><span class="gurmao-bottom-nav__label">${item.label}</span></a>`;
   }).join('');
 
   const mount = () => {
@@ -213,9 +218,7 @@
   else mount();
 
   document.addEventListener('focusin', event => {
-    if (event.target.matches('input, textarea, select, [contenteditable="true"]')) {
-      document.body.classList.add('gurmao-mobile-keyboard');
-    }
+    if (event.target.matches('input, textarea, select, [contenteditable="true"]')) document.body.classList.add('gurmao-mobile-keyboard');
   });
   document.addEventListener('focusout', () => {
     window.setTimeout(() => document.body.classList.remove('gurmao-mobile-keyboard'), 120);
