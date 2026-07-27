@@ -170,6 +170,146 @@
       background: rgba(212, 175, 55, 0.15);
       color: #d4af37;
     }
+
+    /* Desktop feed aligned with restaurace.html */
+    .feed-catalog-hero {
+      height: 350px;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(4, 5, 4, .96) 0%, rgba(4, 5, 4, .78) 48%, rgba(4, 5, 4, .25) 100%),
+        url('images/gurmao-hero-restaurant.jpg') 68% center / cover no-repeat;
+    }
+    .feed-catalog-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 72% 35%, rgba(243, 201, 74, .17), transparent 32%);
+      pointer-events: none;
+    }
+    .feed-catalog-hero-inner {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+    .feed-catalog-copy { max-width: 660px; }
+    .feed-catalog-kicker {
+      color: #f3c94a;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+    .feed-catalog-copy h1 {
+      margin: 12px 0 14px;
+      font-size: clamp(44px, 5vw, 72px);
+      line-height: 1;
+    }
+    .feed-catalog-copy h1 span { color: #f3c94a; }
+    .feed-catalog-copy p {
+      max-width: 590px;
+      color: rgba(255, 255, 255, .68);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+    .feed-search-wrap {
+      width: min(100% - 96px, 1257px);
+      margin: -1px auto 0;
+      position: relative;
+      z-index: 10;
+    }
+    .feed-search-panel {
+      display: grid;
+      grid-template-columns: 1.45fr .9fr .9fr .65fr .62fr;
+      gap: 10px;
+      padding: 14px 16px;
+      border: 1px solid rgba(216, 173, 52, .34);
+      border-radius: 0 0 16px 16px;
+      background: rgba(21, 22, 20, .98);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, .34);
+    }
+    .feed-search-control {
+      width: 100%;
+      height: 48px;
+      border: 1px solid rgba(255, 255, 255, .14);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .025);
+      color: #fff;
+      transition: border-color .2s, background .2s;
+    }
+    .feed-search-control:hover,
+    .feed-search-control:focus-within { border-color: rgba(243, 201, 74, .65); }
+    .feed-search-field { position: relative; }
+    .feed-search-field svg {
+      position: absolute;
+      left: 14px;
+      top: 15px;
+      width: 18px;
+      color: #f3c94a;
+      pointer-events: none;
+    }
+    .feed-search-field input {
+      padding: 0 15px 0 43px;
+      outline: 0;
+    }
+    .feed-search-field input::placeholder { color: rgba(255, 255, 255, .38); }
+    .feed-search-panel .custom-select { position: relative; min-width: 0; }
+    .feed-search-panel .custom-select-trigger {
+      height: 48px;
+      padding: 0 38px 0 14px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .025);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .feed-search-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 0 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .feed-search-submit {
+      border: 0;
+      background: linear-gradient(135deg, #f3c94a, #d6a62b);
+      color: #111;
+    }
+    .feed-search-submit:hover { filter: brightness(1.05); }
+    .feed-results-shell {
+      width: min(100% - 96px, 1257px);
+      margin: 0 auto;
+      padding: 24px 0 70px;
+    }
+    .feed-results-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 52px;
+      margin-bottom: 16px;
+      color: rgba(255, 255, 255, .62);
+      font-size: 14px;
+    }
+    .feed-results-links { display: flex; gap: 10px; }
+    .feed-results-links a {
+      padding: 10px 16px;
+      border: 1px solid rgba(255, 255, 255, .14);
+      border-radius: 999px;
+      color: rgba(255, 255, 255, .78);
+      transition: .2s;
+    }
+    .feed-results-links a:hover { border-color: #f3c94a; color: #f3c94a; }
+    @media (max-width: 1180px) {
+      .feed-search-panel { grid-template-columns: 1.4fr 1fr 1fr; }
+      .feed-search-action { width: 100%; }
+    }
   </style>
 </head>
 <body class="bg-gurmaoblack text-white overflow-x-hidden">
@@ -198,40 +338,25 @@
 
 <!-- DESKTOP GRID -->
 <main class="hidden md:block">
-  <div class="max-w-6xl mx-auto px-6 py-10">
-    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-      <div>
-        <h1 class="text-4xl">Feed</h1>
-        <p class="text-white/60 mt-2">Vybraný svět. Minimum slov. Maximum chuti.</p>
-      </div>
-      <div class="grid w-full grid-cols-1 gap-3 sm:flex sm:w-auto">
-        <a href="ai.html" class="px-5 py-3 text-center rounded-full bg-white/5 hover:bg-gurmaogold hover:text-black transition">Kam dnes podle nálady</a>
-        <a href="collections.html" class="px-5 py-3 text-center rounded-full border border-white/20 hover:border-gurmaogold hover:text-gurmaogold transition">Můj výběr</a>
+  <section class="feed-catalog-hero">
+    <div class="page-shell feed-catalog-hero-inner">
+      <div class="feed-catalog-copy">
+        <div class="feed-catalog-kicker">Inspirace podle nálady</div>
+        <h1>Feed, který začíná <span>chutí</span></h1>
+        <p>Objevuj restaurace podle atmosféry, města a toho, na co máš právě chuť. Vybraný svět. Minimum slov. Maximum chuti.</p>
       </div>
     </div>
+  </section>
 
-    <!-- Search & Filters -->
-    <div class="mt-8 flex flex-col sm:flex-row gap-3">
-      <div class="flex-1 relative">
-        <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/40 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        <input 
-          type="text" 
-          id="searchInput" 
-          placeholder="Hledej restauraci..."
-          class="w-full pl-12 pr-5 py-3 rounded-full bg-white/5 border border-white/10 focus:border-gurmaogold focus:outline-none text-white placeholder:text-white/40"
-        />
+  <section class="feed-search-wrap" aria-label="Filtrování feedu">
+    <div class="feed-search-panel">
+      <div class="feed-search-field feed-search-control">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <input type="text" id="searchInput" maxlength="80" autocomplete="off" placeholder="Název restaurace nebo jídlo...">
       </div>
-      
-      <!-- Custom City Dropdown -->
-      <div class="custom-select w-full sm:w-auto sm:min-w-[160px]">
-        <button 
-          id="cityFilterBtn" 
-          class="custom-select-trigger w-full pl-6 pr-5 py-3 rounded-full bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white"
-        >
-          Všechna města
-        </button>
+
+      <div class="custom-select">
+        <button id="cityFilterBtn" type="button" class="custom-select-trigger feed-search-control">Všechna města</button>
         <div id="cityOptions" class="custom-options hidden">
           <div class="custom-option" data-value="">Všechna města</div>
           <div class="custom-option" data-value="Praha">📍 Praha</div>
@@ -240,31 +365,33 @@
         </div>
       </div>
 
-      <!-- Custom Vibe Dropdown -->
-      <div class="custom-select w-full sm:w-auto sm:min-w-[160px]">
-        <button 
-          id="vibeFilterBtn" 
-          class="custom-select-trigger w-full pl-6 pr-5 py-3 rounded-full bg-white/5 border border-white/10 hover:border-gurmaogold outline-none text-left text-white"
-        >
-          Všechny vibes
-        </button>
+      <div class="custom-select">
+        <button id="vibeFilterBtn" type="button" class="custom-select-trigger feed-search-control">Všechny vibes</button>
         <div id="vibeOptions" class="custom-options hidden">
           <div class="custom-option" data-value="">Všechny vibes</div>
           <div class="custom-option" data-value="LUXE">🍷 LUXE</div>
           <div class="custom-option" data-value="DRAMA">🔥 DRAMA</div>
           <div class="custom-option" data-value="CHAOS">🌮 CHAOS</div>
-          <div class="custom-option" data-value="DARK">🖤 DARK</div>
+          <div class="custom-option" data-value="DARK">🌙 DARK</div>
           <div class="custom-option" data-value="PURE">🌿 PURE</div>
           <div class="custom-option" data-value="CALM">🌊 CALM</div>
         </div>
       </div>
-      
-      <button id="clearFilters" class="px-5 py-3 rounded-full border border-white/20 hover:border-gurmaored hover:text-gurmaored transition whitespace-nowrap">
-        ✕ Reset
-      </button>
-    </div>
 
-    <div id="resultsCount" class="mt-4 text-sm text-white/40"></div>
+      <button id="locationBtn" type="button" class="feed-search-control feed-search-action">⌖ Blízko mě</button>
+      <button id="feedSearchBtn" type="button" class="feed-search-control feed-search-action feed-search-submit">⌕ Hledat</button>
+    </div>
+  </section>
+
+  <div class="feed-results-shell">
+    <div class="feed-results-head">
+      <div id="resultsCount">Načítám restaurace…</div>
+      <div class="feed-results-links">
+        <button id="clearFilters" type="button" class="px-4 py-2 rounded-full border border-white/15 hover:border-gurmaored hover:text-gurmaored transition">✕ Reset</button>
+        <a href="ai.html">Kam dnes podle nálady</a>
+        <a href="collections.html">Můj výběr</a>
+      </div>
+    </div>
     <div id="grid" class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     
     <!-- Loading Indicator -->
@@ -945,6 +1072,7 @@
 
   // Event listeners for filters
   document.getElementById('searchInput')?.addEventListener('input', applyFilters);
+  document.getElementById('feedSearchBtn')?.addEventListener('click', applyFilters);
   
   document.getElementById('resetFilters')?.addEventListener('click', () => {
     const searchInput = document.getElementById('searchInput');
