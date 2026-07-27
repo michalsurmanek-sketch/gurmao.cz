@@ -83,6 +83,14 @@
   populateRegions();
   [['moodOptions','moodBtn'],['occasionOptions','occasionBtn'],['groupSizeOptions','groupSizeBtn'],['priceLevelOptions','priceLevelBtn']].forEach(([o,b])=>{const box=document.getElementById(o);if(box)bindOptions(box,b);});
 
+  const submitButton=form.querySelector('button[type="submit"]');
+  if(submitButton){
+    submitButton.disabled=true;
+    submitButton.style.pointerEvents='none';
+    submitButton.style.opacity='.65';
+    submitButton.setAttribute('aria-busy','true');
+  }
+
   let restaurants=[];
   try{
     const {supabase}=await import('./supabase-client.js');
@@ -111,11 +119,18 @@
     form.scrollIntoView({behavior:'smooth',block:'center'});
   }));
 
-  const submitButton=form.querySelector('button[type="submit"]');
   const handleSubmit=event=>{event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();render();};
   form.addEventListener('submit',handleSubmit,true);
   submitButton?.addEventListener('click',handleSubmit,true);
-  if(submitButton){submitButton.disabled=false;submitButton.style.pointerEvents='auto';submitButton.style.cursor='pointer';submitButton.style.position='relative';submitButton.style.zIndex='10';}
+  if(submitButton){
+    submitButton.disabled=false;
+    submitButton.style.pointerEvents='auto';
+    submitButton.style.opacity='1';
+    submitButton.style.cursor='pointer';
+    submitButton.style.position='relative';
+    submitButton.style.zIndex='10';
+    submitButton.removeAttribute('aria-busy');
+  }
 
   document.getElementById('resetForm')?.addEventListener('click',()=>{
     ['moodBtn','occasionBtn','groupSizeBtn','cityBtn','priceLevelBtn'].forEach(id=>{const b=document.getElementById(id);if(b)delete b.dataset.value;});

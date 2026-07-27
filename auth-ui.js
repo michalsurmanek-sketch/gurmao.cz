@@ -197,5 +197,5 @@
   }
   if (path.endsWith('/collections.html')) loadEnhancement('collections-redesign.css', 'collections-redesign.js', '20260725-1');
   if (path.endsWith('/feed.html')) loadEnhancement('feed-redesign.css', 'feed-redesign.js', '15');
-  if (path.endsWith('/ai.html')) loadEnhancement('ai-redesign.css', 'ai-redesign.js', '5');
+  if (path.endsWith('/ai.html')) loadEnhancement('ai-redesign.css', 'ai-redesign.js', '6');
 })();
