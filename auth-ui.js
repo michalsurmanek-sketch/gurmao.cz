@@ -81,6 +81,63 @@
   else run();
 })();
 
+(function applyUnifiedMobileMenu() {
+  const run = () => {
+    const menu = document.getElementById('mobileMenu');
+    const menuBackdrop = document.getElementById('menuBackdrop');
+    const menuButton = document.getElementById('menuBtn');
+    const closeButton = document.getElementById('menuClose');
+    if (!menu || !menuBackdrop || !menuButton || !closeButton) return;
+
+    const panel = menu.firstElementChild;
+    const nav = menu.querySelector('nav');
+    if (!panel || !nav) return;
+
+    panel.querySelectorAll(':scope > div').forEach(element => {
+      if ((element.textContent || '').replace(/\s+/g, '').includes('GURMAO') && element !== nav) {
+        const hasNavigationLabel = /Navigace/i.test(element.textContent || '');
+        if (!hasNavigationLabel) element.remove();
+      }
+    });
+
+    if (!nav.querySelector('a[href="index.html"]')) {
+      const home = document.createElement('a');
+      home.href = 'index.html';
+      home.textContent = 'Domů';
+      nav.prepend(home);
+    }
+
+    const page = location.pathname.split('/').pop() || 'index.html';
+    nav.querySelectorAll('a[href]').forEach(link => {
+      const href = (link.getAttribute('href') || '').split('?')[0].split('#')[0];
+      link.removeAttribute('style');
+      link.toggleAttribute('data-gurmao-mobile-active', href === page);
+    });
+
+    const style = document.createElement('style');
+    style.id = 'gurmao-unified-mobile-menu-style';
+    style.textContent = `
+      @media (max-width:767px){
+        #menuBackdrop{background:rgba(0,0,0,.72)!important;backdrop-filter:blur(2px)}
+        #mobileMenu{top:68px!important;height:calc(100dvh - 68px)!important;padding:0!important}
+        #mobileMenu>div{position:relative!important;overflow:hidden!important;width:auto!important;max-width:32rem!important;margin:16px!important;padding:16px!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:24px!important;background:rgba(5,5,5,.97)!important;backdrop-filter:blur(18px)!important;box-shadow:0 24px 70px rgba(0,0,0,.55)!important}
+        #mobileMenu>div>div:first-of-type{display:flex!important;align-items:center!important;justify-content:space-between!important;padding:0 0 12px!important;color:rgba(255,255,255,.62)!important;font-size:14px!important}
+        #menuClose{width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;padding:0!important;border:1px solid rgba(255,255,255,.15)!important;border-radius:999px!important;background:rgba(255,255,255,.04)!important;color:#fff!important}
+        #mobileMenu nav{display:grid!important;gap:8px!important;position:relative!important;z-index:1!important}
+        #mobileMenu nav>a,#mobileMenu nav>button,#mobileMenu #userMenuMobile>a,#mobileMenu #userMenuMobile>button{display:flex!important;align-items:center!important;width:100%!important;min-height:48px!important;padding:12px 16px!important;border:0!important;border-radius:14px!important;background:rgba(255,255,255,.045)!important;color:rgba(255,255,255,.9)!important;font-size:15px!important;text-decoration:none!important;transition:background .18s,color .18s,border-color .18s!important}
+        #mobileMenu nav>a:hover,#mobileMenu nav>a:focus-visible,#mobileMenu nav>a[data-gurmao-mobile-active]{background:rgba(216,173,52,.11)!important;color:#f3c94a!important;outline:none!important}
+        #mobileMenu nav>a[data-gurmao-mobile-active]{box-shadow:inset 3px 0 0 #d8ad34!important}
+        #mobileMenu #userMenuMobile{margin-top:8px!important;padding-top:8px!important;border-top:1px solid rgba(255,255,255,.1)!important}
+        #mobileMenu #loginLinkMobile{border:1px solid rgba(255,255,255,.18)!important;background:transparent!important}
+      }
+    `;
+    if (!document.getElementById(style.id)) document.head.appendChild(style);
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run, { once: true });
+  else run();
+})();
+
 (async function initAuthUI() {
   const userMenuDesktop = document.getElementById('userMenuDesktop');
   const userMenuMobile = document.getElementById('userMenuMobile');
