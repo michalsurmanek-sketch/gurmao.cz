@@ -1,6 +1,96 @@
 (() => {
   'use strict';
 
+  // Global favorite toggle fix. Runs in the capture phase so legacy handlers
+  // cannot process the same click twice.
+  const installFavoriteToggle = () => {
+    if (window.__gurmaoFavoriteToggleInstalled) return;
+    window.__gurmaoFavoriteToggleInstalled = true;
+
+    const syncButtons = (restaurantId, saved) => {
+      document.querySelectorAll('[data-save]').forEach(button => {
+        if (button.getAttribute('data-save') !== restaurantId) return;
+        button.textContent = saved ? '❤️' : '♡';
+        button.classList.toggle('saved', saved);
+        button.setAttribute('aria-pressed', String(saved));
+        button.setAttribute('aria-label', saved ? 'Odebrat z výběru' : 'Přidat do výběru');
+        button.title = saved ? 'Odebrat z výběru' : 'Přidat do výběru';
+      });
+    };
+
+    const showFavoriteToast = message => {
+      document.getElementById('gurmao-favorite-toast')?.remove();
+      const toast = document.createElement('div');
+      toast.id = 'gurmao-favorite-toast';
+      toast.textContent = message;
+      toast.style.cssText = 'position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));z-index:9999;transform:translateX(-50%);padding:11px 18px;border-radius:999px;background:#d8ad34;color:#090909;font:700 14px/1.2 Inter,system-ui,sans-serif;box-shadow:0 12px 32px rgba(0,0,0,.45);white-space:nowrap;transition:opacity .25s ease';
+      document.body.appendChild(toast);
+      window.setTimeout(() => {
+        toast.style.opacity = '0';
+        window.setTimeout(() => toast.remove(), 260);
+      }, 1700);
+    };
+
+    document.addEventListener('click', async event => {
+      const button = event.target.closest?.('[data-save]');
+      if (!button) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      if (button.dataset.favoriteBusy === 'true') return;
+      const restaurantId = String(button.getAttribute('data-save') || '').trim();
+      if (!restaurantId) return;
+
+      button.dataset.favoriteBusy = 'true';
+      button.disabled = true;
+
+      try {
+        let saved;
+        if (window.GurmaoCollections?.toggle) {
+          saved = await window.GurmaoCollections.toggle(restaurantId);
+          const cache = window.GurmaoCollections.savedCache;
+          if (cache instanceof Set) {
+            if (saved) cache.add(restaurantId);
+            else cache.delete(restaurantId);
+          }
+        } else {
+          let values = [];
+          try {
+            const parsed = JSON.parse(localStorage.getItem('gurmao_saved') || '[]');
+            values = Array.isArray(parsed) ? parsed : [];
+          } catch (_) {
+            values = [];
+          }
+          const savedSet = new Set(values.map(String));
+          if (savedSet.has(restaurantId)) {
+            savedSet.delete(restaurantId);
+            saved = false;
+          } else {
+            savedSet.add(restaurantId);
+            saved = true;
+          }
+          localStorage.setItem('gurmao_saved', JSON.stringify([...savedSet]));
+        }
+
+        syncButtons(restaurantId, saved);
+        showFavoriteToast(saved ? '❤️ Přidáno do výběru' : '♡ Odebráno z výběru');
+        window.dispatchEvent(new CustomEvent('gurmao:favorites-changed', {
+          detail: { restaurantId, saved }
+        }));
+      } catch (error) {
+        console.error('Favorite toggle failed:', error);
+        showFavoriteToast('Uložení se nepodařilo');
+      } finally {
+        button.disabled = false;
+        delete button.dataset.favoriteBusy;
+      }
+    }, true);
+  };
+
+  installFavoriteToggle();
+
   const currentFile = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
   const excludedPages = /^(admin(?:-|\.)|login\.|register\.|forgot-|reset-|404\.)/;
   if (currentFile === 'mapa.html' || excludedPages.test(currentFile) || document.getElementById('gurmaoBottomNav')) return;
@@ -56,7 +146,8 @@
         display:grid;
         grid-template-columns:repeat(5,minmax(0,1fr));
         align-items:end;
-        border:1px solid rgba(212,175,55,.26);\n        border-bottom:0;
+        border:1px solid rgba(212,175,55,.26);
+        border-bottom:0;
         border-radius:22px 22px 0 0;
         background:linear-gradient(180deg,rgba(24,24,22,.96),rgba(8,9,8,.97));
         box-shadow:0 16px 46px rgba(0,0,0,.52),0 0 24px rgba(212,175,55,.07);
@@ -82,54 +173,13 @@
         transition:color .18s ease,background .18s ease,transform .18s ease;
       }
       .gurmao-bottom-nav__item:active{transform:scale(.94)}
-      .gurmao-bottom-nav__icon{
-        width:23px;
-        height:23px;
-        display:grid;
-        place-items:center;
-      }
-      .gurmao-bottom-nav__icon svg{
-        width:22px;
-        height:22px;
-        fill:none;
-        stroke:currentColor;
-        stroke-width:1.8;
-        stroke-linecap:round;
-        stroke-linejoin:round;
-      }
-      .gurmao-bottom-nav__label{
-        max-width:100%;
-        overflow:hidden;
-        text-overflow:ellipsis;
-        font:600 9px/1.1 Inter,system-ui,sans-serif;
-        letter-spacing:.015em;
-        white-space:nowrap;
-      }
-      .gurmao-bottom-nav__item.is-active{
-        color:#f1c94a;
-        background:rgba(212,175,55,.08);
-      }
-      .gurmao-bottom-nav__item.is-active:not(.is-primary)::after{
-        content:"";
-        position:absolute;
-        top:1px;
-        width:16px;
-        height:2px;
-        border-radius:999px;
-        background:#e2b936;
-        box-shadow:0 0 9px rgba(226,185,54,.7);
-      }
+      .gurmao-bottom-nav__icon{width:23px;height:23px;display:grid;place-items:center}
+      .gurmao-bottom-nav__icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+      .gurmao-bottom-nav__label{max-width:100%;overflow:hidden;text-overflow:ellipsis;font:600 9px/1.1 Inter,system-ui,sans-serif;letter-spacing:.015em;white-space:nowrap}
+      .gurmao-bottom-nav__item.is-active{color:#f1c94a;background:rgba(212,175,55,.08)}
+      .gurmao-bottom-nav__item.is-active:not(.is-primary)::after{content:"";position:absolute;top:1px;width:16px;height:2px;border-radius:999px;background:#e2b936;box-shadow:0 0 9px rgba(226,185,54,.7)}
       .gurmao-bottom-nav__item.is-primary{justify-content:flex-end}
-      .gurmao-bottom-nav__item.is-primary .gurmao-bottom-nav__icon{
-        width:43px;
-        height:43px;
-        margin-top:-16px;
-        border:1px solid rgba(255,232,145,.72);
-        border-radius:50%;
-        color:#0b0b0d;
-        background:linear-gradient(145deg,#f4d566 0%,#d4af37 58%,#a87913 100%);
-        box-shadow:0 7px 20px rgba(212,175,55,.28),inset 0 1px 0 rgba(255,255,255,.38);
-      }
+      .gurmao-bottom-nav__item.is-primary .gurmao-bottom-nav__icon{width:43px;height:43px;margin-top:-16px;border:1px solid rgba(255,232,145,.72);border-radius:50%;color:#0b0b0d;background:linear-gradient(145deg,#f4d566 0%,#d4af37 58%,#a87913 100%);box-shadow:0 7px 20px rgba(212,175,55,.28),inset 0 1px 0 rgba(255,255,255,.38)}
       .gurmao-bottom-nav__item.is-primary .gurmao-bottom-nav__icon svg{width:22px;height:22px;stroke-width:2}
       .gurmao-bottom-nav__item.is-primary.is-active .gurmao-bottom-nav__icon{box-shadow:0 7px 25px rgba(226,185,54,.48),0 0 0 4px rgba(212,175,55,.1)}
       body.gurmao-mobile-keyboard .gurmao-bottom-nav{opacity:0;pointer-events:none;transform:translate(-50%,calc(100% + 30px))}
