@@ -5,17 +5,17 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0b0b0d",
+  "background_color": "#050605",
   "theme_color": "#d4af37",
   "lang": "cs-CZ",
   "dir": "ltr",
   "categories": ["food", "lifestyle"],
   "icons": [
     {
-      "src": "/favicon.svg",
+      "src": "/favicon.svg?v=20260728-medallion-1",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ],
   "shortcuts": [
