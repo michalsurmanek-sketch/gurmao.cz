@@ -1,4 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" fill="#0b0b0d"/>
-  <text x="50" y="70" font-family="serif" font-size="60" font-weight="bold" fill="#d4af37" text-anchor="middle">M</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="GURMAO">
+  <defs>
+    <linearGradient id="gold" x1="18" y1="12" x2="82" y2="88" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f7dc73"/>
+      <stop offset="0.56" stop-color="#d4af37"/>
+      <stop offset="1" stop-color="#a87913"/>
+    </linearGradient>
+    <radialGradient id="shine" cx="34%" cy="24%" r="68%">
+      <stop offset="0" stop-color="#fff4bd" stop-opacity=".52"/>
+      <stop offset=".42" stop-color="#fff4bd" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000" flood-opacity=".38"/>
+    </filter>
+  </defs>
+  <rect width="100" height="100" rx="22" fill="#050605"/>
+  <circle cx="50" cy="50" r="37" fill="url(#gold)" stroke="#ffe891" stroke-width="2.5" filter="url(#shadow)"/>
+  <circle cx="50" cy="50" r="35.5" fill="url(#shine)"/>
+  <text x="50" y="68" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="52" font-weight="800" fill="#0b0b0d">M</text>
 </svg>
