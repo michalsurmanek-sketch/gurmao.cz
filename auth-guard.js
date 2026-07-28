@@ -1,15 +1,24 @@
-// Auth Guard - Protect routes from unauthenticated users
-// Redirects to login.html if user is not logged in
+// Auth Guard – ověřuje skutečnou Supabase relaci místo zastaralého localStorage.
+(async function authGuard() {
+  try {
+    const { supabase } = await import('./supabase-client.js');
+    const { data: { user }, error } = await supabase.auth.getUser();
 
-(function authGuard() {
-  const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
-  
-  if (!user || !user.loggedIn) {
-    // Save current page to redirect back after login
-    const returnUrl = window.location.pathname + window.location.search;
-    localStorage.setItem('gurmao_return_url', returnUrl);
-    
-    // Redirect to login
-    window.location.href = 'login.html';
+    if (error || !user) {
+      const returnUrl = window.location.pathname + window.location.search + window.location.hash;
+      localStorage.setItem('gurmao_return_url', returnUrl);
+      window.location.replace('login.html');
+      return;
+    }
+
+    // Zachovat pouze kompatibilní pomocnou informaci; zdrojem pravdy je Supabase.
+    localStorage.setItem('gurmao_user', JSON.stringify({
+      loggedIn: true,
+      id: user.id,
+      email: user.email || ''
+    }));
+  } catch (error) {
+    console.error('Ověření přihlášení se nezdařilo:', error);
+    // Při dočasné technické chybě stránku nepřepisovat ani uživatele násilně nepřesměrovávat.
   }
 })();
