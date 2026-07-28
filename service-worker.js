@@ -1,7 +1,7 @@
 // GURMAO.cz – čistý síťový service worker bez přepisování HTML.
-// collections.html se nikdy neupravuje, necachuje ani nuceně nepřenačítá.
+// collections.html ani její doplňky se necachují a stránka se nuceně nepřenačítá.
 
-const RUNTIME_VERSION = '20260728-collections-stable-3';
+const RUNTIME_VERSION = '20260728-collections-stable-4';
 
 self.addEventListener('install', () => {
   self.skipWaiting();
@@ -45,8 +45,13 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  const isCollectionsAsset = /\/(collections\.html|collections-redesign\.(?:js|css)|auth-guard\.js)$/i.test(url.pathname);
+  if (isCollectionsAsset) {
+    event.respondWith(fetch(request, { cache: 'no-store' }));
+    return;
+  }
+
   if (request.mode === 'navigate' || request.destination === 'document') {
-    const isCollections = /\/collections\.html$/i.test(url.pathname);
-    event.respondWith(networkHtml(request, !isCollections).catch(() => fetch(request, { cache: 'no-store' })));
+    event.respondWith(networkHtml(request, true).catch(() => fetch(request, { cache: 'no-store' })));
   }
 });
