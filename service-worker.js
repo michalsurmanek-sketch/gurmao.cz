@@ -1,7 +1,8 @@
 // GURMAO.cz – lehký service worker pro společné runtime skripty.
-// HTML se ověřuje v síti, ostatní soubory používají běžnou cache prohlížeče.
+// HTML se vždy načítá ze sítě. Stránka collections.html je zcela vynechána
+// z legacy runtime injekcí, aby ji starší globální skripty nemohly přepisovat.
 
-const RUNTIME_VERSION = '20260726-3';
+const RUNTIME_VERSION = '20260728-collections-fix-1';
 
 self.addEventListener('install', () => {
   self.skipWaiting();
@@ -16,6 +17,23 @@ self.addEventListener('activate', event => {
 });
 
 async function htmlWithRuntimeGuard(request) {
+  const url = new URL(request.url);
+  const isCollections = /\/collections\.html$/i.test(url.pathname);
+
+  // U collections vždy vynutit čerstvý soubor přímo ze sítě a nic do něj nevkládat.
+  if (isCollections) {
+    const response = await fetch(request, { cache: 'reload' });
+    const headers = new Headers(response.headers);
+    headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    headers.set('Pragma', 'no-cache');
+    headers.set('Expires', '0');
+    return new Response(await response.arrayBuffer(), {
+      status: response.status,
+      statusText: response.statusText,
+      headers
+    });
+  }
+
   const response = await fetch(request, { cache: 'no-cache' });
   const contentType = response.headers.get('content-type') || '';
 
@@ -59,7 +77,7 @@ self.addEventListener('fetch', event => {
 
   if (request.mode === 'navigate' || request.destination === 'document') {
     event.respondWith(
-      htmlWithRuntimeGuard(request).catch(() => fetch(request))
+      htmlWithRuntimeGuard(request).catch(() => fetch(request, { cache: 'reload' }))
     );
   }
 });
