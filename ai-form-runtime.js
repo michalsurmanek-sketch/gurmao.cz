@@ -19,6 +19,19 @@
     priceLevelOptions: 'priceLevel'
   };
 
+  const buttonMap = {
+    mood: 'moodBtn',
+    occasion: 'occasionBtn',
+    groupSize: 'groupSizeBtn',
+    city: 'cityBtn',
+    priceLevel: 'priceLevelBtn'
+  };
+
+  function selectedValue(key) {
+    const buttonValue = document.getElementById(buttonMap[key])?.dataset.value;
+    return String(buttonValue ?? selected[key] ?? '').trim();
+  }
+
   document.addEventListener('click', event => {
     const option = event.target.closest('.custom-option');
     if (option) {
@@ -40,7 +53,13 @@
     event.stopImmediatePropagation();
 
     const results = document.getElementById('aiResults');
+    const submitButton = form.querySelector('button[type="submit"]');
     if (!results) return;
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.setAttribute('aria-busy', 'true');
+    }
 
     results.innerHTML = `
       <div class="text-center py-12" role="status" aria-live="polite">
@@ -49,11 +68,11 @@
       </div>`;
 
     const query = {
-      mood: selected.mood || null,
-      occasion: selected.occasion || null,
-      groupSize: Number.parseInt(selected.groupSize, 10) || null,
-      city: selected.city || null,
-      priceLevel: Number.parseInt(selected.priceLevel, 10) || null,
+      mood: selectedValue('mood') || null,
+      occasion: selectedValue('occasion') || null,
+      groupSize: Number.parseInt(selectedValue('groupSize'), 10) || null,
+      city: selectedValue('city') || null,
+      priceLevel: Number.parseInt(selectedValue('priceLevel'), 10) || null,
       freeText: form.querySelector('[name="freeText"]')?.value || ''
     };
 
@@ -63,6 +82,11 @@
     } catch (error) {
       console.error('Recommendation form failed:', error);
       results.innerHTML = '<div class="text-center text-red-300 py-12" role="alert">Doporučení se nepodařilo načíst. Zkus to znovu.</div>';
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.removeAttribute('aria-busy');
+      }
     }
 
     results.scrollIntoView({ behavior: 'smooth', block: 'start' });
