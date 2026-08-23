@@ -245,6 +245,18 @@ const GurmaoCollections = {
 
 window.GurmaoCollections = GurmaoCollections;
 
+function updateSaveButtonLabel(button, active) {
+  if (button.id === 'saveAction') {
+    button.textContent = active ? '♥ Uloženo' : '♡ Uložit';
+    return;
+  }
+  if (button.classList.contains('save-menu-btn')) {
+    button.textContent = active ? '❤️ Uloženo' : '🤍 Uložit do výběru';
+    return;
+  }
+  button.textContent = active ? '❤️' : '🤍';
+}
+
 async function updateAllSaveButtons() {
   const buttons = [...document.querySelectorAll('[data-save]')];
   if (!buttons.length) return;
@@ -255,8 +267,7 @@ async function updateAllSaveButtons() {
       const active = saved.has(id);
       button.classList.toggle('saved', active);
       button.setAttribute('aria-pressed', String(active));
-      if (button.classList.contains('save-menu-btn')) button.textContent = active ? '❤️ Uloženo' : '🤍 Uložit do výběru';
-      else button.textContent = active ? '❤️' : '🤍';
+      updateSaveButtonLabel(button, active);
     });
   } catch (error) {
     console.error('Save buttons could not be refreshed:', error);
@@ -280,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const result = await GurmaoCollections.toggle(id);
       button.classList.toggle('saved', result.saved);
       button.setAttribute('aria-pressed', String(result.saved));
-      button.textContent = result.saved ? '❤️' : '🤍';
+      updateSaveButtonLabel(button, result.saved);
       showToast(result.saved
         ? (result.synced ? '❤️ Přidáno do výběru' : '❤️ Uloženo v tomto zařízení')
         : (result.synced ? '🤍 Odebráno z výběru' : '🤍 Odebráno v tomto zařízení'));
