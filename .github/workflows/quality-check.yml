@@ -33,8 +33,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          node --check supabase-client.js
           node --check app.js
           node --check auth-ui.js
+          node --check header-search.js
           node --check mapa.js
           node --check restaurace.js
           node --check feed-page.js
