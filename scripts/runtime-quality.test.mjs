@@ -6,6 +6,7 @@ const ACTIVE_FILES = [
   'supabase-client.js',
   'app.js',
   'auth-guard.js',
+  'login-page.js',
   'header-search.js',
   'restaurace.js',
   'feed-page.js',
@@ -51,6 +52,37 @@ test('guest collections stay available without authentication redirect', async (
   assert.match(page, /fetchRestaurantsBySlugs/, 'guest collections must resolve locally saved slugs to restaurant data');
   assert.equal(page.includes('unsaveRestaurant'), false, 'collections page must not bypass shared guest/cloud remove logic');
   assert.equal(page.includes('saveRestaurant'), false, 'collections page must not bypass shared guest/cloud restore logic');
+});
+
+test('saved-state bootstrap only joins the restaurant slug', async () => {
+  const client = await text('supabase-client.js');
+  assert.match(client, /restaurants\(slug\)/, 'saved restaurant lookup should fetch only slug relation data');
+  assert.equal(client.includes('restaurants(*)'), false, 'saved-state bootstrap must not fetch complete restaurant rows');
+});
+
+test('login return destinations are same-origin and role checked', async () => {
+  const login = await text('login-page.js');
+  const toast = await text('toast.js');
+  assert.match(login, /url\.origin\s*!==\s*location\.origin/, 'login return URL must be same-origin');
+  assert.match(login, /app_metadata\?\.role\s*!==\s*['"]admin['"]/, 'admin return URL must require admin app_metadata');
+  assert.match(login, /localStorage\.removeItem\(['"]gurmao_return_url['"]\)/, 'stored return URL must be consumed');
+  assert.match(login, /signInWithOAuth/, 'Google login must use the maintained safe callback path');
+  assert.match(login, /redirectTo:\s*callback\.href/, 'Google OAuth must return through login callback');
+  assert.match(toast, /localStorage\.removeItem\(['"]gurmao_user['"]\)/, 'login bootstrap must not trust compatibility localStorage as authentication');
+});
+
+test('nearest restaurant search uses bounded geographic windows', async () => {
+  const source = await text('restaurace.js');
+  const start = source.indexOf('async function fetchNearestRows()');
+  const end = source.indexOf('\nasync function loadResults', start);
+  assert.ok(start >= 0 && end > start, 'fetchNearestRows function must exist');
+  const nearest = source.slice(start, end);
+  assert.match(nearest, /\.gte\(['"]latitude['"]/, 'nearest query must have latitude lower bound');
+  assert.match(nearest, /\.lte\(['"]latitude['"]/, 'nearest query must have latitude upper bound');
+  assert.match(nearest, /\.gte\(['"]longitude['"]/, 'nearest query must have longitude lower bound');
+  assert.match(nearest, /\.lte\(['"]longitude['"]/, 'nearest query must have longitude upper bound');
+  assert.match(nearest, /targetCandidates/, 'nearest query must stop after a bounded candidate target');
+  assert.equal(nearest.includes('batchSize = 500'), false, 'nearest query must not page through the entire restaurant table');
 });
 
 test('contact page has one protected submission path', async () => {
