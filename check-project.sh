@@ -1,64 +1,69 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# GURMAO.cz - Kontrolní skript
-# Ověří, že všechny součásti projektu fungují správně
+printf 'GURMAO.cz – kontrola projektu\n'
+printf '===========================\n\n'
 
-echo "🍽️  GURMAO.cz - Kontrola projektu"
-echo "=================================="
-echo ""
-
-# Kontrola souborů
-echo "📁 Kontrola klíčových souborů..."
-files=(
-  "index.html"
-  "restaurace.html"
-  "mapa.html"
-  "supabase-client.js"
-  "restaurace.js"
-  "mapa.js"
-  "rating.js"
-  "test-db.html"
+required_files=(
+  index.html
+  restaurace.html
+  restaurant.html
+  mapa.html
+  feed.html
+  collections.html
+  profile.html
+  kontakt.html
+  supabase-client.js
+  app.js
+  restaurace.js
+  mapa.js
+  feed-page.js
+  collections-page.js
+  restaurant-detail-page.js
+  scripts/runtime-quality.test.mjs
+  supabase/config.toml
 )
 
-for file in "${files[@]}"; do
-  if [ -f "$file" ]; then
-    echo "  ✅ $file"
+missing=0
+printf 'Klíčové soubory:\n'
+for file in "${required_files[@]}"; do
+  if [[ -f "$file" ]]; then
+    printf '  OK  %s\n' "$file"
   else
-    echo "  ❌ $file - CHYBÍ!"
+    printf '  CHYBÍ  %s\n' "$file"
+    missing=1
   fi
 done
 
-echo ""
-echo "🗄️  Informace o databázi:"
-echo "  • Supabase URL: https://txfuxrezyrgybjvjnhom.supabase.co"
-echo "  • Tabulka: restaurants"
-echo "  • Restaurací: 211"
-echo "  • Města: Praha (100), Zlínský kraj (50), Brno (20), Olomouc (20), Ostrava (16), UH (5)"
-
-echo ""
-echo "🎨 Vibe systém:"
-echo "  ✅ 🍷 LUXE - Elegantní zážitek"
-echo "  ✅ 🔥 DRAMA - Výrazné chutě"
-echo "  ✅ 🌮 CHAOS - Uvolněný styl"
-echo "  ✅ 🌿 PURE - Čisté suroviny"
-echo "  ✅ 🖤 DARK - Intimní atmosféra"
-
-echo ""
-echo "🚀 Testování:"
-echo "  1. Spusť server: python3 -m http.server 8000"
-echo "  2. Test databáze: http://localhost:8000/test-db.html"
-echo "  3. Seznam restaurací: http://localhost:8000/restaurace.html"
-echo "  4. Mapa: http://localhost:8000/mapa.html"
-echo "  5. Homepage: http://localhost:8000/"
-
-echo ""
-echo "📊 Stav projektu:"
-if [ -f "test-db.html" ] && [ -f "supabase-client.js" ] && [ -f "restaurace.js" ]; then
-  echo "  ✅ PROJEKT JE PŘIPRAVEN K NASAZENÍ"
-else
-  echo "  ⚠️  Některé soubory chybí"
+if [[ "$missing" -ne 0 ]]; then
+  printf '\nProjekt nemá všechny povinné soubory.\n' >&2
+  exit 1
 fi
 
-echo ""
-echo "📖 Dokumentace: PROJEKT_STATUS.md"
-echo ""
+printf '\nKontrola retired runtime souborů:\n'
+retired_files=(
+  runtime-guard.js
+  hide-price-level.js
+  restaurant-card-status.js
+  restaurant-card-actions.js
+  restaurace-detail.js
+  rating.js
+  map-footer-search.js
+  footer-search.js
+  daily-menu-ui.js
+  restaurace-redirect.js
+  supabase-edge-function-example.ts
+)
+for file in "${retired_files[@]}"; do
+  if [[ -e "$file" ]]; then
+    printf '  NÁVRAT STARÉ VRSTVY  %s\n' "$file" >&2
+    exit 1
+  fi
+  printf '  OK  %s není přítomen\n' "$file"
+done
+
+printf '\nAutomatické testy:\n'
+npm test
+
+printf '\nVýsledek: projekt prošel lokální strukturální a regresní kontrolou.\n'
+printf 'Poznámka: tento skript neověřuje živé produkční RLS ani Supabase secrets.\n'
