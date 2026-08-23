@@ -1,308 +1,90 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  
-  <!-- Primary Meta Tags -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.json">
   <title>Můj profil – GURMAO</title>
-  <meta name="title" content="Můj profil – GURMAO">
-  <meta name="description" content="Spravuj svůj GURMAO profil, nastav své preference a aktualizuj osobní údaje." />
-  <meta name="robots" content="noindex, follow" />
-  
+  <meta name="description" content="Správa profilu, hesla a účtu GURMAO.">
+  <meta name="robots" content="noindex,follow">
   <link rel="stylesheet" href="tailwind.min.css">
-
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css?v=20260823-profile-1">
   <link rel="stylesheet" href="toast.css">
-  <link rel="stylesheet" href="global.css?v=20260726-gold-scrollbars-1">
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    h1,h2,h3 { font-family: 'Playfair Display', serif; }
+    body{font-family:Inter,system-ui,sans-serif}
+    h1,h2{font-family:"Playfair Display",Georgia,serif}
+    .verification-badge{display:inline-flex;align-items:center;padding:.35rem .7rem;border:1px solid rgba(255,255,255,.16);border-radius:999px;color:rgba(255,255,255,.6);font:600 .72rem/1 Inter,system-ui,sans-serif}
+    .verification-badge.verified{border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.08);color:#86efac}
+    .verification-badge.unverified{border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.08);color:#fde68a}
   </style>
 </head>
-<body class="bg-gurmaoblack text-white">
+<body class="min-h-screen bg-gurmaoblack text-white">
+  <script src="auth-guard.js?v=20260823-profile-1"></script>
+  <script src="toast.js"></script>
 
-<!-- Auth Guard -->
-<script src="auth-guard.js"></script>
-<script src="toast.js"></script>
-
-<!-- Supabase Client -->
-<script type="module">
-  import { supabase, getCurrentUser, updateUserProfile, updatePassword } from './supabase-client.js';
-
-  let currentUser = null;
-
-  // Load user data
-  async function loadUserData() {
-    try {
-      currentUser = await getCurrentUser();
-      
-      if (!currentUser) {
-        window.location.href = 'login.html';
-        return;
-      }
-
-      // Display user info
-      document.getElementById('userEmail').textContent = currentUser.email;
-      document.getElementById('displayName').value = currentUser.user_metadata?.display_name || '';
-      document.getElementById('bio').value = currentUser.user_metadata?.bio || '';
-      
-    } catch (error) {
-      console.error('Error loading user:', error);
-      window.toast.show('❌ Chyba při načítání profilu', 'error');
-    }
-  }
-
-  // Update profile
-  document.getElementById('profileForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const displayName = document.getElementById('displayName').value;
-    const bio = document.getElementById('bio').value;
-    
-    const submitBtn = document.getElementById('saveProfileBtn');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Ukládám...';
-    
-    try {
-      const { data, error } = await supabase.auth.updateUser({
-        data: {
-          display_name: displayName,
-          bio: bio
-        }
-      });
-      
-      if (error) throw error;
-      
-      window.toast.show('✅ Profil byl aktualizován', 'success');
-      
-    } catch (error) {
-      console.error('Profile update error:', error);
-      window.toast.show('❌ Chyba při ukládání profilu', 'error');
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Uložit změny';
-    }
-  });
-
-  // Update password
-  document.getElementById('passwordForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const newPassword = document.getElementById('newPassword').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-    
-    if (newPassword !== confirmPassword) {
-      window.toast.show('❌ Hesla se neshodují', 'error');
-      return;
-    }
-    
-    if (newPassword.length < 8) {
-      window.toast.show('❌ Heslo musí mít alespoň 8 znaků', 'error');
-      return;
-    }
-    
-    const submitBtn = document.getElementById('changePasswordBtn');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Měním heslo...';
-    
-    try {
-      await updatePassword(newPassword);
-      
-      window.toast.show('✅ Heslo bylo změněno', 'success');
-      
-      // Reset form
-      document.getElementById('passwordForm').reset();
-      
-    } catch (error) {
-      console.error('Password change error:', error);
-      window.toast.show('❌ Chyba při změně hesla', 'error');
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Změnit heslo';
-    }
-  });
-
-  // Delete account
-  document.getElementById('deleteAccountBtn').addEventListener('click', async () => {
-    if (!confirm('Opravdu chceš smazat svůj účet? Tuto akci nelze vrátit zpět.')) {
-      return;
-    }
-    
-    if (!confirm('Poslední varování: Všechna tvoje data budou natrvalo smazána. Pokračovat?')) {
-      return;
-    }
-    
-    window.toast.show('⚠️ Funkce zatím není implementována', 'info');
-    // TODO: Implement account deletion
-  });
-
-  // Load data on page load
-  loadUserData();
-</script>
-
-<!-- Header -->
-<header class="border-b border-white/10">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <a href="feed.html" class="text-white/60 hover:text-white transition text-sm">← Feed</a>
-    <a href="index.html" class="modal-title text-2xl">GUR<span class="text-gurmaogold">M</span>AO</a>
-    <div class="w-16"></div>
-  </div>
-</header>
-
-<main class="max-w-5xl mx-auto px-6 py-8">
-  
-  <!-- Header -->
-  <div class="mb-8 pb-6 border-b border-white/5">
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-3xl font-bold mb-2 flex items-center gap-3 select-none">
-          Profil
-          <span class="px-3 py-1 text-xs font-medium bg-gurmaogold/10 text-gurmaogold border border-gurmaogold/30 rounded-full">Ověřený</span>
-        </h1>
-        <p class="text-white/50 text-sm select-none" id="userEmail">Načítám...</p>
-      </div>
-      <div class="hidden sm:flex items-center gap-2 text-xs text-white/40 select-none">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-        </svg>
-        Zabezpečené připojení
-      </div>
+  <header class="border-b border-white/10 bg-gurmaoblack/90 backdrop-blur">
+    <div class="mx-auto flex h-16 max-w-5xl items-center justify-between px-5">
+      <a href="index.html" class="modal-title text-2xl" aria-label="GURMAO – domů">GUR<span class="text-gurmaogold">M</span>AO</a>
+      <a href="collections.html" class="rounded-full border border-white/15 px-4 py-2 text-sm text-white/70 transition hover:border-gurmaogold hover:text-gurmaogold">Můj výběr</a>
     </div>
-  </div>
+  </header>
 
-  <!-- Grid Layout -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    
-    <!-- Personal Info -->
-    <div>
-      <div class="bg-white/5 border border-white/10 rounded-xl p-6">
-        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 select-none">
-          <span class="text-gurmaogold">👤</span> Osobní údaje
-        </h2>
-        
-        <form id="profileForm" class="space-y-4">
+  <main class="mx-auto max-w-5xl px-5 py-8 md:py-12">
+    <section class="mb-8 border-b border-white/10 pb-7">
+      <div class="flex flex-wrap items-center gap-3">
+        <h1 class="text-4xl font-semibold">Můj profil</h1>
+        <span id="verificationBadge" class="verification-badge">Ověřuji e-mail…</span>
+      </div>
+      <p id="userEmail" class="mt-3 text-sm text-white/55">Načítám účet…</p>
+      <p id="profileStatus" class="mt-2 min-h-5 text-sm text-white/55" role="status" aria-live="polite"></p>
+    </section>
+
+    <div class="grid gap-6 lg:grid-cols-2">
+      <section class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-7" aria-labelledby="personalTitle">
+        <h2 id="personalTitle" class="mb-5 text-2xl">Osobní údaje</h2>
+        <form id="profileForm" class="space-y-5">
           <div>
-            <label for="displayName" class="block text-xs text-white/60 mb-1.5 select-none">Jméno</label>
-            <input
-              type="text"
-              id="displayName"
-              class="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-gurmaogold focus:outline-none transition text-sm"
-              placeholder="Tvoje jméno"
-            />
+            <label for="displayName" class="mb-2 block text-sm text-white/65">Jméno</label>
+            <input id="displayName" type="text" maxlength="80" autocomplete="name" class="w-full rounded-xl border border-white/10 bg-black/25 px-4 py-3 outline-none transition focus:border-gurmaogold" placeholder="Tvoje jméno">
           </div>
-
           <div>
-            <label for="bio" class="block text-xs text-white/60 mb-1.5 select-none">Bio</label>
-            <textarea
-              id="bio"
-              rows="8"
-              class="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-gurmaogold focus:outline-none transition text-sm resize-none"
-              placeholder="O mně..."
-            ></textarea>
+            <label for="bio" class="mb-2 block text-sm text-white/65">Bio</label>
+            <textarea id="bio" rows="8" maxlength="1000" class="w-full resize-y rounded-xl border border-white/10 bg-black/25 px-4 py-3 outline-none transition focus:border-gurmaogold" placeholder="Něco o tobě…"></textarea>
+            <p class="mt-2 text-xs text-white/40">Maximálně 1 000 znaků.</p>
           </div>
-
-          <button
-            type="submit"
-            id="saveProfileBtn"
-            class="w-full px-4 py-2 rounded-lg bg-gurmaogold text-black font-medium text-sm hover:bg-gurmaogold/90 transition select-none"
-          >
-            Uložit
-          </button>
+          <button id="saveProfileBtn" type="submit" class="w-full rounded-xl bg-gurmaogold px-5 py-3 font-semibold text-black transition hover:brightness-110 disabled:cursor-wait disabled:opacity-60">Uložit změny</button>
         </form>
+      </section>
+
+      <div class="space-y-6">
+        <section class="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-7" aria-labelledby="passwordTitle">
+          <h2 id="passwordTitle" class="mb-5 text-2xl">Změna hesla</h2>
+          <form id="passwordForm" class="space-y-5">
+            <div>
+              <label for="newPassword" class="mb-2 block text-sm text-white/65">Nové heslo</label>
+              <input id="newPassword" type="password" minlength="10" autocomplete="new-password" required class="w-full rounded-xl border border-white/10 bg-black/25 px-4 py-3 outline-none transition focus:border-gurmaogold" placeholder="Alespoň 10 znaků">
+            </div>
+            <div>
+              <label for="confirmPassword" class="mb-2 block text-sm text-white/65">Potvrzení hesla</label>
+              <input id="confirmPassword" type="password" minlength="10" autocomplete="new-password" required class="w-full rounded-xl border border-white/10 bg-black/25 px-4 py-3 outline-none transition focus:border-gurmaogold" placeholder="Zopakuj nové heslo">
+            </div>
+            <button id="changePasswordBtn" type="submit" class="w-full rounded-xl border border-gurmaogold/45 px-5 py-3 font-semibold text-gurmaogold transition hover:bg-gurmaogold hover:text-black disabled:cursor-wait disabled:opacity-60">Změnit heslo</button>
+          </form>
+        </section>
+
+        <section class="rounded-3xl border border-red-400/25 bg-red-500/5 p-6 md:p-7" aria-labelledby="dangerTitle">
+          <h2 id="dangerTitle" class="text-2xl text-red-300">Smazání účtu</h2>
+          <p class="mt-3 text-sm leading-6 text-white/55">Účet a uživatelská data budou odstraněna natrvalo. Tuto operaci nelze vrátit.</p>
+          <button id="deleteAccountBtn" type="button" class="mt-5 w-full rounded-xl border border-red-400/50 px-5 py-3 font-semibold text-red-300 transition hover:bg-red-500/15 disabled:cursor-wait disabled:opacity-60">Smazat účet</button>
+        </section>
       </div>
     </div>
+  </main>
 
-    <!-- Right Column - Security & Danger -->
-    <div class="space-y-6">
-      <!-- Security -->
-      <div class="bg-white/5 border border-white/10 rounded-xl p-6">
-        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 select-none">
-          <span class="text-blue-400">🔒</span> Heslo
-        </h2>
-        
-        <form id="passwordForm" class="space-y-4">
-          <div>
-            <label for="newPassword" class="block text-xs text-white/60 mb-1.5 select-none">Nové heslo</label>
-            <input
-              type="password"
-              id="newPassword"
-              minlength="8"
-              required
-              class="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-blue-400 focus:outline-none transition text-sm"
-              placeholder="Min. 8 znaků"
-            />
-          </div>
+  <footer class="border-t border-white/10 py-7 text-center text-xs text-white/40">© 2026 GURMAO.cz · Nejez. Prožij.</footer>
 
-          <div>
-            <label for="confirmPassword" class="block text-xs text-white/60 mb-1.5 select-none">Potvrď heslo</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              minlength="8"
-              required
-              class="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 focus:border-blue-400 focus:outline-none transition text-sm"
-              placeholder="Znovu"
-            />
-          </div>
-
-          <button
-            type="submit"
-            id="changePasswordBtn"
-            class="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white font-medium text-sm hover:bg-white/15 transition select-none"
-          >
-            Změnit
-          </button>
-        </form>
-      </div>
-
-      <!-- Danger Zone -->
-      <div class="bg-gurmaored/5 border border-gurmaored/30 rounded-xl p-6">
-        <h2 class="text-lg font-semibold mb-2 flex items-center gap-2 text-gurmaored select-none">
-          ⚠️ Nebezpečná zóna
-        </h2>
-        <p class="text-xs text-white/50 mb-4 select-none">Smazání účtu je nevratné.</p>
-        
-        <button
-          id="deleteAccountBtn"
-          class="w-full px-4 py-2 rounded-lg bg-gurmaored/10 border border-gurmaored text-gurmaored font-medium text-sm hover:bg-gurmaored hover:text-white transition select-none"
-        >
-          Smazat účet
-        </button>
-      </div>
-    </div>
-
-  </div>
-
-</main>
-
-<!-- Footer -->
-<footer class="py-6 border-t border-white/10">
-  <div class="footer-bottom-original max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-    <div class="flex flex-wrap justify-center md:justify-start gap-4 md:gap-6 text-xs md:text-sm text-white/60">
-      <a href="legal.html" class="hover:text-gurmaogold transition">Informace</a>
-      <span class="text-white/40">© 2026 GUR<span class="text-gurmaogold">M</span>AO.cz · Nejez. <span class="text-gurmaogold">Prožij.</span></span>
-    </div>
-    <div class="flex items-center gap-3 relative">
-      
-      <span class="text-sm text-gurmaogold hidden md:inline">Sledujte nás</span>
-      <a href="https://instagram.com/gurmao.cz" target="_blank" rel="noopener noreferrer" title="Instagram" class="footer-social w-9 h-9 rounded-full bg-white/5 border border-white/20 hover:border-gurmaogold hover:bg-gurmaogold/10 transition-all duration-300 flex items-center justify-center group" title="Instagram">
-        <svg class="w-4 h-4 text-white/60 group-hover:text-gurmaogold transition" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-      </a>
-      <a href="https://youtube.com/@gurmao" target="_blank" rel="noopener noreferrer" title="YouTube" class="footer-social w-9 h-9 rounded-full bg-white/5 border border-white/20 hover:border-gurmaogold hover:bg-gurmaogold/10 transition-all duration-300 flex items-center justify-center group" title="YouTube">
-        <svg class="w-5 h-5 text-white/60 group-hover:text-gurmaogold transition" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-      </a>
-      <a href="https://facebook.com/gurmao.cz" target="_blank" rel="noopener noreferrer" title="Facebook" class="footer-social w-9 h-9 rounded-full bg-white/5 border border-white/20 hover:border-gurmaogold hover:bg-gurmaogold/10 transition-all duration-300 flex items-center justify-center group" title="Facebook">
-        <svg class="w-4 h-4 text-white/60 group-hover:text-gurmaogold transition" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-      </a>
-    </div>
-  </div>
-</footer>
-
-<script src="footer-legal-toggle.js"></script>
-<script src="app.js?v=20260726-unified-search-4"></script>
-<script src="auth-ui.js"></script>
-
+  <script type="module" src="profile-page.js?v=20260823-1"></script>
+  <script src="cookie-consent.js?v=20260823-1"></script>
 </body>
 </html>
