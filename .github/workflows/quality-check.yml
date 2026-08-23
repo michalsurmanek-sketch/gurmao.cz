@@ -38,7 +38,10 @@ jobs:
           node --check auth-ui.js
           node --check auth-guard.js
           node --check admin-guard.js
+          node --check auth-redirect.js
           node --check login-page.js
+          node --check homepage-runtime.js
+          node --check admin-dashboard-runtime.js
           node --check header-search.js
           node --check mapa.js
           node --check restaurace.js
