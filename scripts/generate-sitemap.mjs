@@ -1,54 +1,62 @@
-import { writeFile } from 'node:fs/promises';
+import { stat, writeFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://jdprdcnxbxfzgrjjfflr.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_yVoMprXKwKGu1kIKc3p9ew_TQflIOib';
 const SITE_URL = 'https://gurmao.cz';
-
+const ROOT_URL = new URL('../', import.meta.url);
 const headers = { apikey: SUPABASE_KEY, Accept: 'application/json' };
 
 async function fetchAll(table, select) {
   const rows = [];
   const pageSize = 1000;
-
   for (let offset = 0; ; offset += pageSize) {
     const url = new URL(`${SUPABASE_URL}/rest/v1/${table}`);
     url.searchParams.set('select', select);
     url.searchParams.set('slug', 'not.is.null');
     url.searchParams.set('limit', String(pageSize));
     url.searchParams.set('offset', String(offset));
-
     const response = await fetch(url, { headers });
     if (!response.ok) throw new Error(`${table}: ${response.status} ${await response.text()}`);
-
     const page = await response.json();
     rows.push(...page);
     if (page.length < pageSize) break;
   }
-
   return rows;
 }
 
-function urlEntry(location, lastmod, changefreq = 'weekly', priority = '0.7') {
-  return [
-    '  <url>',
-    `    <loc>${location}</loc>`,
-    `    <lastmod>${lastmod}</lastmod>`,
-    `    <changefreq>${changefreq}</changefreq>`,
-    `    <priority>${priority}</priority>`,
-    '  </url>'
-  ].join('\n');
+function xmlEscape(value) {
+  return String(value).replace(/[&<>"']/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;'
+  })[character]);
 }
 
-const today = new Date().toISOString().slice(0, 10);
+function urlEntry(location, { lastmod = '', changefreq = 'weekly', priority = '0.7' } = {}) {
+  const lines = ['  <url>', `    <loc>${xmlEscape(location)}</loc>`];
+  if (lastmod) lines.push(`    <lastmod>${xmlEscape(lastmod)}</lastmod>`);
+  if (changefreq) lines.push(`    <changefreq>${changefreq}</changefreq>`);
+  if (priority) lines.push(`    <priority>${priority}</priority>`);
+  lines.push('  </url>');
+  return lines.join('\n');
+}
+
+async function fileLastmod(relativePath) {
+  try {
+    const info = await stat(fileURLToPath(new URL(relativePath, ROOT_URL)));
+    return info.mtime.toISOString().slice(0, 10);
+  } catch {
+    return '';
+  }
+}
+
 const staticPages = [
-  ['/', 'weekly', '1.0'],
-  ['/restaurace.html', 'daily', '0.9'],
-  ['/mapa.html', 'daily', '0.9'],
-  ['/feed.html', 'daily', '0.8'],
-  ['/kuchar.html', 'weekly', '0.7'],
-  ['/ai.html', 'weekly', '0.7'],
-  ['/kontakt.html', 'monthly', '0.4'],
-  ['/legal.html', 'yearly', '0.2']
+  ['/', 'index.html', 'weekly', '1.0'],
+  ['/restaurace.html', 'restaurace.html', 'daily', '0.9'],
+  ['/mapa.html', 'mapa.html', 'daily', '0.9'],
+  ['/feed.html', 'feed.html', 'daily', '0.8'],
+  ['/kuchar.html', 'kuchar.html', 'weekly', '0.7'],
+  ['/ai.html', 'ai.html', 'weekly', '0.7'],
+  ['/kontakt.html', 'kontakt.html', 'monthly', '0.4']
 ];
 
 const [restaurants, chefs] = await Promise.all([
@@ -56,18 +64,29 @@ const [restaurants, chefs] = await Promise.all([
   fetchAll('chefs', 'slug')
 ]);
 
-const entries = staticPages.map(([path, frequency, priority]) =>
-  urlEntry(`${SITE_URL}${path}`, today, frequency, priority)
-);
+const entries = [];
+for (const [path, file, changefreq, priority] of staticPages) {
+  entries.push(urlEntry(`${SITE_URL}${path}`, {
+    lastmod: await fileLastmod(file),
+    changefreq,
+    priority
+  }));
+}
 
 for (const restaurant of restaurants) {
   const slug = encodeURIComponent(restaurant.slug);
-  const lastmod = restaurant.updated_at?.slice(0, 10) || today;
-  entries.push(urlEntry(`${SITE_URL}/restaurant.html?slug=${slug}`, lastmod, 'weekly', '0.7'));
+  entries.push(urlEntry(`${SITE_URL}/restaurant.html?slug=${slug}`, {
+    lastmod: restaurant.updated_at?.slice(0, 10) || '',
+    changefreq: 'weekly',
+    priority: '0.7'
+  }));
 }
 
 for (const chef of chefs) {
-  entries.push(urlEntry(`${SITE_URL}/kuchar-detail.html?id=${encodeURIComponent(chef.slug)}`, today, 'monthly', '0.5'));
+  entries.push(urlEntry(`${SITE_URL}/kuchar-detail.html?id=${encodeURIComponent(chef.slug)}`, {
+    changefreq: 'monthly',
+    priority: '0.5'
+  }));
 }
 
 const xml = [
