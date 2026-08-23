@@ -39,6 +39,12 @@ if (currentPublicPage === 'restaurace.html') {
   });
 }
 
+if (currentPublicPage === 'ai.html') {
+  void import('/ai-form-runtime.js?v=20260823-1').catch(error => {
+    console.error('Recommendation form runtime failed to load:', error);
+  });
+}
+
 if (!document.getElementById('gurmao-global-scrollbar-style')) {
   const scrollbarStyle = document.createElement('style');
   scrollbarStyle.id = 'gurmao-global-scrollbar-style';
