@@ -36,6 +36,9 @@ jobs:
           node --check supabase-client.js
           node --check app.js
           node --check auth-ui.js
+          node --check auth-guard.js
+          node --check admin-guard.js
+          node --check login-page.js
           node --check header-search.js
           node --check mapa.js
           node --check restaurace.js
