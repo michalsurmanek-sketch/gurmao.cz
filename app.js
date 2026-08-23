@@ -1,12 +1,7 @@
 // GURMAO.cz - Shared JavaScript
-// © 2025 GURMAO.cz
 
-// ======================
-// GLOBAL SETUP
-// ======================
 document.documentElement.style.scrollBehavior = 'smooth';
 
-// Add fade-in animation on page load
 document.addEventListener('DOMContentLoaded', () => {
   document.body.style.opacity = '0';
   requestAnimationFrame(() => {
@@ -15,16 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Register the PWA service worker only on supported, secure origins.
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js').catch((error) => {
+    navigator.serviceWorker.register('/service-worker.js').catch(error => {
       console.error('Service worker registration failed:', error);
     });
   });
 }
 
-// Load the shared mobile bottom navigation on the first visit.
 if (!document.querySelector('script[data-gurmao-bottom-nav]')) {
   const bottomNavScript = document.createElement('script');
   bottomNavScript.src = '/mobile-bottom-nav.js?v=20260726-3';
@@ -33,7 +26,6 @@ if (!document.querySelector('script[data-gurmao-bottom-nav]')) {
   document.head.appendChild(bottomNavScript);
 }
 
-// Load one shared, safe header search implementation on every public page.
 const currentPublicPage = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
 if (!/^(admin(?:-|\.)|login\.|register\.|forgot-|reset-|404\.)/.test(currentPublicPage)) {
   void import('/header-search.js?v=20260726-unified-4').catch(error => {
@@ -41,7 +33,6 @@ if (!/^(admin(?:-|\.)|login\.|register\.|forgot-|reset-|404\.)/.test(currentPubl
   });
 }
 
-// Keep scrollbars consistent even on legacy pages without global.css.
 if (!document.getElementById('gurmao-global-scrollbar-style')) {
   const scrollbarStyle = document.createElement('style');
   scrollbarStyle.id = 'gurmao-global-scrollbar-style';
@@ -56,16 +47,12 @@ if (!document.getElementById('gurmao-global-scrollbar-style')) {
   document.head.appendChild(scrollbarStyle);
 }
 
-// ======================
-// MOBILE MENU
-// ======================
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('menuBtn');
   const close = document.getElementById('menuClose');
   const backdrop = document.getElementById('menuBackdrop');
   const menu = document.getElementById('mobileMenu');
   const header = document.querySelector('header');
-  
   if (!btn || !close || !backdrop || !menu) return;
 
   let scrollPosition = 0;
@@ -82,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
   menu.setAttribute('role', 'dialog');
   menu.setAttribute('aria-label', 'Mobilní navigace');
   syncHeaderHeight();
-  
+
   const open = () => {
     syncHeaderHeight();
     scrollPosition = window.scrollY;
@@ -96,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.width = '100%';
     close.focus({ preventScroll: true });
   };
-  
+
   const shut = () => {
     if (menu.classList.contains('hidden')) return;
     backdrop.classList.add('hidden');
@@ -110,210 +97,208 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: scrollPosition, behavior: 'instant' });
     btn.focus({ preventScroll: true });
   };
-  
+
   btn.addEventListener('click', open);
   close.addEventListener('click', shut);
   backdrop.addEventListener('click', shut);
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') shut();
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') shut();
   });
-
   window.addEventListener('resize', () => {
     syncHeaderHeight();
     if (window.innerWidth >= 768) shut();
   }, { passive: true });
-  
-  // Close menu when clicking any link
-  menu.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', shut);
-  });
+  menu.querySelectorAll('a').forEach(link => link.addEventListener('click', shut));
 });
 
-// ======================
-// SAVE TO COLLECTIONS (Supabase)
-// ======================
-const GurmaoCollections = {
-  storageKey: 'gurmao_saved',
-  savedCache: null,
-  
-  // Check if user is logged in
-  getUser() {
-    return JSON.parse(localStorage.getItem('gurmao_user') || 'null');
-  },
-  
-  // Get saved restaurants (localStorage fallback for non-logged users)
-  async getSaved() {
-    const user = this.getUser();
-    
-    // Use cache if available
-    if (this.savedCache) return this.savedCache;
-    
-    // Get localStorage data
-    const localSaved = new Set(JSON.parse(localStorage.getItem(this.storageKey) || '[]'));
-    
-    if (!user || !user.loggedIn) {
-      // Fallback to localStorage for non-logged users
-      this.savedCache = localSaved;
-      return this.savedCache;
-    }
-    
-    try {
-      // Dynamically import Supabase client
-      const { getSavedRestaurants } = await import('./supabase-client.js');
-      const savedRestaurants = await getSavedRestaurants();
-      // savedRestaurants contains: {restaurant_id: slug, restaurants: {...}}
-      const supabaseSaved = new Set(savedRestaurants.map(r => r.restaurant_id));
-      
-      // Merge Supabase and localStorage data
-      const merged = new Set([...supabaseSaved, ...localSaved]);
-      this.savedCache = merged;
-      return this.savedCache;
-    } catch (error) {
-      console.error('Error fetching saved restaurants:', error);
-      // Fallback to localStorage on error
-      this.savedCache = localSaved;
-      return this.savedCache;
-    }
-  },
-  
-  async save(restaurantId) {
-    const user = this.getUser();
-    
-    if (!user || !user.loggedIn) {
-      // Fallback to localStorage
-      const saved = new Set(JSON.parse(localStorage.getItem(this.storageKey) || '[]'));
-      saved.add(restaurantId);
-      localStorage.setItem(this.storageKey, JSON.stringify([...saved]));
-      return true;
-    }
-    
-    try {
-      const { saveRestaurant } = await import('./supabase-client.js');
-      await saveRestaurant(restaurantId);
-      if (this.savedCache) this.savedCache.add(restaurantId);
-      return true;
-    } catch (error) {
-      console.error('Error saving restaurant to Supabase:', error);
-      // Fallback to localStorage if Supabase fails (e.g., restaurant not in DB yet)
-      const saved = new Set(JSON.parse(localStorage.getItem(this.storageKey) || '[]'));
-      saved.add(restaurantId);
-      localStorage.setItem(this.storageKey, JSON.stringify([...saved]));
-      if (this.savedCache) this.savedCache.add(restaurantId);
-      return true;
-    }
-  },
-  
-  async remove(restaurantId) {
-    const user = this.getUser();
-    
-    if (!user || !user.loggedIn) {
-      // Fallback to localStorage
-      const saved = new Set(JSON.parse(localStorage.getItem(this.storageKey) || '[]'));
-      saved.delete(restaurantId);
-      localStorage.setItem(this.storageKey, JSON.stringify([...saved]));
-      return true;
-    }
-    
-    try {
-      const { unsaveRestaurant } = await import('./supabase-client.js');
-      await unsaveRestaurant(restaurantId);
-      if (this.savedCache) this.savedCache.delete(restaurantId);
-      return true;
-    } catch (error) {
-      console.error('Error removing restaurant from Supabase:', error);
-      // Fallback to localStorage if Supabase fails
-      const saved = new Set(JSON.parse(localStorage.getItem(this.storageKey) || '[]'));
-      saved.delete(restaurantId);
-      localStorage.setItem(this.storageKey, JSON.stringify([...saved]));
-      if (this.savedCache) this.savedCache.delete(restaurantId);
-      return true;
-    }
-  },
-  
-  async toggle(restaurantId) {
-    const saved = await this.getSaved();
-    if (saved.has(restaurantId)) {
-      await this.remove(restaurantId);
-      return false;
-    } else {
-      await this.save(restaurantId);
-      return true;
-    }
-  },
-  
-  async isSaved(restaurantId) {
-    const saved = await this.getSaved();
-    return saved.has(restaurantId);
-  }
-};
-
-// Make GurmaoCollections globally available (for module scripts in feed.html etc)
-window.GurmaoCollections = GurmaoCollections;
-
-// Initialize save buttons with event delegation
-document.addEventListener('DOMContentLoaded', async () => {
-  // Initial update for existing buttons
-  await updateAllSaveButtons();
-  
-  // Event delegation for all save buttons (including dynamically added)
-  document.body.addEventListener('click', async (e) => {
-    const btn = e.target.closest('[data-save]');
-    if (!btn) return;
-    
-    e.preventDefault();
-    e.stopPropagation();
-    
-    const id = btn.getAttribute('data-save');
-    
-    const user = GurmaoCollections.getUser();
-    if (!user || !user.loggedIn) {
-      showToast('⚠️ Přihlaš se pro synchronizaci');
-      // Still works with localStorage
-    }
-    
-    const nowSaved = await GurmaoCollections.toggle(id);
-    btn.textContent = nowSaved ? '❤️' : '🤍';
-    
-    if (nowSaved) {
-      btn.classList.add('saved');
-      showToast('❤️ Přidáno do výběru');
-    } else {
-      btn.classList.remove('saved');
-      showToast('🤍 Odebráno z výběru');
-    }
-  });
-});
-
-// Update all save buttons state
-async function updateAllSaveButtons() {
-  const saveButtons = document.querySelectorAll('[data-save]');
-  for (const btn of saveButtons) {
-    const id = btn.getAttribute('data-save');
-    const isSaved = await GurmaoCollections.isSaved(id);
-    if (isSaved) {
-      btn.textContent = '❤️';
-      btn.classList.add('saved');
-    }
+function readLocalSaved() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem('gurmao_saved') || '[]');
+    return new Set(Array.isArray(parsed) ? parsed.map(String) : []);
+  } catch {
+    localStorage.removeItem('gurmao_saved');
+    return new Set();
   }
 }
 
-// Export function to be called after dynamic content loads
+function writeLocalSaved(saved) {
+  localStorage.setItem('gurmao_saved', JSON.stringify([...saved]));
+}
+
+const GurmaoCollections = {
+  storageKey: 'gurmao_saved',
+  savedCache: null,
+
+  getUser() {
+    try {
+      return JSON.parse(localStorage.getItem('gurmao_user') || 'null');
+    } catch {
+      localStorage.removeItem('gurmao_user');
+      return null;
+    }
+  },
+
+  async getAuthUser() {
+    try {
+      const { getCurrentUser } = await import('./supabase-client.js');
+      return await getCurrentUser();
+    } catch (error) {
+      console.warn('Auth state could not be verified:', error);
+      return null;
+    }
+  },
+
+  async getSaved() {
+    if (this.savedCache) return this.savedCache;
+
+    const localSaved = readLocalSaved();
+    const authUser = await this.getAuthUser();
+    if (!authUser) {
+      this.savedCache = localSaved;
+      return this.savedCache;
+    }
+
+    try {
+      const { getSavedRestaurants } = await import('./supabase-client.js');
+      const savedRestaurants = await getSavedRestaurants();
+      const cloudSaved = new Set(savedRestaurants.map(item => String(item.restaurant_id || '')).filter(Boolean));
+      this.savedCache = new Set([...cloudSaved, ...localSaved]);
+      return this.savedCache;
+    } catch (error) {
+      console.error('Error fetching saved restaurants:', error);
+      this.savedCache = localSaved;
+      return this.savedCache;
+    }
+  },
+
+  async save(restaurantSlug) {
+    const slug = String(restaurantSlug || '');
+    if (!slug) throw new Error('Restaurant slug is required');
+
+    const authUser = await this.getAuthUser();
+    if (!authUser) {
+      const saved = readLocalSaved();
+      saved.add(slug);
+      writeLocalSaved(saved);
+      if (this.savedCache) this.savedCache.add(slug);
+      return { saved: true, synced: false };
+    }
+
+    const { saveRestaurant } = await import('./supabase-client.js');
+    await saveRestaurant(slug);
+    if (this.savedCache) this.savedCache.add(slug);
+    return { saved: true, synced: true };
+  },
+
+  async remove(restaurantSlug) {
+    const slug = String(restaurantSlug || '');
+    if (!slug) throw new Error('Restaurant slug is required');
+
+    const authUser = await this.getAuthUser();
+    if (!authUser) {
+      const saved = readLocalSaved();
+      saved.delete(slug);
+      writeLocalSaved(saved);
+      if (this.savedCache) this.savedCache.delete(slug);
+      return { saved: false, synced: false };
+    }
+
+    const { unsaveRestaurant } = await import('./supabase-client.js');
+    await unsaveRestaurant(slug);
+    if (this.savedCache) this.savedCache.delete(slug);
+    return { saved: false, synced: true };
+  },
+
+  async toggle(restaurantSlug) {
+    const saved = await this.getSaved();
+    return saved.has(String(restaurantSlug))
+      ? this.remove(restaurantSlug)
+      : this.save(restaurantSlug);
+  },
+
+  async isSaved(restaurantSlug) {
+    const saved = await this.getSaved();
+    return saved.has(String(restaurantSlug));
+  },
+
+  invalidate() {
+    this.savedCache = null;
+  }
+};
+
+window.GurmaoCollections = GurmaoCollections;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await updateAllSaveButtons();
+
+  document.body.addEventListener('click', async event => {
+    const btn = event.target.closest('[data-save]');
+    if (!btn || btn.dataset.saveBusy === '1') return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const id = btn.getAttribute('data-save');
+    if (!id) return;
+
+    btn.dataset.saveBusy = '1';
+    btn.disabled = true;
+    try {
+      const result = await GurmaoCollections.toggle(id);
+      btn.textContent = result.saved ? '❤️' : '🤍';
+      btn.classList.toggle('saved', result.saved);
+      if (result.saved) {
+        showToast(result.synced ? '❤️ Přidáno do výběru' : '❤️ Uloženo v tomto zařízení');
+      } else {
+        showToast(result.synced ? '🤍 Odebráno z výběru' : '🤍 Odebráno v tomto zařízení');
+      }
+    } catch (error) {
+      console.error('Saved restaurant synchronization failed:', error);
+      showToast('⚠️ Nepodařilo se synchronizovat. Zkus to znovu.');
+      GurmaoCollections.invalidate();
+      await updateAllSaveButtons();
+    } finally {
+      btn.disabled = false;
+      delete btn.dataset.saveBusy;
+    }
+  });
+});
+
+async function updateAllSaveButtons() {
+  const saveButtons = document.querySelectorAll('[data-save]');
+  if (!saveButtons.length) return;
+
+  let saved;
+  try {
+    saved = await GurmaoCollections.getSaved();
+  } catch (error) {
+    console.error('Saved buttons could not be refreshed:', error);
+    return;
+  }
+
+  saveButtons.forEach(btn => {
+    const id = String(btn.getAttribute('data-save') || '');
+    const isSaved = saved.has(id);
+    btn.textContent = isSaved ? '❤️' : '🤍';
+    btn.classList.toggle('saved', isSaved);
+    btn.setAttribute('aria-pressed', String(isSaved));
+  });
+}
+
 window.updateSaveButtons = updateAllSaveButtons;
 
-// ======================
-// TOAST NOTIFICATIONS
-// ======================
-function showToast(message, duration = 2000) {
+function showToast(message, duration = 2200) {
   const existing = document.getElementById('gurmao-toast');
   if (existing) existing.remove();
-  
+
   const toast = document.createElement('div');
   toast.id = 'gurmao-toast';
   toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full bg-gurmaogold text-black font-semibold shadow-glow animate-fade-in';
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
   toast.textContent = message;
-  
   document.body.appendChild(toast);
-  
+
   setTimeout(() => {
     toast.style.opacity = '0';
     toast.style.transition = 'opacity 0.3s';
@@ -321,124 +306,13 @@ function showToast(message, duration = 2000) {
   }, duration);
 }
 
-// ======================
-// IMAGE URL HELPER
-// ======================
-function getImageUrl(imagePath) {
-  if (!imagePath) return 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=80'; // Fallback
-  if (imagePath.startsWith('http')) return imagePath; // Old Unsplash URLs
-  
-  // Supabase Storage URL
-  const supabaseUrl = 'https://txfuxrezyrgybjvjnhom.supabase.co';
-  return `${supabaseUrl}/storage/v1/object/public/restaurant-images/${imagePath}`;
-}
-
-// ======================
-// CATALOG DATA (MVP + Supabase fallback)
-// ======================
-const GurmaoCatalog = {
-  restaurants: [
-    {
-      id: 'noir-table',
-      vibe: '🍷 LUXE',
-      name: 'Noir Table',
-      city: 'Praha',
-      tag: 'fine dining',
-      href: 'restaurace-noir-table.html',
-      img: getImageUrl('noir-table.jpg'),
-      description: 'Místo, kde se čas zpomalí. Oheň, ticho, precizní servis.'
-    },
-    {
-      id: 'ember-steak',
-      vibe: '🔥 DRAMA',
-      name: 'Ember Steak',
-      city: 'Brno',
-      tag: 'steakhouse',
-      href: 'restaurace-noir-table.html',
-      img: getImageUrl('ember-steak.jpg'),
-      description: 'Oheň, kouř, maso. Žádné výmluvy.'
-    },
-    {
-      id: 'la-calle',
-      vibe: '🌮 CHAOS',
-      name: 'La Calle',
-      city: 'Ostrava',
-      tag: 'street food',
-      href: 'restaurace-noir-table.html',
-      img: getImageUrl('la-calle.jpg'),
-      description: 'Chaos, kyselost, šťáva. Ulice na talíři.'
-    }
-  ],
-  
-  chefs: [
-    {
-      id: 'adam-noir',
-      vibe: '🧑‍🍳 Head Chef · 🍷 LUXE',
-      name: 'Adam Noir',
-      style: 'Minimalismus · oheň · ticho',
-      href: 'kuchar-adam-noir.html',
-      img: 'https://images.unsplash.com/photo-1600891965050-dc6c28c5a12b?auto=format&fit=crop&w=1200&q=80'
-    },
-    {
-      id: 'marek-ember',
-      vibe: '🧑‍🍳 Grill Master · 🔥 DRAMA',
-      name: 'Marek Ember',
-      style: 'Oheň · maso · kouř',
-      href: 'kuchar-adam-noir.html',
-      img: 'https://images.unsplash.com/photo-1604908177074-9c0d0f1f216c?auto=format&fit=crop&w=1200&q=80'
-    },
-    {
-      id: 'sofia-calle',
-      vibe: '🧑‍🍳 Street Artist · 🌮 CHAOS',
-      name: 'Sofia Calle',
-      style: 'Chaos · kyselost · šťáva',
-      href: 'kuchar-adam-noir.html',
-      img: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=1200&q=80'
-    }
-  ],
-  
-  gear: [
-    {
-      id: 'gyuto-240',
-      users: '18 kuchařů',
-      name: 'Gyuto 240 mm',
-      description: 'Preciznost bez kompromisů',
-      img: 'https://images.unsplash.com/photo-1600180758895-7f9a5c0a0f94?auto=format&fit=crop&w=1200&q=80'
-    },
-    {
-      id: 'cast-iron',
-      users: '11 restaurací',
-      name: 'Litinová pánev',
-      description: 'Chuť, která drží',
-      img: 'https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?auto=format&fit=crop&w=1200&q=80'
-    },
-    {
-      id: 'binchotan',
-      users: 'Noir Table',
-      name: 'Uhlí Binchotan',
-      description: 'Oheň bez kouře',
-      img: 'https://images.unsplash.com/photo-1598514983318-2f64f8f4796c?auto=format&fit=crop&w=1200&q=80'
-    }
-  ]
-};
-
-// ======================
-// SMOOTH SCROLL
-// ======================
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+  anchor.addEventListener('click', function (event) {
+    const href = this.getAttribute('href');
+    if (!href || href === '#') return;
+    const target = document.querySelector(href);
+    if (!target) return;
+    event.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
-});
-// Oprava vzhledu po návratu tlačítkem Zpět
-window.addEventListener('pageshow', (event) => {
-  const navigation = performance.getEntriesByType('navigation')[0];
-
-  if (event.persisted || navigation?.type === 'back_forward') {
-    window.location.reload();
-  }
 });
