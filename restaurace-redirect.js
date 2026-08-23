@@ -1,17 +1,16 @@
-// Redirect old restaurant pages to new dynamic detail page
-// This script handles URLs like: restaurace-[slug].html -> restaurace-detail.html?id=[slug]
+// Redirect legacy restaurant pages to the canonical dynamic detail page.
+// Handles: restaurace-[slug].html -> restaurant.html?slug=[slug]
 
-(function() {
-  const currentPath = window.location.pathname;
-  const fileName = currentPath.split('/').pop();
-  
-  // Check if this is a restaurant detail page (restaurace-*.html but not restaurace-detail.html)
-  if (fileName.startsWith('restaurace-') && fileName.endsWith('.html') && fileName !== 'restaurace-detail.html' && fileName !== 'restaurace.html') {
-    // Extract slug from filename: restaurace-[slug].html -> [slug]
-    const slug = fileName.replace('restaurace-', '').replace('.html', '');
-    
-    // Redirect to dynamic detail page
-    const newUrl = `restaurace-detail.html?id=${slug}`;
-    window.location.replace(newUrl);
-  }
+(function () {
+  const fileName = window.location.pathname.split('/').pop() || '';
+  if (!fileName.startsWith('restaurace-') || !fileName.endsWith('.html')) return;
+  if (fileName === 'restaurace-detail.html' || fileName === 'restaurace.html') return;
+
+  const slug = fileName.slice('restaurace-'.length, -'.html'.length);
+  if (!slug) return;
+
+  const target = new URL('restaurant.html', window.location.href);
+  target.searchParams.set('slug', decodeURIComponent(slug));
+  target.hash = window.location.hash;
+  window.location.replace(target.href);
 })();
