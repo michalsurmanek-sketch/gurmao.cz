@@ -1,128 +1,46 @@
-// GURMAO.cz - Shared JavaScript
+// GURMAO.cz – shared public runtime
 
+const currentPublicPage = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
 document.documentElement.style.scrollBehavior = 'smooth';
-
-document.addEventListener('DOMContentLoaded', () => {
-  document.body.style.opacity = '0';
-  requestAnimationFrame(() => {
-    document.body.style.transition = 'opacity 0.3s ease-in';
-    document.body.style.opacity = '1';
-  });
-});
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js').catch(error => {
       console.error('Service worker registration failed:', error);
     });
-  });
+  }, { once: true });
 }
 
-if (!document.querySelector('script[data-gurmao-bottom-nav]')) {
-  const bottomNavScript = document.createElement('script');
-  bottomNavScript.src = '/mobile-bottom-nav.js?v=20260823-1';
-  bottomNavScript.defer = true;
-  bottomNavScript.dataset.gurmaoBottomNav = 'true';
-  document.head.appendChild(bottomNavScript);
+function loadScriptOnce(src, marker) {
+  if (document.querySelector(`script[${marker}]`)) return;
+  const script = document.createElement('script');
+  script.src = src;
+  script.defer = true;
+  script.setAttribute(marker, 'true');
+  document.head.appendChild(script);
 }
 
-const currentPublicPage = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
-
-if (currentPublicPage === 'feed.html') {
-  const innerHtmlDescriptor = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
-  if (innerHtmlDescriptor?.get && innerHtmlDescriptor?.set && !window.__gurmaoFeedSanitizerInstalled) {
-    window.__gurmaoFeedSanitizerInstalled = true;
-
-    const sanitizeFeedMarkup = markup => {
-      const template = document.createElement('template');
-      innerHtmlDescriptor.set.call(template, String(markup ?? ''));
-
-      template.content.querySelectorAll('script,iframe,object,embed,base,meta,link').forEach(node => node.remove());
-      template.content.querySelectorAll('*').forEach(node => {
-        for (const attribute of [...node.attributes]) {
-          const name = attribute.name.toLowerCase();
-          const value = attribute.value.trim();
-          if (name.startsWith('on') || name === 'srcdoc') {
-            node.removeAttribute(attribute.name);
-            continue;
-          }
-          if (name === 'style' && /(?:javascript|vbscript|data)\s*:/i.test(value)) {
-            node.removeAttribute(attribute.name);
-            continue;
-          }
-          if (name === 'href' || name === 'src') {
-            const legacyDetail = value.match(/(?:^|\/)restaurace-([^/?#]+)\.html(?:[?#].*)?$/i);
-            if (name === 'href' && legacyDetail) {
-              node.setAttribute('href', `restaurant.html?slug=${encodeURIComponent(decodeURIComponent(legacyDetail[1]))}`);
-              continue;
-            }
-            try {
-              const url = new URL(value, location.href);
-              if (!['http:', 'https:'].includes(url.protocol)) node.removeAttribute(attribute.name);
-            } catch {
-              node.removeAttribute(attribute.name);
-            }
-          }
-        }
-      });
-
-      return template.innerHTML;
-    };
-
-    Object.defineProperty(Element.prototype, 'innerHTML', {
-      configurable: innerHtmlDescriptor.configurable,
-      enumerable: innerHtmlDescriptor.enumerable,
-      get: innerHtmlDescriptor.get,
-      set(value) {
-        if (this.id === 'feed' || this.id === 'grid') {
-          innerHtmlDescriptor.set.call(this, sanitizeFeedMarkup(value));
-          return;
-        }
-        innerHtmlDescriptor.set.call(this, value);
-      }
-    });
-  }
-}
+loadScriptOnce('/mobile-bottom-nav.js?v=20260823-2', 'data-gurmao-bottom-nav');
 
 if (!/^(admin(?:-|\.)|login\.|register\.|forgot-|reset-|404\.)/.test(currentPublicPage)) {
-  void import('/header-search.js?v=20260823-1').catch(error => {
-    console.error('Shared header search failed to load:', error);
-  });
+  void import('/header-search.js?v=20260823-2').catch(error => console.error('Shared header search failed:', error));
 }
-
 if (currentPublicPage === 'restaurace.html') {
-  void import('/restaurant-card-enhancements.js?v=20260823-2').catch(error => {
-    console.error('Restaurant card enhancements failed to load:', error);
-  });
-  void import('/restaurant-recommendation-card.js?v=20260823-2').catch(error => {
-    console.error('Daily restaurant recommendation failed to load:', error);
-  });
+  void import('/restaurant-card-enhancements.js?v=20260823-2').catch(error => console.error('Restaurant card enhancements failed:', error));
+  void import('/restaurant-recommendation-card.js?v=20260823-2').catch(error => console.error('Daily recommendation failed:', error));
 }
-
 if (currentPublicPage === 'ai.html') {
-  void import('/ai-form-runtime.js?v=20260823-2').catch(error => {
-    console.error('Recommendation form runtime failed to load:', error);
-  });
+  void import('/ai-form-runtime.js?v=20260823-2').catch(error => console.error('Recommendation form runtime failed:', error));
 }
-
 if (currentPublicPage === 'kontakt.html') {
-  void import('/contact-form-runtime.js?v=20260823-1').catch(error => {
-    console.error('Protected contact form failed to load:', error);
-  });
+  void import('/contact-form-runtime.js?v=20260823-2').catch(error => console.error('Protected contact form failed:', error));
 }
 
 if (!document.getElementById('gurmao-global-scrollbar-style')) {
-  const scrollbarStyle = document.createElement('style');
-  scrollbarStyle.id = 'gurmao-global-scrollbar-style';
-  scrollbarStyle.textContent = `
-    html,*{scrollbar-color:#d8ad34 #050505;scrollbar-width:thin}
-    *::-webkit-scrollbar{width:10px;height:10px}
-    *::-webkit-scrollbar-track{background:#050505}
-    *::-webkit-scrollbar-thumb{min-height:36px;border:2px solid #050505;border-radius:999px;background:linear-gradient(180deg,#f3c94a 0%,#d8ad34 55%,#9f7615 100%)}
-    *::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#ffe27a 0%,#e4bd3d 58%,#ad8118 100%)}
-    *::-webkit-scrollbar-corner{background:#050505}
-  `;
-  document.head.appendChild(scrollbarStyle);
+  const style = document.createElement('style');
+  style.id = 'gurmao-global-scrollbar-style';
+  style.textContent = 'html,*{scrollbar-color:#d8ad34 #050505;scrollbar-width:thin}*::-webkit-scrollbar{width:10px;height:10px}*::-webkit-scrollbar-track{background:#050505}*::-webkit-scrollbar-thumb{min-height:36px;border:2px solid #050505;border-radius:999px;background:#d8ad34}*::-webkit-scrollbar-corner{background:#050505}';
+  document.head.appendChild(style);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -134,23 +52,29 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!btn || !close || !backdrop || !menu) return;
 
   let scrollPosition = 0;
+  let previousFocus = null;
+  const focusableSelector = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
   const syncHeaderHeight = () => {
     const height = header?.getBoundingClientRect().height || 65;
     document.documentElement.style.setProperty('--gurmao-header-height', `${Math.ceil(height)}px`);
   };
+  const isOpen = () => !menu.classList.contains('hidden');
 
   btn.setAttribute('aria-controls', 'mobileMenu');
   btn.setAttribute('aria-expanded', 'false');
-  close.setAttribute('aria-label', close.getAttribute('aria-label') || 'Zavřít menu');
   menu.setAttribute('aria-hidden', 'true');
   menu.setAttribute('role', 'dialog');
+  menu.setAttribute('aria-modal', 'true');
   menu.setAttribute('aria-label', 'Mobilní navigace');
+  close.setAttribute('aria-label', close.getAttribute('aria-label') || 'Zavřít menu');
   syncHeaderHeight();
 
   const open = () => {
+    if (isOpen()) return;
     syncHeaderHeight();
     scrollPosition = window.scrollY;
+    previousFocus = document.activeElement;
     backdrop.classList.remove('hidden');
     menu.classList.remove('hidden');
     btn.setAttribute('aria-expanded', 'true');
@@ -163,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const shut = () => {
-    if (menu.classList.contains('hidden')) return;
+    if (!isOpen()) return;
     backdrop.classList.add('hidden');
     menu.classList.add('hidden');
     btn.setAttribute('aria-expanded', 'false');
@@ -173,20 +97,37 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.top = '';
     document.body.style.width = '';
     window.scrollTo({ top: scrollPosition, behavior: 'instant' });
-    btn.focus({ preventScroll: true });
+    (previousFocus instanceof HTMLElement ? previousFocus : btn).focus({ preventScroll: true });
   };
 
   btn.addEventListener('click', open);
   close.addEventListener('click', shut);
   backdrop.addEventListener('click', shut);
+  menu.querySelectorAll('a').forEach(link => link.addEventListener('click', shut));
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') shut();
+    if (!isOpen()) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      shut();
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const focusable = [...menu.querySelectorAll(focusableSelector)].filter(node => !node.hidden && node.getClientRects().length);
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   });
   window.addEventListener('resize', () => {
     syncHeaderHeight();
-    if (window.innerWidth >= 768) shut();
+    if (innerWidth >= 768) shut();
   }, { passive: true });
-  menu.querySelectorAll('a').forEach(link => link.addEventListener('click', shut));
 });
 
 function readLocalSaved() {
@@ -200,25 +141,12 @@ function readLocalSaved() {
 }
 
 function writeLocalSaved(saved) {
-  if (!saved.size) {
-    localStorage.removeItem('gurmao_saved');
-    return;
-  }
-  localStorage.setItem('gurmao_saved', JSON.stringify([...saved]));
+  if (!saved.size) localStorage.removeItem('gurmao_saved');
+  else localStorage.setItem('gurmao_saved', JSON.stringify([...saved]));
 }
 
 const GurmaoCollections = {
-  storageKey: 'gurmao_saved',
   savedCache: null,
-
-  getUser() {
-    try {
-      return JSON.parse(localStorage.getItem('gurmao_user') || 'null');
-    } catch {
-      localStorage.removeItem('gurmao_user');
-      return null;
-    }
-  },
 
   async getAuthUser() {
     try {
@@ -232,18 +160,14 @@ const GurmaoCollections = {
 
   async getSaved() {
     if (this.savedCache) return this.savedCache;
-
     const localSaved = readLocalSaved();
-    const authUser = await this.getAuthUser();
-    if (!authUser) {
-      this.savedCache = localSaved;
-      return this.savedCache;
-    }
+    const user = await this.getAuthUser();
+    if (!user) return (this.savedCache = localSaved);
 
     try {
       const { getSavedRestaurants, saveRestaurant } = await import('./supabase-client.js');
-      const savedRestaurants = await getSavedRestaurants();
-      const cloudSaved = new Set(savedRestaurants.map(item => String(item.restaurant_id || '')).filter(Boolean));
+      const cloudRows = await getSavedRestaurants();
+      const cloudSaved = new Set(cloudRows.map(item => String(item.restaurant_id || '')).filter(Boolean));
       const remainingLocal = new Set(localSaved);
 
       for (const slug of localSaved) {
@@ -256,71 +180,62 @@ const GurmaoCollections = {
           cloudSaved.add(slug);
           remainingLocal.delete(slug);
         } catch (error) {
-          console.warn(`Local saved restaurant could not be synchronized: ${slug}`, error);
+          console.warn(`Saved restaurant sync failed for ${slug}:`, error);
         }
       }
 
       writeLocalSaved(remainingLocal);
-      this.savedCache = new Set([...cloudSaved, ...remainingLocal]);
-      return this.savedCache;
+      return (this.savedCache = new Set([...cloudSaved, ...remainingLocal]));
     } catch (error) {
-      console.error('Error fetching saved restaurants:', error);
-      this.savedCache = localSaved;
-      return this.savedCache;
+      console.error('Saved restaurants could not be loaded:', error);
+      return (this.savedCache = localSaved);
     }
   },
 
-  async save(restaurantSlug) {
-    const slug = String(restaurantSlug || '');
+  async save(slugValue) {
+    const slug = String(slugValue || '').trim();
     if (!slug) throw new Error('Restaurant slug is required');
-
-    const authUser = await this.getAuthUser();
-    if (!authUser) {
+    const user = await this.getAuthUser();
+    if (!user) {
       const saved = readLocalSaved();
       saved.add(slug);
       writeLocalSaved(saved);
-      if (this.savedCache) this.savedCache.add(slug);
+      this.savedCache?.add(slug);
       return { saved: true, synced: false };
     }
-
     const { saveRestaurant } = await import('./supabase-client.js');
     await saveRestaurant(slug);
-    if (this.savedCache) this.savedCache.add(slug);
+    this.savedCache?.add(slug);
     return { saved: true, synced: true };
   },
 
-  async remove(restaurantSlug) {
-    const slug = String(restaurantSlug || '');
+  async remove(slugValue) {
+    const slug = String(slugValue || '').trim();
     if (!slug) throw new Error('Restaurant slug is required');
-
-    const authUser = await this.getAuthUser();
-    if (!authUser) {
+    const user = await this.getAuthUser();
+    if (!user) {
       const saved = readLocalSaved();
       saved.delete(slug);
       writeLocalSaved(saved);
-      if (this.savedCache) this.savedCache.delete(slug);
+      this.savedCache?.delete(slug);
       return { saved: false, synced: false };
     }
-
     const { unsaveRestaurant } = await import('./supabase-client.js');
     await unsaveRestaurant(slug);
     const localSaved = readLocalSaved();
     localSaved.delete(slug);
     writeLocalSaved(localSaved);
-    if (this.savedCache) this.savedCache.delete(slug);
+    this.savedCache?.delete(slug);
     return { saved: false, synced: true };
   },
 
-  async toggle(restaurantSlug) {
+  async toggle(slug) {
     const saved = await this.getSaved();
-    return saved.has(String(restaurantSlug))
-      ? this.remove(restaurantSlug)
-      : this.save(restaurantSlug);
+    return saved.has(String(slug)) ? this.remove(slug) : this.save(slug);
   },
 
-  async isSaved(restaurantSlug) {
-    const saved = await this.getSaved();
-    return saved.has(String(restaurantSlug));
+  async isSaved(slug) {
+    return (await this.getSaved()).has(String(slug));
   },
 
   invalidate() {
@@ -330,137 +245,72 @@ const GurmaoCollections = {
 
 window.GurmaoCollections = GurmaoCollections;
 
-if (currentPublicPage === 'feed.html') {
-  document.addEventListener('click', async event => {
-    const button = event.target.closest('#feed .save-btn, #feed .save-menu-btn, #grid [data-save]');
-    if (!button || button.dataset.saveBusy === '1') return;
-
-    const article = button.closest('[data-restaurant]');
-    const id = String(button.getAttribute('data-save') || article?.getAttribute('data-restaurant') || '');
-    if (!id) return;
-
-    event.preventDefault();
-    event.stopImmediatePropagation();
-
-    const relatedButtons = article
-      ? [...article.querySelectorAll(`[data-save="${CSS.escape(id)}"]`)]
-      : [button];
-    relatedButtons.forEach(item => {
-      item.dataset.saveBusy = '1';
-      item.disabled = true;
-    });
-
-    try {
-      const result = await GurmaoCollections.toggle(id);
-      relatedButtons.forEach(item => {
-        item.classList.toggle('saved', result.saved);
-        item.setAttribute('aria-pressed', String(result.saved));
-        if (item.classList.contains('save-menu-btn')) item.textContent = result.saved ? '❤️ Uloženo' : '🤍 Uložit do výběru';
-        else item.textContent = result.saved ? '❤️' : '🤍';
-      });
-      showToast(result.saved
-        ? (result.synced ? '❤️ Přidáno do výběru' : '❤️ Uloženo v tomto zařízení')
-        : (result.synced ? '🤍 Odebráno z výběru' : '🤍 Odebráno v tomto zařízení'));
-    } catch (error) {
-      console.error('Feed save synchronization failed:', error);
-      showToast('⚠️ Nepodařilo se synchronizovat. Zkus to znovu.');
-      GurmaoCollections.invalidate();
-      await updateAllSaveButtons();
-    } finally {
-      relatedButtons.forEach(item => {
-        item.disabled = false;
-        delete item.dataset.saveBusy;
-      });
-    }
-  }, true);
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
-  await updateAllSaveButtons();
-
-  document.body.addEventListener('click', async event => {
-    const btn = event.target.closest('[data-save]');
-    if (!btn || btn.dataset.saveBusy === '1') return;
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    const id = btn.getAttribute('data-save');
-    if (!id) return;
-
-    btn.dataset.saveBusy = '1';
-    btn.disabled = true;
-    try {
-      const result = await GurmaoCollections.toggle(id);
-      btn.textContent = result.saved ? '❤️' : '🤍';
-      btn.classList.toggle('saved', result.saved);
-      if (result.saved) {
-        showToast(result.synced ? '❤️ Přidáno do výběru' : '❤️ Uloženo v tomto zařízení');
-      } else {
-        showToast(result.synced ? '🤍 Odebráno z výběru' : '🤍 Odebráno v tomto zařízení');
-      }
-    } catch (error) {
-      console.error('Saved restaurant synchronization failed:', error);
-      showToast('⚠️ Nepodařilo se synchronizovat. Zkus to znovu.');
-      GurmaoCollections.invalidate();
-      await updateAllSaveButtons();
-    } finally {
-      btn.disabled = false;
-      delete btn.dataset.saveBusy;
-    }
-  });
-});
-
 async function updateAllSaveButtons() {
-  const saveButtons = document.querySelectorAll('[data-save]');
-  if (!saveButtons.length) return;
-
-  let saved;
+  const buttons = [...document.querySelectorAll('[data-save]')];
+  if (!buttons.length) return;
   try {
-    saved = await GurmaoCollections.getSaved();
+    const saved = await GurmaoCollections.getSaved();
+    buttons.forEach(button => {
+      const id = String(button.dataset.save || '');
+      const active = saved.has(id);
+      button.classList.toggle('saved', active);
+      button.setAttribute('aria-pressed', String(active));
+      if (button.classList.contains('save-menu-btn')) button.textContent = active ? '❤️ Uloženo' : '🤍 Uložit do výběru';
+      else button.textContent = active ? '❤️' : '🤍';
+    });
   } catch (error) {
-    console.error('Saved buttons could not be refreshed:', error);
-    return;
+    console.error('Save buttons could not be refreshed:', error);
   }
-
-  saveButtons.forEach(btn => {
-    const id = String(btn.getAttribute('data-save') || '');
-    const isSaved = saved.has(id);
-    if (btn.classList.contains('save-menu-btn')) btn.textContent = isSaved ? '❤️ Uloženo' : '🤍 Uložit do výběru';
-    else btn.textContent = isSaved ? '❤️' : '🤍';
-    btn.classList.toggle('saved', isSaved);
-    btn.setAttribute('aria-pressed', String(isSaved));
-  });
 }
 
 window.updateSaveButtons = updateAllSaveButtons;
 
+document.addEventListener('DOMContentLoaded', () => {
+  void updateAllSaveButtons();
+  document.body.addEventListener('click', async event => {
+    const button = event.target.closest('[data-save]');
+    if (!button || button.dataset.saveBusy === '1') return;
+    const id = String(button.dataset.save || '').trim();
+    if (!id) return;
+    event.preventDefault();
+    event.stopPropagation();
+    button.dataset.saveBusy = '1';
+    button.disabled = true;
+    try {
+      const result = await GurmaoCollections.toggle(id);
+      button.classList.toggle('saved', result.saved);
+      button.setAttribute('aria-pressed', String(result.saved));
+      button.textContent = result.saved ? '❤️' : '🤍';
+      showToast(result.saved
+        ? (result.synced ? '❤️ Přidáno do výběru' : '❤️ Uloženo v tomto zařízení')
+        : (result.synced ? '🤍 Odebráno z výběru' : '🤍 Odebráno v tomto zařízení'));
+    } catch (error) {
+      console.error('Saved restaurant synchronization failed:', error);
+      GurmaoCollections.invalidate();
+      showToast('⚠️ Nepodařilo se synchronizovat. Zkuste to znovu.');
+      await updateAllSaveButtons();
+    } finally {
+      button.disabled = false;
+      delete button.dataset.saveBusy;
+    }
+  });
+});
+
 function showToast(message, duration = 2200) {
   const existing = document.getElementById('gurmao-toast');
-  if (existing) existing.remove();
-
+  existing?.remove();
   const toast = document.createElement('div');
   toast.id = 'gurmao-toast';
-  toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full bg-gurmaogold text-black font-semibold shadow-glow animate-fade-in';
+  toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full bg-gurmaogold text-black font-semibold shadow-glow';
   toast.setAttribute('role', 'status');
   toast.setAttribute('aria-live', 'polite');
-  toast.textContent = message;
+  toast.textContent = String(message || '');
   document.body.appendChild(toast);
-
   setTimeout(() => {
     toast.style.opacity = '0';
-    toast.style.transition = 'opacity 0.3s';
-    setTimeout(() => toast.remove(), 300);
+    toast.style.transition = 'opacity .25s';
+    setTimeout(() => toast.remove(), 260);
   }, duration);
 }
 
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (event) {
-    const href = this.getAttribute('href');
-    if (!href || href === '#') return;
-    const target = document.querySelector(href);
-    if (!target) return;
-    event.preventDefault();
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-});
+window.showToast = showToast;
