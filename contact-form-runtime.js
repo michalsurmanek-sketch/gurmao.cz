@@ -1,6 +1,16 @@
 import { supabase } from './supabase-client.js';
 
 if (location.pathname.endsWith('/kontakt.html')) {
+  // Remove an obsolete claim from the older static FAQ. The current recommendation
+  // engine uses the user's explicit form choices and current restaurant data; it does
+  // not inspect private saved restaurants or infer a profile from user ratings.
+  document.querySelectorAll('p,div').forEach(element => {
+    const value = String(element.textContent || '').trim();
+    if (value.includes('AI analyzuje vaše uložené restaurace') || value.includes('analyzuje vaše uložené restaurace a hodnocení')) {
+      element.textContent = 'Doporučení vychází z toho, co do formuláře sami zadáte, a z aktuálních veřejných dat restaurací v GURMAO. Uložené restaurace ani soukromá data účtu se k vytvoření doporučení nepoužívají.';
+    }
+  });
+
   const form = document.getElementById('contactForm');
   if (form) {
     const startedAt = Date.now();
