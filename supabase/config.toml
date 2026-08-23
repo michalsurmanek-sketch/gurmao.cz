@@ -1,2 +1,17 @@
 [functions.submit-contact]
 verify_jwt = false
+
+# Public image endpoint used directly by <img src>. The function itself validates
+# that the requested Google photo ID is already attached to a GURMAO restaurant.
+[functions.google-place-photo]
+verify_jwt = false
+
+# User/account or admin operations must always carry a valid Supabase JWT.
+[functions.delete-account]
+verify_jwt = true
+
+[functions.discover-menu]
+verify_jwt = true
+
+[functions.sync-opening-hours]
+verify_jwt = true
