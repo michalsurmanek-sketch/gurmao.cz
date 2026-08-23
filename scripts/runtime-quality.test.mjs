@@ -5,6 +5,7 @@ import { access, readFile } from 'node:fs/promises';
 const ACTIVE_FILES = [
   'supabase-client.js',
   'app.js',
+  'auth-guard.js',
   'header-search.js',
   'restaurace.js',
   'feed-page.js',
@@ -40,6 +41,16 @@ test('active public runtime uses only canonical restaurant detail route', async 
     assert.equal(source.includes('restaurace-detail.html'), false, `${file} still links to restaurace-detail.html`);
     assert.equal(/restaurace-\$\{[^}]+\}\.html/.test(source), false, `${file} still constructs legacy restaurace-<slug>.html`);
   }
+});
+
+test('guest collections stay available without authentication redirect', async () => {
+  const guard = await text('auth-guard.js');
+  const page = await text('collections-page.js');
+  assert.match(guard, /page\s*===\s*['"]collections\.html['"]\)\s*return/, 'collections auth guard must allow guest mode');
+  assert.match(page, /window\.GurmaoCollections/, 'collections page must use the shared saved-state runtime');
+  assert.match(page, /fetchRestaurantsBySlugs/, 'guest collections must resolve locally saved slugs to restaurant data');
+  assert.equal(page.includes('unsaveRestaurant'), false, 'collections page must not bypass shared guest/cloud remove logic');
+  assert.equal(page.includes('saveRestaurant'), false, 'collections page must not bypass shared guest/cloud restore logic');
 });
 
 test('contact page has one protected submission path', async () => {
