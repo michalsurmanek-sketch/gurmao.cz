@@ -1,61 +1,62 @@
--- Tabulka pro kontaktní zprávy z formuláře
--- Spusť tento SQL v Supabase → SQL Editor → New query → Run
+-- GURMAO contact messages schema
+-- Public submissions go through the submit-contact Edge Function using service_role.
 
-CREATE TABLE IF NOT EXISTS contact_messages (
+CREATE TABLE IF NOT EXISTS public.contact_messages (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  subject TEXT NOT NULL,
-  message TEXT NOT NULL,
-  status TEXT DEFAULT 'new' CHECK (status IN ('new', 'read', 'replied', 'archived')),
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
+  name TEXT NOT NULL CHECK (char_length(name) BETWEEN 2 AND 100),
+  email TEXT NOT NULL CHECK (char_length(email) <= 254),
+  subject TEXT NOT NULL CHECK (subject IN ('obecne', 'restaurace', 'spoluprace', 'gdpr', 'jine')),
+  message TEXT NOT NULL CHECK (char_length(message) BETWEEN 10 AND 5000),
+  status TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'read', 'replied', 'archived')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Index pro rychlejší vyhledávání
-CREATE INDEX IF NOT EXISTS idx_contact_messages_status ON contact_messages(status);
-CREATE INDEX IF NOT EXISTS idx_contact_messages_created_at ON contact_messages(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_contact_messages_email ON contact_messages(email);
+CREATE INDEX IF NOT EXISTS idx_contact_messages_status ON public.contact_messages(status);
+CREATE INDEX IF NOT EXISTS idx_contact_messages_created_at ON public.contact_messages(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_contact_messages_email_created_at ON public.contact_messages(email, created_at DESC);
 
--- RLS (Row Level Security) policies
-ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
 
--- Povolit vkládání všem (anonymním uživatelům)
-CREATE POLICY "Anyone can submit contact messages"
-  ON contact_messages
-  FOR INSERT
-  TO anon, authenticated
-  WITH CHECK (true);
+DROP POLICY IF EXISTS "Anyone can submit contact messages" ON public.contact_messages;
+DROP POLICY IF EXISTS "Authenticated users can read contact messages" ON public.contact_messages;
+DROP POLICY IF EXISTS "Authenticated users can update contact messages" ON public.contact_messages;
+DROP POLICY IF EXISTS "Only admins can read contact messages" ON public.contact_messages;
+DROP POLICY IF EXISTS "Only admins can update contact messages" ON public.contact_messages;
 
--- Číst a upravovat zprávy smí pouze admin s rolí v app_metadata.
+REVOKE INSERT, DELETE ON public.contact_messages FROM anon, authenticated;
+GRANT SELECT, UPDATE ON public.contact_messages TO authenticated;
+GRANT ALL ON public.contact_messages TO service_role;
+
 CREATE POLICY "Only admins can read contact messages"
-  ON contact_messages
+  ON public.contact_messages
   FOR SELECT
   TO authenticated
-  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+  USING ((SELECT auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
--- Pouze authenticated uživatelé mohou upravovat status
 CREATE POLICY "Only admins can update contact messages"
-  ON contact_messages
+  ON public.contact_messages
   FOR UPDATE
   TO authenticated
-  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
-  WITH CHECK ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+  USING ((SELECT auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+  WITH CHECK ((SELECT auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
--- Trigger pro aktualizaci updated_at
-CREATE OR REPLACE FUNCTION update_contact_messages_updated_at()
-RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION public.update_contact_messages_updated_at()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
 BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
+DROP TRIGGER IF EXISTS trigger_update_contact_messages_updated_at ON public.contact_messages;
 CREATE TRIGGER trigger_update_contact_messages_updated_at
-  BEFORE UPDATE ON contact_messages
+  BEFORE UPDATE ON public.contact_messages
   FOR EACH ROW
-  EXECUTE FUNCTION update_contact_messages_updated_at();
+  EXECUTE FUNCTION public.update_contact_messages_updated_at();
 
--- Komentáře pro dokumentaci
-COMMENT ON TABLE contact_messages IS 'Kontaktní zprávy z formuláře na webu';
-COMMENT ON COLUMN contact_messages.status IS 'Status zprávy: new, read, replied, archived';
+COMMENT ON TABLE public.contact_messages IS 'Kontaktní zprávy přijaté přes chráněnou Edge Function.';
+COMMENT ON COLUMN public.contact_messages.status IS 'Status zprávy: new, read, replied, archived';
