@@ -20,7 +20,7 @@ if ('serviceWorker' in navigator) {
 
 if (!document.querySelector('script[data-gurmao-bottom-nav]')) {
   const bottomNavScript = document.createElement('script');
-  bottomNavScript.src = '/mobile-bottom-nav.js?v=20260726-3';
+  bottomNavScript.src = '/mobile-bottom-nav.js?v=20260823-1';
   bottomNavScript.defer = true;
   bottomNavScript.dataset.gurmaoBottomNav = 'true';
   document.head.appendChild(bottomNavScript);
@@ -28,8 +28,14 @@ if (!document.querySelector('script[data-gurmao-bottom-nav]')) {
 
 const currentPublicPage = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
 if (!/^(admin(?:-|\.)|login\.|register\.|forgot-|reset-|404\.)/.test(currentPublicPage)) {
-  void import('/header-search.js?v=20260726-unified-4').catch(error => {
+  void import('/header-search.js?v=20260823-1').catch(error => {
     console.error('Shared header search failed to load:', error);
+  });
+}
+
+if (currentPublicPage === 'restaurace.html') {
+  void import('/restaurant-card-enhancements.js?v=20260823-1').catch(error => {
+    console.error('Restaurant card enhancements failed to load:', error);
   });
 }
 
