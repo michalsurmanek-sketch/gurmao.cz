@@ -32,7 +32,7 @@
   <meta name="twitter:image" content="https://gurmao.cz/og-image.jpg" />
 
   <!-- Preconnect k externím službám pro rychlejší načítání -->
-  <link rel="preconnect" href="https://txfuxrezyrgybjvjnhom.supabase.co">
+  <link rel="preconnect" href="https://jdprdcnxbxfzgrjjfflr.supabase.co">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="image" href="images/gurmao-hero.webp" type="image/webp" fetchpriority="high">
@@ -379,7 +379,7 @@
   </form>
 
   <div class="hero-discovery relative">
-    <div class="hero-count">Prohledáváme <strong>2 480</strong> restaurací po celé ČR</div>
+    <div class="hero-count">Prohledáváme <strong aria-live="polite">…</strong> restaurací po celé ČR</div>
     <div class="taste-heading"><span>Podle kuchyně</span></div>
     <div class="taste-grid taste-grid-cuisine"><a class="taste-item" href="restaurace.html?q=pizza"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 20 20 5c3 5 3 10 0 15-4 2-8 2-11 0Z"/><path d="M12 17c3 1 6 1 9 0"/><circle cx="15" cy="13" r="1"/><circle cx="18" cy="9" r="1"/></svg><span>Pizza</span></a><a class="taste-item" href="restaurace.html?q=burger"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10c1-4 4-6 7-6s6 2 7 6H5Z"/><path d="M4 13h16M5 16h14M5 19h14l-1 2H6l-1-2Z"/></svg><span>Burger</span></a><a class="taste-item" href="restaurace.html?q=sushi"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="9" cy="9" rx="5" ry="3"/><path d="M4 9v5c0 2 2 3 5 3s5-1 5-3V9M18 4 11 20M21 5l-7 16"/></svg><span>Sushi</span></a><a class="taste-item" href="restaurace.html?q=steak"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 14c0-6 5-10 11-9 5 1 7 5 4 9-3 5-8 7-13 6-2-1-3-3-2-6Z"/><path d="M10 10c2-2 5-2 7-1M9 15c3 1 6 1 8-1"/></svg><span>Steak</span></a><a class="taste-item" href="restaurace.html?q=vegan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21C6 18 5 11 6 5c5 1 9 4 10 9"/><path d="M13 21c0-7 3-12 8-15 1 7-2 13-8 15Z"/><path d="M9 10c3 3 4 6 4 11"/></svg><span>Vegan</span></a><a class="taste-item" href="restaurace.html?q=brunch"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10h12v5c0 4-3 6-6 6s-6-2-6-6v-5Z"/><path d="M17 12h2c2 0 3 1 3 3s-1 3-4 3h-1M8 7c-1-2 1-3 0-5M12 7c-1-2 1-3 0-5M16 7c-1-2 1-3 0-5"/></svg><span>Brunch</span></a><a class="taste-item" href="restaurace.html?q=italská"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16c4-7 12-9 16-3-2 6-8 8-16 3Z"/><path d="M7 16c3-2 7-3 11-2M9 10c2 1 4 1 6 0"/></svg><span>Italská</span></a><a class="taste-item" href="restaurace.html?q=mexická"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17c2-6 6-9 8-9s6 3 8 9H4Z"/><path d="M7 17h10M9 11l3 3 3-3"/></svg><span>Mexická</span></a><a class="taste-item" href="restaurace.html?q=česká"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16M6 18v-6h12v6M8 12V8h8v4M10 8V5h4v3"/></svg><span>Česká</span></a><a class="taste-item" href="restaurace.html?q=pivnice"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h11v12H7c-1 0-2-1-2-2V7Z"/><path d="M16 9h3c2 0 3 2 3 4s-1 4-4 4h-2M8 4v3M11 4v3M14 4v3"/></svg><span>Pivnice</span></a><a class="taste-item" href="restaurace.html?q=fine dining"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16M6 18c0-6 3-10 6-10s6 4 6 10M12 5v3M9 5h6"/></svg><span>Fine Dining</span></a></div>
     <div class="taste-heading taste-heading-mood"><span>Podle nálady a příležitosti</span></div>
@@ -688,46 +688,8 @@
   </div>
 </footer>
 
-<script>
-  // Mobile Search Toggle
-  const mobileSearchBtn = document.getElementById('mobileSearchBtn');
-  const mobileSearchBox = document.getElementById('mobileSearchBox');
-  const mobileSearchClose = document.getElementById('mobileSearchClose');
-  const mobileSearchInput = document.getElementById('mobileSearchInput');
-  const headerLogo = document.getElementById('headerLogo');
-  const mobileHeaderControls = document.getElementById('mobileHeaderControls');
-  
-  if (mobileSearchBtn && mobileSearchBox) {
-    // Open mobile search
-    mobileSearchBtn.addEventListener('click', () => {
-      mobileSearchBox.classList.remove('hidden');
-      headerLogo.style.opacity = '0';
-      headerLogo.style.pointerEvents = 'none';
-      mobileHeaderControls.style.opacity = '0';
-      mobileHeaderControls.style.pointerEvents = 'none';
-      setTimeout(() => mobileSearchInput.focus(), 300);
-    });
-    
-    // Close mobile search
-    if (mobileSearchClose) {
-      mobileSearchClose.addEventListener('click', () => {
-        mobileSearchBox.classList.add('hidden');
-        headerLogo.style.opacity = '1';
-        headerLogo.style.pointerEvents = 'auto';
-        mobileHeaderControls.style.opacity = '1';
-        mobileHeaderControls.style.pointerEvents = 'auto';
-        mobileSearchInput.value = '';
-        const mobileSearchResults = document.getElementById('mobileSearchResults');
-        if (mobileSearchResults) mobileSearchResults.classList.add('hidden');
-      });
-    }
-  }
-</script>
-
 <script src="footer-legal-toggle.js"></script>
-<script src="app.js?v=20260726-unified-search-4"></script>
-<script type="module" src="header-search.js?v=20260726-unified-4"></script>
-<script type="module" src="location-search.js"></script>
+<script src="app.js?v=20260823-shared-4"></script>
 
 <!-- Structured Data (JSON-LD) for SEO -->
 <script type="application/ld+json">
