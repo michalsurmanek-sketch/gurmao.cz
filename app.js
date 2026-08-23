@@ -34,8 +34,11 @@ if (!/^(admin(?:-|\.)|login\.|register\.|forgot-|reset-|404\.)/.test(currentPubl
 }
 
 if (currentPublicPage === 'restaurace.html') {
-  void import('/restaurant-card-enhancements.js?v=20260823-1').catch(error => {
+  void import('/restaurant-card-enhancements.js?v=20260823-2').catch(error => {
     console.error('Restaurant card enhancements failed to load:', error);
+  });
+  void import('/restaurant-recommendation-card.js?v=20260823-2').catch(error => {
+    console.error('Daily restaurant recommendation failed to load:', error);
   });
 }
 
