@@ -719,22 +719,9 @@
 }
 </script>
 
-<script type="module" src="supabase-client.js"></script>
 <script type="module" src="auth-redirect.js"></script>
 <script src="auth-ui.js"></script>
-<script src="onboarding.js"></script>
 <script src="cookie-consent.js"></script>
-<script>
-  // Homepage: Change CTA for logged-in users
-  const user = JSON.parse(localStorage.getItem('gurmao_user') || 'null');
-  if (user) {
-    const heroLoginBtn = document.getElementById('heroLoginBtn');
-    if (heroLoginBtn) {
-      heroLoginBtn.href = 'collections.html';
-      heroLoginBtn.textContent = 'Můj výběr';
-    }
-  }
-</script>
 
 <!-- Vibe Tooltips -->
 <script src="vibe-tooltips.js"></script>
