@@ -27,6 +27,63 @@ if (!document.querySelector('script[data-gurmao-bottom-nav]')) {
 }
 
 const currentPublicPage = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
+
+if (currentPublicPage === 'feed.html') {
+  const innerHtmlDescriptor = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+  if (innerHtmlDescriptor?.get && innerHtmlDescriptor?.set && !window.__gurmaoFeedSanitizerInstalled) {
+    window.__gurmaoFeedSanitizerInstalled = true;
+
+    const sanitizeFeedMarkup = markup => {
+      const template = document.createElement('template');
+      innerHtmlDescriptor.set.call(template, String(markup ?? ''));
+
+      template.content.querySelectorAll('script,iframe,object,embed,base,meta,link').forEach(node => node.remove());
+      template.content.querySelectorAll('*').forEach(node => {
+        for (const attribute of [...node.attributes]) {
+          const name = attribute.name.toLowerCase();
+          const value = attribute.value.trim();
+          if (name.startsWith('on') || name === 'srcdoc') {
+            node.removeAttribute(attribute.name);
+            continue;
+          }
+          if (name === 'style' && /(?:javascript|vbscript|data)\s*:/i.test(value)) {
+            node.removeAttribute(attribute.name);
+            continue;
+          }
+          if (name === 'href' || name === 'src') {
+            const legacyDetail = value.match(/(?:^|\/)restaurace-([^/?#]+)\.html(?:[?#].*)?$/i);
+            if (name === 'href' && legacyDetail) {
+              node.setAttribute('href', `restaurant.html?slug=${encodeURIComponent(decodeURIComponent(legacyDetail[1]))}`);
+              continue;
+            }
+            try {
+              const url = new URL(value, location.href);
+              if (!['http:', 'https:'].includes(url.protocol)) node.removeAttribute(attribute.name);
+            } catch {
+              node.removeAttribute(attribute.name);
+            }
+          }
+        }
+      });
+
+      return template.innerHTML;
+    };
+
+    Object.defineProperty(Element.prototype, 'innerHTML', {
+      configurable: innerHtmlDescriptor.configurable,
+      enumerable: innerHtmlDescriptor.enumerable,
+      get: innerHtmlDescriptor.get,
+      set(value) {
+        if (this.id === 'feed' || this.id === 'grid') {
+          innerHtmlDescriptor.set.call(this, sanitizeFeedMarkup(value));
+          return;
+        }
+        innerHtmlDescriptor.set.call(this, value);
+      }
+    });
+  }
+}
+
 if (!/^(admin(?:-|\.)|login\.|register\.|forgot-|reset-|404\.)/.test(currentPublicPage)) {
   void import('/header-search.js?v=20260823-1').catch(error => {
     console.error('Shared header search failed to load:', error);
@@ -43,7 +100,7 @@ if (currentPublicPage === 'restaurace.html') {
 }
 
 if (currentPublicPage === 'ai.html') {
-  void import('/ai-form-runtime.js?v=20260823-1').catch(error => {
+  void import('/ai-form-runtime.js?v=20260823-2').catch(error => {
     console.error('Recommendation form runtime failed to load:', error);
   });
 }
@@ -273,6 +330,51 @@ const GurmaoCollections = {
 
 window.GurmaoCollections = GurmaoCollections;
 
+if (currentPublicPage === 'feed.html') {
+  document.addEventListener('click', async event => {
+    const button = event.target.closest('#feed .save-btn, #feed .save-menu-btn, #grid [data-save]');
+    if (!button || button.dataset.saveBusy === '1') return;
+
+    const article = button.closest('[data-restaurant]');
+    const id = String(button.getAttribute('data-save') || article?.getAttribute('data-restaurant') || '');
+    if (!id) return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    const relatedButtons = article
+      ? [...article.querySelectorAll(`[data-save="${CSS.escape(id)}"]`)]
+      : [button];
+    relatedButtons.forEach(item => {
+      item.dataset.saveBusy = '1';
+      item.disabled = true;
+    });
+
+    try {
+      const result = await GurmaoCollections.toggle(id);
+      relatedButtons.forEach(item => {
+        item.classList.toggle('saved', result.saved);
+        item.setAttribute('aria-pressed', String(result.saved));
+        if (item.classList.contains('save-menu-btn')) item.textContent = result.saved ? '❤️ Uloženo' : '🤍 Uložit do výběru';
+        else item.textContent = result.saved ? '❤️' : '🤍';
+      });
+      showToast(result.saved
+        ? (result.synced ? '❤️ Přidáno do výběru' : '❤️ Uloženo v tomto zařízení')
+        : (result.synced ? '🤍 Odebráno z výběru' : '🤍 Odebráno v tomto zařízení'));
+    } catch (error) {
+      console.error('Feed save synchronization failed:', error);
+      showToast('⚠️ Nepodařilo se synchronizovat. Zkus to znovu.');
+      GurmaoCollections.invalidate();
+      await updateAllSaveButtons();
+    } finally {
+      relatedButtons.forEach(item => {
+        item.disabled = false;
+        delete item.dataset.saveBusy;
+      });
+    }
+  }, true);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   await updateAllSaveButtons();
 
@@ -324,7 +426,8 @@ async function updateAllSaveButtons() {
   saveButtons.forEach(btn => {
     const id = String(btn.getAttribute('data-save') || '');
     const isSaved = saved.has(id);
-    btn.textContent = isSaved ? '❤️' : '🤍';
+    if (btn.classList.contains('save-menu-btn')) btn.textContent = isSaved ? '❤️ Uloženo' : '🤍 Uložit do výběru';
+    else btn.textContent = isSaved ? '❤️' : '🤍';
     btn.classList.toggle('saved', isSaved);
     btn.setAttribute('aria-pressed', String(isSaved));
   });
