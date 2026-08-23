@@ -244,7 +244,9 @@ function card(restaurant) {
 }
 
 function updateToolbar() {
-  $('resultCount').textContent = `Celkem: ${state.total.toLocaleString('cs-CZ')} restaurací`;
+  $('resultCount').textContent = state.sort === 'distance'
+    ? `Nejbližší: ${state.total.toLocaleString('cs-CZ')} restaurací`
+    : `Celkem: ${state.total.toLocaleString('cs-CZ')} restaurací`;
   document.querySelectorAll('.per-page-btn').forEach(button => button.classList.toggle('active', Number(button.dataset.count) === state.perPage));
   document.querySelectorAll('[data-restaurant-view]').forEach(button => button.classList.toggle('active', button.dataset.restaurantView === state.view));
   document.querySelectorAll('#filters [data-vibe]').forEach(button => button.classList.toggle('is-active', (VIBE_MAP[button.dataset.vibe] || 'all') === state.vibe));
@@ -303,32 +305,46 @@ async function fetchServerPage(offset) {
 }
 
 async function fetchNearestRows() {
-  const rows = [];
-  const batchSize = 500;
-  let offset = 0;
-  while (true) {
+  const latitude = Number(state.userLocation?.lat);
+  const longitude = Number(state.userLocation?.lng);
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return [];
+
+  const targetCandidates = Math.max(120, state.perPage * 10);
+  const latitudeWindows = [0.03, 0.07, 0.15, 0.35, 0.8, 1.8, 4.5];
+  const longitudeFactor = Math.max(0.35, Math.cos(latitude * Math.PI / 180));
+  const byId = new Map();
+
+  for (const latDelta of latitudeWindows) {
+    const lonDelta = latDelta / longitudeFactor;
     let query = supabase.from('restaurants').select(CARD_FIELDS);
-    query = applyCommonFilters(query).not('latitude', 'is', null).not('longitude', 'is', null);
-    const { data, error } = await query.range(offset, offset + batchSize - 1);
+    query = applyCommonFilters(query)
+      .not('latitude', 'is', null)
+      .not('longitude', 'is', null)
+      .gte('latitude', latitude - latDelta)
+      .lte('latitude', latitude + latDelta)
+      .gte('longitude', longitude - lonDelta)
+      .lte('longitude', longitude + lonDelta)
+      .limit(1000);
+
+    const { data, error } = await query;
     if (error) throw error;
-    const batch = data || [];
-    rows.push(...batch);
-    if (batch.length < batchSize) break;
-    offset += batchSize;
+    for (const restaurant of data || []) byId.set(String(restaurant.id || restaurant.slug), restaurant);
+    if (byId.size >= targetCandidates) break;
   }
 
-  return rows
+  return [...byId.values()]
     .map(restaurant => {
-      const latitude = Number(restaurant.latitude);
-      const longitude = Number(restaurant.longitude);
-      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+      const rowLat = Number(restaurant.latitude);
+      const rowLng = Number(restaurant.longitude);
+      if (!Number.isFinite(rowLat) || !Number.isFinite(rowLng)) return null;
       return {
         ...restaurant,
-        _distance: distanceKm(state.userLocation.lat, state.userLocation.lng, latitude, longitude)
+        _distance: distanceKm(latitude, longitude, rowLat, rowLng)
       };
     })
     .filter(Boolean)
-    .sort((a, b) => a._distance - b._distance);
+    .sort((a, b) => a._distance - b._distance)
+    .slice(0, Math.max(targetCandidates, 240));
 }
 
 async function loadResults(reset = true) {
