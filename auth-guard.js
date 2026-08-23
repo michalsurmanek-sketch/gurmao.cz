@@ -1,5 +1,11 @@
-// Auth Guard – ověřuje skutečnou Supabase relaci místo zastaralého localStorage.
+// Auth Guard – chrání pouze stránky, které skutečně vyžadují přihlášení.
 (async function authGuard() {
+  const page = (window.location.pathname.split('/').pop() || '').toLowerCase();
+
+  // Můj výběr podporuje hosta přes localStorage a přihlášeného uživatele přes Supabase.
+  // Proto collections.html nesmí být přesměrována na login.
+  if (page === 'collections.html') return;
+
   try {
     const { supabase } = await import('./supabase-client.js');
     const { data: { user }, error } = await supabase.auth.getUser();
@@ -11,7 +17,7 @@
       return;
     }
 
-    // Zachovat pouze kompatibilní pomocnou informaci; zdrojem pravdy je Supabase.
+    // Zachovat pouze kompatibilní pomocnou informaci; zdrojem pravdy je Supabase Auth.
     localStorage.setItem('gurmao_user', JSON.stringify({
       loggedIn: true,
       id: user.id,
