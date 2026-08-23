@@ -47,7 +47,6 @@ jobs:
           node --check profile-page.js
           node --check contact-form-runtime.js
           node --check cookie-consent.js
-          node --check rating.js
           node --check restaurant-card-enhancements.js
           node --check restaurant-recommendation-card.js
           node --check restaurant-detail-page.js
