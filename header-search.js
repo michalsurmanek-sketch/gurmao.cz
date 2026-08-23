@@ -79,7 +79,16 @@ function position(panel, anchor) {
   panel.style.left = `${Math.max(12, Math.min(innerWidth - panel.offsetWidth - 12, rect.right - panel.offsetWidth))}px`;
 }
 
-function buildPanel(anchor) {
+function findTriggers() {
+  return [...new Set([
+    document.getElementById('headerSearchToggle'),
+    document.getElementById('mobileSearchBtn'),
+    document.getElementById('searchToggle'),
+    document.querySelector('[data-header-search]')
+  ].filter(Boolean))];
+}
+
+function buildPanel(triggers) {
   document.getElementById(PANEL_ID)?.remove();
   const panel = document.createElement('section');
   panel.id = PANEL_ID;
@@ -120,31 +129,47 @@ function buildPanel(anchor) {
   panel.append(top, tools, results);
   document.body.appendChild(panel);
 
+  const setExpanded = value => triggers.forEach(trigger => trigger.setAttribute('aria-expanded', String(value)));
+  const activeAnchor = () => matchMedia('(max-width:767px)').matches
+    ? (document.getElementById('mobileSearchBtn') || triggers[0])
+    : (document.getElementById('headerSearchToggle') || triggers[0]);
+
   const closePanel = () => {
     panel.hidden = true;
-    anchor.setAttribute('aria-expanded', 'false');
+    setExpanded(false);
   };
   const openPanel = () => {
+    document.getElementById('mobileSearchBox')?.classList.add('hidden');
     panel.hidden = false;
-    anchor.setAttribute('aria-expanded', 'true');
-    position(panel, anchor);
-    setStatus(results, `Začněte psát. Hledáme v názvu, městě, kuchyni a vibe.`);
+    setExpanded(true);
+    position(panel, activeAnchor());
+    setStatus(results, 'Začněte psát. Hledáme v názvu, městě, kuchyni a vibe.');
     setTimeout(() => input.focus(), 20);
   };
 
   close.addEventListener('click', closePanel);
-  anchor.addEventListener('click', event => {
-    event.preventDefault();
-    event.stopPropagation();
-    panel.hidden ? openPanel() : closePanel();
+  triggers.forEach(trigger => {
+    trigger.setAttribute('aria-haspopup', 'dialog');
+    trigger.setAttribute('aria-expanded', 'false');
+    const captureLegacyMobile = trigger.id === 'mobileSearchBtn';
+    trigger.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (captureLegacyMobile) event.stopImmediatePropagation();
+      panel.hidden ? openPanel() : closePanel();
+    }, captureLegacyMobile ? { capture: true } : undefined);
   });
+
   document.addEventListener('click', event => {
-    if (!panel.hidden && !panel.contains(event.target) && !anchor.contains(event.target)) closePanel();
+    const clickedTrigger = triggers.some(trigger => trigger.contains(event.target));
+    if (!panel.hidden && !panel.contains(event.target) && !clickedTrigger) closePanel();
   });
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && !panel.hidden) closePanel();
   });
-  window.addEventListener('resize', () => { if (!panel.hidden) position(panel, anchor); }, { passive: true });
+  window.addEventListener('resize', () => {
+    if (!panel.hidden) position(panel, activeAnchor());
+  }, { passive: true });
 
   return { panel, input, results, locationButton };
 }
@@ -201,19 +226,13 @@ function renderResults(container, restaurants) {
   });
 }
 
-function findTrigger() {
-  return document.getElementById('headerSearchToggle') || document.getElementById('searchToggle') || document.querySelector('[data-header-search]');
-}
-
 function init() {
   if (ROOT.dataset.gurmaoHeaderSearchReady === 'true') return;
-  const anchor = findTrigger();
-  if (!anchor) return;
+  const triggers = findTriggers();
+  if (!triggers.length) return;
   ROOT.dataset.gurmaoHeaderSearchReady = 'true';
   injectStyles();
-  anchor.setAttribute('aria-haspopup', 'dialog');
-  anchor.setAttribute('aria-expanded', 'false');
-  const ui = buildPanel(anchor);
+  const ui = buildPanel(triggers);
   let timer;
 
   ui.input.addEventListener('input', () => {
