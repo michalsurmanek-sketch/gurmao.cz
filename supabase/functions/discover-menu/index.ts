@@ -21,7 +21,7 @@ function scoreCandidate(url:string,label:string,body=''){
 async function inspectUrl(url:string){
   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),15000);
   try{
-    const r=await fetch(url,{redirect:'follow',signal:controller.signal,headers:{'user-agent':'GURMAO-menu-discovery/1.1 (+https://gurmao.cz)'}});
+    const r=await fetch(url,{redirect:'follow',signal:controller.signal,headers:{'user-agent':'GURMAO-menu-discovery/1.2 (+https://gurmao.cz)'}});
     if(!r.ok)return null;
     const type=(r.headers.get('content-type')||'').toLowerCase();
     const pdf=type.includes('application/pdf')||isPdfUrl(r.url);
@@ -34,15 +34,22 @@ async function inspectUrl(url:string){
 Deno.serve(async req=>{
   if(req.method==='OPTIONS')return new Response('ok',{headers:corsHeaders});
   try{
-    const supabaseUrl=Deno.env.get('SUPABASE_URL')!;
-    const anonKey=Deno.env.get('SUPABASE_ANON_KEY')!;
-    const serviceKey=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl=Deno.env.get('SUPABASE_URL');
+    const anonKey=Deno.env.get('SUPABASE_ANON_KEY');
+    const serviceKey=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if(!supabaseUrl||!anonKey||!serviceKey){
+      return new Response(JSON.stringify({message:'Serverová konfigurace není kompletní'}),{status:503,headers:{...corsHeaders,'Content-Type':'application/json'}});
+    }
+
     const auth=req.headers.get('Authorization')||'';
     const userClient=createClient(supabaseUrl,anonKey,{global:{headers:{Authorization:auth}}});
-    const {data:{user}}=await userClient.auth.getUser();
-    if(!user)return new Response(JSON.stringify({message:'Nepřihlášený uživatel'}),{status:401,headers:{...corsHeaders,'Content-Type':'application/json'}});
-    const adminEmails=(Deno.env.get('ADMIN_EMAILS')||'').split(',').map(v=>v.trim().toLowerCase()).filter(Boolean);
-    if(adminEmails.length&&!adminEmails.includes((user.email||'').toLowerCase()))return new Response(JSON.stringify({message:'Přístup odepřen'}),{status:403,headers:{...corsHeaders,'Content-Type':'application/json'}});
+    const {data:{user},error:userError}=await userClient.auth.getUser();
+    if(userError||!user){
+      return new Response(JSON.stringify({message:'Nepřihlášený uživatel'}),{status:401,headers:{...corsHeaders,'Content-Type':'application/json'}});
+    }
+    if(user.app_metadata?.role!=='admin'){
+      return new Response(JSON.stringify({message:'Přístup odepřen'}),{status:403,headers:{...corsHeaders,'Content-Type':'application/json'}});
+    }
 
     const body=await req.json();
     const restaurantId=body.restaurant_id;
