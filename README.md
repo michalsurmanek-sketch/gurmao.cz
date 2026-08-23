@@ -2,245 +2,164 @@
 
 **Nejez. Prožij.**
 
-Kurátorovaná platforma pro gastronomii s filozofií zaměřenou na zážitky, ne jen jídlo.
+GURMAO je česká platforma pro hledání restaurací podle chuti, kuchyně, města, nálady a atmosféry. Projekt používá reálnou datovou vrstvu v Supabase/PostgreSQL; nejde už o původní mock/MVP katalog.
 
-## 🎨 Koncept
+## Hlavní veřejné části
 
-GURMAO je minimalistická dark-mode platforma pro objevování vybraných restaurací, kuchařů a gastro zážitků. Není to katalog všech restaurací - pouze těch, které mají důvod existovat.
+- `index.html` – homepage a vstup do hledání,
+- `restaurace.html` + `restaurace.js` – katalog a filtry,
+- `restaurant.html?slug=<slug>` + `restaurant-detail-page.js` – jediný canonical detail restaurace,
+- `mapa.html` + `mapa.js` – mapa s GeoJSON clusteringem,
+- `feed.html` + `feed-page.js` – stránkovaný feed,
+- `ai.html` + `ai-recommendations.js` – deterministická doporučení nad aktuálními daty,
+- `collections.html` + `collections-page.js` – Můj výběr pro hosta i přihlášeného uživatele,
+- `profile.html` + `profile-page.js` – profil a správa účtu,
+- `kontakt.html` + `contact-form-runtime.js` – chráněný kontaktní formulář.
 
-### Klíčové funkce
+## Technologie
 
-- **Vibe systém** - kategorizace podle atmosféry a nálady
-- **AI doporučení** - jedno místo podle aktuální nálady, bez scrollování
-- **Můj výběr** - osobní chuťová paměť uložených míst
-- **Feed** - kurátorovaný obsah s mobile-first přístupem
-- **Gear** - vybavení doporučené profesionály
+- statický frontend HTML/CSS/vanilla JavaScript,
+- Tailwind CSS build,
+- Supabase Auth + Postgres + Edge Functions,
+- GitHub Actions pro kontrolu, sitemapu, importy a datové automatizace,
+- MapLibre/Mapbox-compatible mapová vrstva nad OpenFreeMap stylem,
+- Google Places enrichment na serverové/automatizační vrstvě.
 
-## 🚀 Technologie
+## Architektonická pravidla
 
-- **Tailwind CSS** (CDN) - utility-first CSS framework
-- **Vanilla JavaScript** - žádné frameworky, čistý JS
-- **localStorage** - ukládání dat (MVP režim)
-- **Google Fonts** - Playfair Display + Inter
+### Restaurace
 
-## 🎨 Design systém
+Veřejné odkazy používají pouze:
 
-### Barevná paleta
-
-```css
-gurmaoblack: #0b0b0d  /* Tmavé pozadí */
-gurmaogold: #d4af37    /* Zlatá - hlavní akcent */
-gurmaored: #8b1d18     /* Červená - minimálně použito */
+```text
+restaurant.html?slug=<slug>
 ```
 
-### Vizuální prvky
+Staré `restaurace-<slug>.html` a `restaurace-detail.html?id=...` jsou retired/legacy cesty a aktivní runtime je nesmí generovat.
 
-- Dark mode s minimalistickým designem
-- Zlaté akcenty pro CTA a důležité prvky
-- Glow efekty (`shadow-glow`)
-- Backdrop blur pro layery
-- Rounded-3xl pro karty (24px radius)
+### Uložené restaurace
 
-### Typography
+`window.GurmaoCollections` v `app.js` je jediná sdílená logika:
 
-- **Headings**: Playfair Display (serif, elegantní)
-- **Body**: Inter (sans-serif, čitelný)
+- host → `localStorage`,
+- přihlášený uživatel → `saved_restaurants`,
+- po přihlášení se lokální slugy pokusí synchronizovat do cloudu,
+- interní DB vazba používá UUID restaurace, veřejné URL/save atributy používají slug.
 
-## 📁 Struktura projektu
+### Auth a admin
 
-```
-├── index.html                    # Landing page
-├── feed.html                     # Feed s restauracemi
-├── restaurace.html               # Seznam restaurací
-├── kuchar.html                   # Seznam kuchařů
-├── gear.html                     # Vybavení
-├── ai.html                       # AI doporučení
-├── collections.html              # Můj výběr
-├── onboarding.html               # Registrační formulář
-├── restaurace-noir-table.html    # Detail restaurace
-├── kuchar-adam-noir.html         # Profil kuchaře
-├── app.js                        # Sdílený JavaScript
-└── CNAME                         # GitHub Pages konfigurace
-```
+- zdroj pravdy je `supabase.auth.getUser()`, ne `localStorage`,
+- admin role je pouze `user.app_metadata.role === 'admin'`,
+- e-mail ani `user_metadata` neudělují admin oprávnění,
+- login return URL musí zůstat same-origin,
+- admin Edge Functions ověřují JWT i admin roli před použitím service-role klienta.
 
-## 🎯 Vibe systém
+### Kontakt
 
-Restaurace jsou kategorizovány podle "vibes" - atmosféry a pocitu:
+Browser nikdy nezapisuje přímo do `contact_messages`.
 
-- 🔥 **DRAMA** - intenzivní zážitky, dramatická atmosféra
-- 🖤 **DARK** - elegantní fine dining, tmavá estetika
-- 🌿 **PURE** - čisté chutě, minimalismus
-- 🍷 **LUXE** - luxusní prostředí, premium service
-- 🌮 **CHAOS** - street food, živá atmosféra
-- 🌊 **CALM** - klidná, relaxační atmosféra
-
-## 💾 Lokální úložiště
-
-Data jsou ukládána v `localStorage`:
-
-### Save funkcionalita
-
-```javascript
-// Klíč pro uložené restaurace
-const SAVED_KEY = 'gurmao_saved';
-
-// Uložit restauraci
-GurmaoApp.toggleSave('noir-table');
-
-// Získat všechny uložené
-const saved = GurmaoApp.getSaved();
+```text
+kontakt.html
+  → contact-form-runtime.js
+  → Edge Function submit-contact
+  → validace/rate limit
+  → service-role INSERT
 ```
 
-### Data struktura
+### Service worker
 
-```javascript
-// Restaurace
-{
-  id: 'noir-table',
-  vibe: '🍷 LUXE',
-  name: 'Noir Table',
-  city: 'Praha',
-  tag: 'fine dining',
-  href: 'restaurace-noir-table.html',
-  img: 'https://...'
-}
-```
+`service-worker.js` nepřepisuje HTML a neinjektuje opravné runtime skripty. Slouží jen pro síťovou navigaci a offline fallback.
 
-## 🔧 Jak spustit
+## Vibe systém
 
-### 1. Lokální vývoj
+- 🍷 LUXE
+- 🔥 DRAMA
+- 🌮 CHAOS
+- 🌿 PURE
+- 🖤 DARK
+- 🌊 CALM
 
-Jednoduše otevřete `index.html` v prohlížeči. Nebo použijte lokální server:
+Vibe je doplňkový signál pro hledání a doporučení; primární produktový vstup zůstává chuť/kuchyně/lokalita.
+
+## Lokální kontrola
+
+Po checkoutu:
 
 ```bash
-# Python 3
-python -m http.server 8000
-
-# Node.js
-npx http-server
-
-# VS Code Live Server
-# Klikněte pravým na index.html -> Open with Live Server
+npm ci
+npm test
+./check-project.sh
 ```
 
-### 2. GitHub Pages
+`npm test` zahrnuje importní testy, chef testy a `scripts/runtime-quality.test.mjs`.
 
-Projekt je nakonfigurován pro GitHub Pages:
+GitHub Actions `quality-check.yml` navíc kontroluje syntaxi klíčových runtime modulů.
 
-1. Push do `main` branch
-2. GitHub automaticky deployuje
-3. Dostupné na: `https://username.github.io/gurmao.cz`
+## Pre-deploy kontrola
 
-CNAME soubor obsahuje vlastní doménu.
-
-## 📱 Mobilní menu
-
-Hamburger menu je implementováno ve všech stránkách:
-
-- Automaticky se zavře při kliknutí na odkaz
-- Podporuje Escape klávesou
-- Backdrop overlay pro lepší UX
-- Responsive breakpoint: `md:` (768px)
-
-## 🎨 Přidání nové restaurace
-
-### 1. Přidat do seznamu (restaurace.html)
-
-```html
-<a href="restaurace-nazev.html" class="group rounded-3xl bg-white/5 hover:bg-white/10 transition overflow-hidden">
-  <div class="aspect-[3/4] bg-[url('obrazek.jpg')] bg-cover bg-center"></div>
-  <div class="p-6">
-    <div class="text-sm text-gurmaogold mb-1">🍷 LUXE</div>
-    <h3 class="text-xl font-semibold">Název</h3>
-    <p class="text-white/60 text-sm mt-1">Město · typ</p>
-  </div>
-</a>
+```bash
+./deploy.sh
 ```
 
-### 2. Přidat do katalogu (collections.html)
+Skript je pouze verifier. Záměrně neprovádí `git add`, commit, push ani změny Supabase.
 
-```javascript
-const catalog = [
-  {
-    id: 'nazev-restaurace',
-    vibe: '🍷 LUXE',
-    name: 'Název',
-    city: 'Město',
-    tag: 'typ',
-    href: 'restaurace-nazev.html',
-    img: 'url_obrazku'
-  }
-];
+## Supabase
+
+Nepřipojuj náhodně nový projekt a nepřepisuj browser konfiguraci podle historických návodů.
+
+Před schema změnami:
+
+```bash
+supabase login
+supabase link --project-ref <SPRAVNY_GURMAO_PROJECT_REF>
+supabase db pull
 ```
 
-### 3. Vytvořit detailní stránku
+Pak spusť read-only audit:
 
-Použijte `restaurace-noir-table.html` jako šablonu.
+```text
+supabase/rls-audit.sql
+```
 
-## 🔍 SEO
+Teprve podle skutečného produkčního schématu vytvoř chybějící migration baseline. Současný adresář `supabase/migrations/` zatím nepředstavuje kompletní reprodukovatelný obraz celé produkční DB.
 
-Všechny stránky obsahují:
+## Bezpečnost
 
-- Meta description
-- Open Graph tagy pro social sharing
-- Twitter Card tagy
-- Správné semantic HTML
+- `service_role` nikdy do browseru ani Git repozitáře,
+- veřejné klientské klíče nesmí být zaměňovány za serverové secrets,
+- uživatelské tabulky mají mít RLS,
+- `saved_restaurants` pouze vlastní řádky,
+- `profiles` pouze vlastní profil,
+- `contact_messages` bez anon/authenticated INSERT,
+- admin zápisy chránit backendem/RLS, ne jen UI,
+- dynamická DB data renderovat přes bezpečný DOM nebo escapovat.
 
-## 🚧 MVP poznámky
+## SEO
 
-Aktuální verze je MVP (Minimum Viable Product):
+- `robots.txt` odkazuje na `sitemap.xml`,
+- sitemapu generuje `scripts/generate-sitemap.mjs`,
+- workflow ji pravidelně aktualizuje,
+- restaurant sitemap URL používají canonical route,
+- statické `lastmod` se odvozuje z poslední Git změny příslušného souboru.
 
-- ✅ Design a UX kompletní
-- ✅ Mobile responsive
-- ✅ localStorage pro ukládání
-- ⚠️ Mock data (v produkci připojit k DB)
-- ⚠️ Onboarding formulář neposílá data
-- ⚠️ Chybí real-time aktualizace
+Dlouhodobý otevřený úkol: prerender/static detail restaurace, aby title, description, OG a Restaurant JSON-LD nebyly závislé pouze na klientském JavaScriptu.
 
-## 🎯 Roadmap
+## Stav projektu a další zdroje pravdy
 
-### Fáze 1 - Backend (budoucí)
-- [ ] Databáze (Supabase/Firebase)
-- [ ] Autentizace uživatelů
-- [ ] Real-time aktualizace
-- [ ] API endpointy
+- `PROJEKT_STATUS.md`
+- `PRODUCTION_CHECKLIST.md`
+- `SUPABASE_SETUP.md`
+- `ADMIN_SETUP.md`
+- `EDGE_FUNCTION_SETUP.md`
+- `scripts/runtime-quality.test.mjs`
 
-### Fáze 2 - Funkce
-- [ ] Vyhledávání
-- [ ] Filtry na feed
-- [ ] Review systém
-- [ ] Rezervace
+## Známé otevřené technické body
 
-### Fáze 3 - Komunitní
-- [ ] Uživatelské profily
-- [ ] Komentáře
-- [ ] Sdílení sbírek
-- [ ] Following systém
+- dokončit skutečný DB/RLS diff po zpřístupnění Gurmao Supabase,
+- vytvořit reprodukovatelný migration baseline,
+- doplnit browser E2E testy,
+- doplnit automatizovaný accessibility audit,
+- prerenderovat SEO detailové stránky,
+- případně nahradit bounding-box nearest search PostGIS/RPC dotazem.
 
-## 🤝 Přispívání
-
-Pro MVP není potřeba složitý setup:
-
-1. Fork repozitář
-2. Vytvoř feature branch
-3. Commituj změny
-4. Push a vytvoř Pull Request
-
-### Coding style
-
-- Používej Tailwind utility classes
-- Konzistentní mezery (2 spaces)
-- Komentuj složitější logiku
-- Testuj na mobile i desktop
-
-## 📄 Licence
-
-© 2025 GURMAO.cz · Všechna práva vyhrazena
-
-## 💬 Kontakt
-
-Pro otázky a návrhy: [Sem přidat kontakt]
-
----
-
-**Nejez. Prožij.** 🍷
+© 2026 GURMAO.cz
