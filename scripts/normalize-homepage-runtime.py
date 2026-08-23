@@ -32,17 +32,36 @@ text = re.sub(
     count=1
 )
 
+# auth-redirect.js imports the shared Supabase client, so a second direct module tag is
+# redundant. The old onboarding runtime is a no-op and should not ship on the homepage.
+text = re.sub(r'\n?<script type="module" src="supabase-client\.js"></script>', '', text)
+text = re.sub(r'\n?<script src="onboarding\.js"></script>', '', text)
+
+# Homepage account CTA must be driven by verified Supabase auth in homepage-runtime.js,
+# never by a forgeable/stale localStorage compatibility marker.
+text = re.sub(
+    r'\n<script>\s*// Homepage: Change CTA for logged-in users[\s\S]*?</script>',
+    '',
+    text,
+    count=1
+)
+
 for forbidden in (
     'txfuxrezyrgybjvjnhom.supabase.co',
     'src="header-search.js?v=20260726-unified-4"',
     'src="location-search.js"',
-    '// Mobile Search Toggle'
+    '// Mobile Search Toggle',
+    'src="onboarding.js"',
+    '// Homepage: Change CTA for logged-in users',
+    'type="module" src="supabase-client.js"'
 ):
     if forbidden in text:
         raise SystemExit(f'Homepage normalization failed, legacy marker remains: {forbidden}')
 
 if '<script src="app.js?v=20260823-shared-4"></script>' not in text:
     raise SystemExit('Current app.js runtime reference was not established.')
+if '<script type="module" src="auth-redirect.js"></script>' not in text:
+    raise SystemExit('Homepage auth/page runtime router is missing.')
 if 'https://jdprdcnxbxfzgrjjfflr.supabase.co' not in text:
     raise SystemExit('Current Supabase preconnect was not established.')
 
