@@ -1,199 +1,123 @@
-# 🍽️ GURMAO.cz - Stav projektu
+# GURMAO.cz – aktuální technický stav
 
-## ✅ Databáze - Aktuální stav (211 restaurací)
+**Aktualizováno:** 23. srpna 2026
 
-### Distribuce po městech:
-- **Praha**: 100 restaurací
-- **Zlínský kraj**: 50 restaurací  
-- **Brno**: 20 restaurací
-- **Olomouc**: 20 restaurací
-- **Ostrava**: 16 restaurací
-- **Uherské Hradiště**: 5 restaurací
+Tento soubor je stručný zdroj pravdy pro současnou architekturu repozitáře. Nejde o potvrzení stavu živé produkční databáze; Gurmao Supabase projekt není v aktuálním připojeném nástroji dostupný pro přímou inspekci.
 
-**CELKEM: 211 restaurací**
+## Produkční směr
 
----
+GURMAO je vyhledávač a doporučovací vrstva restaurací podle chuti, lokality, hodnocení a atmosféry. Veřejný web používá Supabase/Postgres jako datovou vrstvu a statický frontend s modulárním JavaScriptem.
 
-## 🎨 Vibe systém (5 kategorií)
+## Aktuální Supabase klient
 
-✅ Podporované vibes:
-- 🍷 **LUXE** - Elegantní zážitek, důraz na detail, klidná atmosféra
-- 🔥 **DRAMA** - Výrazné chutě, silná osobnost, nezapomenutelné kombinace  
-- 🌮 **CHAOS** - Uvolněný styl, pestrost, radost z jídla bez pravidel
-- 🌿 **PURE** - Čisté suroviny, jednoduchost, chuť v hlavní roli
-- 🖤 **DARK** - Intimní atmosféra, večerní vibe, tlumené světlo
+Browser používá jedinou konfiguraci v `supabase-client.js`. Starý projektový ref byl z aktivního JavaScriptu odstraněn. Publishable klíč může být v browseru; `service_role` klíč do browseru ani repozitáře nepatří.
 
-❌ Nepodporováno (automaticky převedeno):
-- 🌊 **CALM** → převedeno na PURE nebo LUXE
+## Restaurace
 
----
+- katalog: `restaurace.html` + `restaurace.js`,
+- canonical detail: `restaurant.html?slug=<slug>`,
+- mapa: `mapa.html` + `mapa.js`,
+- feed: `feed.html` + `feed-page.js`,
+- globální vyhledávání: `header-search.js`.
 
-## 📁 Struktura databáze
+Běžný katalog je stránkovaný na serveru. Mapa používá GeoJSON clustering. Aktivní veřejné komponenty nesmí generovat staré `restaurace-<slug>.html` ani `restaurace-detail.html?id=...` odkazy.
 
-### Tabulka: `restaurants`
+## Uložené restaurace
 
-Sloupce:
-- `id` (UUID, primary key)
-- `slug` (text, unique) - URL-friendly identifikátor
-- `name` (text) - Název restaurace
-- `city` (text) - Město
-- `vibe` (text) - Kategorie atmosféry (🍷🔥🌮🌿🖤)
-- `tag` (text) - Typ kuchyně / kategorie
-- `description` (text) - Popis restaurace
-- `latitude` (numeric) - GPS souřadnice - šířka
-- `longitude` (numeric) - GPS souřadnice - délka
-- `image_url` (text) - URL obrázku (Unsplash placeholders)
-- `created_at` (timestamp) - Datum vytvoření záznamu
+`app.js` poskytuje `GurmaoCollections`:
 
----
+- host: lokální `localStorage`,
+- přihlášený uživatel: Supabase `saved_restaurants`,
+- lokální položky se po přihlášení pokusí synchronizovat do cloudu,
+- při selhání cloudového zápisu se nesmí zobrazit falešný úspěch.
 
-## 🔧 Funkční komponenty
+`collections.html` je dostupná i bez přihlášení a zobrazuje lokálně uložené restaurace. `profile.html` zůstává chráněná autentizací.
 
-### ✅ Funguje:
-1. **Supabase připojení** - Opravené API klíče
-2. **Načítání restaurací** - `/restaurace.html`
-3. **Mapa** - `/mapa.html` s Mapbox GL + GPS značky
-4. **Rating systém** - Připravený
-5. **Vibe filtry** - Funkční
-6. **Sdílení** - Social share tlačítka
+## AI / doporučení
 
-### 📋 HTML stránky:
-- ✅ `index.html` - Homepage
-- ✅ `restaurace.html` - Seznam všech restaurací
-- ✅ `mapa.html` - Interaktivní mapa
-- ✅ `feed.html` - Feed view
-- ✅ `login.html` - Přihlášení
-- ✅ `profile.html` - Profil uživatele
-- ✅ `admin.html` - Admin panel
-- ✅ `test-db.html` - **Test databázového připojení**
+`ai-recommendations.js` nepoužívá demo restaurace ani náhodné skóre. Kandidáti jsou předfiltrováni v Supabase a lokálně doskórováni podle zadaných kritérií a dostupných dat. Jde o deterministický recommender, ne o placené pořadí.
 
----
+## Hodnocení
 
-## 🚀 Jak projekt používat
+Aktuální veřejný detail zobrazuje Google rating a počet Google hodnocení. Starý browserový `rating.js` byl odstraněn, protože už nebyl aktivní součástí produktu. Referenční SQL pro případnou budoucí vlastní rating vrstvu používá sloupec `stars` a UUID restaurace.
 
-### 1. Test databázového připojení
+## Kontakt
+
+Veřejný kontakt nikdy nezapisuje přímo do `contact_messages`:
+
+`kontakt.html` → `contact-form-runtime.js` → Edge Function `submit-contact` → serverový zápis.
+
+Přímý browserový `INSERT` do `contact_messages` nemá být povolen RLS/granty.
+
+## Edge Functions
+
+JWT politika je explicitní v `supabase/config.toml`:
+
+- `submit-contact`: veřejná, vlastní ochrana,
+- `google-place-photo`: veřejná, ale obslouží jen photo ID uložená v databázi Gurmao,
+- `delete-account`: JWT,
+- `discover-menu`: JWT + admin role,
+- `sync-opening-hours`: JWT + admin role.
+
+Admin role se bere z `user.app_metadata.role === 'admin'`, nikoliv z e-mailu nebo uživatelsky editovatelných metadata.
+
+## Service worker
+
+`service-worker.js` už nepřepisuje HTML a neinjektuje opravné skripty. Poskytuje pouze síťové navigace a offline fallback.
+
+## SEO
+
+- canonical restaurant URL: `restaurant.html?slug=...`,
+- sitemapu generuje `scripts/generate-sitemap.mjs`,
+- automatizace `.github/workflows/build-sitemap.yml` ji pravidelně regeneruje,
+- statické `lastmod` vychází z posledního Git commitu příslušného souboru,
+- dynamické restaurace používají dostupné `updated_at`.
+
+Dlouhodobý SEO cíl zůstává build-time/prerendered detail pro každou restauraci, aby metadata a Restaurant JSON-LD nebyly závislé pouze na klientském JavaScriptu.
+
+## CI a regresní ochrana
+
+`npm test` spouští import testy, chef testy a `scripts/runtime-quality.test.mjs`. GitHub Actions `quality-check.yml` navíc kontroluje syntaxi klíčových runtime souborů.
+
+Regresní testy hlídají například:
+
+- zákaz starých restaurant rout,
+- jedinou chráněnou contact cestu,
+- explicitní JWT režim Edge Functions,
+- admin kontrolu funkcí se service-role přístupem,
+- zákaz návratu runtime patch souborů,
+- zákaz monkey-patche `Element.prototype.innerHTML`,
+- guest režim Můj výběr,
+- zákaz retired Supabase projektu v aktivním runtime.
+
+## Databázové migrace – otevřený dluh
+
+`supabase/migrations/` stále neobsahuje úplný baseline produkčního schématu. Bez přímého přístupu k živému Gurmao Supabase projektu se úplný baseline nesmí domýšlet.
+
+Bezpečný postup je:
+
+1. připojit správný Gurmao projekt,
+2. provést `supabase db pull`,
+3. porovnat skutečné RLS, tabulky, views, funkce a triggery,
+4. vytvořit reprodukovatelný baseline,
+5. ověřit `supabase db reset` lokálně,
+6. až potom aplikovat nové schema migrace.
+
+## Známé zbývající priority
+
+1. odstranit poslední retired Supabase preconnect z `index.html`,
+2. dokončit audit všech starých dokumentů a utility skriptů,
+3. po zpřístupnění Gurmao Supabase udělat skutečný DB/RLS diff,
+4. serverově vyřešit geografické řazení „nejblíž“ v katalogu,
+5. připravit prerender/static SEO detailové stránky,
+6. přidat browser E2E + accessibility testy.
+
+## Lokální kontrola
+
 ```bash
-# Spusť lokální server
-python3 -m http.server 8000
-
-# Otevři v prohlížeči
-http://localhost:8000/test-db.html
+npm ci
+npm test
+./check-project.sh
 ```
 
-### 2. Zobrazení restaurací
-```bash
-# Seznam restaurací
-http://localhost:8000/restaurace.html
-
-# Mapa
-http://localhost:8000/mapa.html
-```
-
-### 3. Import dalších restaurací
-SQL soubory jsou připravené v batches po 10 restauracích:
-- Zkopíruj SQL do Supabase → SQL Editor
-- Spusť query
-- Refresh stránku
-
----
-
-## 📊 Kvalita dat
-
-### GPS souřadnice:
-- ✅ **Všech 211 restaurací** má GPS souřadnice
-- Přesnost: Přibližné souřadnice měst/adres
-
-### Obrázky:
-- ✅ **Všech 211 restaurací** má `image_url`
-- Zdroj: Unsplash placeholders (800x800px)
-- Kvalita: HD stock fotografie
-
-### Vibes distribuce:
-- 🌿 **PURE**: ~35% (čisté, jednoduché restaurace)
-- 🌮 **CHAOS**: ~30% (živé, neformální)
-- 🍷 **LUXE**: ~20% (elegantní, fine dining)
-- 🔥 **DRAMA**: ~10% (výrazné, masové)
-- 🖤 **DARK**: ~5% (intimní, speciální)
-
----
-
-## 🔐 Autentizace
-
-### Supabase Auth:
-- Email/Password login ✅
-- User profiles ✅
-- Protected routes ✅
-- Admin role ✅
-
----
-
-## 🗺️ Mapbox integrace
-
-### Funkce:
-- Interaktivní mapa ČR
-- 211 GPS značek
-- Popup s info o restauraci
-- Navigace + Geolokace
-- Vibe filtrování na mapě
-
-### Konfigurace:
-```javascript
-mapboxgl.accessToken = 'pk.eyJ1...' // Veřejný token
-center: [15.5, 49.8] // Střed ČR
-zoom: 7.2
-```
-
----
-
-## 📱 Responsive design
-
-- ✅ Mobile-first approach
-- ✅ Tailwind CSS
-- ✅ Adaptivní grid (1-3 sloupce)
-- ✅ Touch-friendly prvky
-
----
-
-## 🎯 Další kroky
-
-### Doporučené akce:
-1. ✅ **Test databáze** - Otevři `test-db.html`
-2. ✅ **Zkontroluj mapu** - Otevři `mapa.html`
-3. ✅ **Zkontroluj seznam** - Otevři `restaurace.html`
-4. 🔄 **Nahraď Unsplash** - Použij reálné fotky restaurací
-5. 🔄 **Přesné GPS** - Uprav souřadnice na přesné adresy
-6. 🔄 **SEO optimalizace** - Meta tags, sitemap
-7. 🔄 **Analytics** - Google Analytics integrace
-
----
-
-## 💾 Backup a export
-
-### Export dat z Supabase:
-```sql
--- Export všech restaurací
-COPY (SELECT * FROM restaurants ORDER BY city, name) 
-TO '/tmp/gurmao-restaurants.csv' 
-WITH CSV HEADER;
-```
-
-### CSV formát:
-```csv
-slug,name,city,vibe,tag,description,latitude,longitude,image_url
-field-prague,Field,Praha,🍷 LUXE,fine dining,...,50.0875,14.4213,https://...
-```
-
----
-
-## 📞 Kontakty a podpora
-
-- **Supabase URL**: https://txfuxrezyrgybjvjnhom.supabase.co
-- **Projekt**: GURMAO.cz
-- **Verze**: 1.0.0
-- **Datum**: 5. ledna 2026
-
----
-
-**Status**: ✅ **PRODUKČNĚ PŘIPRAVENO**
-
-Všechny základní funkce fungují, data jsou v databázi, frontend je připojený.
+`check-project.sh` ověřuje strukturu a regresní testy, ale nenahrazuje kontrolu živého Supabase projektu.
