@@ -1,3 +1,5 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
 const baseHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -20,15 +22,35 @@ Deno.serve(async (req) => {
     const name = url.searchParams.get('name') || '';
     const width = Math.min(Math.max(Number(url.searchParams.get('w')) || 1200, 400), 1800);
     const apiKey = Deno.env.get('GOOGLE_PLACES_API_KEY');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
-    if (!apiKey) {
-      console.error('GOOGLE_PLACES_API_KEY is not configured.');
+    if (!apiKey || !supabaseUrl || !serviceRoleKey) {
+      console.error('google-place-photo: missing server configuration');
       return textResponse('Fotografie je dočasně nedostupná.', 503);
     }
 
     if (!/^places\/[A-Za-z0-9_-]+\/photos\/[A-Za-z0-9_-]+$/.test(name)) {
       return textResponse('Neplatný identifikátor fotografie.', 400);
     }
+
+    // This endpoint is intentionally public so it can be used directly in <img src>.
+    // Only photo IDs already attached to a GURMAO restaurant may consume Google quota.
+    const admin = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data: storedPhoto, error: lookupError } = await admin
+      .from('restaurants')
+      .select('id')
+      .eq('google_photo_name', name)
+      .limit(1)
+      .maybeSingle();
+
+    if (lookupError) {
+      console.error('google-place-photo: restaurant lookup failed', lookupError.message);
+      return textResponse('Fotografie je dočasně nedostupná.', 503);
+    }
+    if (!storedPhoto) return textResponse('Fotografie nebyla nalezena.', 404);
 
     const endpoint = `https://places.googleapis.com/v1/${name}/media?maxWidthPx=${width}&skipHttpRedirect=true`;
     const googleResponse = await fetch(endpoint, {
@@ -48,6 +70,7 @@ Deno.serve(async (req) => {
     try {
       const photoUrl = new URL(location);
       if (photoUrl.protocol !== 'https:') throw new Error('Non-HTTPS photo URL');
+      // Google may change media hosts, so protocol is the hard security boundary here.
     } catch (error) {
       console.error('Invalid Google photo redirect URL:', error);
       return textResponse('Fotografie je dočasně nedostupná.', 502);
