@@ -41,6 +41,7 @@ jobs:
           node --check ai-form-runtime.js
           node --check ai-redesign.js
           node --check collections-page.js
+          node --check profile-page.js
           node --check contact-form-runtime.js
           node --check cookie-consent.js
           node --check rating.js
