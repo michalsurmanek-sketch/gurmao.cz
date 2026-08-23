@@ -1,6 +1,11 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const ALLOWED_ORIGINS = new Set(['https://gurmao.cz', 'https://www.gurmao.cz', 'http://localhost:3000', 'http://127.0.0.1:3000']);
+const ALLOWED_ORIGINS = new Set([
+  'https://gurmao.cz',
+  'https://www.gurmao.cz',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000'
+]);
 
 function cors(origin: string | null) {
   return {
@@ -14,7 +19,11 @@ function cors(origin: string | null) {
 function json(body: unknown, status: number, origin: string | null) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...cors(origin), 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }
+    headers: {
+      ...cors(origin),
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'no-store'
+    }
   });
 }
 
@@ -28,18 +37,23 @@ Deno.serve(async req => {
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY');
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   const authorization = req.headers.get('authorization') || '';
+
   if (!supabaseUrl || !anonKey || !serviceRoleKey) {
     console.error('delete-account: missing server configuration');
     return json({ message: 'Smazání účtu je dočasně nedostupné.' }, 503, origin);
   }
-  if (!authorization.startsWith('Bearer ')) return json({ message: 'Je nutné se znovu přihlásit.' }, 401, origin);
+  if (!authorization.startsWith('Bearer ')) {
+    return json({ message: 'Je nutné se znovu přihlásit.' }, 401, origin);
+  }
 
   const userClient = createClient(supabaseUrl, anonKey, {
     global: { headers: { Authorization: authorization } },
     auth: { persistSession: false, autoRefreshToken: false }
   });
   const { data: { user }, error: userError } = await userClient.auth.getUser();
-  if (userError || !user) return json({ message: 'Relaci se nepodařilo ověřit. Přihlaste se znovu.' }, 401, origin);
+  if (userError || !user) {
+    return json({ message: 'Relaci se nepodařilo ověřit. Přihlaste se znovu.' }, 401, origin);
+  }
 
   let body: Record<string, unknown> = {};
   try { body = await req.json(); } catch {}
@@ -51,16 +65,16 @@ Deno.serve(async req => {
     auth: { persistSession: false, autoRefreshToken: false }
   });
 
-  const deletions: Array<[string, PromiseLike<{ error: { message?: string } | null }>]> = [
+  // These rows are directly owned by auth.uid(). Missing optional tables are logged,
+  // but cleanup never targets unrelated data by e-mail or any other non-unique field.
+  const ownedRows: Array<[string, PromiseLike<{ error: { message?: string } | null }>]> = [
     ['saved_restaurants', admin.from('saved_restaurants').delete().eq('user_id', user.id)],
     ['ratings', admin.from('ratings').delete().eq('user_id', user.id)],
     ['reviews', admin.from('reviews').delete().eq('user_id', user.id)],
     ['profiles', admin.from('profiles').delete().eq('id', user.id)]
   ];
 
-  if (user.email) deletions.push(['contact_messages', admin.from('contact_messages').delete().eq('email', user.email.toLowerCase())]);
-
-  for (const [table, deletion] of deletions) {
+  for (const [table, deletion] of ownedRows) {
     try {
       const { error } = await deletion;
       if (error) console.warn(`delete-account: ${table} cleanup failed`, error.message || error);
