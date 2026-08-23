@@ -38,7 +38,9 @@ jobs:
           node --check restaurace.js
           node --check ai-recommendations.js
           node --check ai-form-runtime.js
+          node --check contact-form-runtime.js
           node --check restaurant-card-enhancements.js
+          node --check restaurant-recommendation-card.js
           node --check restaurant-detail-page.js
           node --check service-worker.js
           node --check scripts/generate-sitemap.mjs
