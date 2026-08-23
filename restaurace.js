@@ -43,6 +43,7 @@ function applyRestaurantFilterStyles() {
     .card-menu-close{position:absolute;right:12px;top:12px;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:#fff;cursor:pointer}
     .round-action svg{width:17px;height:17px;pointer-events:none}
     .menu-btn{color:#f3c94a}
+    .directory-loading{grid-column:1/-1;text-align:center;padding:70px 0;color:rgba(255,255,255,.62)}
   `;
   document.head.appendChild(style);
 }
@@ -56,6 +57,11 @@ const VIBE_MAP = {
   calm: '🌊 CALM'
 };
 
+const CARD_FIELDS = [
+  'id','slug','name','city','tag','vibe','description','image_url',
+  'latitude','longitude','google_rating','google_review_count','price_level','created_at'
+].join(',');
+
 const params = new URLSearchParams(location.search);
 const state = {
   search: params.get('q') || '',
@@ -65,12 +71,15 @@ const state = {
   sort: params.get('sort') || 'recommended',
   view: localStorage.getItem('gurmaoRestaurantView') === 'rows' ? 'rows' : 'cards',
   perPage: 12,
-  shown: 12,
+  rows: [],
+  total: 0,
   userLocation: null,
-  all: [],
-  filtered: [],
-  loading: false
+  nearestRows: null,
+  loading: false,
+  requestSequence: 0
 };
+
+if (state.sort === 'distance') state.sort = 'recommended';
 
 const $ = id => document.getElementById(id);
 const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({
@@ -111,7 +120,7 @@ function updateUrl() {
   if (state.city) query.set('city', state.city);
   const vibeKey = Object.keys(VIBE_MAP).find(key => VIBE_MAP[key] === state.vibe);
   if (vibeKey) query.set('vibe', vibeKey);
-  if (state.sort !== 'recommended') query.set('sort', state.sort);
+  if (state.sort !== 'recommended' && state.sort !== 'distance') query.set('sort', state.sort);
   history.replaceState(null, '', `${location.pathname}${query.toString() ? `?${query}` : ''}`);
 }
 
@@ -125,13 +134,6 @@ function scrollToNearbyResults() {
   const toolbarTop = toolbar.getBoundingClientRect().top + window.scrollY;
   const targetTop = Math.max(0, Math.round(toolbarTop - headerHeight));
   window.scrollTo({ top: targetTop, left: 0, behavior: 'smooth' });
-  window.setTimeout(() => {
-    const correctedToolbarTop = toolbar.getBoundingClientRect().top + window.scrollY;
-    const correctedTarget = Math.max(0, Math.round(correctedToolbarTop - headerHeight));
-    if (Math.abs(window.scrollY - correctedTarget) > 3) {
-      window.scrollTo({ top: correctedTarget, left: 0, behavior: 'smooth' });
-    }
-  }, 420);
 }
 
 function scheduleNearbyResultsScroll() {
@@ -140,175 +142,21 @@ function scheduleNearbyResultsScroll() {
   else run();
 }
 
-async function loadAll() {
-  if (state.loading) return;
-  state.loading = true;
-  $('resultCount').textContent = 'Načítání restaurací…';
-  try {
-    const all = [];
-    let from = 0;
-    const batchSize = 500;
-    let total = Infinity;
-    while (from < total) {
-      const { data, error, count } = await supabase
-        .from('restaurants')
-        .select('*', { count: 'exact' })
-        .order('created_at', { ascending: false })
-        .range(from, from + batchSize - 1);
-      if (error) throw error;
-      all.push(...(data || []));
-      total = count ?? all.length;
-      if (!data?.length || all.length >= total) break;
-      from += batchSize;
-    }
-    state.all = all;
-    fillSelects();
-    applyFilters();
-  } catch (error) {
-    console.error(error);
-    $('restaurantsList').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:70px 0;color:#e58b8b">Restaurace se nepodařilo načíst.</div>';
-    $('resultCount').textContent = 'Chyba načítání';
-  } finally {
-    state.loading = false;
-  }
-}
-
-function fillSelects() {
-  const cuisines = [...new Set(state.all.map(row => row.tag).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'cs'));
-  const cities = [...new Set(state.all.map(row => row.city).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'cs'));
-  $('cuisineFilter').innerHTML = '<option value="">Všechny kuchyně</option>' + cuisines.map(value => `<option value="${esc(value)}">${esc(value)}</option>`).join('');
-  $('localityFilter').innerHTML = '<option value="">Všechny lokality</option>' + cities.map(value => `<option value="${esc(value)}">${esc(value)}</option>`).join('');
-  $('cuisineFilter').value = state.cuisine;
-  $('localityFilter').value = state.city;
-}
-
 function restaurantRating(restaurant) {
-  const value = Number(restaurant.google_rating || restaurant.rating || restaurant.average_rating || 0);
+  const value = Number(restaurant.google_rating || 0);
   return Number.isFinite(value) && value >= 0 && value <= 5 ? value : 0;
 }
 
 function restaurantReviewCount(restaurant) {
-  const value = Number(
-    restaurant.google_review_count ||
-    restaurant.google_reviews_count ||
-    restaurant.user_ratings_total ||
-    restaurant.rating_count ||
-    restaurant.review_count ||
-    restaurant.reviews_count || 0
-  );
+  const value = Number(restaurant.google_review_count || 0);
   return Number.isFinite(value) && value >= 0 ? value : 0;
-}
-
-function hasGoogleRating(restaurant) {
-  return Boolean(restaurant.google_place_id || restaurant.place_id || restaurant.google_rating);
-}
-
-function parseMinutes(value) {
-  const match = String(value || '').match(/(\d{1,2})[:.]?(\d{2})?/);
-  if (!match) return null;
-  const hours = Number(match[1]);
-  const minutes = Number(match[2] || 0);
-  return hours >= 0 && hours <= 24 && minutes >= 0 && minutes < 60 ? hours * 60 + minutes : null;
-}
-
-function todayHours(restaurant) {
-  const raw = restaurant.opening_hours || restaurant.hours || restaurant.openingHours || restaurant.google_opening_hours;
-  if (!raw) return '';
-  const day = new Date().getDay();
-  const keys = [
-    ['sun', 'sunday', 'ne', 'nedele', 'neděle'],
-    ['mon', 'monday', 'po', 'pondeli', 'pondělí'],
-    ['tue', 'tuesday', 'ut', 'úterý', 'utery'],
-    ['wed', 'wednesday', 'st', 'streda', 'středa'],
-    ['thu', 'thursday', 'ct', 'čt', 'ctvrtek', 'čtvrtek'],
-    ['fri', 'friday', 'pa', 'pá', 'patek', 'pátek'],
-    ['sat', 'saturday', 'so', 'sobota']
-  ][day];
-  if (Array.isArray(raw)) return String(raw[day] ?? raw.find(value => keys.some(key => norm(value).startsWith(norm(key)))) ?? '');
-  if (typeof raw === 'object') {
-    const entry = Object.entries(raw).find(([key]) => keys.some(candidate => norm(key) === norm(candidate) || norm(key).startsWith(norm(candidate))));
-    return String(entry?.[1] ?? '');
-  }
-  const text = String(raw).trim();
-  if (!text) return '';
-  const parts = text.split(/\n|;|\s\|\s/).map(value => value.trim()).filter(Boolean);
-  const entry = parts.find(value => keys.some(key => norm(value).startsWith(norm(key))));
-  return entry ? entry.replace(/^[^:–—-]+[:\s-]+/, '').trim() : text;
-}
-
-function openingStatusHtml(restaurant) {
-  const value = todayHours(restaurant);
-  if (!value) return '<span class="opening-status unknown">🕐 Otevírací doba neuvedena</span>';
-  const normalized = norm(value);
-  if (/zavreno|closed|neotevira/.test(normalized)) return '<span class="opening-status closed">● Dnes zavřeno</span>';
-  const matches = [...value.matchAll(/(\d{1,2}(?::|\.)\d{2})\s*[–—-]\s*(\d{1,2}(?::|\.)\d{2})/g)];
-  if (!matches.length) return `<span class="opening-status unknown">🕐 ${esc(value.slice(0, 38))}</span>`;
-  const now = new Date();
-  const current = now.getHours() * 60 + now.getMinutes();
-  let nextOpen = null;
-  for (const match of matches) {
-    const open = parseMinutes(match[1]);
-    const close = parseMinutes(match[2]);
-    if (open === null || close === null) continue;
-    const adjustedClose = close <= open ? close + 1440 : close;
-    const adjustedNow = current < open && adjustedClose > 1440 ? current + 1440 : current;
-    if (adjustedNow >= open && adjustedNow < adjustedClose) {
-      const remaining = adjustedClose - adjustedNow;
-      const closeText = match[2].replace('.', ':');
-      return remaining <= 30
-        ? `<span class="opening-status closing">● Zavírá za ${remaining} min</span>`
-        : `<span class="opening-status open">● Otevřeno do ${closeText}</span>`;
-    }
-    if (current < open && (nextOpen === null || open < nextOpen)) nextOpen = open;
-  }
-  if (nextOpen !== null) {
-    const hours = String(Math.floor(nextOpen / 60)).padStart(2, '0');
-    const minutes = String(nextOpen % 60).padStart(2, '0');
-    return `<span class="opening-status closed">● Zavřeno · otevírá v ${hours}:${minutes}</span>`;
-  }
-  return '<span class="opening-status closed">● Zavřeno</span>';
 }
 
 function ratingHtml(restaurant) {
   const rating = restaurantRating(restaurant);
-  if (!rating) return openingStatusHtml(restaurant);
+  if (!rating) return '<span class="opening-status unknown">Bez hodnocení</span>';
   const reviews = restaurantReviewCount(restaurant);
-  const source = hasGoogleRating(restaurant) ? '<span class="rating-source">Google</span>' : '';
-  return `<span class="card-stars" aria-hidden="true">★</span><span class="rating-number">${rating.toFixed(1).replace('.', ',')}${reviews ? ` (${reviews.toLocaleString('cs-CZ')})` : ''}</span>${source}`;
-}
-
-function applyFilters(reset = true) {
-  const query = norm(state.search);
-  const cuisine = norm(state.cuisine);
-  const city = norm(state.city);
-  const rows = state.all.filter(restaurant => {
-    const haystack = norm([restaurant.name, restaurant.description, restaurant.tag, restaurant.city].join(' '));
-    return (!query || haystack.includes(query)) &&
-      (!cuisine || norm(restaurant.tag).includes(cuisine)) &&
-      (!city || norm(restaurant.city) === city) &&
-      (state.vibe === 'all' || restaurant.vibe === state.vibe);
-  });
-
-  if (state.userLocation) {
-    rows.forEach(restaurant => {
-      const latitude = Number(restaurant.latitude);
-      const longitude = Number(restaurant.longitude);
-      restaurant._distance = Number.isFinite(latitude) && Number.isFinite(longitude)
-        ? distanceKm(state.userLocation.lat, state.userLocation.lng, latitude, longitude)
-        : Infinity;
-    });
-  } else {
-    rows.forEach(restaurant => { delete restaurant._distance; });
-  }
-
-  if (state.sort === 'rating-desc') rows.sort((a, b) => restaurantRating(b) - restaurantRating(a));
-  else if (state.sort === 'name-asc') rows.sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'cs'));
-  else if (state.sort === 'distance') rows.sort((a, b) => (a._distance ?? Infinity) - (b._distance ?? Infinity));
-
-  state.filtered = rows;
-  if (reset) state.shown = state.perPage;
-  updateUrl();
-  render();
+  return `<span class="card-stars" aria-hidden="true">★</span><span class="rating-number">${rating.toFixed(1).replace('.', ',')}${reviews ? ` (${reviews.toLocaleString('cs-CZ')})` : ''}</span><span class="rating-source">Google</span>`;
 }
 
 function vibeKey(restaurant) {
@@ -329,17 +177,17 @@ function badgeHtml(restaurant) {
 }
 
 function priceLevel(restaurant) {
-  const raw = String(restaurant.price_level || restaurant.price || '').toUpperCase();
+  const raw = String(restaurant.price_level || '').toUpperCase();
   if (!raw) return '';
-  if (raw.includes('VERY_EXPENSIVE') || raw === '4' || raw.includes('$$$$')) return '$$$$';
-  if (raw.includes('EXPENSIVE') || raw === '3' || raw.includes('$$$')) return '$$$';
-  if (raw.includes('MODERATE') || raw === '2' || raw.includes('$$')) return '$$';
-  if (raw.includes('INEXPENSIVE') || raw === '1' || raw === '$') return '$';
+  if (raw.includes('VERY_EXPENSIVE') || raw === '4') return '$$$$';
+  if (raw.includes('EXPENSIVE') || raw === '3') return '$$$';
+  if (raw.includes('MODERATE') || raw === '2') return '$$';
+  if (raw.includes('INEXPENSIVE') || raw === '1') return '$';
   return '';
 }
 
 function economicalRestaurantImage(restaurant) {
-  const imageUrl = String(restaurant.image_url || restaurant.image || restaurant.photo_url || '').trim();
+  const imageUrl = String(restaurant.image_url || '').trim();
   const usesPaidGoogleProxy = imageUrl.includes('/functions/v1/google-place-photo');
   return imageUrl && !usesPaidGoogleProxy ? imageUrl : 'images/gurmao-hero-restaurant.jpg';
 }
@@ -395,40 +243,212 @@ function card(restaurant) {
   </article>`;
 }
 
-function bindCardActions() {
-  document.querySelectorAll('.menu-btn').forEach(button => button.addEventListener('click', event => {
-    event.preventDefault();
-    event.stopPropagation();
-    button.closest('.restaurant-card')?.classList.add('menu-open');
-  }));
-  document.querySelectorAll('.card-menu-close').forEach(button => button.addEventListener('click', () => {
-    button.closest('.restaurant-card')?.classList.remove('menu-open');
-  }));
+function updateToolbar() {
+  $('resultCount').textContent = `Celkem: ${state.total.toLocaleString('cs-CZ')} restaurací`;
+  document.querySelectorAll('.per-page-btn').forEach(button => button.classList.toggle('active', Number(button.dataset.count) === state.perPage));
+  document.querySelectorAll('[data-restaurant-view]').forEach(button => button.classList.toggle('active', button.dataset.restaurantView === state.view));
+  document.querySelectorAll('#filters [data-vibe]').forEach(button => button.classList.toggle('is-active', (VIBE_MAP[button.dataset.vibe] || 'all') === state.vibe));
 }
 
 function render() {
   const list = $('restaurantsList');
-  const visible = state.filtered.slice(0, state.shown);
-  list.innerHTML = visible.length
-    ? visible.map(card).join('')
+  list.innerHTML = state.rows.length
+    ? state.rows.map(card).join('')
     : '<div style="grid-column:1/-1;text-align:center;padding:70px 0;color:rgba(255,255,255,.55)">Žádné restaurace neodpovídají filtrům.</div>';
-  $('resultCount').textContent = `Celkem: ${state.filtered.length} restaurací`;
-  document.querySelectorAll('.per-page-btn').forEach(button => button.classList.toggle('active', Number(button.dataset.count) === state.perPage));
-  document.querySelectorAll('[data-restaurant-view]').forEach(button => button.classList.toggle('active', button.dataset.restaurantView === state.view));
-  document.querySelectorAll('#filters [data-vibe]').forEach(button => button.classList.toggle('is-active', (VIBE_MAP[button.dataset.vibe] || 'all') === state.vibe));
+
+  updateToolbar();
   document.querySelector('.load-more')?.remove();
-  if (state.shown < state.filtered.length) {
+  if (state.rows.length < state.total) {
     const wrapper = document.createElement('div');
     wrapper.className = 'load-more page-shell';
-    wrapper.innerHTML = '<button type="button">Načíst další restaurace</button>';
-    wrapper.querySelector('button').onclick = () => {
-      state.shown += state.perPage;
-      render();
-    };
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = state.loading ? 'Načítám…' : 'Načíst další restaurace';
+    button.disabled = state.loading;
+    button.addEventListener('click', () => loadResults(false));
+    wrapper.appendChild(button);
     list.after(wrapper);
   }
-  bindCardActions();
+
   if (typeof window.updateSaveButtons === 'function') window.updateSaveButtons();
+}
+
+function applyCommonFilters(query) {
+  query = query.not('slug', 'is', null);
+  if (state.search) {
+    const value = clean(state.search).replace(/[,%()]/g, ' ').replace(/\s+/g, ' ').trim();
+    if (value) query = query.or(`name.ilike.%${value}%,description.ilike.%${value}%,tag.ilike.%${value}%,city.ilike.%${value}%`);
+  }
+  if (state.cuisine) query = query.ilike('tag', `%${state.cuisine}%`);
+  if (state.city) query = query.eq('city', state.city);
+  if (state.vibe !== 'all') query = query.eq('vibe', state.vibe);
+  return query;
+}
+
+function applyServerSort(query) {
+  if (state.sort === 'rating-desc') {
+    return query.order('google_rating', { ascending: false, nullsFirst: false }).order('google_review_count', { ascending: false, nullsFirst: false });
+  }
+  if (state.sort === 'name-asc') return query.order('name', { ascending: true });
+  return query.order('google_rating', { ascending: false, nullsFirst: false }).order('google_review_count', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false });
+}
+
+async function fetchServerPage(offset) {
+  let query = supabase.from('restaurants').select(CARD_FIELDS, { count: 'exact' });
+  query = applyCommonFilters(query);
+  query = applyServerSort(query);
+  const { data, error, count } = await query.range(offset, offset + state.perPage - 1);
+  if (error) throw error;
+  return { rows: data || [], total: count || 0 };
+}
+
+async function fetchNearestRows() {
+  const rows = [];
+  const batchSize = 500;
+  let offset = 0;
+  while (true) {
+    let query = supabase.from('restaurants').select(CARD_FIELDS);
+    query = applyCommonFilters(query).not('latitude', 'is', null).not('longitude', 'is', null);
+    const { data, error } = await query.range(offset, offset + batchSize - 1);
+    if (error) throw error;
+    const batch = data || [];
+    rows.push(...batch);
+    if (batch.length < batchSize) break;
+    offset += batchSize;
+  }
+
+  return rows
+    .map(restaurant => {
+      const latitude = Number(restaurant.latitude);
+      const longitude = Number(restaurant.longitude);
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+      return {
+        ...restaurant,
+        _distance: distanceKm(state.userLocation.lat, state.userLocation.lng, latitude, longitude)
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a._distance - b._distance);
+}
+
+async function loadResults(reset = true) {
+  const sequence = ++state.requestSequence;
+  if (reset) {
+    state.rows = [];
+    state.nearestRows = null;
+    $('restaurantsList').innerHTML = '<div class="directory-loading">Načítám restaurace…</div>';
+  }
+  state.loading = true;
+  updateUrl();
+
+  try {
+    if (state.sort === 'distance' && state.userLocation) {
+      if (!state.nearestRows) state.nearestRows = await fetchNearestRows();
+      if (sequence !== state.requestSequence) return;
+      state.total = state.nearestRows.length;
+      const targetLength = reset ? state.perPage : state.rows.length + state.perPage;
+      state.rows = state.nearestRows.slice(0, targetLength);
+    } else {
+      const offset = reset ? 0 : state.rows.length;
+      const payload = await fetchServerPage(offset);
+      if (sequence !== state.requestSequence) return;
+      state.total = payload.total;
+      state.rows = reset ? payload.rows : [...state.rows, ...payload.rows];
+    }
+  } catch (error) {
+    if (sequence !== state.requestSequence) return;
+    console.error('Restaurant directory loading failed:', error);
+    $('restaurantsList').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:70px 0;color:#e58b8b">Restaurace se nepodařilo načíst.</div>';
+    $('resultCount').textContent = 'Chyba načítání';
+    state.total = state.rows.length;
+    return;
+  } finally {
+    if (sequence === state.requestSequence) state.loading = false;
+  }
+
+  if (sequence === state.requestSequence) render();
+}
+
+async function loadFacets() {
+  const values = [];
+  const batchSize = 1000;
+  let offset = 0;
+  try {
+    while (true) {
+      const { data, error } = await supabase.from('restaurants').select('city,tag').range(offset, offset + batchSize - 1);
+      if (error) throw error;
+      const batch = data || [];
+      values.push(...batch);
+      if (batch.length < batchSize) break;
+      offset += batchSize;
+    }
+
+    const cuisines = [...new Set(values.map(row => textValue(row.tag)).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'cs'));
+    const cities = [...new Set(values.map(row => textValue(row.city)).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'cs'));
+    $('cuisineFilter').innerHTML = '<option value="">Všechny kuchyně</option>' + cuisines.map(value => `<option value="${esc(value)}">${esc(value)}</option>`).join('');
+    $('localityFilter').innerHTML = '<option value="">Všechny lokality</option>' + cities.map(value => `<option value="${esc(value)}">${esc(value)}</option>`).join('');
+    $('cuisineFilter').value = state.cuisine;
+    $('localityFilter').value = state.city;
+  } catch (error) {
+    console.warn('Restaurant filter options failed to load:', error);
+  }
+}
+
+function textValue(value) {
+  return String(value ?? '').trim();
+}
+
+function clearLocationMode() {
+  state.userLocation = null;
+  state.nearestRows = null;
+  if (state.sort === 'distance') state.sort = 'recommended';
+  if ($('restaurantSort')) $('restaurantSort').value = state.sort;
+}
+
+function requestLocation() {
+  const locationBtn = $('locationBtn');
+  if (!navigator.geolocation) {
+    alert('Prohlížeč nepodporuje polohu.');
+    return;
+  }
+
+  const originalLabel = locationBtn.textContent;
+  locationBtn.disabled = true;
+  locationBtn.setAttribute('aria-busy', 'true');
+  locationBtn.textContent = '⌖ Zjišťuji polohu…';
+
+  navigator.geolocation.getCurrentPosition(position => {
+    state.search = '';
+    state.cuisine = '';
+    state.city = '';
+    state.vibe = 'all';
+    state.sort = 'distance';
+    state.userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
+    state.nearestRows = null;
+
+    $('searchInput').value = '';
+    $('cuisineFilter').value = '';
+    $('localityFilter').value = '';
+    $('restaurantSort').value = 'distance';
+    $('filters').classList.remove('open');
+
+    loadResults(true).then(scheduleNearbyResultsScroll);
+    locationBtn.disabled = false;
+    locationBtn.removeAttribute('aria-busy');
+    locationBtn.textContent = originalLabel;
+  }, () => {
+    state.sort = 'recommended';
+    state.userLocation = null;
+    $('restaurantSort').value = 'recommended';
+    locationBtn.disabled = false;
+    locationBtn.removeAttribute('aria-busy');
+    locationBtn.textContent = originalLabel;
+    alert('Polohu se nepodařilo zjistit.');
+  }, {
+    enableHighAccuracy: true,
+    timeout: 15000,
+    maximumAge: 30000
+  });
 }
 
 function bind() {
@@ -443,53 +463,63 @@ function bind() {
   const locationBtn = $('locationBtn');
 
   searchInput.value = state.search;
+  restaurantSort.value = state.sort;
+
   searchInput.addEventListener('input', event => {
     clearTimeout(timer);
     timer = setTimeout(() => {
+      clearLocationMode();
       state.search = clean(event.target.value);
-      applyFilters();
-    }, 250);
+      loadResults(true);
+    }, 300);
   });
   searchInput.addEventListener('keydown', event => {
     if (event.key === 'Enter') {
+      event.preventDefault();
+      clearTimeout(timer);
+      clearLocationMode();
       state.search = clean(event.target.value);
-      applyFilters();
+      loadResults(true);
     }
   });
   searchBtn.addEventListener('click', () => {
+    clearLocationMode();
     state.search = clean(searchInput.value);
-    applyFilters();
+    loadResults(true);
     scheduleNearbyResultsScroll();
   });
   cuisineFilter.addEventListener('change', event => {
+    clearLocationMode();
     state.cuisine = event.target.value;
-    applyFilters();
+    loadResults(true);
   });
   localityFilter.addEventListener('change', event => {
+    clearLocationMode();
     state.city = event.target.value;
-    state.userLocation = null;
-    if (state.sort === 'distance') {
-      state.sort = 'recommended';
-      restaurantSort.value = 'recommended';
-    }
-    applyFilters();
+    loadResults(true);
   });
   restaurantSort.addEventListener('change', event => {
+    if (event.target.value === 'distance') {
+      requestLocation();
+      return;
+    }
     state.sort = event.target.value;
-    applyFilters(false);
+    state.userLocation = null;
+    state.nearestRows = null;
+    loadResults(true);
   });
   moreFiltersBtn.addEventListener('click', () => filters.classList.toggle('open'));
   document.querySelectorAll('#filters [data-vibe]').forEach(button => {
     button.addEventListener('click', () => {
+      clearLocationMode();
       state.vibe = VIBE_MAP[button.dataset.vibe] || 'all';
-      applyFilters();
+      loadResults(true);
     });
   });
   document.querySelectorAll('.per-page-btn').forEach(button => {
     button.addEventListener('click', () => {
-      state.perPage = Number(button.dataset.count);
-      state.shown = state.perPage;
-      render();
+      state.perPage = Number(button.dataset.count) || 12;
+      loadResults(true);
     });
   });
   document.querySelectorAll('[data-restaurant-view]').forEach(button => {
@@ -499,64 +529,14 @@ function bind() {
       render();
     });
   });
-
-  locationBtn.addEventListener('click', () => {
-    if (!navigator.geolocation) {
-      alert('Prohlížeč nepodporuje polohu.');
-      return;
-    }
-
-    clearTimeout(timer);
-    state.search = '';
-    state.cuisine = '';
-    state.city = '';
-    state.vibe = 'all';
-    state.sort = 'distance';
-    state.userLocation = null;
-    state.shown = state.perPage;
-
-    searchInput.value = '';
-    cuisineFilter.value = '';
-    localityFilter.value = '';
-    restaurantSort.value = 'distance';
-    filters.classList.remove('open');
-    document.querySelectorAll('#filters [data-vibe]').forEach(button => button.classList.toggle('is-active', button.dataset.vibe === 'all'));
-    updateUrl();
-
-    const originalLabel = locationBtn.textContent;
-    locationBtn.disabled = true;
-    locationBtn.setAttribute('aria-busy', 'true');
-    locationBtn.textContent = '⌖ Zjišťuji polohu…';
-    const finish = () => {
-      locationBtn.disabled = false;
-      locationBtn.removeAttribute('aria-busy');
-      locationBtn.textContent = originalLabel;
-    };
-
-    navigator.geolocation.getCurrentPosition(position => {
-      state.userLocation = { lat: position.coords.latitude, lng: position.coords.longitude };
-      applyFilters();
-      finish();
-      scheduleNearbyResultsScroll();
-    }, () => {
-      state.sort = 'recommended';
-      restaurantSort.value = 'recommended';
-      updateUrl();
-      applyFilters();
-      finish();
-      alert('Polohu se nepodařilo zjistit.');
-    }, {
-      enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 30000
-    });
-  });
+  locationBtn.addEventListener('click', requestLocation);
 }
 
 function initRestaurantsPage() {
   applyRestaurantFilterStyles();
   bind();
-  loadAll();
+  loadFacets();
+  loadResults(true);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initRestaurantsPage, { once: true });
