@@ -1,5 +1,21 @@
 import { supabase } from './supabase-client.js';
 
+const SOURCE_ID = 'gurmao-restaurants';
+const CLUSTER_LAYER_ID = 'gurmao-restaurant-clusters';
+const CLUSTER_COUNT_LAYER_ID = 'gurmao-restaurant-cluster-count';
+const POINT_LAYER_ID = 'gurmao-restaurant-points';
+const PAGE_SIZE = 1000;
+
+const VIBE = {
+  LUXE: { color: '#f3c94a', label: '🍷 LUXE' },
+  DRAMA: { color: '#ff856d', label: '🔥 DRAMA' },
+  CHAOS: { color: '#ffb15f', label: '🌮 CHAOS' },
+  PURE: { color: '#69dc83', label: '🌿 PURE' },
+  DARK: { color: '#c8aaff', label: '🖤 DARK' },
+  CALM: { color: '#75c8ff', label: '🌊 CALM' },
+  OTHER: { color: '#d8ad34', label: 'Restaurace' }
+};
+
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'https://tiles.openfreemap.org/styles/liberty',
@@ -24,36 +40,17 @@ const geolocate = new mapboxgl.GeolocateControl({
   showUserHeading: true,
   showAccuracyCircle: false
 });
-
 map.addControl(geolocate, 'top-right');
 geolocate.on('geolocate', event => {
-  map.flyTo({
-    center: [event.coords.longitude, event.coords.latitude],
-    zoom: 10,
-    essential: true
-  });
+  map.flyTo({ center: [event.coords.longitude, event.coords.latitude], zoom: 11, essential: true });
 });
 
-const allMarkers = [];
+let allFeatures = [];
 const activeFilters = new Set();
 
-const vibeTooltips = {
-  '🍷 LUXE': 'Elegantní zážitek, důraz na detail, klidná atmosféra',
-  '🔥 DRAMA': 'Výrazné chutě, silná osobnost, nezapomenutelné kombinace',
-  '🌮 CHAOS': 'Uvolněný styl, pestrost, radost z jídla bez pravidel',
-  '🌿 PURE': 'Čisté suroviny, jednoduchost, chuť v hlavní roli',
-  '🖤 DARK': 'Intimní atmosféra, večerní vibe, tlumené světlo',
-  '🌊 CALM': 'Klidná atmosféra, harmonie, pohoda'
-};
-
-function markerPresentation(vibe = '') {
-  if (vibe.includes('DRAMA')) return ['🔴', 'drop-shadow(0 2px 8px rgba(255, 0, 0, 0.6))'];
-  if (vibe.includes('LUXE')) return ['🟡', 'drop-shadow(0 2px 8px rgba(255, 215, 0, 0.6))'];
-  if (vibe.includes('PURE')) return ['🟢', 'drop-shadow(0 2px 8px rgba(0, 255, 0, 0.6))'];
-  if (vibe.includes('DARK')) return ['⚫', 'drop-shadow(0 2px 8px rgba(255, 255, 255, 0.4))'];
-  if (vibe.includes('CHAOS')) return ['🟠', 'drop-shadow(0 2px 8px rgba(255, 165, 0, 0.6))'];
-  if (vibe.includes('CALM')) return ['🔵', 'drop-shadow(0 2px 8px rgba(0, 150, 255, 0.6))'];
-  return ['📍', 'drop-shadow(0 2px 8px rgba(212, 175, 55, 0.5))'];
+function vibeKey(value) {
+  const text = String(value || '').toUpperCase();
+  return Object.keys(VIBE).find(key => key !== 'OTHER' && text.includes(key)) || 'OTHER';
 }
 
 function validCoordinates(restaurant) {
@@ -61,27 +58,76 @@ function validCoordinates(restaurant) {
   const longitude = Number(restaurant.longitude);
   if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
   if (latitude < 48.4 || latitude > 51.2 || longitude < 11.8 || longitude > 19.2) return null;
-  return { latitude, longitude };
+  return [longitude, latitude];
 }
 
-function createPopupContent(restaurant, latitude, longitude) {
-  const root = document.createElement('div');
-  root.className = 'min-w-[200px]';
+function featureFromRestaurant(restaurant) {
+  const coordinates = validCoordinates(restaurant);
+  if (!coordinates) return null;
+  const key = vibeKey(restaurant.vibe);
+  return {
+    type: 'Feature',
+    geometry: { type: 'Point', coordinates },
+    properties: {
+      id: String(restaurant.id || ''),
+      slug: String(restaurant.slug || restaurant.id || ''),
+      name: String(restaurant.name || 'Restaurace'),
+      city: String(restaurant.city || ''),
+      tag: String(restaurant.tag || ''),
+      vibe: String(restaurant.vibe || ''),
+      vibeKey: key,
+      description: String(restaurant.description || '').slice(0, 320)
+    }
+  };
+}
 
-  if (restaurant.vibe) {
-    const vibe = document.createElement('div');
-    vibe.className = 'vibe-tooltip text-xs text-gurmaogold mb-1';
-    vibe.dataset.tooltip = vibeTooltips[restaurant.vibe] || '';
-    vibe.textContent = String(restaurant.vibe);
-    root.appendChild(vibe);
+function collection(features) {
+  return { type: 'FeatureCollection', features };
+}
+
+async function loadAllRestaurants() {
+  const rows = [];
+  for (let offset = 0; ; offset += PAGE_SIZE) {
+    const { data, error } = await supabase
+      .from('restaurants')
+      .select('id,slug,name,city,tag,vibe,description,latitude,longitude')
+      .not('latitude', 'is', null)
+      .not('longitude', 'is', null)
+      .range(offset, offset + PAGE_SIZE - 1);
+    if (error) throw error;
+    const batch = data || [];
+    rows.push(...batch);
+    if (batch.length < PAGE_SIZE) break;
   }
+  return rows.map(featureFromRestaurant).filter(Boolean);
+}
+
+function currentFeatures() {
+  if (!activeFilters.size) return allFeatures;
+  return allFeatures.filter(feature => activeFilters.has(feature.properties.vibeKey));
+}
+
+function refreshSource() {
+  const source = map.getSource(SOURCE_ID);
+  if (source) source.setData(collection(currentFeatures()));
+}
+
+function createPopupContent(properties) {
+  const root = document.createElement('div');
+  root.className = 'min-w-[210px]';
+
+  const key = VIBE[properties.vibeKey] ? properties.vibeKey : 'OTHER';
+  const vibe = document.createElement('div');
+  vibe.className = 'text-xs text-gurmaogold mb-1';
+  vibe.textContent = properties.vibe || VIBE[key].label;
+  root.appendChild(vibe);
 
   const title = document.createElement('h3');
   title.className = 'text-lg font-bold mb-1';
-  title.textContent = String(restaurant.name || 'Restaurace');
+  title.textContent = properties.name || 'Restaurace';
   root.appendChild(title);
 
-  const metaParts = [restaurant.city, restaurant.tag].filter(Boolean).map(String);
+  const metaParts = [properties.city, properties.tag].filter(Boolean);
   if (metaParts.length) {
     const meta = document.createElement('div');
     meta.className = 'text-white/60 text-sm mb-2';
@@ -89,10 +135,10 @@ function createPopupContent(restaurant, latitude, longitude) {
     root.appendChild(meta);
   }
 
-  if (restaurant.description) {
+  if (properties.description) {
     const description = document.createElement('p');
     description.className = 'text-white/80 text-sm mb-3';
-    description.textContent = String(restaurant.description).slice(0, 320);
+    description.textContent = properties.description;
     root.appendChild(description);
   }
 
@@ -100,18 +146,10 @@ function createPopupContent(restaurant, latitude, longitude) {
   actions.className = 'flex gap-2';
 
   const detail = document.createElement('a');
-  detail.className = 'flex-1 px-4 py-2 rounded-full bg-gurmaogold text-black text-sm font-semibold hover:scale-105 transition text-center';
-  detail.href = `restaurant.html?slug=${encodeURIComponent(String(restaurant.slug || restaurant.id || ''))}`;
+  detail.className = 'flex-1 px-4 py-2 rounded-full bg-gurmaogold text-black text-sm font-semibold text-center';
+  detail.href = `restaurant.html?slug=${encodeURIComponent(properties.slug || properties.id || '')}`;
   detail.textContent = 'Detail →';
   actions.appendChild(detail);
-
-  const navigate = document.createElement('a');
-  navigate.className = 'px-4 py-2 rounded-full border border-gurmaogold text-gurmaogold text-sm font-semibold hover:bg-gurmaogold hover:text-black transition';
-  navigate.href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${latitude},${longitude}`)}`;
-  navigate.target = '_blank';
-  navigate.rel = 'noopener noreferrer';
-  navigate.textContent = '🧭 Navigovat';
-  actions.appendChild(navigate);
 
   root.appendChild(actions);
   return root;
@@ -119,105 +157,142 @@ function createPopupContent(restaurant, latitude, longitude) {
 
 function collapseLegendOnMobile() {
   if (window.innerWidth >= 768) return;
-  const legendContent = document.getElementById('legendContent');
-  const legendToggle = document.getElementById('legendToggle');
-  if (legendContent && legendToggle) {
-    legendContent.hidden = true;
-    legendToggle.textContent = '▶';
+  const content = document.getElementById('legendContent');
+  const toggle = document.getElementById('legendToggle');
+  if (content && toggle) {
+    content.hidden = true;
+    content.style.display = 'none';
+    toggle.textContent = '▶';
   }
 }
 
-async function loadRestaurants() {
-  try {
-    const { data: restaurants, error } = await supabase
-      .from('restaurants')
-      .select('id,slug,name,city,tag,vibe,description,latitude,longitude');
+function addRestaurantLayers(features) {
+  map.addSource(SOURCE_ID, {
+    type: 'geojson',
+    data: collection(features),
+    cluster: true,
+    clusterMaxZoom: 13,
+    clusterRadius: 48
+  });
 
-    if (error) throw error;
+  map.addLayer({
+    id: CLUSTER_LAYER_ID,
+    type: 'circle',
+    source: SOURCE_ID,
+    filter: ['has', 'point_count'],
+    paint: {
+      'circle-color': [
+        'step', ['get', 'point_count'],
+        '#8b711f', 25, '#aa8625', 75, '#d8ad34'
+      ],
+      'circle-radius': [
+        'step', ['get', 'point_count'],
+        17, 25, 21, 75, 26
+      ],
+      'circle-stroke-width': 2,
+      'circle-stroke-color': 'rgba(255,255,255,.62)',
+      'circle-opacity': 0.94
+    }
+  });
 
-    const restaurantsWithGPS = (restaurants || [])
-      .map(restaurant => ({ restaurant, coordinates: validCoordinates(restaurant) }))
-      .filter(item => item.coordinates);
+  map.addLayer({
+    id: CLUSTER_COUNT_LAYER_ID,
+    type: 'symbol',
+    source: SOURCE_ID,
+    filter: ['has', 'point_count'],
+    layout: {
+      'text-field': ['get', 'point_count_abbreviated'],
+      'text-size': 12
+    },
+    paint: { 'text-color': '#090a08' }
+  });
 
-    if (!restaurantsWithGPS.length) return;
+  map.addLayer({
+    id: POINT_LAYER_ID,
+    type: 'circle',
+    source: SOURCE_ID,
+    filter: ['!', ['has', 'point_count']],
+    paint: {
+      'circle-radius': ['interpolate', ['linear'], ['zoom'], 7, 5, 12, 7, 16, 9],
+      'circle-color': [
+        'match', ['get', 'vibeKey'],
+        'LUXE', VIBE.LUXE.color,
+        'DRAMA', VIBE.DRAMA.color,
+        'CHAOS', VIBE.CHAOS.color,
+        'PURE', VIBE.PURE.color,
+        'DARK', VIBE.DARK.color,
+        'CALM', VIBE.CALM.color,
+        VIBE.OTHER.color
+      ],
+      'circle-stroke-width': 1.5,
+      'circle-stroke-color': '#10110e',
+      'circle-opacity': 0.95
+    }
+  });
 
-    restaurantsWithGPS.forEach(({ restaurant, coordinates }) => {
-      const [markerIcon, markerFilter] = markerPresentation(String(restaurant.vibe || ''));
-
-      const markerElement = document.createElement('button');
-      markerElement.type = 'button';
-      markerElement.className = 'marker';
-      markerElement.style.width = '40px';
-      markerElement.style.height = '40px';
-      markerElement.style.cursor = 'pointer';
-      markerElement.style.fontSize = '32px';
-      markerElement.style.filter = markerFilter;
-      markerElement.style.background = 'transparent';
-      markerElement.style.border = '0';
-      markerElement.style.padding = '0';
-      markerElement.textContent = markerIcon;
-      markerElement.setAttribute('aria-label', `Otevřít ${String(restaurant.name || 'restauraci')} na mapě`);
-
-      const popup = new mapboxgl.Popup({
-        offset: 25,
-        closeButton: true,
-        closeOnClick: false
-      }).setDOMContent(createPopupContent(restaurant, coordinates.latitude, coordinates.longitude));
-
-      popup.on('open', () => {
-        if (window.initVibeTooltips) window.initVibeTooltips();
-        collapseLegendOnMobile();
-      });
-
-      const marker = new mapboxgl.Marker(markerElement)
-        .setLngLat([coordinates.longitude, coordinates.latitude])
-        .setPopup(popup)
-        .addTo(map);
-
-      allMarkers.push({ marker, vibe: String(restaurant.vibe || '') });
+  map.on('click', CLUSTER_LAYER_ID, event => {
+    const feature = event.features?.[0];
+    if (!feature) return;
+    const clusterId = feature.properties?.cluster_id;
+    const source = map.getSource(SOURCE_ID);
+    source.getClusterExpansionZoom(clusterId, (error, zoom) => {
+      if (error) {
+        console.warn('Cluster zoom failed:', error);
+        return;
+      }
+      map.easeTo({ center: feature.geometry.coordinates, zoom });
     });
-  } catch (error) {
-    console.error('Error loading restaurants:', error);
+  });
+
+  map.on('click', POINT_LAYER_ID, event => {
+    const feature = event.features?.[0];
+    if (!feature) return;
+    const coordinates = feature.geometry.coordinates.slice();
+    while (Math.abs(event.lngLat.lng - coordinates[0]) > 180) {
+      coordinates[0] += event.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
+    new mapboxgl.Popup({ offset: 14, closeButton: true })
+      .setLngLat(coordinates)
+      .setDOMContent(createPopupContent(feature.properties || {}))
+      .addTo(map);
+    collapseLegendOnMobile();
+  });
+
+  for (const layerId of [CLUSTER_LAYER_ID, POINT_LAYER_ID]) {
+    map.on('mouseenter', layerId, () => { map.getCanvas().style.cursor = 'pointer'; });
+    map.on('mouseleave', layerId, () => { map.getCanvas().style.cursor = ''; });
   }
 }
 
 function initFilters() {
   document.querySelectorAll('.vibe-filter').forEach(element => {
+    const key = vibeKey(element.getAttribute('data-vibe'));
+    element.setAttribute('role', element.tagName === 'BUTTON' ? 'button' : 'switch');
+    element.setAttribute('aria-pressed', 'false');
     element.addEventListener('click', () => {
-      const vibe = element.getAttribute('data-vibe');
-      if (vibe) toggleVibeFilter(vibe);
+      if (key === 'OTHER') return;
+      if (activeFilters.has(key)) activeFilters.delete(key);
+      else activeFilters.add(key);
+      const active = activeFilters.has(key);
+      element.setAttribute('aria-pressed', String(active));
+      element.style.opacity = active || !activeFilters.size ? '1' : '0.5';
+      document.querySelectorAll('.vibe-filter').forEach(other => {
+        const otherKey = vibeKey(other.getAttribute('data-vibe'));
+        const otherActive = activeFilters.has(otherKey);
+        other.setAttribute('aria-pressed', String(otherActive));
+        other.style.opacity = !activeFilters.size || otherActive ? '1' : '0.48';
+        const label = other.querySelector('.vibe-filter-label');
+        if (label) {
+          label.style.textDecoration = otherActive ? 'underline' : 'none';
+          label.style.color = otherActive ? '#d4af37' : '';
+        }
+      });
+      refreshSource();
     });
   });
 }
 
-function toggleVibeFilter(vibe) {
-  if (activeFilters.has(vibe)) activeFilters.delete(vibe);
-  else activeFilters.add(vibe);
-
-  document.querySelectorAll('.vibe-filter').forEach(element => {
-    const elementVibe = element.getAttribute('data-vibe') || '';
-    if (elementVibe !== vibe) return;
-    const label = element.querySelector('.vibe-filter-label');
-    const active = activeFilters.has(vibe);
-    element.setAttribute('aria-pressed', String(active));
-    element.style.opacity = active ? '1' : '0.5';
-    if (label) {
-      label.style.textDecoration = active ? 'underline' : 'none';
-      label.style.color = active ? '#d4af37' : '';
-    }
-  });
-
-  filterMarkers();
-}
-
-function filterMarkers() {
-  allMarkers.forEach(({ marker, vibe }) => {
-    const visible = activeFilters.size === 0 || [...activeFilters].some(filter => vibe.includes(filter));
-    marker.getElement().style.display = visible ? '' : 'none';
-  });
-}
-
-map.on('load', () => {
+function addCzechBorder() {
   fetch('czech-border.geojson')
     .then(response => {
       if (!response.ok) throw new Error(`Czech border ${response.status}`);
@@ -232,13 +307,23 @@ map.on('load', () => {
         source: 'czech-border',
         paint: {
           'line-color': '#d4af37',
-          'line-width': 2,
-          'line-opacity': 0.8
+          'line-width': 1.5,
+          'line-opacity': 0.72
         }
       });
     })
     .catch(error => console.warn('Czech border failed to load:', error));
+}
 
-  loadRestaurants();
+map.on('load', async () => {
+  addCzechBorder();
   initFilters();
+  try {
+    allFeatures = await loadAllRestaurants();
+    addRestaurantLayers(allFeatures);
+  } catch (error) {
+    console.error('Restaurant map data failed to load:', error);
+    const mapElement = document.getElementById('map');
+    if (mapElement) mapElement.setAttribute('aria-label', 'Mapu restaurací se nepodařilo načíst.');
+  }
 });
