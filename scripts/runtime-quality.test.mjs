@@ -98,6 +98,7 @@ test('removed runtime patch layers stay removed', async () => {
     'restaurant-card-status.js',
     'restaurant-card-actions.js',
     'restaurace-detail.js',
+    'rating.js',
     'map-footer-search.js',
     'footer-search.js',
     'daily-menu-ui.js',
