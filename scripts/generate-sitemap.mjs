@@ -1,10 +1,11 @@
-import { stat, writeFile } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { writeFile } from 'node:fs/promises';
 
+const execFileAsync = promisify(execFile);
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://jdprdcnxbxfzgrjjfflr.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_yVoMprXKwKGu1kIKc3p9ew_TQflIOib';
 const SITE_URL = 'https://gurmao.cz';
-const ROOT_URL = new URL('../', import.meta.url);
 const headers = { apikey: SUPABASE_KEY, Accept: 'application/json' };
 
 async function fetchAll(table, select) {
@@ -40,10 +41,13 @@ function urlEntry(location, { lastmod = '', changefreq = 'weekly', priority = '0
   return lines.join('\n');
 }
 
-async function fileLastmod(relativePath) {
+async function gitLastmod(relativePath) {
   try {
-    const info = await stat(fileURLToPath(new URL(relativePath, ROOT_URL)));
-    return info.mtime.toISOString().slice(0, 10);
+    const { stdout } = await execFileAsync('git', ['log', '-1', '--format=%cs', '--', relativePath], {
+      cwd: new URL('../', import.meta.url)
+    });
+    const value = stdout.trim();
+    return /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : '';
   } catch {
     return '';
   }
@@ -67,7 +71,7 @@ const [restaurants, chefs] = await Promise.all([
 const entries = [];
 for (const [path, file, changefreq, priority] of staticPages) {
   entries.push(urlEntry(`${SITE_URL}${path}`, {
-    lastmod: await fileLastmod(file),
+    lastmod: await gitLastmod(file),
     changefreq,
     priority
   }));
