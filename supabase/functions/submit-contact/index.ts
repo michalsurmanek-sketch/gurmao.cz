@@ -7,7 +7,19 @@ const ALLOWED_ORIGINS = new Set([
   'http://127.0.0.1:3000'
 ]);
 
-const SUBJECTS = new Set(['obecne', 'restaurace', 'spoluprace', 'gdpr', 'jine']);
+const SUBJECT_ALIASES = new Map<string, string>([
+  ['obecne', 'obecne'],
+  ['feedback', 'obecne'],
+  ['restaurace', 'restaurace'],
+  ['restaurant', 'restaurace'],
+  ['correction', 'restaurace'],
+  ['spoluprace', 'spoluprace'],
+  ['cooperation', 'spoluprace'],
+  ['gdpr', 'gdpr'],
+  ['jine', 'jine'],
+  ['other', 'jine']
+]);
+
 const burstWindow = new Map<string, number[]>();
 
 function cors(origin: string | null) {
@@ -96,10 +108,11 @@ Deno.serve(async req => {
 
   const name = normalizedText(body.name, 100);
   const email = normalizedText(body.email, 254).toLowerCase();
-  const subject = normalizedText(body.subject, 40);
+  const rawSubject = normalizedText(body.subject, 40).toLowerCase();
+  const subject = SUBJECT_ALIASES.get(rawSubject) || '';
   const message = normalizedMessage(body.message);
 
-  if (name.length < 2 || !validEmail(email) || !SUBJECTS.has(subject) || message.length < 10) {
+  if (name.length < 2 || !validEmail(email) || !subject || message.length < 10) {
     return json({ message: 'Zkontrolujte vyplněné údaje.' }, 400, origin);
   }
 
