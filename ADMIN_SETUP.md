@@ -1,104 +1,52 @@
-# 🔒 Admin Role Setup Guide
+# Admin setup – GURMAO.cz
 
-## Jak nastavit admin uživatele v Supabase
+Tento dokument nahrazuje historický návod navázaný na konkrétní e-mail a automatické udělení role prvnímu účtu.
 
-### Přes SQL Editor (doporučeno)
+## Aktuální bezpečnostní model
 
-1. **Otevři SQL Editor**
-   - V Supabase Dashboard jdi na **SQL Editor**
+- Admin oprávnění je serverově spravovaná hodnota `auth.users.raw_app_meta_data.role = 'admin'`.
+- Frontend kontroluje pouze ověřeného uživatele ze Supabase Auth.
+- `admin-guard.js` vyžaduje `user.app_metadata?.role === 'admin'`.
+- Edge Functions s administrátorským přístupem kontrolují stejnou roli před vytvořením service-role klienta.
+- RLS musí admin zápisy autorizovat přes `auth.jwt()->'app_metadata'->>'role'`.
+- E-mail, `localStorage` ani `user_metadata` nesmí samy udělovat admin oprávnění.
 
-2. **Spusť tento SQL příkaz**
-   ```sql
-   UPDATE auth.users
-   SET raw_app_meta_data = COALESCE(raw_app_meta_data, '{}'::jsonb) || '{"role": "admin"}'::jsonb
-   WHERE email = 'michalsurmanek@seznam.cz';
-   ```
+## Nastavení nebo odebrání role
 
-Admin roli nikdy nenastavuj při registraci ani přes klientská `user_metadata`.
+Správce Supabase může cílovému uživateli změnit `raw_app_meta_data` v SQL Editoru nebo přes důvěryhodný serverový Admin API proces. Nepoužívej v repozitáři hardcoded osobní e-mail; vždy nejdřív jednoznačně identifikuj konkrétní účet v aktuálním projektu.
 
-## Jak to funguje
+Příklad principu podle UUID uživatele:
 
-### Ochrana Admin Panelu
-
-Soubor `admin-guard.js` kontroluje:
-
-1. ✅ Je uživatel přihlášený?
-2. ✅ Má uživatel `role: "admin"` v serverových `app_metadata`?
-
-Pokud ne → přesměrování na hlavní stránku + chybová hláška
-
-### Bezpečnostní tipy
-
-⚠️ **DŮLEŽITÉ:**
-- Admin role je uložena v serverově spravovaných `app_metadata`
-- Nikdy nepoužívej pouze localStorage pro ověření admin práv
-- Vždy kontroluj oprávnění i na backend straně (Supabase RLS policies)
-
-### Nastavení Row Level Security (RLS) v Supabase
-
-Pro maximální bezpečnost nastav RLS policies:
-
-```sql
--- Povolit čtení restaurací všem
-CREATE POLICY "Anyone can read restaurants"
-ON restaurants FOR SELECT
-TO public
-USING (true);
-
--- Povolit zápis pouze adminům
-CREATE POLICY "Only admins can insert/update/delete restaurants"
-ON restaurants FOR ALL
-TO authenticated
-USING (
-  (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
-);
-```
-
-## Testování
-
-1. Přihlaš se jako admin uživatel
-2. Otevři https://gurmao.cz/admin.html
-3. Měl bys vidět admin panel
-4. Zkus se přihlásit jako běžný uživatel → měl bys být přesměrován
-
-## Správa admin uživatelů
-
-### Odebrat admin práva
 ```sql
 UPDATE auth.users
-SET raw_app_meta_data = raw_app_meta_data - 'role'
-WHERE email = 'michalsurmanek@seznam.cz';
+SET raw_app_meta_data = COALESCE(raw_app_meta_data, '{}'::jsonb) || '{"role":"admin"}'::jsonb
+WHERE id = '<AUTH_USER_UUID>'::uuid;
 ```
 
-### Zobrazit všechny adminy
-```sql
-SELECT email, raw_app_meta_data->>'role' as role
-FROM auth.users
-WHERE raw_app_meta_data->>'role' = 'admin';
-```
-
-## Automatické nastavení prvního admina
-
-Pro první setup můžeš vytvořit Database Function:
+Odebrání:
 
 ```sql
-CREATE OR REPLACE FUNCTION make_first_user_admin()
-RETURNS TRIGGER AS $$
-BEGIN
-  -- Pokud je to první uživatel, udělej ho adminem
-  IF (SELECT COUNT(*) FROM auth.users) = 1 THEN
-    NEW.raw_app_meta_data = COALESCE(NEW.raw_app_meta_data, '{}'::jsonb) || '{"role": "admin"}'::jsonb;
-  END IF;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-CREATE TRIGGER set_first_user_as_admin
-  BEFORE INSERT ON auth.users
-  FOR EACH ROW
-  EXECUTE FUNCTION make_first_user_admin();
+UPDATE auth.users
+SET raw_app_meta_data = COALESCE(raw_app_meta_data, '{}'::jsonb) - 'role'
+WHERE id = '<AUTH_USER_UUID>'::uuid;
 ```
 
----
+Po změně role uživatel musí získat nový access token, typicky odhlášením a novým přihlášením.
 
-**📝 Poznámka:** Po každé změně user metadata je třeba uživatele odhlásit a znovu přihlásit, aby se změny projevily.
+## Co je zakázané
+
+- trigger typu „první registrovaný uživatel se automaticky stane adminem“,
+- role v `user_metadata`,
+- admin rozhodnutí podle e-mailu ve frontendu,
+- admin rozhodnutí podle `localStorage`,
+- service-role klíč v browseru.
+
+## Ověření
+
+1. Běžný uživatel nesmí otevřít `admin.html`.
+2. Běžný JWT nesmí projít admin Edge Function.
+3. Admin s aktuálním tokenem projde `admin-guard.js` i backend kontrolou.
+4. Po odebrání role a obnovení tokenu přístup zmizí.
+5. Skutečné RLS ověř pomocí `supabase/rls-audit.sql`.
+
+Další aktuální dokumentace: `SUPABASE_SETUP.md` a `PROJEKT_STATUS.md`.
