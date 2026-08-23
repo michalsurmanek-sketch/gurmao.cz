@@ -1,19 +1,12 @@
-// Rating System for GURMAO.cz
-// © 2025 GURMAO.cz
-// Now uses Supabase for persistent storage
+// GURMAO rating runtime.
+// Numeric star ratings live in `ratings`; text reviews live in `reviews`.
 
 class RatingManager {
   constructor() {
+    this.module = null;
     this.supabase = null;
-    this.rateRestaurantFn = null;
-    this.getUserRatingFn = null;
-    this.getRatingStatsFn = null;
-    this.getAllRatingsStatsFn = null;
-    this.getAllUserRatingsFn = null;
     this.ready = false;
     this.initPromise = this.initSupabase();
-    
-    // Cache
     this.statsCache = new Map();
     this.userRatingsCache = new Map();
     this.cacheLoaded = false;
@@ -21,391 +14,209 @@ class RatingManager {
 
   async initSupabase() {
     try {
-      const module = await import('./supabase-client.js');
-      this.supabase = module.supabase;
-      this.rateRestaurantFn = module.rateRestaurant;
-      this.getUserRatingFn = module.getUserRating;
-      this.getRatingStatsFn = module.getRestaurantRatingStats;
-      this.getAllRatingsStatsFn = module.getAllRatingsStats;
-      this.getAllUserRatingsFn = module.getAllUserRatings;
+      this.module = await import('./supabase-client.js');
+      this.supabase = this.module.supabase;
       this.ready = true;
     } catch (error) {
-      console.error('Failed to load Supabase:', error);
+      console.error('Rating system failed to load:', error);
       this.ready = false;
     }
   }
 
   async ensureReady() {
-    if (!this.ready) {
-      await this.initPromise;
-    }
-    if (!this.ready) {
-      throw new Error('Rating systém se nepodařilo načíst');
-    }
+    if (!this.ready) await this.initPromise;
+    if (!this.ready || !this.module || !this.supabase) throw new Error('Rating systém se nepodařilo načíst');
   }
-  
+
   async loadAllRatings() {
     if (this.cacheLoaded) return;
-    
+    await this.ensureReady();
     try {
-      await this.ensureReady();
-      
-      // Load all stats and user ratings in parallel
-      const [statsMap, userRatingsMap] = await Promise.all([
-        this.getAllRatingsStatsFn(),
-        this.getAllUserRatingsFn()
+      const [stats, userRatings] = await Promise.all([
+        this.module.getAllRatingsStats(),
+        this.module.getAllUserRatings()
       ]);
-      
-      this.statsCache = statsMap;
-      this.userRatingsCache = userRatingsMap;
-      this.cacheLoaded = true;
-      
+      this.statsCache = stats;
+      this.userRatingsCache = userRatings;
     } catch (error) {
-      // Silent fail - rating system not critical for feed
-      console.warn('Rating system unavailable');
+      console.warn('Rating cache is unavailable:', error);
       this.statsCache = new Map();
       this.userRatingsCache = new Map();
-      this.cacheLoaded = true; // Mark as loaded to prevent retries
+    } finally {
+      this.cacheLoaded = true;
     }
   }
 
-  // Rate a restaurant (1-5 stars)
   async rate(restaurantId, stars) {
     await this.ensureReady();
-
-    if (stars < 1 || stars > 5) {
-      throw new Error('Hodnocení musí být mezi 1 a 5');
+    const numericStars = Number(stars);
+    if (!Number.isInteger(numericStars) || numericStars < 1 || numericStars > 5) {
+      throw new Error('Hodnocení musí být celé číslo od 1 do 5');
     }
-
-    try {
-      const result = await this.rateRestaurantFn(restaurantId, stars);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    const result = await this.module.rateRestaurant(String(restaurantId), numericStars);
+    this.statsCache.delete(String(restaurantId));
+    this.userRatingsCache.set(String(restaurantId), numericStars);
+    return result;
   }
 
-  // Get user's current rating for a restaurant
   async getUserRating(restaurantId) {
     await this.ensureReady();
-    
-    // Use cache if available
-    if (this.cacheLoaded && this.userRatingsCache.has(restaurantId)) {
-      return this.userRatingsCache.get(restaurantId);
-    }
-    
-    try {
-      return await this.getUserRatingFn(restaurantId);
-    } catch (error) {
-      console.error('Error getting user rating:', error);
-      return null;
-    }
+    const key = String(restaurantId);
+    if (this.cacheLoaded && this.userRatingsCache.has(key)) return this.userRatingsCache.get(key);
+    return this.module.getUserRating(key);
   }
 
-  // Check if user is logged in
   async isUserLoggedIn() {
     await this.ensureReady();
-    
-    try {
-      const { data: { user } } = await this.supabase.auth.getUser();
-      return !!user;
-    } catch {
-      return false;
-    }
+    const { data: { user }, error } = await this.supabase.auth.getUser();
+    return !error && Boolean(user);
   }
 
-  // Get average rating for a restaurant
-  async getAverage(restaurantId) {
-    await this.ensureReady();
-    
-    // Use cache if available
-    if (this.cacheLoaded && this.statsCache.has(restaurantId)) {
-      return this.statsCache.get(restaurantId).average_rating || 0;
-    }
-    
-    try {
-      const stats = await this.getRatingStatsFn(restaurantId);
-      return stats.average_rating || 0;
-    } catch (error) {
-      console.error('Error getting rating stats:', error);
-      return 0;
-    }
-  }
-
-  // Get rating count
-  async getCount(restaurantId) {
-    await this.ensureReady();
-    
-    // Use cache if available
-    if (this.cacheLoaded && this.statsCache.has(restaurantId)) {
-      return this.statsCache.get(restaurantId).rating_count || 0;
-    }
-    
-    try {
-      const stats = await this.getRatingStatsFn(restaurantId);
-      return stats.rating_count || 0;
-    } catch (error) {
-      console.error('Error getting rating count:', error);
-      return 0;
-    }
-  }
-
-  // Get rating statistics
   async getRestaurantRatingStats(restaurantId) {
     await this.ensureReady();
-    
-    // Use cache if available
-    if (this.cacheLoaded && this.statsCache.has(restaurantId)) {
-      return this.statsCache.get(restaurantId);
-    }
-    
-    try {
-      return await this.getRatingStatsFn(restaurantId);
-    } catch (error) {
-      console.error('Error getting rating stats:', error);
-      return {
-        restaurant_id: restaurantId,
-        rating_count: 0,
-        average_rating: 0
-      };
-    }
+    const key = String(restaurantId);
+    if (this.cacheLoaded && this.statsCache.has(key)) return this.statsCache.get(key);
+    return this.module.getRestaurantRatingStats(key);
   }
 
-  // Submit a review with rating
-  async submitRating(restaurantSlug, rating, comment, title = null) {
+  async getAverage(restaurantId) {
+    const stats = await this.getRestaurantRatingStats(restaurantId);
+    return Number(stats?.average_rating || 0);
+  }
+
+  async getCount(restaurantId) {
+    const stats = await this.getRestaurantRatingStats(restaurantId);
+    return Number(stats?.rating_count || 0);
+  }
+
+  async resolveRestaurant(identifier) {
     await this.ensureReady();
-    
-    try {
-      const { data: { user }, error: authError } = await this.supabase.auth.getUser();
-      
-      if (authError || !user) {
-        throw new Error('Musíte být přihlášeni pro přidání recenze');
-      }
-      
-      // Get user name from profile
-      const { data: profile } = await this.supabase
-        .from('profiles')
-        .select('display_name')
-        .eq('id', user.id)
-        .single();
-      
-      // Insert review
+    const value = String(identifier || '').trim();
+    if (!value) throw new Error('Chybí restaurace');
+
+    if (/^[0-9a-f-]{36}$/i.test(value)) {
       const { data, error } = await this.supabase
-        .from('ratings')
-        .insert({
-          restaurant_id: restaurantSlug,
-          user_id: user.id,
-          user_name: profile?.display_name || user.email?.split('@')[0] || 'Anonym',
-          rating: rating,
-          comment: comment,
-          title: title
-        });
-      
+        .from('restaurants')
+        .select('id,slug,name')
+        .eq('id', value)
+        .maybeSingle();
       if (error) throw error;
-      
-      // Clear cache
-      this.statsCache.delete(restaurantSlug);
-      this.userRatingsCache.delete(restaurantSlug);
-      
-      return true;
-    } catch (error) {
-      console.error('Error submitting review:', error);
-      throw error;
+      if (data) return data;
     }
+
+    const { data, error } = await this.supabase
+      .from('restaurants')
+      .select('id,slug,name')
+      .eq('slug', value)
+      .maybeSingle();
+    if (error) throw error;
+    if (!data) throw new Error('Restaurace nebyla nalezena');
+    return data;
   }
 
-  // Get all reviews for a restaurant
-  async getRestaurantRatings(restaurantSlug) {
+  async submitRating(restaurantIdentifier, rating, comment, title = null) {
     await this.ensureReady();
-    
-    try {
-      const { data, error } = await this.supabase
-        .from('ratings')
-        .select('*')
-        .eq('restaurant_id', restaurantSlug)
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      
-      return data || [];
-    } catch (error) {
-      console.error('Error loading reviews:', error);
-      return [];
+    const numericRating = Number(rating);
+    const reviewText = String(comment || '').trim();
+    const reviewTitle = String(title || '').trim();
+    if (!Number.isInteger(numericRating) || numericRating < 1 || numericRating > 5) {
+      throw new Error('Hodnocení musí být celé číslo od 1 do 5');
     }
+    if (reviewText.length < 3 || reviewText.length > 3000) {
+      throw new Error('Recenze musí mít 3 až 3000 znaků');
+    }
+    if (reviewTitle.length > 120) throw new Error('Nadpis recenze je příliš dlouhý');
+
+    const { data: { user }, error: authError } = await this.supabase.auth.getUser();
+    if (authError || !user) throw new Error('Musíte být přihlášeni pro přidání recenze');
+
+    const restaurant = await this.resolveRestaurant(restaurantIdentifier);
+    await this.module.addReview(
+      user.id,
+      restaurant.id,
+      numericRating,
+      reviewTitle || null,
+      reviewText
+    );
+    return true;
   }
 
-  // Render star rating (static display)
+  async getRestaurantRatings(restaurantIdentifier) {
+    await this.ensureReady();
+    const restaurant = await this.resolveRestaurant(restaurantIdentifier);
+    const reviews = await this.module.getRestaurantReviews(restaurant.id);
+    return (reviews || []).map(review => ({
+      ...review,
+      rating: Number(review.rating || 0),
+      comment: String(review.text || ''),
+      user_name: String(review.profiles?.display_name || 'Anonym')
+    }));
+  }
+
   renderStars(rating, size = 'md') {
-    const sizeClass = {
-      sm: 'text-xs',
-      md: 'text-sm',
-      lg: 'text-base'
-    }[size] || 'text-sm';
-
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-
-    let html = `<div class="inline-flex items-center gap-0.5 ${sizeClass} opacity-60">`;
-    
-    // Full stars
-    for (let i = 0; i < fullStars; i++) {
-      html += '<span class="text-gurmaogold">●</span>';
-    }
-    
-    // Half star
-    if (hasHalfStar) {
-      html += '<span class="text-gurmaogold">◐</span>';
-    }
-    
-    // Empty stars
-    for (let i = 0; i < emptyStars; i++) {
-      html += '<span class="text-white/20">○</span>';
-    }
-    
-    html += `</div>`;
-    return html;
+    const value = Math.max(0, Math.min(5, Number(rating) || 0));
+    const sizeClass = { sm: 'text-xs', md: 'text-sm', lg: 'text-base' }[size] || 'text-sm';
+    const rounded = Math.round(value);
+    return `<div class="inline-flex items-center gap-0.5 ${sizeClass}" aria-label="Hodnocení ${value.toFixed(1)} z 5">${[1,2,3,4,5].map(star => `<span class="${star <= rounded ? 'text-gurmaogold' : 'text-white/20'}" aria-hidden="true">${star <= rounded ? '●' : '○'}</span>`).join('')}</div>`;
   }
 
-  // Render interactive star rating
   async renderInteractiveStars(restaurantId, currentRating = 0) {
     const isLoggedIn = await this.isUserLoggedIn();
     const userRating = isLoggedIn ? await this.getUserRating(restaurantId) : null;
-    const hasRated = userRating !== null;
-    const finalRating = userRating || currentRating;
-    
-    // If user already rated, show locked rating
-    if (hasRated) {
-      const html = `
-        <div class="rating-locked inline-flex items-center gap-1" data-restaurant="${restaurantId}">
-          ${[1, 2, 3, 4, 5].map(star => `
-            <span 
-              class="text-sm ${star <= finalRating ? 'text-gurmaogold opacity-70' : 'text-white/15'}"
-              title="Již jste ohodnotili ${finalRating} ${finalRating === 1 ? 'hvězdičkou' : finalRating < 5 ? 'hvězdičkami' : 'hvězdičkami'}"
-            >●</span>
-          `).join('')}
-          <span class="ml-2 text-xs text-white/40">Již ohodnoceno</span>
-        </div>
-      `;
-      return html;
+    const finalRating = Number(userRating ?? currentRating ?? 0);
+
+    if (userRating != null) {
+      return `<div class="rating-locked inline-flex items-center gap-1" data-restaurant="${String(restaurantId)}">${[1,2,3,4,5].map(star => `<span class="text-sm ${star <= finalRating ? 'text-gurmaogold opacity-70' : 'text-white/15'}" aria-hidden="true">●</span>`).join('')}<span class="ml-2 text-xs text-white/40">Již ohodnoceno</span></div>`;
     }
-    
-    // If not logged in, show login prompt
+
     if (!isLoggedIn) {
-      const html = `
-        <div class="rating-login inline-flex items-center gap-2">
-          ${[1, 2, 3, 4, 5].map(star => `
-            <span class="text-sm text-white/10">○</span>
-          `).join('')}
-          <a href="login.html" class="ml-2 text-xs text-gurmaogold hover:underline">Přihlásit se k hodnocení</a>
-        </div>
-      `;
-      return html;
+      return `<div class="rating-login inline-flex items-center gap-2">${[1,2,3,4,5].map(() => '<span class="text-sm text-white/10" aria-hidden="true">○</span>').join('')}<a href="login.html" class="ml-2 text-xs text-gurmaogold hover:underline">Přihlásit se k hodnocení</a></div>`;
     }
-    
-    // Show interactive rating
-    const html = `
-      <div class="rating-interactive inline-flex items-center gap-1" data-restaurant="${restaurantId}">
-        ${[1, 2, 3, 4, 5].map(star => `
-          <button 
-            type="button"
-            class="rating-star text-base transition-all hover:scale-110 hover:opacity-100 ${star <= finalRating ? 'text-gurmaogold opacity-70' : 'text-white/20 opacity-50'}"
-            data-star="${star}"
-            title="${star} ${star === 1 ? 'hvězdička' : star < 5 ? 'hvězdičky' : 'hvězdiček'}"
-          >●</button>
-        `).join('')}
-      </div>
-    `;
-    return html;
+
+    return `<div class="rating-interactive inline-flex items-center gap-1" data-restaurant="${String(restaurantId)}">${[1,2,3,4,5].map(star => `<button type="button" class="rating-star text-base transition-all hover:scale-110 ${star <= finalRating ? 'text-gurmaogold opacity-70' : 'text-white/20 opacity-50'}" data-star="${star}" aria-label="Ohodnotit ${star} z 5">●</button>`).join('')}</div>`;
   }
 
-  // Initialize interactive rating listeners
   initializeInteractive() {
-    document.addEventListener('click', async (e) => {
-      const star = e.target.closest('.rating-star');
-      if (!star) return;
+    if (window.__gurmaoRatingInteractionInitialized) return;
+    window.__gurmaoRatingInteractionInitialized = true;
 
+    document.addEventListener('click', async event => {
+      const star = event.target.closest('.rating-star');
+      if (!star || star.disabled) return;
       const container = star.closest('.rating-interactive');
-      const restaurantId = container.dataset.restaurant;
-      const stars = parseInt(star.dataset.star);
+      const restaurantId = container?.dataset.restaurant;
+      const stars = Number(star.dataset.star);
+      if (!restaurantId || !Number.isInteger(stars)) return;
 
-      // Okamžitě aktualizuj UI (optimisticky)
-      const allStars = container.querySelectorAll('.rating-star');
-      allStars.forEach((s, idx) => {
-        if (idx < stars) {
-          s.classList.remove('text-white/20');
-          s.classList.add('text-gurmaogold');
-        } else {
-          s.classList.add('text-white/20');
-          s.classList.remove('text-gurmaogold');
-        }
-        // Disable buttons
-        s.disabled = true;
-        s.style.cursor = 'default';
-        s.classList.remove('hover:scale-110');
-      });
-      
-      // Add locked message
-      const lockedMsg = document.createElement('span');
-      lockedMsg.className = 'ml-2 text-xs text-white/40';
-      lockedMsg.textContent = 'Ukládání...';
-      container.appendChild(lockedMsg);
-
+      const buttons = [...container.querySelectorAll('.rating-star')];
+      buttons.forEach(button => { button.disabled = true; });
       try {
-        // Save rating na pozadí
         await this.rate(restaurantId, stars);
-        
-        // Update locked message
-        lockedMsg.textContent = 'Již ohodnoceno';
-        
-        // Show toast
-        if (window.toast) {
-          window.toast.show(`Hodnocení uloženo: ${stars}/5`, 'success');
-        }
-
-        // Trigger update event (na pozadí načti statistiky)
-        this.getRestaurantRatingStats(restaurantId).then(stats => {
-          window.dispatchEvent(new CustomEvent('ratingUpdated', { 
-            detail: { restaurantId, stars, average: stats?.average_rating || stars }
-          }));
-        }).catch(err => console.error('Error loading stats:', err));
-
-      } catch (error) {
-        console.error('Rating error:', error);
-        lockedMsg.textContent = 'Chyba!';
-        lockedMsg.classList.add('text-red-500');
-        
-        // Vrátit UI zpět
-        allStars.forEach(s => {
-          s.disabled = false;
-          s.style.cursor = 'pointer';
-          s.classList.add('hover:scale-110');
+        buttons.forEach((button, index) => {
+          button.classList.toggle('text-gurmaogold', index < stars);
+          button.classList.toggle('text-white/20', index >= stars);
         });
-        
-        if (window.toast) {
-          window.toast.show(error.message || 'Nepodařilo se ohodnotit', 'error');
-        }
+        window.dispatchEvent(new CustomEvent('ratingUpdated', { detail: { restaurantId, stars } }));
+        window.toast?.show?.(`Hodnocení uloženo: ${stars}/5`, 'success');
+      } catch (error) {
+        console.error('Rating save failed:', error);
+        buttons.forEach(button => { button.disabled = false; });
+        window.toast?.show?.(error.message || 'Nepodařilo se uložit hodnocení', 'error');
       }
     });
   }
 }
 
-// Global instance
 const ratingManager = new RatingManager();
 window.ratingManager = ratingManager;
 export default ratingManager;
 
-// Auto-initialize
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    window.ratingManager.initializeInteractive();
-  });
+  document.addEventListener('DOMContentLoaded', () => ratingManager.initializeInteractive(), { once: true });
 } else {
-  // DOM already loaded
-  window.ratingManager.initializeInteractive();
+  ratingManager.initializeInteractive();
 }
 
-// Convenience functions
-window.rateRestaurant = (id, stars) => window.ratingManager.rate(id, stars);
-window.getRestaurantRating = (id) => window.ratingManager.getAverage(id);
-window.renderStars = (rating, size) => window.ratingManager.renderStars(rating, size);
+window.rateRestaurant = (id, stars) => ratingManager.rate(id, stars);
+window.getRestaurantRating = id => ratingManager.getAverage(id);
+window.renderStars = (rating, size) => ratingManager.renderStars(rating, size);
