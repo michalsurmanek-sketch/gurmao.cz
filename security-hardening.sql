@@ -1,40 +1,33 @@
--- GURMAO security migration
--- Run once in Supabase Dashboard -> SQL Editor, then log out and back in.
-
--- Admin authorization belongs in server-controlled app_metadata.
-UPDATE auth.users
-SET raw_app_meta_data = COALESCE(raw_app_meta_data, '{}'::jsonb) || '{"role":"admin"}'::jsonb
-WHERE email = 'michalsurmanek@seznam.cz';
-
-CREATE OR REPLACE FUNCTION public.is_admin()
-RETURNS boolean
-LANGUAGE sql
-STABLE
-SECURITY DEFINER
-SET search_path = ''
-AS $$
-  SELECT COALESCE((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false);
-$$;
-
-REVOKE ALL ON FUNCTION public.is_admin() FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.is_admin() TO authenticated;
+-- GURMAO security hardening
+-- Apply to the production Supabase project after reviewing current schema state.
+-- Admin authorization uses server-controlled app_metadata.role = 'admin'.
 
 ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Anyone can submit contact messages" ON public.contact_messages;
 DROP POLICY IF EXISTS "Authenticated users can read contact messages" ON public.contact_messages;
 DROP POLICY IF EXISTS "Authenticated users can update contact messages" ON public.contact_messages;
 DROP POLICY IF EXISTS "Only admins can read contact messages" ON public.contact_messages;
 DROP POLICY IF EXISTS "Only admins can update contact messages" ON public.contact_messages;
 
+-- Public clients never write contact messages directly. The submit-contact Edge Function
+-- validates requests and inserts with the service role.
+REVOKE INSERT, DELETE ON public.contact_messages FROM anon, authenticated;
+GRANT SELECT, UPDATE ON public.contact_messages TO authenticated;
+GRANT ALL ON public.contact_messages TO service_role;
+
 CREATE POLICY "Only admins can read contact messages"
   ON public.contact_messages
   FOR SELECT
   TO authenticated
-  USING (public.is_admin());
+  USING ((SELECT auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
 CREATE POLICY "Only admins can update contact messages"
   ON public.contact_messages
   FOR UPDATE
   TO authenticated
-  USING (public.is_admin())
-  WITH CHECK (public.is_admin());
+  USING ((SELECT auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+  WITH CHECK ((SELECT auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+
+-- The previous public SECURITY DEFINER helper is no longer needed.
+DROP FUNCTION IF EXISTS public.is_admin();
