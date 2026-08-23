@@ -1,347 +1,268 @@
-/**
- * AI Recommendations Engine for GURMAO
- * Smart restaurant recommendations based on mood, occasion, and preferences
- */
+import { supabase } from './supabase-client.js';
 
-class AIRecommendationEngine {
-  constructor() {
-    this.restaurants = [
-      {
-        id: 'noir-table',
-        name: 'Noir Table',
-        vibe: 'LUXE',
-        vibeEmoji: '🍷',
-        city: 'Praha',
-        tag: 'fine dining',
-        description: 'Místo, kde se čas zpomalí. Oheň, ticho, precizní servis.',
-        href: 'restaurace-noir-table.html',
-        priceLevel: 4,
-        mood: ['romantika', 'oslava', 'business'],
-        cuisine: ['modern european', 'fine dining'],
-        atmosphere: ['klidná', 'elegantní', 'intimní'],
-        occasion: ['výročí', 'rande', 'business dinner'],
-        groupSize: [2, 4],
-        keywords: ['oheň', 'ticho', 'luxus', 'wine pairing', 'degustační menu']
-      },
-      {
-        id: 'ember-steak',
-        name: 'Ember Steak',
-        vibe: 'DRAMA',
-        vibeEmoji: '🔥',
-        city: 'Brno',
-        tag: 'steakhouse',
-        description: 'Oheň, kouř, maso. Žádné výmluvy.',
-        href: 'restaurace-noir-table.html',
-        priceLevel: 3,
-        mood: ['hlad', 'kamarádi', 'oslava'],
-        cuisine: ['steakhouse', 'grill'],
-        atmosphere: ['živá', 'masivní', 'dominantní'],
-        occasion: ['narozeniny', 'party', 'páteční večer'],
-        groupSize: [2, 4, 6, 8],
-        keywords: ['maso', 'grill', 'steaky', 'bourbon', 'craft beer']
-      },
-      {
-        id: 'la-calle',
-        name: 'La Calle',
-        vibe: 'CHAOS',
-        vibeEmoji: '🌮',
-        city: 'Ostrava',
-        tag: 'street food',
-        description: 'Chaos s chuťovým smyslem.',
-        href: 'restaurace-noir-table.html',
-        priceLevel: 2,
-        mood: ['zábava', 'kamarádi', 'rychlé jídlo'],
-        cuisine: ['mexican', 'street food'],
-        atmosphere: ['rušná', 'casual', 'energická'],
-        occasion: ['oběd', 'rychlá večeře', 'after party'],
-        groupSize: [2, 4, 6],
-        keywords: ['tacos', 'street food', 'rychlé', 'casual', 'mexická kuchyně']
-      }
-    ];
+const VIBE_EMOJI = {
+  LUXE: '🍷',
+  DRAMA: '🔥',
+  CHAOS: '🌮',
+  PURE: '🌿',
+  DARK: '🌙',
+  CALM: '🌊'
+};
 
-    this.moodProfiles = {
-      'romantika': { vibes: ['LUXE', 'PURE'], groupSize: 2, atmosphere: ['intimní', 'klidná', 'elegantní'] },
-      'oslava': { vibes: ['DRAMA', 'CHAOS'], groupSize: [4, 6, 8], atmosphere: ['živá', 'energická'] },
-      'business': { vibes: ['LUXE', 'CALM'], groupSize: [2, 4], atmosphere: ['klidná', 'elegantní'] },
-      'kamarádi': { vibes: ['DRAMA', 'CHAOS'], groupSize: [4, 6], atmosphere: ['živá', 'casual'] },
-      'rychle': { vibes: ['CHAOS'], priceLevel: [1, 2], atmosphere: ['casual', 'rušná'] },
-      'klid': { vibes: ['CALM', 'PURE'], groupSize: [1, 2], atmosphere: ['klidná', 'intimní'] }
-    };
+const MOOD_VIBES = {
+  romantika: ['LUXE', 'CALM'],
+  oslava: ['DRAMA', 'CHAOS', 'LUXE'],
+  business: ['LUXE', 'CALM'],
+  kamarádi: ['CHAOS', 'DRAMA'],
+  rychle: ['CHAOS', 'PURE'],
+  klid: ['CALM', 'PURE'],
+  dobrodružství: ['CHAOS', 'DRAMA']
+};
 
-    this.occasionProfiles = {
-      'rande': { mood: 'romantika', vibes: ['LUXE'], priceLevel: [3, 4] },
-      'výročí': { mood: 'romantika', vibes: ['LUXE'], priceLevel: [4] },
-      'narozeniny': { mood: 'oslava', vibes: ['DRAMA', 'CHAOS'], groupSize: [4, 6, 8] },
-      'business dinner': { mood: 'business', vibes: ['LUXE', 'CALM'], priceLevel: [3, 4] },
-      'oběd': { mood: 'rychle', vibes: ['CHAOS'], priceLevel: [1, 2] },
-      'páteční večer': { mood: 'kamarádi', vibes: ['DRAMA'], groupSize: [4, 6] },
-      'party': { mood: 'oslava', vibes: ['CHAOS', 'DRAMA'], groupSize: [6, 8] }
-    };
-  }
+const OCCASION_VIBES = {
+  rande: ['LUXE', 'CALM'],
+  výročí: ['LUXE'],
+  narozeniny: ['DRAMA', 'CHAOS'],
+  'business dinner': ['LUXE', 'CALM'],
+  oběd: ['PURE', 'CHAOS', 'CALM'],
+  'páteční večer': ['DRAMA', 'CHAOS'],
+  party: ['CHAOS', 'DRAMA']
+};
 
-  /**
-   * Get AI recommendations based on user input
-   */
-  getRecommendations(query) {
-    const {
-      mood = null,
-      occasion = null,
-      groupSize = null,
-      city = null,
-      priceLevel = null,
-      freeText = ''
-    } = query;
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  })[char]);
+}
 
-    let scored = this.restaurants.map(restaurant => {
-      let score = 0;
-      let reasons = [];
+function normalize(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
 
-      // Mood matching
-      if (mood && this.moodProfiles[mood]) {
-        const profile = this.moodProfiles[mood];
-        if (profile.vibes.includes(restaurant.vibe)) {
-          score += 30;
-          reasons.push(`Perfektní ${restaurant.vibe} vibe pro ${mood}`);
-        }
-        if (profile.groupSize && (Array.isArray(profile.groupSize) 
-            ? profile.groupSize.includes(groupSize) 
-            : profile.groupSize === groupSize)) {
-          score += 15;
-        }
-        if (profile.atmosphere && restaurant.atmosphere.some(a => profile.atmosphere.includes(a))) {
-          score += 20;
-          reasons.push(`Atmosféra sedí`);
-        }
-      }
+function vibeKey(value) {
+  const text = normalize(value);
+  return Object.keys(VIBE_EMOJI).find(key => text.includes(key.toLowerCase())) || '';
+}
 
-      // Occasion matching
-      if (occasion && this.occasionProfiles[occasion]) {
-        const profile = this.occasionProfiles[occasion];
-        if (restaurant.occasion.includes(occasion)) {
-          score += 35;
-          reasons.push(`Doporučeno pro ${occasion}`);
-        }
-        if (profile.vibes.includes(restaurant.vibe)) {
-          score += 25;
-        }
-      }
+function numericPriceLevel(value) {
+  const raw = String(value || '').toUpperCase();
+  if (!raw) return null;
+  if (raw.includes('VERY_EXPENSIVE') || raw === '4') return 4;
+  if (raw.includes('EXPENSIVE') || raw === '3') return 3;
+  if (raw.includes('MODERATE') || raw === '2') return 2;
+  if (raw.includes('INEXPENSIVE') || raw === '1') return 1;
+  return null;
+}
 
-      // Group size matching
-      if (groupSize && restaurant.groupSize.includes(groupSize)) {
-        score += 20;
-        reasons.push(`Ideální pro ${groupSize} ${groupSize === 2 ? 'lidi' : 'lidí'}`);
-      }
-
-      // City matching
-      if (city && restaurant.city.toLowerCase() === city.toLowerCase()) {
-        score += 15;
-        reasons.push(`Ve tvém městě: ${city}`);
-      } else if (city) {
-        score -= 10; // Penalty for wrong city
-      }
-
-      // Price level matching
-      if (priceLevel && Math.abs(restaurant.priceLevel - priceLevel) === 0) {
-        score += 15;
-        reasons.push('Cenová relace sedí');
-      }
-
-      // Free text keyword matching
-      if (freeText) {
-        const lowerText = freeText.toLowerCase();
-        let keywordMatches = 0;
-        
-        restaurant.keywords.forEach(keyword => {
-          if (lowerText.includes(keyword.toLowerCase())) {
-            keywordMatches++;
-            score += 10;
-          }
-        });
-
-        if (keywordMatches > 0) {
-          reasons.push(`${keywordMatches} keyword ${keywordMatches === 1 ? 'match' : 'matches'}`);
-        }
-
-        // Check description
-        if (restaurant.description.toLowerCase().includes(lowerText.split(' ')[0])) {
-          score += 5;
-        }
-      }
-
-      // Base score for variety
-      score += Math.random() * 5;
-
-      return {
-        ...restaurant,
-        score: Math.round(score),
-        matchReasons: reasons.slice(0, 3) // Top 3 reasons
-      };
-    });
-
-    // Sort by score
-    scored.sort((a, b) => b.score - a.score);
-
-    return scored;
-  }
-
-  /**
-   * Generate AI-style explanation for recommendation
-   */
-  generateExplanation(query, topPick) {
-    const { mood, occasion, groupSize } = query;
-    
-    let explanation = "Na základě tvých preferencí ";
-    
-    if (mood) explanation += `(nálada: ${mood}) `;
-    if (occasion) explanation += `a příležitosti "${occasion}" `;
-    if (groupSize) explanation += `pro ${groupSize} ${groupSize === 2 ? 'lidi' : 'lidí'} `;
-    
-    explanation += `ti doporučuji **${topPick.name}** v ${topPick.city}. `;
-    
-    if (topPick.matchReasons.length > 0) {
-      explanation += `Důvody: ${topPick.matchReasons.join(', ')}.`;
-    }
-
-    return explanation;
-  }
-
-  /**
-   * Get confidence level based on score
-   */
-  getConfidence(score) {
-    if (score >= 80) return { level: 'Vysoká', color: 'text-green-400', emoji: '💚' };
-    if (score >= 60) return { level: 'Střední', color: 'text-yellow-400', emoji: '💛' };
-    if (score >= 40) return { level: 'Nízká', color: 'text-orange-400', emoji: '🧡' };
-    return { level: 'Velmi nízká', color: 'text-red-400', emoji: '❤️' };
-  }
-
-  /**
-   * Render recommendation card
-   */
-  renderRecommendationCard(restaurant, index) {
-    const confidence = this.getConfidence(restaurant.score);
-    const isTopPick = index === 0;
-
-    return `
-      <div class="bg-white/5 rounded-2xl border ${isTopPick ? 'border-gurmaogold shadow-glow' : 'border-white/10'} p-6 hover:bg-white/10 transition">
-        ${isTopPick ? '<div class="inline-block px-3 py-1 rounded-full bg-gurmaogold text-black text-xs font-bold mb-3">🏆 TOP PICK</div>' : ''}
-        
-        <div class="flex items-start justify-between mb-3">
-          <div>
-            <div class="text-xs text-gurmaogold mb-1">${restaurant.vibeEmoji} ${restaurant.vibe}</div>
-            <h3 class="text-xl font-bold">${restaurant.name}</h3>
-            <div class="text-white/60 text-sm mt-1">${restaurant.city} · ${restaurant.tag}</div>
-          </div>
-          <div class="text-right">
-            <div class="${confidence.color} text-sm font-semibold">${confidence.emoji} ${confidence.level}</div>
-            <div class="text-white/40 text-xs mt-1">Score: ${restaurant.score}</div>
-          </div>
-        </div>
-
-        <p class="text-white/80 text-sm mb-4">${restaurant.description}</p>
-
-        ${restaurant.matchReasons.length > 0 ? `
-          <div class="mb-4 space-y-1">
-            ${restaurant.matchReasons.map(reason => `
-              <div class="text-xs text-white/60 flex items-center gap-2">
-                <span class="text-gurmaogold">✓</span>
-                ${reason}
-              </div>
-            `).join('')}
-          </div>
-        ` : ''}
-
-        <div class="flex gap-2">
-          <a href="${restaurant.href}" class="flex-1 px-4 py-2 rounded-full ${isTopPick ? 'bg-gurmaogold text-black' : 'bg-white/10 text-white'} text-center text-sm font-semibold hover:scale-105 transition">
-            Zobrazit detail →
-          </a>
-          <button onclick="window.saveRestaurant && window.saveRestaurant('${restaurant.id}', '${restaurant.name}')" 
-                  class="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition">
-            💾
-          </button>
-        </div>
-      </div>
-    `;
-  }
-
-  /**
-   * Render all recommendations
-   */
-  renderRecommendations(query) {
-    const recommendations = this.getRecommendations(query);
-    const topPick = recommendations[0];
-
-    if (!recommendations || recommendations.length === 0) {
-      return '<div class="text-center text-white/60 py-12">Žádné doporučení nenalezeno. Zkus změnit filtry.</div>';
-    }
-
-    const explanation = this.generateExplanation(query, topPick);
-
-    return `
-      <div class="mb-8 p-6 bg-gradient-to-br from-gurmaogold/20 to-gurmaored/20 rounded-2xl border border-gurmaogold/30">
-        <div class="flex items-start gap-3">
-          <div class="text-3xl">🤖</div>
-          <div class="flex-1">
-            <h3 class="font-bold mb-2">AI Doporučení</h3>
-            <p class="text-white/90 text-sm leading-relaxed">${explanation}</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        ${recommendations.map((r, i) => this.renderRecommendationCard(r, i)).join('')}
-      </div>
-    `;
+function safeImageUrl(value) {
+  try {
+    const url = new URL(String(value || ''), location.origin);
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+  } catch {
+    return '';
   }
 }
 
-// Initialize and expose globally
-window.aiEngine = new AIRecommendationEngine();
+function detailUrl(restaurant) {
+  return `restaurant.html?slug=${encodeURIComponent(String(restaurant.slug || restaurant.id || ''))}`;
+}
 
-// Auto-initialize form handler
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('aiRecommendationForm');
-  const resultsContainer = document.getElementById('aiResults');
+class AIRecommendationEngine {
+  constructor() {
+    this.restaurants = null;
+    this.loadingPromise = null;
+  }
 
-  if (form && resultsContainer) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
+  async loadRestaurants() {
+    if (this.restaurants) return this.restaurants;
+    if (this.loadingPromise) return this.loadingPromise;
 
-      // Show loading
-      resultsContainer.innerHTML = `
-        <div class="text-center py-12">
-          <div class="inline-block animate-spin text-4xl mb-4">🤖</div>
-          <div class="text-white/60">AI přemýšlí...</div>
-        </div>
-      `;
+    this.loadingPromise = (async () => {
+      const rows = [];
+      const pageSize = 500;
+      let from = 0;
+      let total = Infinity;
 
-      // Simulate AI processing delay
-      setTimeout(() => {
-        const formData = new FormData(form);
-        const query = {
-          mood: formData.get('mood') || null,
-          occasion: formData.get('occasion') || null,
-          groupSize: parseInt(formData.get('groupSize')) || null,
-          city: formData.get('city') || null,
-          priceLevel: parseInt(formData.get('priceLevel')) || null,
-          freeText: formData.get('freeText') || ''
-        };
+      while (from < total) {
+        const { data, error, count } = await supabase
+          .from('restaurants')
+          .select('id,slug,name,city,tag,vibe,description,image_url,google_rating,google_review_count,price_level,opening_hours', { count: 'exact' })
+          .not('slug', 'is', null)
+          .range(from, from + pageSize - 1);
 
-        const html = window.aiEngine.renderRecommendations(query);
-        resultsContainer.innerHTML = html;
+        if (error) throw error;
+        rows.push(...(data || []));
+        total = count ?? rows.length;
+        if (!data?.length || rows.length >= total) break;
+        from += pageSize;
+      }
 
-        // Scroll to results
-        resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 1200);
+      this.restaurants = rows.filter(restaurant => restaurant?.name && (restaurant.slug || restaurant.id));
+      return this.restaurants;
+    })().finally(() => {
+      this.loadingPromise = null;
     });
 
-    // Reset button
-    const resetBtn = document.getElementById('resetForm');
-    if (resetBtn) {
-      resetBtn.addEventListener('click', () => {
-        form.reset();
-        resultsContainer.innerHTML = '';
-      });
+    return this.loadingPromise;
+  }
+
+  scoreRestaurant(restaurant, query) {
+    let score = 0;
+    const reasons = [];
+    const restaurantVibe = vibeKey(restaurant.vibe);
+    const city = normalize(query.city);
+    const freeText = normalize(query.freeText);
+    const restaurantText = normalize([
+      restaurant.name,
+      restaurant.city,
+      restaurant.tag,
+      restaurant.vibe,
+      restaurant.description
+    ].filter(Boolean).join(' '));
+
+    if (city) {
+      if (normalize(restaurant.city) === city) {
+        score += 40;
+        reasons.push(`Je v ${restaurant.city}`);
+      } else {
+        score -= 35;
+      }
+    }
+
+    const moodVibes = MOOD_VIBES[query.mood] || [];
+    if (restaurantVibe && moodVibes.includes(restaurantVibe)) {
+      score += 28;
+      reasons.push(`Sedí na náladu ${query.mood}`);
+    }
+
+    const occasionVibes = OCCASION_VIBES[query.occasion] || [];
+    if (restaurantVibe && occasionVibes.includes(restaurantVibe)) {
+      score += 24;
+      reasons.push(`Hodí se pro ${query.occasion}`);
+    }
+
+    const wantedPrice = Number(query.priceLevel) || null;
+    const restaurantPrice = numericPriceLevel(restaurant.price_level);
+    if (wantedPrice && restaurantPrice) {
+      const difference = Math.abs(wantedPrice - restaurantPrice);
+      if (difference === 0) {
+        score += 24;
+        reasons.push('Odpovídá rozpočtu');
+      } else if (difference === 1) {
+        score += 8;
+      } else {
+        score -= 12;
+      }
+    }
+
+    if (freeText) {
+      const terms = [...new Set(freeText.split(/\s+/).filter(term => term.length >= 2))].slice(0, 6);
+      const matches = terms.filter(term => restaurantText.includes(term));
+      if (matches.length) {
+        score += Math.min(42, matches.length * 14);
+        reasons.push(`Odpovídá chuti: ${matches.slice(0, 3).join(', ')}`);
+      } else {
+        score -= 10;
+      }
+    }
+
+    const rating = Number(restaurant.google_rating || 0);
+    const reviews = Number(restaurant.google_review_count || 0);
+    if (Number.isFinite(rating) && rating > 0) {
+      score += Math.max(0, (rating - 3.5) * 10);
+      if (rating >= 4.5) reasons.push(`Hodnocení ${rating.toFixed(1)} na Google`);
+    }
+    if (Number.isFinite(reviews) && reviews > 0) {
+      score += Math.min(12, Math.log10(reviews + 1) * 4);
+    }
+
+    if (restaurant.image_url) score += 2;
+    if (restaurant.opening_hours) score += 2;
+
+    return {
+      restaurant,
+      score,
+      reasons: reasons.slice(0, 3)
+    };
+  }
+
+  async getRecommendations(query = {}) {
+    const restaurants = await this.loadRestaurants();
+    const scored = restaurants
+      .map(restaurant => this.scoreRestaurant(restaurant, query))
+      .filter(item => item.score > -20)
+      .sort((a, b) => b.score - a.score || Number(b.restaurant.google_rating || 0) - Number(a.restaurant.google_rating || 0));
+
+    return scored.slice(0, 3);
+  }
+
+  explanation(query, result) {
+    const restaurant = result.restaurant;
+    if (result.reasons.length) {
+      return `${restaurant.name} vychází nejlépe podle zadaných kritérií: ${result.reasons.join(' · ')}.`;
+    }
+    return `${restaurant.name} vychází nejlépe z aktuálních restaurací v databázi GURMAO podle dostupných dat a hodnocení.`;
+  }
+
+  card(result, index) {
+    const restaurant = result.restaurant;
+    const rating = Number(restaurant.google_rating || 0);
+    const reviews = Number(restaurant.google_review_count || 0);
+    const image = safeImageUrl(restaurant.image_url);
+    const vibe = vibeKey(restaurant.vibe);
+    const vibeLabel = vibe ? `${VIBE_EMOJI[vibe]} ${vibe}` : 'GURMAO VÝBĚR';
+    const reasons = result.reasons.length
+      ? `<div class="mb-4 space-y-1">${result.reasons.map(reason => `<div class="text-xs text-white/60 flex items-center gap-2"><span class="text-gurmaogold">✓</span>${escapeHtml(reason)}</div>`).join('')}</div>`
+      : '';
+    const ratingHtml = rating > 0
+      ? `<div class="text-gurmaogold text-sm font-semibold">★ ${escapeHtml(rating.toFixed(1).replace('.', ','))}${reviews > 0 ? ` · ${escapeHtml(reviews.toLocaleString('cs-CZ'))} recenzí` : ''}</div>`
+      : '<div class="text-white/40 text-xs">Bez dostupného hodnocení</div>';
+
+    return `<article class="bg-white/5 rounded-2xl border ${index === 0 ? 'border-gurmaogold shadow-glow' : 'border-white/10'} overflow-hidden hover:bg-white/10 transition">
+      ${image ? `<a href="${escapeHtml(detailUrl(restaurant))}" class="block aspect-[16/9] overflow-hidden"><img src="${escapeHtml(image)}" alt="${escapeHtml(restaurant.name)}" loading="lazy" class="w-full h-full object-cover"></a>` : ''}
+      <div class="p-6">
+        ${index === 0 ? '<div class="inline-block px-3 py-1 rounded-full bg-gurmaogold text-black text-xs font-bold mb-3">TOP DOPORUČENÍ</div>' : ''}
+        <div class="text-xs text-gurmaogold mb-1">${escapeHtml(vibeLabel)}</div>
+        <h3 class="text-xl font-bold">${escapeHtml(restaurant.name)}</h3>
+        <div class="text-white/60 text-sm mt-1">${escapeHtml([restaurant.city, restaurant.tag].filter(Boolean).join(' · '))}</div>
+        <div class="mt-3">${ratingHtml}</div>
+        ${restaurant.description ? `<p class="text-white/80 text-sm my-4">${escapeHtml(String(restaurant.description).slice(0, 220))}</p>` : '<div class="mb-4"></div>'}
+        ${reasons}
+        <a href="${escapeHtml(detailUrl(restaurant))}" class="inline-flex w-full justify-center px-4 py-3 rounded-full ${index === 0 ? 'bg-gurmaogold text-black' : 'bg-white/10 text-white'} text-sm font-semibold hover:scale-[1.02] transition">Zobrazit detail →</a>
+      </div>
+    </article>`;
+  }
+
+  async renderRecommendations(query = {}) {
+    try {
+      const results = await this.getRecommendations(query);
+      if (!results.length) {
+        return '<div class="text-center text-white/60 py-12">Pro zadaná kritéria jsme nenašli vhodnou restauraci. Zkus změnit město nebo preference.</div>';
+      }
+
+      const top = results[0];
+      return `<section aria-live="polite">
+        <div class="mb-8 p-6 bg-gradient-to-br from-gurmaogold/20 to-gurmaored/20 rounded-2xl border border-gurmaogold/30">
+          <div class="flex items-start gap-3">
+            <div class="text-3xl" aria-hidden="true">✦</div>
+            <div class="flex-1">
+              <h3 class="font-bold mb-2">Doporučení GURMAO</h3>
+              <p class="text-white/90 text-sm leading-relaxed">${escapeHtml(this.explanation(query, top))}</p>
+              <p class="text-white/45 text-xs mt-3">Výsledek vychází z aktuálních dat restaurací, zadaných preferencí a dostupného hodnocení. Nejde o placené pořadí.</p>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${results.map((result, index) => this.card(result, index)).join('')}</div>
+      </section>`;
+    } catch (error) {
+      console.error('Recommendation loading failed:', error);
+      return '<div class="text-center text-red-300 py-12">Doporučení se teď nepodařilo načíst. Zkus to prosím znovu.</div>';
     }
   }
-});
+}
+
+window.aiEngine = new AIRecommendationEngine();
