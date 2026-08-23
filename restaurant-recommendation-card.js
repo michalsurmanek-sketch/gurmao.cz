@@ -1,5 +1,8 @@
 (async function initRecommendationCard(){
   if(!location.pathname.endsWith('/restaurace.html'))return;
+  if(window.__gurmaoRecommendationCardInitialized)return;
+  window.__gurmaoRecommendationCardInitialized=true;
+
   const box=document.getElementById('recommendedCarousel');
   if(!box)return;
 
