@@ -1,794 +1,434 @@
-// GURMAO.cz - Supabase Client Configuration
-// © 2025 GURMAO.cz
+// GURMAO.cz – shared Supabase client and compatibility helpers.
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+const SUPABASE_URL = 'https://jdprdcnxbxfzgrjjfflr.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_yVoMprXKwKGu1kIKc3p9ew_TQflIOib';
 
-// Supabase Project Configuration
-const SUPABASE_URL = "https://jdprdcnxbxfzgrjjfflr.supabase.co";
-
-// Supabase anon public key (safe to expose in frontend)
-const SUPABASE_ANON_KEY = "sb_publishable_yVoMprXKwKGu1kIKc3p9ew_TQflIOib";
-
-// Create Supabase client
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// Make supabase available globally for non-module scripts
 window.supabase = supabase;
 export { supabase };
 
-// ======================
-// AUTH HELPERS
-// ======================
+function cleanText(value, max = 5000) {
+  return String(value ?? '').normalize('NFKC').trim().slice(0, max);
+}
 
-/**
- * Sign up new user
- */
+async function requireUser(expectedUserId = null) {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) throw new Error('User not authenticated');
+  if (expectedUserId && String(expectedUserId) !== user.id) throw new Error('User mismatch');
+  return user;
+}
+
+async function resolveRestaurant(identifier) {
+  const value = cleanText(identifier, 200);
+  if (!value) throw new Error('Restaurant identifier is required');
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+  const { data, error } = await supabase
+    .from('restaurants')
+    .select('id,slug,name')
+    .eq(isUuid ? 'id' : 'slug', value)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) throw new Error('Restaurant not found');
+  return data;
+}
+
+// AUTH
 export async function signUp(email, password, displayName = null) {
+  const normalizedEmail = cleanText(email, 254).toLowerCase();
   const { data, error } = await supabase.auth.signUp({
-    email: email,
-    password: password,
-    options: {
-      data: {
-        display_name: displayName || email.split('@')[0]
-      }
-    }
+    email: normalizedEmail,
+    password,
+    options: { data: { display_name: cleanText(displayName || normalizedEmail.split('@')[0], 80) } }
   });
-  
   if (error) throw error;
   return data;
 }
 
-/**
- * Sign in with email/password
- */
 export async function signIn(email, password) {
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: email,
-    password: password
+    email: cleanText(email, 254).toLowerCase(),
+    password
   });
-  
   if (error) throw error;
   return data;
 }
 
-/**
- * Sign in with Google
- */
 export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: {
-      redirectTo: window.location.origin + '/feed.html'
-    }
+    options: { redirectTo: `${location.origin}/feed.html` }
   });
-  
   if (error) throw error;
   return data;
 }
 
-/**
- * Sign out
- */
 export async function signOut() {
   const { error } = await supabase.auth.signOut();
   if (error) throw error;
-  
-  // Clear localStorage
   localStorage.removeItem('gurmao_user');
-  window.location.href = 'index.html';
+  location.href = 'index.html';
 }
 
-/**
- * Get current user
- */
 export async function getCurrentUser() {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error) throw error;
   return user;
 }
 
-/**
- * Check if user is logged in
- */
 export async function isAuthenticated() {
-  const { data: { session } } = await supabase.auth.getSession();
-  return !!session;
+  const { data: { user }, error } = await supabase.auth.getUser();
+  return !error && Boolean(user);
 }
 
-/**
- * Reset password
- */
 export async function resetPassword(email) {
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+  const { error } = await supabase.auth.resetPasswordForEmail(cleanText(email, 254).toLowerCase(), {
     redirectTo: 'https://gurmao.cz/reset-password.html'
   });
-  
   if (error) throw error;
 }
 
-/**
- * Update password
- */
 export async function updatePassword(newPassword) {
-  const { error } = await supabase.auth.updateUser({
-    password: newPassword
-  });
-  
+  if (String(newPassword || '').length < 10) throw new Error('Heslo musí mít alespoň 10 znaků');
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
   if (error) throw error;
 }
 
-// ======================
-// PROFILE HELPERS
-// ======================
-
-/**
- * Get user profile
- */
-export async function getUserProfile(userId) {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
-    .single();
-  
+// PROFILE – compatibility helpers are always scoped to the current authenticated user.
+export async function getUserProfile(userId = null) {
+  const user = await requireUser(userId);
+  const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
   if (error) throw error;
   return data;
 }
 
-/**
- * Update user profile
- */
 export async function updateUserProfile(userId, updates) {
+  const user = await requireUser(userId);
+  const safeUpdates = { ...updates };
+  delete safeUpdates.id;
+  delete safeUpdates.user_id;
+  delete safeUpdates.email;
+  delete safeUpdates.role;
+  delete safeUpdates.created_at;
   const { data, error } = await supabase
     .from('profiles')
-    .update(updates)
-    .eq('id', userId)
+    .update(safeUpdates)
+    .eq('id', user.id)
     .select()
-    .single();
-  
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
 
-// ======================
-// RESTAURANTS HELPERS
-// ======================
-
-/**
- * Get all restaurants
- */
+// RESTAURANTS
 export async function getRestaurants(filters = {}) {
-  let query = supabase.from('restaurants').select('*');
-  
-  if (filters.vibe) {
-    query = query.eq('vibe', filters.vibe);
-  }
-  
-  if (filters.city) {
-    query = query.eq('city', filters.city);
-  }
-  
-  const { data, error } = await query.order('created_at', { ascending: false });
-  
+  const limit = Math.min(500, Math.max(1, Number(filters.limit) || 100));
+  const offset = Math.max(0, Number(filters.offset) || 0);
+  let query = supabase.from('restaurants').select('*').order('created_at', { ascending: false }).range(offset, offset + limit - 1);
+  if (filters.vibe) query = query.ilike('vibe', `%${cleanText(filters.vibe, 40).replace(/[,%()]/g, '')}%`);
+  if (filters.city) query = query.eq('city', cleanText(filters.city, 120));
+  const { data, error } = await query;
   if (error) throw error;
-  return data;
+  return data || [];
 }
 
-/**
- * Get single restaurant by slug
- */
 export async function getRestaurant(slug) {
-  const { data, error } = await supabase
-    .from('restaurants')
-    .select('*')
-    .eq('slug', slug)
-    .single();
-  
+  const restaurant = await resolveRestaurant(slug);
+  const { data, error } = await supabase.from('restaurants').select('*').eq('id', restaurant.id).maybeSingle();
   if (error) throw error;
   return data;
 }
 
-// ======================
-// SAVED RESTAURANTS (Collections)
-// ======================
-
-/**
- * Save restaurant (by slug)
- */
+// SAVED RESTAURANTS
 export async function saveRestaurant(restaurantSlug) {
-  const user = await getCurrentUser();
-  if (!user) throw new Error('User not authenticated');
-  
-  // Get restaurant UUID by slug
-  const restaurant = await getRestaurant(restaurantSlug);
-  if (!restaurant) throw new Error('Restaurant not found');
-  
+  const user = await requireUser();
+  const restaurant = await resolveRestaurant(restaurantSlug);
   const { data, error } = await supabase
     .from('saved_restaurants')
-    .insert({
-      user_id: user.id,
-      restaurant_id: restaurant.id
-    })
+    .insert({ user_id: user.id, restaurant_id: restaurant.id })
     .select()
-    .single();
-  
+    .maybeSingle();
   if (error) {
-    // If already saved, ignore duplicate error
     if (error.code === '23505') return null;
     throw error;
   }
-  
   return data;
 }
 
-/**
- * Unsave restaurant (by slug)
- */
 export async function unsaveRestaurant(restaurantSlug) {
-  const user = await getCurrentUser();
-  if (!user) throw new Error('User not authenticated');
-  
-  // Get restaurant UUID by slug
-  const restaurant = await getRestaurant(restaurantSlug);
-  if (!restaurant) throw new Error('Restaurant not found');
-  
+  const user = await requireUser();
+  const restaurant = await resolveRestaurant(restaurantSlug);
   const { error } = await supabase
     .from('saved_restaurants')
     .delete()
     .eq('user_id', user.id)
     .eq('restaurant_id', restaurant.id);
-  
   if (error) throw error;
 }
 
-/**
- * Get user's saved restaurants
- */
 export async function getSavedRestaurants() {
   const user = await getCurrentUser();
   if (!user) return [];
-  
   const { data, error } = await supabase
     .from('saved_restaurants')
-    .select(`
-      *,
-      restaurants (*)
-    `)
+    .select('id,user_id,restaurant_id,created_at,restaurants(*)')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
-  
   if (error) throw error;
-  
-  // Return with slug as restaurant_id for compatibility
-  return data.map(item => ({
+  return (data || []).map(item => ({
     ...item,
-    restaurant_id: item.restaurants.slug
+    restaurant_id: item.restaurants?.slug || item.restaurant_id
   }));
 }
 
-/**
- * Check if restaurant is saved
- */
 export async function isRestaurantSaved(userId, restaurantId) {
+  const user = await requireUser(userId);
+  const restaurant = await resolveRestaurant(restaurantId);
   const { data, error } = await supabase
     .from('saved_restaurants')
     .select('id')
-    .eq('user_id', userId)
-    .eq('restaurant_id', restaurantId)
-    .single();
-  
-  return !error && !!data;
+    .eq('user_id', user.id)
+    .eq('restaurant_id', restaurant.id)
+    .maybeSingle();
+  if (error) throw error;
+  return Boolean(data);
 }
 
-// ======================
-// REVIEWS HELPERS
-// ======================
-
-/**
- * Add review (optional - requires reviews table)
- */
+// TEXT REVIEWS
 export async function addReview(userId, restaurantId, rating, title, text) {
+  const user = await requireUser(userId);
+  const restaurant = await resolveRestaurant(restaurantId);
+  const numeric = Number(rating);
+  const reviewText = cleanText(text, 3000);
+  const reviewTitle = cleanText(title, 120);
+  if (!Number.isInteger(numeric) || numeric < 1 || numeric > 5) throw new Error('Hodnocení musí být 1 až 5');
+  if (reviewText.length < 3) throw new Error('Recenze je příliš krátká');
   const { data, error } = await supabase
     .from('reviews')
     .insert({
-      user_id: userId,
-      restaurant_id: restaurantId,
-      rating: rating,
-      title: title,
-      text: text
+      user_id: user.id,
+      restaurant_id: restaurant.id,
+      rating: numeric,
+      title: reviewTitle || null,
+      text: reviewText
     })
     .select()
-    .single();
-  
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
 
-/**
- * Get restaurant reviews (optional - requires reviews table)
- */
 export async function getRestaurantReviews(restaurantId) {
+  const restaurant = await resolveRestaurant(restaurantId);
   const { data, error } = await supabase
     .from('reviews')
-    .select(`
-      *,
-      profiles (display_name, avatar_url)
-    `)
-    .eq('restaurant_id', restaurantId)
+    .select('id,restaurant_id,rating,title,text,created_at,profiles(display_name,avatar_url)')
+    .eq('restaurant_id', restaurant.id)
     .order('created_at', { ascending: false });
-  
   if (error) throw error;
-  return data;
+  return data || [];
 }
 
-// ======================
-// REAL-TIME SUBSCRIPTIONS
-// ======================
-
-/**
- * Subscribe to saved restaurants changes
- */
 export function subscribeSavedRestaurants(userId, callback) {
   return supabase
-    .channel('saved_restaurants')
-    .on(
-      'postgres_changes',
-      {
-        event: '*',
-        schema: 'public',
-        table: 'saved_restaurants',
-        filter: `user_id=eq.${userId}`
-      },
-      callback
-    )
+    .channel(`saved_restaurants:${String(userId || '')}`)
+    .on('postgres_changes', {
+      event: '*', schema: 'public', table: 'saved_restaurants', filter: `user_id=eq.${String(userId || '')}`
+    }, callback)
     .subscribe();
 }
 
-// ======================
-// AUTH STATE LISTENER
-// ======================
-
-/**
- * Listen for auth state changes
- */
 export function onAuthStateChange(callback) {
-  return supabase.auth.onAuthStateChange((event, session) => {
-    callback(event, session);
-  });
+  return supabase.auth.onAuthStateChange((event, session) => callback(event, session));
 }
 
-// ======================
-// MIGRATION HELPER
-// ======================
-
-/**
- * Migrate localStorage collections to Supabase
- */
-export async function migrateLocalStorageToSupabase(userId) {
+// Fixed legacy migration helper. It never loads the full restaurant catalog and clears only successful local items.
+export async function migrateLocalStorageToSupabase() {
+  await requireUser();
+  let saved;
   try {
-    // Get saved items from localStorage
-    const savedKey = 'gurmao_saved';
-    const saved = JSON.parse(localStorage.getItem(savedKey) || '[]');
-    
-    if (!saved || saved.length === 0) {
-      return;
-    }
-    
-    // Get all restaurants to map slugs to IDs
-    const restaurants = await getRestaurants();
-    const restaurantMap = {};
-    restaurants.forEach(r => {
-      restaurantMap[r.slug] = r.id;
-    });
-    
-    // Insert saved restaurants
-    const promises = saved.map(slug => {
-      const restaurantId = restaurantMap[slug];
-      if (restaurantId) {
-        return saveRestaurant(userId, restaurantId);
-      }
-      return null;
-    }).filter(Boolean);
-    
-    await Promise.all(promises);
-    
-    
-    // Clear localStorage
-    localStorage.removeItem(savedKey);
-    
-  } catch (error) {
-    console.error('Migration error:', error);
-    throw error;
+    const parsed = JSON.parse(localStorage.getItem('gurmao_saved') || '[]');
+    saved = Array.isArray(parsed) ? parsed.map(String).filter(Boolean) : [];
+  } catch {
+    saved = [];
   }
+  if (!saved.length) return { migrated: 0, remaining: 0 };
+
+  const remaining = [];
+  let migrated = 0;
+  for (const slug of saved) {
+    try {
+      await saveRestaurant(slug);
+      migrated += 1;
+    } catch (error) {
+      console.warn(`Local saved restaurant migration failed: ${slug}`, error);
+      remaining.push(slug);
+    }
+  }
+  if (remaining.length) localStorage.setItem('gurmao_saved', JSON.stringify(remaining));
+  else localStorage.removeItem('gurmao_saved');
+  return { migrated, remaining: remaining.length };
 }
 
-// ======================
-// STORAGE HELPERS
-// ======================
-
-/**
- * Upload file to storage
- */
+// STORAGE
 export async function uploadFile(bucket, path, file) {
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .upload(path, file, {
-      cacheControl: '3600',
-      upsert: false
-    });
-  
+  const { data, error } = await supabase.storage.from(bucket).upload(path, file, { cacheControl: '3600', upsert: false });
   if (error) throw error;
   return data;
 }
 
-/**
- * Get public URL for file
- */
 export function getPublicUrl(bucket, path) {
-  const { data } = supabase.storage
-    .from(bucket)
-    .getPublicUrl(path);
-  
-  return data.publicUrl;
+  return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
 }
 
-/**
- * Delete file from storage
- */
 export async function deleteFile(bucket, path) {
-  const { error } = await supabase.storage
-    .from(bucket)
-    .remove([path]);
-  
+  const { error } = await supabase.storage.from(bucket).remove([path]);
   if (error) throw error;
 }
 
-/**
- * Upload restaurant image
- */
 export async function uploadRestaurantImage(file, restaurantSlug) {
-  const ext = file.name.split('.').pop();
-  const path = `${restaurantSlug}.${ext}`;
-  
+  const extension = String(file?.name || '').split('.').pop()?.replace(/[^a-z0-9]/gi, '').toLowerCase() || 'bin';
+  const safeSlug = cleanText(restaurantSlug, 160).replace(/[^a-z0-9_-]/gi, '-');
+  const path = `${safeSlug}.${extension}`;
   await uploadFile('restaurant-images', path, file);
   return path;
 }
 
-/**
- * Upload user avatar
- */
 export async function uploadAvatar(file) {
-  const user = await getCurrentUser();
-  if (!user) throw new Error('User not authenticated');
-  
-  const ext = file.name.split('.').pop();
-  const path = `${user.id}/avatar.${ext}`;
-  
+  const user = await requireUser();
+  const extension = String(file?.name || '').split('.').pop()?.replace(/[^a-z0-9]/gi, '').toLowerCase() || 'bin';
+  const path = `${user.id}/avatar.${extension}`;
   await uploadFile('avatars', path, file);
-  
-  // Update profile with avatar path
   await updateUserProfile(user.id, { avatar_path: path });
-  
   return path;
 }
 
-/**
- * Get restaurant image URL
- */
 export function getRestaurantImageUrl(imagePath) {
   if (!imagePath) return null;
-  if (imagePath.startsWith('http')) return imagePath; // Fallback for old URLs
+  if (/^https?:\/\//i.test(String(imagePath))) return String(imagePath);
   return getPublicUrl('restaurant-images', imagePath);
 }
 
-/**
- * Get avatar URL
- */
 export function getAvatarUrl(avatarPath) {
   if (!avatarPath) return null;
-  if (avatarPath.startsWith('http')) return avatarPath; // Fallback for old URLs
+  if (/^https?:\/\//i.test(String(avatarPath))) return String(avatarPath);
   return getPublicUrl('avatars', avatarPath);
 }
 
-// ======================
-// CONTACT MESSAGES
-// ======================
-
-/**
- * Submit contact form message
- */
-export async function submitContactMessage(messageData) {
-  const { name, email, subject, message } = messageData;
-  
-  const { data, error } = await supabase
-    .from('contact_messages')
-    .insert({
-      name: name,
-      email: email,
-      subject: subject,
-      message: message,
-      status: 'new'
-    })
-    .select()
-    .single();
-  
+// CONTACT – compatibility export now uses the protected server function, never direct table INSERT.
+export async function submitContactMessage(messageData = {}) {
+  const payload = {
+    name: messageData.name,
+    email: messageData.email,
+    subject: messageData.subject,
+    message: messageData.message,
+    website: messageData.website || '',
+    startedAt: Number(messageData.startedAt) || Date.now() - 2000
+  };
+  const { data, error } = await supabase.functions.invoke('submit-contact', { body: payload });
   if (error) throw error;
+  if (!data?.ok) throw new Error(data?.message || 'Zprávu se nepodařilo odeslat');
   return data;
 }
 
-/**
- * Get all contact messages (admin only)
- */
 export async function getContactMessages() {
-  const { data, error } = await supabase
-    .from('contact_messages')
-    .select('*')
-    .order('created_at', { ascending: false });
-  
+  await requireUser();
+  const { data, error } = await supabase.from('contact_messages').select('*').order('created_at', { ascending: false });
   if (error) throw error;
   return data || [];
 }
 
-/**
- * Update contact message status (admin only)
- */
 export async function updateContactMessageStatus(messageId, status) {
+  await requireUser();
+  const allowed = new Set(['new', 'read', 'replied', 'archived']);
+  if (!allowed.has(String(status))) throw new Error('Invalid contact status');
   const { data, error } = await supabase
     .from('contact_messages')
-    .update({ status: status })
-    .eq('id', messageId)
+    .update({ status })
+    .eq('id', String(messageId))
     .select()
-    .single();
-  
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
 
-// ======================
-// RATINGS
-// ======================
-
-/**
- * Add or update user rating for a restaurant
- */
+// NUMERIC RATINGS
 export async function rateRestaurant(restaurantId, stars) {
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    throw new Error('Pro hodnocení se musíte přihlásit');
-  }
-  
-  if (stars < 1 || stars > 5) {
-    throw new Error('Hodnocení musí být mezi 1 a 5');
-  }
-  
-  // Upsert - insert or update if exists
+  const user = await requireUser();
+  const restaurant = await resolveRestaurant(restaurantId);
+  const numeric = Number(stars);
+  if (!Number.isInteger(numeric) || numeric < 1 || numeric > 5) throw new Error('Hodnocení musí být mezi 1 a 5');
   const { data, error } = await supabase
     .from('ratings')
-    .upsert({
-      user_id: user.id,
-      restaurant_id: restaurantId,
-      stars: stars
-    }, {
-      onConflict: 'user_id,restaurant_id'
-    })
+    .upsert({ user_id: user.id, restaurant_id: restaurant.id, stars: numeric }, { onConflict: 'user_id,restaurant_id' })
     .select()
-    .single();
-  
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
 
-/**
- * Get user's rating for a restaurant
- */
 export async function getUserRating(restaurantId) {
-  const { data: { user } } = await supabase.auth.getUser();
-  
+  const user = await getCurrentUser();
   if (!user) return null;
-  
+  const restaurant = await resolveRestaurant(restaurantId);
   const { data, error } = await supabase
     .from('ratings')
     .select('stars')
     .eq('user_id', user.id)
-    .eq('restaurant_id', restaurantId)
-    .single();
-  
-  if (error) {
-    if (error.code === 'PGRST116') return null; // No rows found
-    throw error;
-  }
-  
-  return data?.stars || null;
-}
-
-/**
- * Get rating statistics for a restaurant
- */
-export async function getRestaurantRatingStats(restaurantId) {
-  // Try to get from rating_stats view first
-  const { data: viewData, error: viewError } = await supabase
-    .from('rating_stats')
-    .select('*')
-    .eq('restaurant_id', restaurantId)
+    .eq('restaurant_id', restaurant.id)
     .maybeSingle();
-  
-  // If view exists and has data, use it
-  if (!viewError && viewData) {
-    return viewData;
-  }
-  
-  // Fallback: calculate from ratings table
-  const { data: ratings, error } = await supabase
-    .from('ratings')
-    .select('stars')
-    .eq('restaurant_id', restaurantId);
-  
-  if (error) {
-    console.error('Error fetching ratings:', error);
-    return {
-      restaurant_id: restaurantId,
-      rating_count: 0,
-      average_rating: 0,
-      five_stars: 0,
-      four_stars: 0,
-      three_stars: 0,
-      two_stars: 0,
-      one_star: 0
-    };
-  }
-  
-  // If no ratings, return zero stats
-  if (!ratings || ratings.length === 0) {
-    return {
-      restaurant_id: restaurantId,
-      rating_count: 0,
-      average_rating: 0,
-      five_stars: 0,
-      four_stars: 0,
-      three_stars: 0,
-      two_stars: 0,
-      one_star: 0
-    };
-  }
-  
-  // Calculate statistics
-  const rating_count = ratings.length;
-  const sum = ratings.reduce((acc, r) => acc + r.stars, 0);
-  const average_rating = Math.round((sum / rating_count) * 10) / 10;
-  
-  return {
-    restaurant_id: restaurantId,
-    rating_count,
-    average_rating,
-    five_stars: ratings.filter(r => r.stars === 5).length,
-    four_stars: ratings.filter(r => r.stars === 4).length,
-    three_stars: ratings.filter(r => r.stars === 3).length,
-    two_stars: ratings.filter(r => r.stars === 2).length,
-    one_star: ratings.filter(r => r.stars === 1).length
-  };
+  if (error) throw error;
+  return data?.stars ?? null;
 }
 
-/**
- * Get all ratings for a restaurant
- */
+function emptyRatingStats(restaurantId) {
+  return { restaurant_id: restaurantId, rating_count: 0, average_rating: 0, five_stars: 0, four_stars: 0, three_stars: 0, two_stars: 0, one_star: 0 };
+}
+
+export async function getRestaurantRatingStats(restaurantId) {
+  const restaurant = await resolveRestaurant(restaurantId);
+  const { data, error } = await supabase.from('rating_stats').select('*').eq('restaurant_id', restaurant.id).maybeSingle();
+  if (!error && data) return data;
+  return emptyRatingStats(restaurant.id);
+}
+
 export async function getRestaurantRatings(restaurantId) {
+  const restaurant = await resolveRestaurant(restaurantId);
   const { data, error } = await supabase
     .from('ratings')
-    .select('*')
-    .eq('restaurant_id', restaurantId)
+    .select('id,restaurant_id,stars,created_at')
+    .eq('restaurant_id', restaurant.id)
     .order('created_at', { ascending: false });
-  
   if (error) throw error;
   return data || [];
 }
 
-/**
- * Get all ratings stats at once (bulk load)
- */
 export async function getAllRatingsStats() {
-  try {
-    // Try to get from rating_stats view
-    const { data: viewData, error: viewError } = await supabase
-      .from('rating_stats')
-      .select('*');
-    
-    if (!viewError && viewData) {
-      // Convert to Map for quick lookup
-      const statsMap = new Map();
-      viewData.forEach(stat => {
-        statsMap.set(stat.restaurant_id, stat);
-      });
-      return statsMap;
-    }
-  } catch (error) {
-  }
-  
-  // Fallback: get all ratings and calculate
-  const { data: allRatings, error } = await supabase
-    .from('ratings')
-    .select('restaurant_id, stars');
-  
+  const { data, error } = await supabase.from('rating_stats').select('*');
   if (error) {
-    console.error('Error fetching all ratings:', error);
+    console.warn('rating_stats is unavailable:', error.message || error);
     return new Map();
   }
-  
-  // Group by restaurant and calculate stats
-  const statsMap = new Map();
-  const grouped = {};
-  
-  allRatings?.forEach(rating => {
-    if (!grouped[rating.restaurant_id]) {
-      grouped[rating.restaurant_id] = [];
-    }
-    grouped[rating.restaurant_id].push(rating.stars);
-  });
-  
-  Object.entries(grouped).forEach(([restaurantId, stars]) => {
-    const count = stars.length;
-    const sum = stars.reduce((a, b) => a + b, 0);
-    const avg = Math.round((sum / count) * 10) / 10;
-    
-    statsMap.set(restaurantId, {
-      restaurant_id: restaurantId,
-      rating_count: count,
-      average_rating: avg,
-      five_stars: stars.filter(s => s === 5).length,
-      four_stars: stars.filter(s => s === 4).length,
-      three_stars: stars.filter(s => s === 3).length,
-      two_stars: stars.filter(s => s === 2).length,
-      one_star: stars.filter(s => s === 1).length
-    });
-  });
-  
-  return statsMap;
+  return new Map((data || []).map(row => [String(row.restaurant_id), row]));
 }
 
-/**
- * Get all user ratings at once
- */
 export async function getAllUserRatings() {
-  const { data: { user } } = await supabase.auth.getUser();
-  
+  const user = await getCurrentUser();
   if (!user) return new Map();
-  
-  const { data, error } = await supabase
-    .from('ratings')
-    .select('restaurant_id, stars')
-    .eq('user_id', user.id);
-  
-  if (error) {
-    console.error('Error fetching user ratings:', error);
-    return new Map();
-  }
-  
-  const ratingsMap = new Map();
-  data?.forEach(rating => {
-    ratingsMap.set(rating.restaurant_id, rating.stars);
-  });
-  
-  return ratingsMap;
+  const { data, error } = await supabase.from('ratings').select('restaurant_id,stars').eq('user_id', user.id);
+  if (error) throw error;
+  return new Map((data || []).map(row => [String(row.restaurant_id), row.stars]));
 }
 
-/**
- * Delete user's rating
- */
 export async function deleteRating(restaurantId) {
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    throw new Error('Musíte být přihlášeni');
-  }
-  
+  const user = await requireUser();
+  const restaurant = await resolveRestaurant(restaurantId);
   const { error } = await supabase
     .from('ratings')
     .delete()
     .eq('user_id', user.id)
-    .eq('restaurant_id', restaurantId);
-  
+    .eq('restaurant_id', restaurant.id);
   if (error) throw error;
 }
 
-// Export client as default
 export default supabase;
