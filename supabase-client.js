@@ -171,7 +171,7 @@ export async function getSavedRestaurants() {
   if (!user) return [];
   const { data, error } = await supabase
     .from('saved_restaurants')
-    .select('id,user_id,restaurant_id,created_at,restaurants(*)')
+    .select('id,user_id,restaurant_id,created_at,restaurants(slug)')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
   if (error) throw error;
