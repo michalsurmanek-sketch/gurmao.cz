@@ -1,5 +1,7 @@
-const SUPABASE_URL = 'https://jdprdcnxbxfzgrjjfflr.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_yVoMprXKwKGu1kIKc3p9ew_TQflIOib';
+import { writeFile } from 'node:fs/promises';
+
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://jdprdcnxbxfzgrjjfflr.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_yVoMprXKwKGu1kIKc3p9ew_TQflIOib';
 const SITE_URL = 'https://gurmao.cz';
 
 const headers = { apikey: SUPABASE_KEY, Accept: 'application/json' };
@@ -62,7 +64,7 @@ const entries = staticPages.map(([path, frequency, priority]) =>
 for (const restaurant of restaurants) {
   const slug = encodeURIComponent(restaurant.slug);
   const lastmod = restaurant.updated_at?.slice(0, 10) || today;
-  entries.push(urlEntry(`${SITE_URL}/restaurace-detail.html?id=${slug}`, lastmod, 'weekly', '0.7'));
+  entries.push(urlEntry(`${SITE_URL}/restaurant.html?slug=${slug}`, lastmod, 'weekly', '0.7'));
 }
 
 for (const chef of chefs) {
@@ -79,4 +81,3 @@ const xml = [
 
 await writeFile(new URL('../sitemap.xml', import.meta.url), xml, 'utf8');
 console.log(`Generated sitemap.xml with ${entries.length} URLs.`);
-import { writeFile } from 'node:fs/promises';
