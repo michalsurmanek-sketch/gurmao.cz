@@ -3,10 +3,14 @@ import assert from 'node:assert/strict';
 import { access, readFile } from 'node:fs/promises';
 
 const ACTIVE_FILES = [
+  'index.html',
   'supabase-client.js',
   'app.js',
   'auth-guard.js',
+  'auth-redirect.js',
   'login-page.js',
+  'homepage-runtime.js',
+  'admin-dashboard-runtime.js',
   'header-search.js',
   'restaurace.js',
   'feed-page.js',
@@ -42,6 +46,27 @@ test('active public runtime uses only canonical restaurant detail route', async 
     assert.equal(source.includes('restaurace-detail.html'), false, `${file} still links to restaurace-detail.html`);
     assert.equal(/restaurace-\$\{[^}]+\}\.html/.test(source), false, `${file} still constructs legacy restaurace-<slug>.html`);
   }
+});
+
+test('homepage uses one maintained runtime path', async () => {
+  const page = await text('index.html');
+  const homepage = await text('homepage-runtime.js');
+  assert.match(page, /https:\/\/jdprdcnxbxfzgrjjfflr\.supabase\.co/, 'homepage must preconnect only to current Supabase');
+  assert.match(page, /app\.js\?v=20260823-shared-4/, 'homepage must load current app runtime');
+  assert.equal(/src="header-search\.js/.test(page), false, 'homepage must not directly double-load header search');
+  assert.equal(/src="location-search\.js/.test(page), false, 'homepage must not directly double-load location search');
+  assert.equal(page.includes('src="onboarding.js"'), false, 'retired onboarding must not load');
+  assert.equal(page.includes('type="module" src="supabase-client.js"'), false, 'auth router should own Supabase module loading');
+  assert.equal(page.includes('// Homepage: Change CTA for logged-in users'), false, 'homepage must not trust localStorage for auth CTA');
+  assert.match(homepage, /supabase\.auth\.getUser\(\)/, 'homepage account CTA must use verified auth');
+});
+
+test('mobile and desktop header search share one runtime', async () => {
+  const source = await text('header-search.js');
+  assert.match(source, /getElementById\(['"]headerSearchToggle['"]\)/);
+  assert.match(source, /getElementById\(['"]mobileSearchBtn['"]\)/);
+  assert.match(source, /capture:\s*true/, 'mobile trigger must capture and suppress the retired inline opener if encountered');
+  assert.match(source, /restaurant\.html\?slug=/, 'search results must use canonical detail route');
 });
 
 test('guest collections stay available without authentication redirect', async () => {
@@ -142,6 +167,8 @@ test('removed runtime patch layers stay removed', async () => {
     'restaurant-card-actions.js',
     'restaurace-detail.js',
     'rating.js',
+    'onboarding.js',
+    'ga.js',
     'map-footer-search.js',
     'footer-search.js',
     'daily-menu-ui.js',
