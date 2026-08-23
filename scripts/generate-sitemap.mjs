@@ -47,7 +47,6 @@ const staticPages = [
   ['/feed.html', 'daily', '0.8'],
   ['/kuchar.html', 'weekly', '0.7'],
   ['/ai.html', 'weekly', '0.7'],
-  ['/gear.html', 'weekly', '0.6'],
   ['/kontakt.html', 'monthly', '0.4'],
   ['/legal.html', 'yearly', '0.2']
 ];
