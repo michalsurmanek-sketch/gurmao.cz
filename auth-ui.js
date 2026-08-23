@@ -1,31 +1,21 @@
-// GURMAO.cz – sdílené přihlášení, navigace a bezpečné doplňky stránek.
+// GURMAO.cz – shared authentication, navigation and lightweight page enhancements.
 (() => {
   'use strict';
 
-  const onReady = (callback) => {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', callback, { once: true });
-    } else {
-      callback();
-    }
+  const onReady = callback => {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', callback, { once: true });
+    else callback();
   };
 
-  const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, character => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
+  const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[character]));
 
-  // Opraví pouze poškozená lokální data. Service worker ani cache se zde nemažou.
   try {
     const userRaw = localStorage.getItem('gurmao_user');
     if (userRaw !== null) {
       const user = JSON.parse(userRaw);
-      if (!user || typeof user !== 'object' || Array.isArray(user)) {
-        localStorage.removeItem('gurmao_user');
-      }
+      if (!user || typeof user !== 'object' || Array.isArray(user)) localStorage.removeItem('gurmao_user');
     }
   } catch {
     localStorage.removeItem('gurmao_user');
@@ -33,15 +23,13 @@
 
   try {
     const savedRaw = localStorage.getItem('gurmao_saved');
-    if (savedRaw !== null && !Array.isArray(JSON.parse(savedRaw))) {
-      localStorage.setItem('gurmao_saved', '[]');
-    }
+    if (savedRaw !== null && !Array.isArray(JSON.parse(savedRaw))) localStorage.setItem('gurmao_saved', '[]');
   } catch {
     localStorage.setItem('gurmao_saved', '[]');
   }
 
   onReady(() => {
-    const footerText = '© 2026 GURMAO.cz • Nejez. Prožij. • Objevujte nejlepší restaurace v celé České republice.';
+    const footerText = '© 2026 GURMAO.cz • Nejez. Prožij. • Objevujte restaurace v celé České republice.';
     document.querySelectorAll('footer').forEach(footer => {
       const candidates = [...footer.querySelectorAll('span, p, small, div')]
         .filter(element => /©|GURMAO\.cz/i.test(element.textContent || ''))
@@ -157,9 +145,34 @@
     }
   }
 
-  onReady(() => void initializeAuthentication());
+  async function updateHomepageRestaurantCount() {
+    const page = location.pathname.split('/').pop() || 'index.html';
+    if (page !== 'index.html') return;
+    const target = document.querySelector('.hero-count strong');
+    if (!target) return;
 
-  // Doplňky se načítají pouze tam, kde jsou stále potřeba.
+    try {
+      const { supabase } = await import('./supabase-client.js');
+      const { count, error } = await supabase
+        .from('restaurants')
+        .select('id', { count: 'exact', head: true })
+        .not('slug', 'is', null);
+      if (error) throw error;
+      if (Number.isInteger(count)) target.textContent = count.toLocaleString('cs-CZ');
+    } catch (error) {
+      console.warn('Homepage restaurant count failed:', error);
+      const container = target.closest('.hero-count');
+      if (container) container.textContent = 'Prohledáváme restaurace po celé ČR';
+    }
+  }
+
+  onReady(() => {
+    void initializeAuthentication();
+    void updateHomepageRestaurantCount();
+  });
+
+  // Visual-only enhancements. Functional restaurant recommendation logic is
+  // loaded by app.js, so auth-ui must not create a second copy of that runtime.
   onReady(() => {
     const path = location.pathname.replace(/\/+$/, '');
     const loadEnhancement = (css, js, version) => {
@@ -179,10 +192,10 @@
 
     if (path.endsWith('/kuchar.html')) loadEnhancement('chef-redesign.css', 'chef-redesign.js', '4');
     if (path.endsWith('/restaurace.html')) {
-      loadEnhancement('restaurant-gold-scrollbar.css', null, '20260725-2');
-      loadEnhancement(null, 'restaurant-locality-select-fix.js', '20260725-2');
-      loadEnhancement('restaurant-recommendation-card.css', 'restaurant-recommendation-card.js', '20260725-3');
+      loadEnhancement('restaurant-gold-scrollbar.css', null, '20260823-1');
+      loadEnhancement(null, 'restaurant-locality-select-fix.js', '20260823-1');
+      loadEnhancement('restaurant-recommendation-card.css', null, '20260823-1');
     }
-    if (path.endsWith('/ai.html')) loadEnhancement('ai-redesign.css', 'ai-redesign.js', '6');
+    if (path.endsWith('/ai.html')) loadEnhancement('ai-redesign.css', 'ai-redesign.js', '7');
   });
 })();
