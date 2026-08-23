@@ -48,6 +48,12 @@ if (currentPublicPage === 'ai.html') {
   });
 }
 
+if (currentPublicPage === 'kontakt.html') {
+  void import('/contact-form-runtime.js?v=20260823-1').catch(error => {
+    console.error('Protected contact form failed to load:', error);
+  });
+}
+
 if (!document.getElementById('gurmao-global-scrollbar-style')) {
   const scrollbarStyle = document.createElement('style');
   scrollbarStyle.id = 'gurmao-global-scrollbar-style';
@@ -129,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function readLocalSaved() {
   try {
     const parsed = JSON.parse(localStorage.getItem('gurmao_saved') || '[]');
-    return new Set(Array.isArray(parsed) ? parsed.map(String) : []);
+    return new Set(Array.isArray(parsed) ? parsed.map(String).filter(Boolean) : []);
   } catch {
     localStorage.removeItem('gurmao_saved');
     return new Set();
@@ -137,6 +143,10 @@ function readLocalSaved() {
 }
 
 function writeLocalSaved(saved) {
+  if (!saved.size) {
+    localStorage.removeItem('gurmao_saved');
+    return;
+  }
   localStorage.setItem('gurmao_saved', JSON.stringify([...saved]));
 }
 
@@ -174,10 +184,27 @@ const GurmaoCollections = {
     }
 
     try {
-      const { getSavedRestaurants } = await import('./supabase-client.js');
+      const { getSavedRestaurants, saveRestaurant } = await import('./supabase-client.js');
       const savedRestaurants = await getSavedRestaurants();
       const cloudSaved = new Set(savedRestaurants.map(item => String(item.restaurant_id || '')).filter(Boolean));
-      this.savedCache = new Set([...cloudSaved, ...localSaved]);
+      const remainingLocal = new Set(localSaved);
+
+      for (const slug of localSaved) {
+        if (cloudSaved.has(slug)) {
+          remainingLocal.delete(slug);
+          continue;
+        }
+        try {
+          await saveRestaurant(slug);
+          cloudSaved.add(slug);
+          remainingLocal.delete(slug);
+        } catch (error) {
+          console.warn(`Local saved restaurant could not be synchronized: ${slug}`, error);
+        }
+      }
+
+      writeLocalSaved(remainingLocal);
+      this.savedCache = new Set([...cloudSaved, ...remainingLocal]);
       return this.savedCache;
     } catch (error) {
       console.error('Error fetching saved restaurants:', error);
@@ -220,6 +247,9 @@ const GurmaoCollections = {
 
     const { unsaveRestaurant } = await import('./supabase-client.js');
     await unsaveRestaurant(slug);
+    const localSaved = readLocalSaved();
+    localSaved.delete(slug);
+    writeLocalSaved(localSaved);
     if (this.savedCache) this.savedCache.delete(slug);
     return { saved: false, synced: true };
   },
