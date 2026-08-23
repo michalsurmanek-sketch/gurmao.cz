@@ -1,4 +1,5 @@
-// GURMAO homepage-only enhancements.
+import { supabase } from './supabase-client.js';
+
 if ((location.pathname.split('/').pop() || 'index.html').toLowerCase() !== 'index.html') {
   throw new Error('homepage-runtime loaded outside homepage');
 }
@@ -46,9 +47,29 @@ function applyHomepageCuisineLayout() {
   `;
 }
 
+async function syncAccountCta() {
+  const cta = document.getElementById('heroLoginBtn');
+  if (!cta) return;
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) {
+      cta.href = 'login.html';
+      cta.textContent = 'Přihlásit se →';
+      return;
+    }
+    cta.href = 'collections.html';
+    cta.textContent = 'Můj výběr';
+  } catch (error) {
+    console.warn('Homepage auth CTA could not be verified:', error);
+    cta.href = 'login.html';
+    cta.textContent = 'Přihlásit se →';
+  }
+}
+
 function initHomepage() {
   addWineBarHomepageCategory();
   applyHomepageCuisineLayout();
+  void syncAccountCta();
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initHomepage, { once: true });
