@@ -1,42 +1,28 @@
-// GURMAO.cz – čistý síťový service worker bez přepisování HTML.
-// collections.html ani její doplňky se necachují a stránka se nuceně nepřenačítá.
+// GURMAO.cz – minimal network service worker.
+// It never rewrites HTML or injects application scripts.
 
-const RUNTIME_VERSION = '20260728-collections-stable-4';
+const CACHE_NAME = 'gurmao-offline-20260823-1';
+const OFFLINE_URL = '/offline.html';
 
-self.addEventListener('install', () => {
-  self.skipWaiting();
+self.addEventListener('install', event => {
+  event.waitUntil((async () => {
+    try {
+      const cache = await caches.open(CACHE_NAME);
+      await cache.add(new Request(OFFLINE_URL, { cache: 'reload' }));
+    } catch (error) {
+      console.warn('Offline fallback could not be cached:', error);
+    }
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
-    const cacheNames = await caches.keys();
-    await Promise.all(cacheNames.map(name => caches.delete(name)));
+    const names = await caches.keys();
+    await Promise.all(names.filter(name => name !== CACHE_NAME).map(name => caches.delete(name)));
     await self.clients.claim();
   })());
 });
-
-async function networkHtml(request, injectRuntime) {
-  const response = await fetch(request, { cache: 'no-store' });
-  const contentType = response.headers.get('content-type') || '';
-  if (!response.ok || !contentType.includes('text/html') || !injectRuntime) return response;
-
-  let html = await response.text();
-  const scripts = [
-    { marker: '/runtime-guard.js', tag: `<script src="/runtime-guard.js?v=${RUNTIME_VERSION}"></script>` },
-    { marker: '/hide-price-level.js', tag: `<script src="/hide-price-level.js?v=${RUNTIME_VERSION}"></script>` },
-    { marker: '/restaurant-card-status.js', tag: `<script src="/restaurant-card-status.js?v=${RUNTIME_VERSION}"></script>` },
-    { marker: '/restaurant-card-actions.js', tag: `<script src="/restaurant-card-actions.js?v=${RUNTIME_VERSION}"></script>` },
-    { marker: '/mobile-bottom-nav.js', tag: `<script src="/mobile-bottom-nav.js?v=${RUNTIME_VERSION}"></script>` }
-  ];
-
-  const missingTags = scripts.filter(script => !html.includes(script.marker)).map(script => script.tag).join('');
-  if (missingTags) html = html.includes('</head>') ? html.replace('</head>', `${missingTags}</head>`) : `${missingTags}${html}`;
-
-  const headers = new Headers(response.headers);
-  headers.delete('content-length');
-  headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-  return new Response(html, { status: response.status, statusText: response.statusText, headers });
-}
 
 self.addEventListener('fetch', event => {
   const request = event.request;
@@ -45,13 +31,15 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  const isCollectionsAsset = /\/(collections\.html|collections-redesign\.(?:js|css)|auth-guard\.js)$/i.test(url.pathname);
-  if (isCollectionsAsset) {
-    event.respondWith(fetch(request, { cache: 'no-store' }));
-    return;
-  }
-
   if (request.mode === 'navigate' || request.destination === 'document') {
-    event.respondWith(networkHtml(request, true).catch(() => fetch(request, { cache: 'no-store' })));
+    event.respondWith((async () => {
+      try {
+        return await fetch(request, { cache: 'no-cache' });
+      } catch (error) {
+        const fallback = await caches.match(OFFLINE_URL);
+        if (fallback) return fallback;
+        throw error;
+      }
+    })());
   }
 });
