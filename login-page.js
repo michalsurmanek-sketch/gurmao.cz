@@ -2,7 +2,6 @@ import {
   supabase,
   signIn,
   signUp,
-  signInWithGoogle,
   resetPassword,
   migrateLocalStorageToSupabase
 } from './supabase-client.js';
@@ -29,12 +28,17 @@ function safeDestination(value, user = null) {
   }
 }
 
-function desiredDestination(user = null) {
+function peekDestination(user = null) {
   const params = new URLSearchParams(location.search);
-  const fromQuery = safeDestination(params.get('return'), user);
-  const fromStorage = safeDestination(localStorage.getItem('gurmao_return_url'), user);
+  return safeDestination(params.get('return'), user)
+    || safeDestination(localStorage.getItem('gurmao_return_url'), user)
+    || DEFAULT_DESTINATION;
+}
+
+function consumeDestination(user = null) {
+  const destination = peekDestination(user);
   localStorage.removeItem('gurmao_return_url');
-  return fromQuery || fromStorage || DEFAULT_DESTINATION;
+  return destination;
 }
 
 function storeCompatibilityUser(user) {
@@ -68,7 +72,7 @@ async function syncLocalSaved() {
 async function completeSignIn(user) {
   storeCompatibilityUser(user);
   await syncLocalSaved();
-  location.replace(desiredDestination(user));
+  location.replace(consumeDestination(user));
 }
 
 async function handleExistingSession() {
@@ -184,11 +188,17 @@ function bindAuthActions() {
     if (target.tagName === 'BUTTON' && /pokračovat\s+s\s+google/i.test(target.textContent || '')) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      const destination = desiredDestination();
+      const destination = peekDestination();
       localStorage.setItem('gurmao_return_url', destination);
       const loading = toastLoadingSafe('Přihlašování přes Google…');
       try {
-        await signInWithGoogle();
+        const callback = new URL('/login.html', location.origin);
+        callback.searchParams.set('oauth', '1');
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: callback.href }
+        });
+        if (error) throw error;
       } catch (error) {
         console.error('Google login failed:', error);
         toastUpdateSafe(loading, `❌ ${error?.message || 'Google přihlášení se nepodařilo'}`, 'error');
