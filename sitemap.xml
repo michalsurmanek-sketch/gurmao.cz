@@ -103,8 +103,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=banh-mi-makers-praha-5-2f6c9bf0ff</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=vinoteka-kolbenova-praha-2f06d925b5</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -115,8 +115,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pub-a-club-u-maxe-praha-f519db8a6c</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=zizkovska-hudebni-restaurace-u-krale-praha-3bb8d079d0</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -207,6 +207,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=ztraceny-raj-praha-fd6fc903a8</loc>
     <lastmod>2026-09-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=gourmet-market-praha-praha-dd799ca91c</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -932,7 +938,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-cecha</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1004,7 +1010,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=original-formanka-praha-bc218f3800</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1063,14 +1069,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pivnice-u-zelen%C3%A9ho-stromu</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=happy-noodles-and-sushi-praha-65a1755941</loc>
+    <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=happy-noodles-and-sushi-praha-65a1755941</loc>
-    <lastmod>2026-07-27</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=pivnice-u-zelen%C3%A9ho-stromu</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1100,13 +1106,13 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=trezor-spork-praha-b5fee81d8c</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=fresh-greek-praha-9b98a81456</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1238,7 +1244,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=bohemia-restaurant-praha-c3df8534e0</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1549,12 +1555,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=sicily-cafe-praha-64a18a62ef</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-mikulda</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>weekly</changefreq>
@@ -1568,7 +1568,13 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=bagel-lounge-florenc-praha-925bb3fc3f</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=sicily-cafe-praha-64a18a62ef</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1639,12 +1645,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=krystal-bistro-praha-f2483be312</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=losteria-ostrava</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>weekly</changefreq>
@@ -1659,6 +1659,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-zlat%C3%BD-and%C4%9Bl</loc>
     <lastmod>2026-07-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=krystal-bistro-praha-f2483be312</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2437,6 +2443,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=pub-a-club-u-maxe-praha-f519db8a6c</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-radnice-boskovice</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -2468,7 +2480,19 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=banh-mi-makers-dlouha-praha-5628877c45</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=banh-mi-makers-praha-5-2f6c9bf0ff</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=brown-nosing-praha-57c4b882af</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2521,6 +2545,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=cd-restaurant-praha-83550245af</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-zameck%C3%A1</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>weekly</changefreq>
@@ -2535,6 +2565,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=vitalisimo-cafe-bistro-praha-2f486bd34b</loc>
     <lastmod>2026-07-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=anor-uzbek-restaurant-praha-fcbf705a60</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2653,12 +2689,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=merkur-praha-f0fbb0276e</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=u-kun%C5%A1t%C3%A1t%C5%AF</loc>
     <lastmod>2026-09-22</lastmod>
     <changefreq>weekly</changefreq>
@@ -2671,8 +2701,20 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=merkur-praha-f0fbb0276e</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=loft-n8-praha-8b8d4339d9</loc>
     <lastmod>2026-09-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-majak-praha-c4a0e83163</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2703,12 +2745,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=vozovna-bistro-praha-cd3e2a37a6</loc>
     <lastmod>2026-08-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-majak-praha-c4a0e83163</loc>
-    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -5161,12 +5197,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=zeleznicni-zastavka-praha-dolni-pocernice-praha-da8cbb9949</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=u-dvou-kastanu-praha-55601f2a89</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
@@ -5175,6 +5205,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=benjamin</loc>
     <lastmod>2026-07-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=zeleznicni-zastavka-praha-dolni-pocernice-praha-da8cbb9949</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -5216,7 +5252,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=touch-of-india-praha-83b30a20a1</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -5233,12 +5269,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=praha-5-oficialni-stranky-praha-e9b030cf5d</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=bistro-bastardo</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>weekly</changefreq>
@@ -5251,8 +5281,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=smoke-heaven-praha-3dc65a1733</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=praha-5-oficialni-stranky-praha-e9b030cf5d</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -5269,6 +5299,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=smoke-heaven-praha-3dc65a1733</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=shahi-indian-prague-04e386ac2e</loc>
     <lastmod>2026-08-01</lastmod>
     <changefreq>weekly</changefreq>
@@ -5281,14 +5317,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pizzeria-venezia-uh</loc>
-    <lastmod>2026-07-24</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=prima-mix-market-official-praha-f5bd980e24</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=prima-mix-market-official-praha-f5bd980e24</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=pizzeria-venezia-uh</loc>
+    <lastmod>2026-07-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -5301,12 +5337,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pizzeria-ristorante-corleone-praha-9d54a1d540</loc>
     <lastmod>2026-07-28</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=unilever-food-solutions-ceska-republika-praha-e84aecff57</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -5450,7 +5480,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=kyvadlo-praha-6eaa206a42</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -5588,19 +5618,13 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=oi-zoi-oi-pho-u-fugiho-praha-1-39c8fca094</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=samarkand-charles-bridge-prague-praha-4cf0c006b9</loc>
     <lastmod>2026-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=alebrijes-prague-bdc27031fb</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -5625,6 +5649,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-moravsk%C3%A1</loc>
     <lastmod>2026-07-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=alebrijes-prague-bdc27031fb</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -5773,12 +5803,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=km-pizza-praha-96180b8401</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=torture-olomouc-77d1b866b9</loc>
     <lastmod>2026-09-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -5799,6 +5823,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-chladek-praha-23fa944df0</loc>
     <lastmod>2026-07-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=km-pizza-praha-96180b8401</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -5863,18 +5893,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=obcerstveni-u-supa-praha-3dcfc70112</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=praguesfinest-praha-ded6acf902</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=asia-jidlo-yao-praha-386c748a82</loc>
     <lastmod>2026-08-01</lastmod>
     <changefreq>weekly</changefreq>
@@ -5889,6 +5907,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=skandal-bar-uherske-hradiste</loc>
     <lastmod>2026-07-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=praguesfinest-praha-ded6acf902</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -5923,14 +5947,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=snidane-praha-feb7b650a6</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=bistro-longin-praha-3403bbbc0a</loc>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=bistro-longin-praha-3403bbbc0a</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=snidane-praha-feb7b650a6</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -5943,12 +5967,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurant-pub-radnicni</loc>
     <lastmod>2026-07-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=gourmet-market-praha-praha-dd799ca91c</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -5996,7 +6014,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=cote-jardin-praha-2-9230be2aac</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -6158,7 +6176,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=jidelna-babcak-praha-2780b9e62d</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -6403,8 +6421,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-sv-jana-stitna-nad-vlari-a638858e93</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=kfc-praha-20e5ca2f28</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -6523,14 +6541,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=mcdonald-s-praha-9-28ff7759a2</loc>
-    <lastmod>2026-07-28</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=katchi-restaurant-bar-praha-d1b4463bc0</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=katchi-restaurant-bar-praha-d1b4463bc0</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=mcdonald-s-praha-9-28ff7759a2</loc>
+    <lastmod>2026-07-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -7171,6 +7189,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=london-underground-bar-praha-2ccd65e2e6</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=hillbilly-praha-e1ceb485e1</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -7195,12 +7219,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=london-underground-bar-praha-2ccd65e2e6</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=poke-poke-praha-40677aeb60</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -7214,7 +7232,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=asia-bistro-jablonec</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -8486,7 +8504,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=bistro-na-zamku-praha-d812bc69e2</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -11749,12 +11767,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=mattoni-bar-praha-f1c733328e</loc>
-    <lastmod>2026-08-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-hybernska-praha-f20e474b01</loc>
     <lastmod>2026-07-29</lastmod>
     <changefreq>weekly</changefreq>
@@ -11763,6 +11775,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=whiskeria-praha-9d96b29561</loc>
     <lastmod>2026-07-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=mattoni-bar-praha-f1c733328e</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -11797,14 +11815,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=tornado-praha-809608be61</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=metro-petriny-praha-93026643b2</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -11833,8 +11845,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=prednasky-o-cestovani-praha-142c0a0bc2</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=tornado-praha-809608be61</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -11881,8 +11893,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=celorocni-grilovani-s-prateli-praha-30fa95f3b1</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=jidelna-sokolovska-praha-72f453d232</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -11899,14 +11911,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=green-day-salads-praha-d475d640db</loc>
-    <lastmod>2026-07-29</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=celorocni-grilovani-s-prateli-praha-30fa95f3b1</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=jidelna-sokolovska-praha-72f453d232</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=green-day-salads-praha-d475d640db</loc>
+    <lastmod>2026-07-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -11965,12 +11977,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=infocentrum-sale-praha-e32b3edbf8</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=maler-bar-praha-0f19c83455</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -12007,8 +12013,14 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=infocentrum-sale-praha-e32b3edbf8</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=food-truck-point-prague-879ae3120e</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12049,12 +12061,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=sumak-praha-74a34ce129</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=jidelna-vozovna-zizkov-praha-c00afd7814</loc>
     <lastmod>2026-08-01</lastmod>
     <changefreq>weekly</changefreq>
@@ -12063,6 +12069,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=coffee-break-cake-praha-7af2aae3f2</loc>
     <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=sumak-praha-74a34ce129</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12139,12 +12151,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=sushi-time-praha-88bf3d06b3</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=vegetarian-club-gouranga-praha-0e3ed10408</loc>
     <lastmod>2026-07-29</lastmod>
     <changefreq>weekly</changefreq>
@@ -12181,8 +12187,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=alzabox-praha-1b84b9162f</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=sushi-time-praha-88bf3d06b3</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=senat-vshe-praha-f6a0c79195</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12205,8 +12217,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=senat-vshe-praha-f6a0c79195</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=shooters-maslovice-praha-5d3b726a92</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12217,14 +12229,20 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=shooters-maslovice-praha-5d3b726a92</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=alzabox-praha-1b84b9162f</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=inle-bistro-praha-ef5012aa5b</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=pastagiano-praha-c6d741bac1</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12237,12 +12255,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=jama3-garden-pub-praha-12b197c7ae</loc>
     <lastmod>2026-07-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pastagiano-praha-c6d741bac1</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12261,12 +12273,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=kavarna-kocici-praha-a1680bcfa3</loc>
     <lastmod>2026-07-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=bistro-meduz-praha-e1828f377a</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12320,7 +12326,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=coffee-in-garden-praha-4618e6f883</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12361,18 +12367,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pilsner-urquell-praha-159bc872c4</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=burrito-loco-prague-b56577f774</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=bistro-tyrsovka-praha-be04acfb4e</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -12385,6 +12379,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=pilsner-urquell-praha-159bc872c4</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-nju-baba-praha-0e58eb724b</loc>
     <lastmod>2026-07-29</lastmod>
     <changefreq>weekly</changefreq>
@@ -12393,6 +12393,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurant-san-marco-praha-f96a952671</loc>
     <lastmod>2026-07-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=burrito-loco-prague-b56577f774</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12445,14 +12451,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=dhaba-beas-prague-52ee734e3a</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=dumpli-praha-e46baf4fed</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12481,6 +12481,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=dhaba-beas-prague-52ee734e3a</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=george-prime-steak</loc>
     <lastmod>2026-09-22</lastmod>
     <changefreq>weekly</changefreq>
@@ -12489,12 +12495,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=jidlovice-prague-4da334fff0</loc>
     <lastmod>2026-08-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=king-jeliman-s-grand-restaurant-praha-f40944b894</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12529,14 +12529,20 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=king-jeliman-s-grand-restaurant-praha-f40944b894</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=meatcraft-praha-0d24a6aa3b</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=zamecka-restaurace-ctenice-prague-88784664fe</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=big-ben-foods-praha-5652bff1f7</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12553,8 +12559,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=big-ben-foods-praha-5652bff1f7</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=zamecka-restaurace-ctenice-prague-88784664fe</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12579,12 +12585,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=koykan-praha-2f68f9656b</loc>
     <lastmod>2026-08-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=fine-poke-praha-6260fb9322</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12631,12 +12631,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=navat-prague-f69be9ac37</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=cafe-svateho-vaclava-praha-97910259c0</loc>
     <lastmod>2026-07-29</lastmod>
     <changefreq>weekly</changefreq>
@@ -12673,14 +12667,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pizzeria-einstein-praha-0bc530a06f</loc>
-    <lastmod>2026-08-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=navat-prague-f69be9ac37</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=nola-bistro-bakery-prague-f6c4c329fa</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=pizzeria-einstein-praha-0bc530a06f</loc>
+    <lastmod>2026-08-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12693,6 +12687,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=londoners-sports-bar-praha-4f89f70b5b</loc>
     <lastmod>2026-07-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=nola-bistro-bakery-prague-f6c4c329fa</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12759,12 +12759,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurant-sarah-bernhardt-prague-55eca160c1</loc>
     <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=mccain-hranolky-ceska-republika-praha-45112b4aa5</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12854,7 +12848,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=sushi-point-praha-3296bcdd11</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12897,12 +12891,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=mcdonald-s-praha-3-zizkov-0fbfa0df0f</loc>
     <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=hh-bistro-praha-878563705f</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12997,14 +12985,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pizzerie-pepino-praha-1be4d4ba25</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=bar-69-praha-2ad7ac30ce</loc>
+    <lastmod>2026-07-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=bar-69-praha-2ad7ac30ce</loc>
-    <lastmod>2026-07-29</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=pizzerie-pepino-praha-1be4d4ba25</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13039,8 +13027,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=hard-rock-cafe-prague-prague-309820ec4c</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=ji-dlo-ji-hu-prague-aae6bce032</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13071,12 +13059,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=expres-praha-cakovice-praha-2e64e49475</loc>
     <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=ji-dlo-ji-hu-prague-aae6bce032</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13219,12 +13201,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=obcerstveni-v-obore-praha-6a54dae606</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pizza-express-praha-1-a6cec8c871</loc>
     <lastmod>2026-08-02</lastmod>
     <changefreq>weekly</changefreq>
@@ -13267,8 +13243,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=dhaba-beas-praha-5-c2971aab6b</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=forbidden-taste-pop-up-restaurant-praha-70611dd1be</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13303,20 +13279,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=forbidden-taste-pop-up-restaurant-praha-70611dd1be</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pivo-a-parek-praha-74e5ca2261</loc>
     <lastmod>2026-09-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=mr-wombat-praha-c423861ebe</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13327,8 +13291,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=zizkovska-hudebni-restaurace-u-krale-praha-3bb8d079d0</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=mr-wombat-praha-c423861ebe</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13357,12 +13321,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=skupina-coop-praha-5156d5385b</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=hospudka-u-standy-praha-6ce4b3dbb2</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -13371,6 +13329,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=barometr-dining-praha-49c82b5d17</loc>
     <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=skupina-coop-praha-5156d5385b</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13400,7 +13364,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=cateringvpraze-cz-praha-cf38c8adf8</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13441,12 +13405,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=na-palouku-praha-a0128d9413</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=barcelounoc-praha-8390671a75</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -13477,6 +13435,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=na-palouku-praha-a0128d9413</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pubble-praha-45e003abf0</loc>
     <lastmod>2026-07-29</lastmod>
     <changefreq>weekly</changefreq>
@@ -13485,12 +13449,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=sushi-tam-da-praha-ca05c55a73</loc>
     <lastmod>2026-09-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=nase-maso-holesovicka-trznice-praha-2fea8e8b9e</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13513,6 +13471,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=nase-maso-holesovicka-trznice-praha-2fea8e8b9e</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=u-sladecku-praha-1ed93c0f78</loc>
     <lastmod>2026-07-29</lastmod>
     <changefreq>weekly</changefreq>
@@ -13527,12 +13491,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=arepas-de-lyna-praha-a379742df4</loc>
     <lastmod>2026-07-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=cd-restaurant-praha-83550245af</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13621,12 +13579,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=anor-uzbek-restaurant-praha-fcbf705a60</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=share-sweet-wine-bar-praha-79b51908e8</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>weekly</changefreq>
@@ -13669,14 +13621,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=zdrava-jidelna-praha-7c6602db8c</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=kantyna-9-praha-726e082c98</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13717,8 +13663,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=fakin-praha-becb0723e7</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=pizza-krc-praha-962436ae4f</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13741,8 +13687,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pizza-krc-praha-962436ae4f</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=aroma-prague-praha-8d9388350b</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13755,12 +13701,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=waf-waf-praha-78600eedd2</loc>
     <lastmod>2026-07-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=aroma-prague-praha-8d9388350b</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13825,8 +13765,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pepsico-praha-praha-d846b30d7d</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=habibi-nights-praha-50796f7ca0</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13861,14 +13801,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=habibi-nights-praha-50796f7ca0</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=edu-bufet-praha-f23bab0f4e</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13879,20 +13813,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=privoz-p5-cisarska-louka-vyton-naplavka-smichov-praha-61668923e3</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=cafe-rozmbersky-palac-prague-aefe8dfd7e</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=hostinec-gocaruv-dum-praha-bc9b8932ba</loc>
     <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=cafe-rozmbersky-palac-prague-aefe8dfd7e</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -13923,12 +13851,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=sport-club-praha-7d2c5cce81</loc>
     <lastmod>2026-07-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=divadelni-restaurace-prague-196a7d3fc0</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -14085,12 +14007,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurant-no-110-praha-10c8b8ebde</loc>
     <lastmod>2026-07-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=lokal-dlouhaaa-praha-8721165ddc</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -14671,14 +14587,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=crystalis-ltd-praha-8e64be0fc3</loc>
-    <lastmod>2026-09-28</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=bistro-b-praha-cf8e1e8462</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=bistro-b-praha-cf8e1e8462</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=crystalis-ltd-praha-8e64be0fc3</loc>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -14695,14 +14611,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=den-noc-praha-545e683148</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=leaf-praha-0adf53984a</loc>
+    <lastmod>2026-07-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=leaf-praha-0adf53984a</loc>
-    <lastmod>2026-07-29</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=den-noc-praha-545e683148</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -14761,12 +14677,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=bistro-shop-by-antonio-sandev-praha-7291fabe8f</loc>
-    <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=klec-praha-aa430544b1</loc>
     <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
@@ -14775,6 +14685,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pizzeria-napoli</loc>
     <lastmod>2026-09-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=bistro-shop-by-antonio-sandev-praha-7291fabe8f</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -14961,12 +14877,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=kyoto-wok-and-sushi-praha-a83ba7cbd9</loc>
     <lastmod>2026-08-28</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-supa</loc>
-    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -16274,7 +16184,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=terra-e-mare-praha-9a28d23685</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -16369,14 +16279,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=staromestsky-pivovar-u-supa-praha-c845fb0cb4</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=zlata-praha-praha-af6766848a</loc>
+    <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=zlata-praha-praha-af6766848a</loc>
-    <lastmod>2026-07-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=staromestsky-pivovar-u-supa-praha-c845fb0cb4</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -16407,12 +16317,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=palavska-tavern-praha-06b89b7eac</loc>
     <lastmod>2026-09-28</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=maso-a-kobliha-vinohrady</loc>
-    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -17203,12 +17107,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=dany-s-wine-bar-praha-20ce4813aa</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-radnice-vyskov</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -17223,6 +17121,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=bar-kobka-8-praha-cff43c0371</loc>
     <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=dany-s-wine-bar-praha-20ce4813aa</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -17629,12 +17533,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-parlamentu-kladno</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=u-kotvy-praha-df4bebfee7</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
@@ -17803,12 +17701,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-krnov</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=staroceska-pekarna-praha-92cbbd1e04</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
@@ -17925,12 +17817,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=il-palazzo-praha-52aaeaa6d9</loc>
     <lastmod>2026-09-28</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=the-dutch-pub-steak-and-burger-praha-7f93e7a918</loc>
-    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -18061,6 +17947,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=zdrava-jidelna-praha-7c6602db8c</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=hostinec-u-rotundy-praha-8b9c05c057</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
@@ -18069,6 +17961,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=chillspot-terrace-prague-praha-d0a1902cfa</loc>
     <lastmod>2026-09-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=fakin-praha-becb0723e7</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -18109,6 +18007,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=catering-hosi-praha-fcf8531acc</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-radnice-jaromer</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -18117,6 +18021,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=napoke-prague-praha-8d5ecf2a74</loc>
     <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=funny-praha-9-vysocany-b1d497617c</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -18145,6 +18055,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=kings-court-restaurant-praha-561ecad5b3</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=lok%C3%A1l-u-b%C3%ADl%C3%A9-ku%C5%BEelky</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -18159,6 +18075,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=zatisi-group-praha-619574baa6</loc>
     <lastmod>2026-09-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=pepsico-praha-praha-d846b30d7d</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -18223,6 +18145,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=mojo-hostel-prague-praha-4a4d449fb1</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=kav%C3%A1rna-azyl</loc>
     <lastmod>2026-09-22</lastmod>
     <changefreq>weekly</changefreq>
@@ -18253,6 +18181,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=ave-mama-cafe-praha-db790eae8e</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=ingarden-noodles-restaurant-cafe-praha-4db1b608e1</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -18273,6 +18207,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=ichnusa-botega-bistro-praha-255889170a</loc>
     <lastmod>2026-09-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=privoz-p5-cisarska-louka-vyton-naplavka-smichov-praha-61668923e3</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -18303,6 +18243,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pivovar-zizkov</loc>
     <lastmod>2026-09-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=si-carnal-taqueria-praha-8165eb72ca</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -18343,6 +18289,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=divadelni-restaurace-prague-196a7d3fc0</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=palpost-praha-90edd45478</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -18363,6 +18315,24 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=sokol-ceska-obec-sokolska-praha-1d69f59ac1</loc>
     <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=sapa-vietnamska-trznice-praha-4ea4271cd9</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=tchibo-prague-21703e505c</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=el-shisha-cafe-cajovna-v-centru-prahy-praha-2b126e5cf9</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -18391,6 +18361,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=stara-zbrojnice-praha-60e2c1ad57</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=cafe-de-paris-praha-08dd23d8b8</loc>
     <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
@@ -18399,6 +18375,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=seafood-prague-praha-14293817af</loc>
     <lastmod>2026-09-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=u-svejka-praha-7b1b9d8766</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -18451,6 +18433,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=sasazu-praha-dff119c43a</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=cafe-slavia-praha-df43e47527</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
@@ -18471,6 +18459,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=roesel-praha-f7f5f22225</loc>
     <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=lokal-dlouhaaa-praha-8721165ddc</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -20305,12 +20299,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=radek-s-kitchen-praha-07a0b83466</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=jdu-na-jedno-praha-5cfa78da85</loc>
     <lastmod>2026-09-29</lastmod>
     <changefreq>weekly</changefreq>
@@ -20319,6 +20307,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=bento-house-cafe-cooking-class-praha-14954ebcf7</loc>
     <lastmod>2026-09-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=radek-s-kitchen-praha-07a0b83466</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -22262,7 +22256,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=the-bowls-prague-4e4fdad44c</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -23071,12 +23065,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pizzeria-grosseto</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=sushi-ya-brno-9ac2034eae</loc>
     <lastmod>2026-09-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -23097,6 +23085,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=manifesto-market-praha-1-ca8982a441</loc>
     <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=pizzeria-grosseto</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -23311,14 +23305,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=le-petit-bouillon-prague-700224081b</loc>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-poja-praha-3-87b6bed349</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-poja-praha-3-87b6bed349</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=le-petit-bouillon-prague-700224081b</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -23983,14 +23977,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=u-jecmene-prague-1b297b0e79</loc>
-    <lastmod>2026-08-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-hroznu</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-hroznu</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=u-jecmene-prague-1b297b0e79</loc>
+    <lastmod>2026-08-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -26408,7 +26402,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=stredoveka-krcma-praha-praha-58e5a7d5e8</loc>
-    <lastmod>2026-08-31</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -27733,12 +27727,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=repoint-rekola-praha-91cb830cda</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-bukacu-praha-f23d708696</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -27799,8 +27787,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=freshkruhac-butovice-praha-f8aab5a61c</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=bozsky-trdelnik-praha-ba63cbd55a</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -27829,12 +27817,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=bozsky-trdelnik-praha-ba63cbd55a</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pho-tien-praha-d50ddbdff8</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -27855,6 +27837,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=modranka-prague-f6dd50c98d</loc>
     <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=freshkruhac-butovice-praha-f8aab5a61c</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -28363,12 +28351,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurant-kkcg-praha-95ad00fbd5</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=polevkarna-u-babicky-praha-186ef5b7e1</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -28717,12 +28699,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=st-wenceslas-vineyard-praha-5788a06c89</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=tre-xanh-vietnamese-restaurant-praha-b75fb388f0</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -28837,12 +28813,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=sestava-praha-e95156488d</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=vinoteka-u-marka-praha-395fc9e592</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -28915,8 +28885,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=slow-cafe-praha-b0f7dec632</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=kolkovna-vitezna-praha-787a9207bb</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -28957,12 +28927,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=kolkovna-vitezna-praha-787a9207bb</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=praga-medievale-praha-1d1f5931a6</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
@@ -28993,8 +28957,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=u-jeffa-praha-7c00d7206c</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=divadlo-kampa-praha-22f9db1021</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29029,8 +28993,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=divadlo-kampa-praha-22f9db1021</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=u-jeffa-praha-7c00d7206c</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29167,12 +29131,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=benzina-praha-d4fa532166</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pizza-pasta-michaello-praha-f1b9e411b1</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -29181,6 +29139,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=kuty-pizza-praha-33257a8888</loc>
     <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=benzina-praha-d4fa532166</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29233,12 +29197,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=banh-mi-ba-praha-06b69c23ed</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=hospudka-na-slavoji-praha-61f5e3b133</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -29265,6 +29223,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=klanhome-praha-db9d2f9c6d</loc>
     <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=banh-mi-ba-praha-06b69c23ed</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29317,20 +29281,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=le-bistro-bonjour-praha-fc5638cfce</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=dhaba-beas-prague-2a58be06cc</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=vasilij-goncar-pizzerie-pasta-e-basta-praha-740feb98b8</loc>
     <lastmod>2026-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=dhaba-beas-prague-2a58be06cc</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29443,8 +29401,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=basta-prague-8c110f8eb9</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=pizza-25-praha-5fdd9f0599</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29467,12 +29425,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pizza-25-praha-5fdd9f0599</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurant-chinois-praha-7603c80e14</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -29481,12 +29433,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=oriental-food-praha-3c7ef388cd</loc>
     <lastmod>2026-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=zeman-maso-uzeniny-praha-ee580ad966</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29527,6 +29473,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=zeman-maso-uzeniny-praha-ee580ad966</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pizzeria-ristorante-roma-uno-praha-badc688dc4</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>weekly</changefreq>
@@ -29539,26 +29491,20 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=km-pizza-prague-8-26fa5e761e</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=raketou-praha-45c95f0848</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=raketou-praha-45c95f0848</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=veggiegarden-prague-3845656c77</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=holy-pasta-prague-2eed34d756</loc>
     <lastmod>2026-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=veggiegarden-prague-3845656c77</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29581,8 +29527,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=uno-due-tre-prague-361d506f57</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=km-pizza-prague-8-26fa5e761e</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=mlsna-labut-praha-4f07778cda</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29611,12 +29563,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=mlsna-labut-praha-4f07778cda</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=loco-wings-prague-praha-e8eeba9697</loc>
     <lastmod>2026-08-01</lastmod>
     <changefreq>weekly</changefreq>
@@ -29635,12 +29581,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=hot-dog-prague-praha-740f4930c0</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=suplik-praha-c63f3185a0</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -29649,6 +29589,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=aia-polevkarna-prague-eaf2af4aae</loc>
     <lastmod>2026-07-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=hot-dog-prague-praha-740f4930c0</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29685,12 +29631,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=hasu-sushi-praha-3-8e76e80a81</loc>
     <lastmod>2026-08-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=wrap-n-roll-prague-4d9671afce</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29755,8 +29695,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=holesovicka-jidelna-prague-9402acdb14</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=cafe7bar-prague-61bbe4539b</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29797,14 +29737,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=cafe7bar-prague-61bbe4539b</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=banh-mi-ba-praha-9c130bb8c8</loc>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=banh-mi-ba-praha-9c130bb8c8</loc>
-    <lastmod>2026-09-28</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=holesovicka-jidelna-prague-9402acdb14</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29821,8 +29761,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=safir-praha-12c4491ab3</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=flixbus-zastavka-praha-b7ea8c3026</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29863,20 +29803,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=flixbus-zastavka-praha-b7ea8c3026</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pizza-de-gusto-praha-5-657c33ff57</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=french-garden-praha-b8c4a55661</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=km-pizza-praag-80e6a2d5d3</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29905,20 +29839,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=km-pizza-praag-80e6a2d5d3</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-sedlaka-praha-3-58efc2219c</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=parky-s-prague-1308dd5f4b</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29935,8 +29863,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=umamy-prague-9f984d5e56</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=pod-lipami-praha-8428cc50ed</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -29983,14 +29911,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pod-lipami-praha-8428cc50ed</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=km-pizza-praha-2446cc6c1b</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30007,8 +29929,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=spoko-praha-b7a02e1591</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=pizza4you-praha-10-9673f713f3</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30037,20 +29959,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pizza4you-praha-10-9673f713f3</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=rysanka-bus-praha-0c3b8c6c4d</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=edison-praha-15-f743790ccc</loc>
     <lastmod>2026-08-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=rysanka-bus-praha-0c3b8c6c4d</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30073,8 +29989,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=fine-poke-prague-ba68040c66</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=poctiva-restaurace-prague-15c44731d9</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30087,12 +30003,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pho-u-pani-hoa-praha-f9c58dead8</loc>
     <lastmod>2026-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=poctiva-restaurace-prague-15c44731d9</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30115,8 +30025,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=dhaba-beas-prague-fd24e1235f</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=fine-poke-prague-ba68040c66</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=the-adventurer-s-cellar-praha-2681cf6985</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30163,26 +30079,20 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=the-adventurer-s-cellar-praha-2681cf6985</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=la-casata-praha-58543882f1</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=brambor-king-prague-cfc593aa55</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=dhaba-beas-prague-fd24e1235f</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=obcerstveni-u-trilobita-prague-a777fe73f1</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30295,8 +30205,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=burrito-loco-prague-d24a9c2316</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=top-doner-kebab-prague-b18bfac2a9</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30331,32 +30241,20 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=top-doner-kebab-prague-b18bfac2a9</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=gocarovy-domy-praha-22a12f2551</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=dhaba-beas-prague-6-d27ef96097</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=nutricni-ordinace-praha-a89fcc1cb0</loc>
     <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=kodanka-prague-4a7b4c01ba</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30451,12 +30349,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=bufet-fappz-praha-73838e01b8</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=velka-klasterni-restaurace-praha-12a74342a0</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
@@ -30475,6 +30367,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=bufet-fappz-praha-73838e01b8</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-hamr-praha-397ef221df</loc>
     <lastmod>2026-08-02</lastmod>
     <changefreq>weekly</changefreq>
@@ -30482,13 +30380,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pizza-di-praga-praha-4-6e79782345</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=loving-bistro-prague-cd585acc80</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30523,8 +30415,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-templare-praha-126157be53</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=klub-na-venecku-praha-0039818665</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30561,12 +30453,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=prima-basta-prague-e07adf4bb6</loc>
     <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=klub-na-venecku-praha-0039818665</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30679,12 +30565,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=poc-k-prague-1-2c17a31bf1</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pho-dai-viet-praha-9dc9c91323</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -30697,8 +30577,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=locanda-emanuele-praha-094c4b44bc</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=poc-k-prague-1-2c17a31bf1</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=italmotori-praha-1ea8dfad56</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30741,12 +30627,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-dap-praha-6-a29f0e7139</loc>
     <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=italmotori-praha-1ea8dfad56</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30799,20 +30679,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=km-pizza-praha-8f103683c0</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pivovar-zubr</loc>
     <lastmod>2026-09-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=marche-movenpick-prague-eb691fcb94</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=km-pizza-praha-8f103683c0</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30835,14 +30709,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=san-carlo-prague-51c1cbe95a</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=prima-basta-praha-2cf444c54f</loc>
+    <lastmod>2026-08-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=prima-basta-praha-2cf444c54f</loc>
-    <lastmod>2026-08-02</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=men-s-store-giay-da-nam-praha-8746598e61</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30865,8 +30739,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=men-s-store-giay-da-nam-praha-8746598e61</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=san-carlo-prague-51c1cbe95a</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30901,14 +30775,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=hezky-cesky-bistro-praha-2778537130</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=coffee-time-praha-9b7685834d</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=coffee-time-praha-9b7685834d</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=hezky-cesky-bistro-praha-2778537130</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30927,12 +30801,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=infiniti-prague-923caaf4fc</loc>
     <lastmod>2026-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=falafelova-prague-72d11be6b5</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30961,8 +30829,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=dhaba-beas-prague-2-64e639230a</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=falafelova-prague-72d11be6b5</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -30979,20 +30847,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=u-tety-heleny-prague-a9d81bc067</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=green-spirit-vegetarian-bistro-cafe-prague-974ba920ee</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=perfect-canteen-praha-e98b17514f</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -31009,26 +30871,20 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=km-pizza-prague-5ac9816fb7</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=haskova-restaurace-u-brejsku-praha-e762361420</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=haskova-restaurace-u-brejsku-praha-e762361420</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=u-tety-heleny-prague-a9d81bc067</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=herna-bar-hubert-praha-f51423dfc9</loc>
     <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=vinoteka-kolbenova-praha-2f06d925b5</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -31345,12 +31201,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pramen-sira-n-wintona-praha-a4a37928d5</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=hoang-thanh-praha-45d283cb6c</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -31393,6 +31243,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=pramen-sira-n-wintona-praha-a4a37928d5</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=epic-steaks-grilbar-praha-b0e671f908</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>weekly</changefreq>
@@ -31419,12 +31275,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=chef-sultan-i-p-pavlova-praha-b61247b36a</loc>
     <lastmod>2026-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=brown-nosing-praha-57c4b882af</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -31465,8 +31315,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=bus-147-dejvicka-vyhledy-praha-0c442f07c0</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=kino-brouk-praha-af41de0644</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -31513,14 +31363,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=kino-brouk-praha-af41de0644</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=bus-147-dejvicka-vyhledy-praha-0c442f07c0</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=manikura-praha-praha-2e5952eeb7</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=1316-medieval-restaurant-praha-13733b3b3f</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -31573,8 +31423,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=1316-medieval-restaurant-praha-13733b3b3f</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=manikura-praha-praha-2e5952eeb7</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -32551,8 +32401,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=catering-hosi-praha-fcf8531acc</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurant-na-klarove-praha-49b938a6dc</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -32563,14 +32413,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurant-na-klarove-praha-49b938a6dc</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=fernsehturm-prag-praha-cc7241dfef</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -32623,8 +32467,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=funny-praha-9-vysocany-b1d497617c</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=lod-vodouch-praha-ad31d72ebb</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -32641,14 +32485,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=lod-vodouch-praha-ad31d72ebb</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=paroplavba-prague-boats-praha-ef435cf1a8</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -32683,8 +32521,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=kings-court-restaurant-praha-561ecad5b3</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-praha-fa4149739b</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -32695,8 +32533,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-praha-fa4149739b</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=astana-praha-13098ad6c7</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -32709,12 +32547,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pruge-city-chikhya-praha-947031fcde</loc>
     <lastmod>2026-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=astana-praha-13098ad6c7</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -32757,12 +32589,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=zeleznicni-zastavka-praha-stodulky-praha-bc74207dd4</loc>
     <lastmod>2026-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=mojo-hostel-prague-praha-4a4d449fb1</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -32815,20 +32641,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=ave-mama-cafe-praha-db790eae8e</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=cyklostezka-a2-troja-praha-62cae8ece2</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=frycovicka-praha-8e0bb6eee6</loc>
     <lastmod>2026-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=cyklostezka-a2-troja-praha-62cae8ece2</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -32869,8 +32689,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=si-carnal-taqueria-praha-8165eb72ca</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=pizza-papa-cipolla-prague-5-9f25a047b3</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -32917,12 +32737,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pizza-papa-cipolla-prague-5-9f25a047b3</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-hrabenky</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
@@ -32941,8 +32755,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=el-shisha-cafe-cajovna-v-centru-prahy-praha-2b126e5cf9</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=gurkhaclub-cz-praha-2d20a1e817</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -32983,12 +32797,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=gurkhaclub-cz-praha-2d20a1e817</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=nev-dama-praha-3e90ab9eb6</loc>
     <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
@@ -33019,8 +32827,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=stara-zbrojnice-praha-60e2c1ad57</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=bistraw-prague-059ff8b10e</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -33063,12 +32871,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=havana-bar-praha-78947531d6</loc>
     <lastmod>2026-07-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=bistraw-prague-059ff8b10e</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -33127,14 +32929,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=ipouzdro-cz-praha-1cd2626bc1</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=nase-divocina-praha-e7171d00df</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -33151,8 +32947,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=u-svejka-praha-7b1b9d8766</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=ipouzdro-cz-praha-1cd2626bc1</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -33199,20 +32995,14 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=jidelna-na-vytoni-praha-5c6a995d6e</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=coda-restaurant</loc>
     <lastmod>2026-08-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=sapa-vietnamska-trznice-praha-4ea4271cd9</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=jidelna-na-vytoni-praha-5c6a995d6e</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -33417,12 +33207,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=tilak-vegetarianska-bio-restaurace</loc>
     <lastmod>2026-08-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=tchibo-prague-21703e505c</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -33871,6 +33655,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=el-camino-tapas-restaurant-praha-f1b7d83715</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-v-ruthardce</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -33883,8 +33673,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=sumi-garden-praha-c06dc0e473</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=bakeshop-little-bakery-praha-e2d5c72d21</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -33895,32 +33685,26 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=bakeshop-little-bakery-praha-e2d5c72d21</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=el-camino-tapas-restaurant-praha-f1b7d83715</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=sumi-garden-praha-c06dc0e473</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=ragazzi-pizza-bar-praha-3e8d4aa3b2</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=vinoteka-soudek-praha-ca7ca1f32c</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=buddha-tea-house-praha-23bd4e4ad5</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -33938,19 +33722,19 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-praha-12b1bb5fa7</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=duha-prague-fd5fee7344</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=parky-s-praha-f3a27675d4</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -33961,20 +33745,20 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=taverna-olympos-praha-4c1042167f</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=olive-point-praha-a4b5e99f34</loc>
     <lastmod>2026-09-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=curling-club-prague-0e766fb751</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=sushi-chef-praha-ce66c6cf95</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -33997,14 +33781,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=taverna-olympos-praha-4c1042167f</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=curling-club-prague-0e766fb751</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=zadni-vratka-praha-26749d67ca</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=lahudkarstvi-jan-paukert-praha-be22ae72e2</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34015,38 +33799,32 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=lahudkarstvi-jan-paukert-praha-be22ae72e2</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=duse-v-peri-praha-eea12b34f2</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-zamek-melnik</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=mcdonald-s-prague-8ef731a1a7</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=third-coast-pizza-praha-750856fa0e</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=zadni-vratka-praha-26749d67ca</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=garuda-restaurant-praha-3816dd0a39</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=kolkovna-dock-praha-8-40a279355e</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=cloverleaf-restaurace-praha-e9aebd9005</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34057,26 +33835,20 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=cloverleaf-restaurace-praha-e9aebd9005</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=third-coast-pizza-praha-750856fa0e</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=kolkovna-dock-praha-8-40a279355e</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=mcdonald-s-prague-8ef731a1a7</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=zmrzlina-z-opocna-praha-679c37ccd4</loc>
     <lastmod>2026-09-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=matoka-praha-939418acd2</loc>
-    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34093,26 +33865,26 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=czech-cuisine-praha-3aacedfc7b</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=matoka-praha-939418acd2</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-U-cerneho-orla-beroun</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=winghaus-praha-0a1d8b636e</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=one-club-praha-a71dbbf794</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=czech-cuisine-praha-3aacedfc7b</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34124,13 +33896,13 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=nemocnice-na-bulovce-praha-9a7e4a4db8</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pizza-miki-prague-52d0031d0b</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=one-club-praha-a71dbbf794</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34141,14 +33913,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=cukrarna-hajek-praha-c1812a4c15</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=pizza-miki-prague-52d0031d0b</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=zastavka-praha-21-e0ca1160ef</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=cukrarna-hajek-praha-c1812a4c15</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34165,56 +33937,56 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=zastavka-praha-21-e0ca1160ef</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=al-ponte-prague-praha-c98a6b6514</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=figo-praha-71b824588c</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=chutnej-praha-5208572ed7</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=ceska-posta-praha-227e65b383</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=la-bodeguita-del-medio-praha-f2b4fea5c2</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=dhaba-cafe-praha-f43d7c660d</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=club-route-66-praha-57a90e8b47</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-prim%C3%A1tor</loc>
     <lastmod>2026-08-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=mcdonald-s-prague-c47865aeef</loc>
-    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34231,26 +34003,26 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=mcdonald-s-prague-3dca837f92</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=mcdonald-s-prague-c47865aeef</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=u-stupartu-prague-1d1242a10d</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=mcdonald-s-prague-3dca837f92</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=na-hradbach-praha-790064453c</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=rikatado-praha-4bcc4b1c13</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=u-stupartu-prague-1d1242a10d</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34267,26 +34039,26 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=rikatado-praha-4bcc4b1c13</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=buona-pizza-praha-2-5d8275674a</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=makakiko-running-sushi-praha-e02c3a5da8</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=automat-svet-praha-bbf466a8c9</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=chocafe-praha-718b3aa62f</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=hostinec-u-tunelu-praha-753f0a6041</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34321,8 +34093,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=hostinec-u-tunelu-praha-753f0a6041</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=chocafe-praha-718b3aa62f</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34333,26 +34105,20 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=burger-bar-chomutov</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-josefina-praha-5f74c55fd9</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-josefina-praha-5f74c55fd9</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-sv-jana-stitna-nad-vlari-a638858e93</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=na-brehu-rhony-francouzska-praha-4661734a8a</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=u-bohouse-praha-8d1ebb3ea9</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34383,6 +34149,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=mlynarske-pelmene-praha-2e3d6ed31b</loc>
     <lastmod>2026-08-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=u-bohouse-praha-8d1ebb3ea9</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34507,6 +34279,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=repoint-rekola-praha-91cb830cda</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=honey-praha-7a2ca8814f</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
@@ -34627,14 +34405,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=michelle-sushi-praha-158788ff02</loc>
-    <lastmod>2026-09-26</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=prednasky-o-cestovani-praha-142c0a0bc2</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=bistro-cafe-grandior-praha-6d6315b189</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=michelle-sushi-praha-158788ff02</loc>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34663,6 +34441,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-sparta-praha-bc92b24766</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=benzina-praha-1b2838c60d</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
@@ -34670,13 +34454,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=burger-inn</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-sparta-praha-bc92b24766</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34718,13 +34496,25 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pizza-merlo-praha-7bdbaff81b</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=burger-bar-chomutov</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=bistro-cafe-grandior-praha-6d6315b189</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=cafe-prostoru-praha-4481ec9666</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34843,8 +34633,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=o-che-s-irish-bar-praha-a1deefb6d7</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurant-kkcg-praha-95ad00fbd5</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34891,6 +34681,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=st-wenceslas-vineyard-praha-5788a06c89</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=regal-burger-praha-c72b8ca0a5</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
@@ -34929,6 +34725,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=kanada-pizza-restaurant-praha-6849bba82b</loc>
     <lastmod>2026-07-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=sestava-praha-e95156488d</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -34981,26 +34783,38 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=miss-saigon-praha-17160f367b</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=slow-cafe-praha-b0f7dec632</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=u-cihelny-praha-27158b5e5a</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pizza-pasta-factory-praha-2cbdb76115</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=bistro-meduz-praha-e1828f377a</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pizza-hut-praha-galerie-butovice-praha-de1b718a84</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=miss-saigon-praha-17160f367b</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=le-bistro-bonjour-praha-fc5638cfce</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=basta-prague-8c110f8eb9</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -35029,14 +34843,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=u-dvou-sester-praha-1-4acb15ef27</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=la-formaggeria-gran-moravia-praha-3b5a33e04d</loc>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=la-formaggeria-gran-moravia-praha-3b5a33e04d</loc>
-    <lastmod>2026-09-26</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=u-dvou-sester-praha-1-4acb15ef27</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -35083,6 +34897,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=uno-due-tre-prague-361d506f57</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pizza-prosek-praha-5720dd56ab</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
@@ -35121,6 +34941,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=don-vito-asia-restaurant-praha-e9ca96e523</loc>
     <lastmod>2026-09-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=fine-poke-praha-6260fb9322</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -35167,6 +34993,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=wrap-n-roll-prague-4d9671afce</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=namaste-india-restaurant-praha-9757e022a0</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
@@ -35205,6 +35037,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=vinny-loch-praha-691cdf4e90</loc>
     <lastmod>2026-09-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=safir-praha-12c4491ab3</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -35251,20 +35089,50 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=unilever-food-solutions-ceska-republika-praha-e84aecff57</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=cafe-veloklasik-praha-0f1444587a</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=sasy-the-original-praha-1-e16dbf9353</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-supa</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=ram-lobster-and-burger-praha-cabbc53e83</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=pizza-pasta-factory-praha-2cbdb76115</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=french-garden-praha-b8c4a55661</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=sasy-the-original-praha-1-e16dbf9353</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=umamy-prague-9f984d5e56</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -35289,12 +35157,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=eska-praha-cf35a0125c</loc>
     <lastmod>2026-08-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=sasazu-praha-dff119c43a</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -35359,14 +35221,20 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=nase-maso-praha-a1e5608058</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=spoko-praha-b7a02e1591</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=sansho-praha-d42457c565</loc>
     <lastmod>2026-08-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=nase-maso-praha-a1e5608058</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -36139,6 +36007,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=maso-a-kobliha-vinohrady</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=benzina-praha-239afb140f</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
@@ -36331,14 +36205,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=di-nuovo-praha-b4527648c6</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=vindysova-tovarna-praha-77b759200e</loc>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=vindysova-tovarna-praha-77b759200e</loc>
-    <lastmod>2026-09-26</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=di-nuovo-praha-b4527648c6</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -36662,7 +36536,7 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=caffe-milani-praha-fccf7a4414</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -36715,6 +36589,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-parlamentu-kladno</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=emperor-square-praha-39ccb9ccf9</loc>
     <lastmod>2026-07-29</lastmod>
     <changefreq>weekly</changefreq>
@@ -36753,6 +36633,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=indian-kitchen-by-r-r-praha-e1179db15a</loc>
     <lastmod>2026-07-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-krnov</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -37233,6 +37119,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-pavlovin-praha-52c6cbc0f6</loc>
     <lastmod>2026-09-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=the-dutch-pub-steak-and-burger-praha-7f93e7a918</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -37837,12 +37729,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=bistro-v-nebi-prague-1-20e3b8ad69</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=obcanska-plovarna-praha-6e7dbe9cb3</loc>
     <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
@@ -37851,6 +37737,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=cafe-rozmberk-praha-57d2237160</loc>
     <lastmod>2026-09-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=bistro-v-nebi-prague-1-20e3b8ad69</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -39427,6 +39319,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=tchibo-prague-b0fe520753</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=next-door-by-imperial</loc>
     <lastmod>2026-08-24</lastmod>
     <changefreq>weekly</changefreq>
@@ -39435,12 +39333,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=tahini-praha-1088f873a9</loc>
     <lastmod>2026-08-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=tchibo-prague-b0fe520753</loc>
-    <lastmod>2026-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -39853,12 +39745,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=sadky-lahovice-praha-aa747de7e3</loc>
-    <lastmod>2026-09-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=club-restaurant-peugeot-praha-05515a98df</loc>
     <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
@@ -39883,6 +39769,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=sadky-lahovice-praha-aa747de7e3</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=svet-rovnatek-praha-a0dea64797</loc>
     <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
@@ -39891,6 +39783,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurace-na-hristi-praha-ef458c2092</loc>
     <lastmod>2026-09-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=prolog-noodle-bar-praha-d310665021</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -39913,8 +39811,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=prolog-noodle-bar-praha-d310665021</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=automat-svet-praha-bbf466a8c9</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -39938,19 +39836,19 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pizzerie-flamengo-praha-b0fbdac2c8</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=kfc-praha-20e5ca2f28</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=pizza-hut-praha-galerie-butovice-praha-de1b718a84</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pivovar-restaurace-eggenberg</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -39963,6 +39861,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=cats-coffee-praha-praha-58e513b023</loc>
     <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=o-che-s-irish-bar-praha-a1deefb6d7</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -40070,7 +39974,13 @@
   </url>
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=restaurant-u-morice</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-zamek-melnik</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -40135,14 +40045,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=masaro-uherske-hradiste</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=u-parlamentu</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=u-parlamentu</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=masaro-uherske-hradiste</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -40165,8 +40075,38 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=mccain-hranolky-ceska-republika-praha-45112b4aa5</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=burrito-loco-prague-d24a9c2316</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=hh-bistro-praha-878563705f</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=loving-bistro-prague-cd585acc80</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=gokana-japanese-restaurant</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-radnice-brandys</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -40177,8 +40117,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-radnice-brandys</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=brambor-king-prague-cfc593aa55</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=kodanka-prague-4a7b4c01ba</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -40209,6 +40155,18 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=beer-bar-zvonkova-praha-87cf5528b0</loc>
     <lastmod>2026-09-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=hard-rock-cafe-prague-prague-309820ec4c</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-u-templare-praha-126157be53</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -40261,6 +40219,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=pan-panzerotto-praha-bb2b49548d</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=kafe-kolej-praha-0655e227f2</loc>
     <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
@@ -40281,12 +40245,6 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=bystro-cafe-praha-a8b3529288</loc>
     <lastmod>2026-09-28</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=pan-panzerotto-praha-bb2b49548d</loc>
-    <lastmod>2026-09-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -40351,6 +40309,18 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=obcerstveni-u-supa-praha-3dcfc70112</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=obcerstveni-v-obore-praha-6a54dae606</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=standard-cafe-praha-e6e5934fb8</loc>
     <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
@@ -40387,20 +40357,26 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-kamin-prague-ca7ecec350</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=lounge-terrace-prague-af64362d72</loc>
     <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=restaurace-kamin-prague-ca7ecec350</loc>
-    <lastmod>2026-09-30</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=residence-u-cerneho-orla-praha-dfdadcee0f</loc>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://gurmao.cz/restaurant.html?slug=residence-u-cerneho-orla-praha-dfdadcee0f</loc>
-    <lastmod>2026-09-28</lastmod>
+    <loc>https://gurmao.cz/restaurant.html?slug=locanda-emanuele-praha-094c4b44bc</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -40489,6 +40465,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=marche-movenpick-prague-eb691fcb94</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://gurmao.cz/restaurant.html?slug=kofflik-praha-0d8f0beb88</loc>
     <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
@@ -40515,6 +40497,18 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=pizzeria-piccolo-mondo-praha-aa40ba5a94</loc>
     <lastmod>2026-09-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=dhaba-beas-prague-2-64e639230a</loc>
+    <lastmod>2026-10-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=km-pizza-prague-5ac9816fb7</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -40587,6 +40581,12 @@
   <url>
     <loc>https://gurmao.cz/restaurant.html?slug=na-ruzku-praha-ac613cd5a1</loc>
     <lastmod>2026-09-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://gurmao.cz/restaurant.html?slug=dhaba-beas-praha-5-c2971aab6b</loc>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
