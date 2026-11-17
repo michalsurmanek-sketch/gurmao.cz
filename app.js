@@ -23,7 +23,7 @@ function loadScriptOnce(src, marker) {
 loadScriptOnce('/mobile-bottom-nav.js?v=20260823-2', 'data-gurmao-bottom-nav');
 
 if (!/^(admin(?:-|\.)|login\.|register\.|forgot-|reset-|404\.)/.test(currentPublicPage)) {
-  void import('/header-search.js?v=20260823-2').catch(error => console.error('Shared header search failed:', error));
+  void import('/header-search.js?v=20261117-nearby-1').catch(error => console.error('Shared header search failed:', error));
 }
 if (currentPublicPage === 'restaurace.html') {
   void import('/restaurant-card-enhancements.js?v=20260823-2').catch(error => console.error('Restaurant card enhancements failed:', error));
