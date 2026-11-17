@@ -179,7 +179,7 @@ body .hero-bg form[role="search"] + div.hero-discovery::before {
 }
 
 
-/* Header wordmark refresh — 2026-07-25 */
+/* Header wordmark — matches the approved gold medallion design. */
 header a.modal-title,
 header a.brand .gurmao-wordmark {
   display: inline-flex !important;
@@ -213,9 +213,17 @@ header a.brand {
 header a.modal-title::after { display: none; }
 header a.modal-title > .text-gurmaogold,
 header a.brand .gurmao-medallion {
-  width: .98em !important;
-  height: .98em !important;
+  box-sizing: border-box !important;
+  width: 1.22em !important;
+  height: 1.22em !important;
+  min-width: 1.22em !important;
+  padding: .08em !important;
   margin: 0 .055em !important;
+  overflow: visible !important;
+  font-family: Inter, system-ui, sans-serif !important;
+  font-size: 1em !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
   display: inline-grid !important;
   place-items: center !important;
   flex: 0 0 auto !important;
@@ -226,7 +234,7 @@ header a.brand .gurmao-medallion {
   box-shadow: inset 0 1px 0 rgba(255,255,255,.42), 0 0 18px rgba(212,175,55,.2) !important;
   letter-spacing: 0 !important;
   text-shadow: none !important;
-  transform: translateY(-.02em);
+  transform: none !important;
 }
 header a.brand small {
   display: block !important;
