@@ -5,6 +5,8 @@ const PANEL_ID = 'gurmaoGlobalHeaderSearch';
 const STYLE_ID = 'gurmaoGlobalHeaderSearchStyles';
 const MIN_QUERY = 2;
 const LIMIT = 12;
+const NEARBY_LIMIT = 4;
+const PAGE_SIZE = 1000;
 let sequence = 0;
 let userLocation = null;
 
@@ -37,6 +39,7 @@ function imageUrl(value) {
 }
 
 function distanceKm(lat1, lon1, lat2, lon2) {
+  if ([lat1, lon1, lat2, lon2].some(value => value === null || value === undefined || value === '')) return null;
   const values = [lat1, lon1, lat2, lon2].map(Number);
   if (!values.every(Number.isFinite)) return null;
   const [a, b, c, d] = values;
@@ -143,7 +146,7 @@ function buildPanel(triggers) {
     panel.hidden = false;
     setExpanded(true);
     position(panel, activeAnchor());
-    setStatus(results, 'Začněte psát. Hledáme v názvu, městě, kuchyni a vibe.');
+    input.dispatchEvent(new Event('input'));
     setTimeout(() => input.focus(), 20);
   };
 
@@ -171,22 +174,40 @@ function buildPanel(triggers) {
     if (!panel.hidden) position(panel, activeAnchor());
   }, { passive: true });
 
-  return { panel, input, results, locationButton };
+  return { panel, input, results, locationButton, hint };
 }
 
-async function queryRestaurants(rawQuery) {
+async function queryRestaurants(rawQuery, origin = null) {
   const queryTerms = terms(rawQuery);
-  if (!queryTerms.length) return [];
+  if (!queryTerms.length && !origin) return [];
   const clauses = queryTerms.flatMap(term => ['name','city','tag','vibe'].map(field => `${field}.ilike.%${term}%`));
-  const { data, error } = await supabase
-    .from('restaurants')
-    .select('id,slug,name,city,tag,vibe,image_url,latitude,longitude,google_rating')
-    .not('slug', 'is', null)
-    .or(clauses.join(','))
-    .order('google_rating', { ascending: false, nullsFirst: false })
-    .limit(LIMIT);
-  if (error) throw error;
-  return Array.isArray(data) ? data : [];
+  const rows = [];
+  // Distance must be ranked across every matching restaurant, before limiting.
+  for (let offset = 0; ; offset += PAGE_SIZE) {
+    let request = supabase
+      .from('restaurants')
+      .select('id,slug,name,city,tag,vibe,image_url,latitude,longitude,google_rating')
+      .not('slug', 'is', null);
+    if (clauses.length) request = request.or(clauses.join(','));
+    if (origin) {
+      request = request.not('latitude', 'is', null).not('longitude', 'is', null)
+        .order('id', { ascending: true }).range(offset, offset + PAGE_SIZE - 1);
+    } else {
+      request = request.order('google_rating', { ascending: false, nullsFirst: false }).limit(LIMIT);
+    }
+    const { data, error } = await request;
+    if (error) throw error;
+    const page = Array.isArray(data) ? data : [];
+    rows.push(...page);
+    if (!origin || page.length < PAGE_SIZE) break;
+  }
+  if (!origin) return rows;
+  return rows
+    .map(item => ({ item, distance: distanceKm(origin.lat, origin.lng, item.latitude, item.longitude) }))
+    .filter(entry => entry.distance !== null)
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, queryTerms.length ? LIMIT : NEARBY_LIMIT)
+    .map(entry => entry.item);
 }
 
 function renderResults(container, restaurants) {
@@ -239,18 +260,17 @@ function init() {
     clearTimeout(timer);
     const q = normalize(ui.input.value);
     const current = ++sequence;
-    if (q.length < MIN_QUERY) {
+    const origin = userLocation ? { ...userLocation } : null;
+    ui.hint.textContent = origin ? 'Nejbližší restaurace · název je nepovinný' : `Alespoň ${MIN_QUERY} znaky`;
+    if (!origin && q.length < MIN_QUERY) {
       setStatus(ui.results, `Zadejte alespoň ${MIN_QUERY} znaky.`);
       return;
     }
     setStatus(ui.results, 'Hledám…');
     timer = setTimeout(async () => {
       try {
-        const rows = await queryRestaurants(q);
+        const rows = await queryRestaurants(q, origin);
         if (current !== sequence) return;
-        if (userLocation) {
-          rows.sort((a, b) => (distanceKm(userLocation.lat,userLocation.lng,a.latitude,a.longitude) ?? Infinity) - (distanceKm(userLocation.lat,userLocation.lng,b.latitude,b.longitude) ?? Infinity));
-        }
         renderResults(ui.results, rows);
       } catch (error) {
         if (current !== sequence) return;
